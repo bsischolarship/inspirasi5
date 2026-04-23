@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rekap | Inspirasi BSI Scholarship — Batch 5</title>
+    <link rel="icon" href="assets/logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="assets/logo.png" />
+    <link rel="stylesheet" href="assets/style.css" />
+
+    <!-- ===== TAMBAHAN STYLE (TIDAK MENGHAPUS STYLE ANDA) ===== -->
+    <style>
+      /* Wrapper dropdown periode agar sejajar dengan input lain */
+      .periode-dropdown {
+        position: relative;
+        width: 100%;
+      }
+
+      /* Tombol tampilannya mirip input (tidak makan tempat, tidak wrap) */
+      .periode-btn {
+        width: 100%;
+        height: 44px;
+        padding: 0 14px;
+        border-radius: 14px;
+        border: 1px solid #cfd6e4;
+        background: #fff;
+        font-size: 14px;
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .periode-btn .periode-btn-label {
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .periode-btn .periode-btn-caret {
+        flex: 0 0 auto;
+        opacity: 0.7;
+      }
+
+      /* Panel overlay (tidak mendorong layout, mobile aman) */
+      .periode-panel {
+        display: none;
+        position: absolute;
+        top: 52px;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border: 1px solid #cfd6e4;
+        border-radius: 14px;
+        max-height: 220px;
+        overflow-y: auto;
+        z-index: 999;
+        padding: 8px;
+      }
+
+      .periode-panel.open {
+        display: block;
+      }
+
+      /* Item dibuat <label> biar KLIK di seluruh box */
+      .periode-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        cursor: pointer;
+        user-select: none;
+        width: 100%;
+      }
+
+      .periode-item:hover {
+        background: #f3f6fb;
+      }
+
+      .periode-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        flex: 0 0 auto;
+        accent-color: #00a79d;
+      }
+
+      .periode-item span {
+        flex: 1;
+        min-width: 0;
+        white-space: nowrap;       /* cegah "Des ↵ 2025" */
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Header kecil di panel (opsional tapi rapi) */
+      .periode-panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 6px 8px 10px;
+        border-bottom: 1px solid #e6ebf3;
+        margin-bottom: 8px;
+      }
+
+      .periode-panel-title {
+        font-size: 12px;
+        opacity: 0.75;
+        white-space: nowrap;
+      }
+
+      .periode-panel-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .periode-mini-btn {
+        font-size: 12px;
+        padding: 6px 10px;
+        border-radius: 10px;
+        border: 1px solid #d7deea;
+        background: #fff;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .periode-mini-btn:hover {
+        background: #f3f6fb;
+      }
+
+
+    /* ===== FIX: agar dropdown tidak terpotong ===== */
+    .card,
+    .filter-grid {
+      overflow: visible !important;
+    }
+
+    .periode-panel {
+      z-index: 9999 !important;
+    }
+
+    .periode-panel {
+      margin-top: 4px;
+    }
+
+    /* ===== FILTER GRID PROPORSI BARU ===== */
+    .filter-grid {
+      display: grid;
+      grid-template-columns:
+        1.2fr   /* No Induk (lebih pendek) */
+        1.6fr   /* Nama */
+        1.6fr   /* Kampus */
+        1.2fr   /* Kelompok (lebih pendek) */
+        2.4fr;  /* Periode (PALING PANJANG) */
+      gap: 14px;
+    }
+
+    .periode-dropdown,
+    .periode-btn {
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .filter-grid {
+        grid-template-columns: 1fr; /* stack */
+      }
+    }
+
+/* ===== BASE BADGE ===== */
+.status-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  box-sizing: border-box;
+}
+
+/* ===== CHECK (HIJAU SUCCESS) ===== */
+.status-ok {
+  background: #e9f7ef;          /* soft green highlight */
+  border: 2px solid #22c55e;    /* green-500 */
+}
+
+.status-ok::after {
+  content: "✓";
+  position: absolute;
+  color: #16a34a;               /* green-600 */
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+
+/* ===== CROSS (MERAH) ===== */
+.status-no {
+  background: #fdeaea;          /* highlight merah */
+  border: 2px solid #ef4444;
+}
+
+.status-no::after {
+  content: "×";
+  position: absolute;
+  color: #ef4444;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1;
+  transform: translateY(-1px); /* optical centering */
+}
+
+/* ===== TP (KUNING) ===== */
+.status-tp {
+  background: #fffbeb;
+  border: 2px solid #f59e0b;
+  color: #d97706;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .3px;
+}
+
+
+.btn-report{
+  padding:6px 10px;
+  font-size:12px;
+  font-weight:600;
+  border-radius:8px;
+  background:#f1f5ff;
+  color:#1f3c88;
+  border:1px solid #c7d2fe;
+  text-decoration:none;
+}
+
+.btn-report:hover{
+  background:#1f3c88;
+  color:#fff;
+}
+
+
+      /* Mobile: panel tetap overlay, max-height lebih pendek */
+      @media (max-width: 768px) {
+        .periode-panel {
+          max-height: 200px;
+        }
+      }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: #6b7280;
+    }
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+    .empty-state h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0 0 6px;
+      color: #374151;
+    }
+    .empty-state p {
+      font-size: 13px;
+      margin: 0;
+    }
+
+    /* ===== AWARDEE CARD (mobile) ===== */
+    .awardee-header {
+      background: linear-gradient(135deg, #1f3c88 0%, #00a79d 100%);
+      border-radius: 16px;
+      padding: 20px;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .awardee-header .aw-nim  { font-size: 12px; opacity: .75; font-weight: 500; letter-spacing:.5px; }
+    .awardee-header .aw-nama { font-size: 20px; font-weight: 700; margin: 4px 0 2px; }
+    .awardee-header .aw-meta { font-size: 12px; opacity: .8; }
+
+    .periode-cards { display: flex; flex-direction: column; gap: 12px; }
+
+    .periode-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .periode-card-head {
+      background: #f8faff;
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1f3c88;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .periode-card-head .pc-icon { font-size: 14px; }
+    .activity-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0;
+    }
+    .activity-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 6px;
+      border-right: 1px solid #f0f0f0;
+      gap: 6px;
+    }
+    .activity-item:last-child { border-right: none; }
+    .activity-item .act-label {
+      font-size: 10px;
+      color: #6b7280;
+      font-weight: 500;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* Hide table on mobile, show cards */
+    @media (max-width: 768px) {
+      .rekap-desktop { display: none !important; }
+      .rekap-mobile  { display: block !important; }
+    }
+    @media (min-width: 769px) {
+      .rekap-desktop { display: block !important; }
+      .rekap-mobile  { display: none !important; }
+    }
+
+    /* ===== QUARTERLY SUMMARY ===== */
+    .qtr-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .qtr-cards { display: flex; flex-direction: column; gap: 10px; }
+    .qtr-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .qtr-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #f8faff;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .qtr-card-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1f3c88;
+    }
+    .qtr-card-range {
+      font-size: 11px;
+      color: #6b7280;
+    }
+    .qtr-avg-badge {
+      font-size: 13px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+    .qtr-avg-badge.avg-high  { background: #dcfce7; color: #15803d; }
+    .qtr-avg-badge.avg-mid   { background: #fef9c3; color: #a16207; }
+    .qtr-avg-badge.avg-low   { background: #fee2e2; color: #b91c1c; }
+    .qtr-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .qtr-detail-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 6px;
+      border-right: 1px solid #f0f0f0;
+      gap: 4px;
+      text-align: center;
+    }
+    .qtr-detail-item:last-child { border-right: none; }
+    .qtr-detail-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+    }
+    .qtr-detail-pct {
+      font-size: 18px;
+      font-weight: 800;
+      color: #1f3c88;
+    }
+    .qtr-detail-pct.pct-high { color: #15803d; }
+    .qtr-detail-pct.pct-mid  { color: #a16207; }
+    .qtr-detail-pct.pct-low  { color: #b91c1c; }
+    .qtr-detail-bar {
+      width: 100%;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .qtr-detail-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: #1f3c88;
+      transition: width .4s ease;
+    }
+    .qtr-detail-bar-fill.bar-high { background: #22c55e; }
+    .qtr-detail-bar-fill.bar-mid  { background: #eab308; }
+    .qtr-detail-bar-fill.bar-low  { background: #ef4444; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* KPI strip: sembunyikan di mobile (digantikan versi inline di dalam card) */
+    @media (max-width: 768px) {
+      #kpiStrip { display: none !important; }
+    }
+
+    /* Mobile KPI di bawah banner identitas */
+    .mobile-kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 5px;
+      margin: 8px 0 10px;
+    }
+    .mobile-kpi-item {
+      background: #f8faff;
+      border: 1px solid #e5e7eb;
+      border-radius: 9px;
+      padding: 6px 3px 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      min-width: 0;
+    }
+    .mobile-kpi-item .mk-label {
+      font-size: 8px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: .2px;
+      white-space: nowrap;
+    }
+    .mobile-kpi-item .mk-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: #1f3c88;
+    }
+
+    /* Keterangan status mobile */
+    .mobile-keterangan { display: none; }
+    @media (max-width: 768px) {
+      .mobile-keterangan { display: block; }
+    }
+
+    /* ===== GLOBAL OVERFLOW FIX ===== */
+    html, body { overflow-x: hidden; max-width: 100%; }
+    .page--split, .split-right, .card--form-panel {
+      min-width: 0;
+      max-width: 100%;
+      overflow: visible;
+    }
+    #rekapResult, .rekap-mobile, .periode-cards {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+    .awardee-header { word-break: break-word; }
+    .activity-grid  { width: 100%; box-sizing: border-box; }
+    .activity-item  { min-width: 0; flex: 1 1 0; }
+    .act-label      { font-size: 9px; }
+    .periode-card   { overflow: hidden; }
+
+    /* ===== KPI STRIP ===== */
+    .kpi-strip-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+    .kpi-chip {
+      background: #f8faff;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 8px 4px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      text-align: center;
+      min-width: 0;
+    }
+    .kpi-chip-label {
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .3px;
+      color: #6b7280;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .kpi-chip-val {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1f3c88;
+    }
+    @media (max-width: 400px) {
+      .kpi-chip-label { font-size: 8px; letter-spacing: 0; }
+      .kpi-chip-val   { font-size: 13px; }
+      .kpi-chip       { padding: 6px 2px 5px; }
+    }
+
+    /* Override layout rekap: single column, full width */
+    body[data-page="rekap"] .page {
+      max-width: 1100px;
+      padding: 0 24px 32px;
+    }
+    body[data-page="rekap"] .page--split {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    /* Panel kiri jadi bar tipis horizontal di atas */
+    body[data-page="rekap"] .split-left {
+      display: block !important;
+    }
+    body[data-page="rekap"] .card--guide {
+      padding: 16px 20px;
+    }
+    /* Info panduan & keterangan dalam satu baris di desktop */
+    .rekap-top-bar {
+      display: flex;
+      align-items: flex-start;
+      gap: 24px;
+    }
+    .rekap-top-bar .rtb-guide {
+      flex: 1;
+    }
+    .rekap-top-bar .rtb-legend {
+      flex: 0 0 auto;
+      align-self: flex-end;
+    }
+    /* Sembunyikan mobile-keterangan karena sekarang selalu tampil */
+    .mobile-keterangan { display: none !important; }
+    @media (max-width: 768px) {
+      body[data-page="rekap"] .page { padding: 0 14px 28px; }
+      .rekap-top-bar { flex-direction: column; gap: 10px; }
+      .rekap-top-bar .rtb-legend { width: 100%; }
+    }
+
+    /* filter toggle btn */
+    .filter-toggle-btn {
+      background: none;
+      border: none;
+      font-size: 12px;
+      color: #00a79d;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 600;
+    }
+    .filter-toggle-btn:hover { text-decoration: underline; }
+
+    /* extra filter grid */
+    #extraFilters > div {
+      gap: 8px;
+    }
+    @media (max-width: 480px) {
+      #extraFilters > div {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    </style>
+</head>
+
+<body data-page="rekap" data-page="rekap">
+
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/logo.png" alt="BSI">
+    <div class="sidebar-brand-text">
+      <div class="sidebar-brand-title">BSIS Inspirasi</div>
+      <span class="sidebar-brand-sub">Batch 5</span>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Menu</div>
+      <a href="index.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-5H9v5H4a1 1 0 0 1-1-1V9.5z"/></svg>
+        Home
+      </a>
+      <a href="list-form.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+        List Form
+      </a>
+      <a href="rekap.html" class="sidebar-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Rekap Aktivitas
+      </a>
+      <a href="lapor.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Lapor
+      </a>
+    <div class="sidebar-admin-group" id="adminGroup" style="display:none;">
+      <div class="sidebar-section-label" style="margin-top:16px;">Portal Admin</div>
+      <a href="admin.html" id="navAdminLink" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Kelola Pengguna
+      </a>
+      <a href="admin-forms.html" class="sidebar-link" id="navAdminForms">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14l2 2 4-4"/></svg>
+        Kelola Form
+      </a>
+      <a href="admin-awardee.html" class="sidebar-link" id="navAdminAwardee">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        Data Awardee
+      </a>
+      <a href="admin-pengumuman.html" class="sidebar-link" id="navAdminAnnouncement">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Pengumuman
+      </a>
+      <a href="admin-rekap.html" class="sidebar-link" id="navAdminRekap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Laporan & Ekspor
+      </a>
+      <a href="admin-settings.html" class="sidebar-link" id="navAdminSettings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Pengaturan
+      </a>
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <a href="profile.html" class="sidebar-link" id="sidebarUserLink">
+      <span class="sidebar-user-avatar" id="sidebarAvatar">?</span>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebarEmail">Memuat...</div>
+        <div class="sidebar-user-role" id="sidebarRole">BSI Scholarship</div>
+      </div>
+    </a>
+    <button class="sidebar-logout" onclick="authLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Keluar dari Akun
+    </button>
+  </div>
+  <div class="sidebar-copyright">&copy; 2026 BSI Scholarship Inspirasi</div>
+</aside>
+<div class="app-main">
+
+<header class="app-header">
+  <button class="app-header-toggle" onclick="toggleSidebar()" aria-label="Menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="app-header-title">Rekap Aktivitas</div>
+    <div class="app-header-right">
+    <div class="header-user-info" id="headerUserInfo">
+      <div class="header-greeting"><span id="headerGreeting">Selamat datang,</span> <strong id="headerName">...</strong> <span class="header-role-badge" id="headerRoleBadge">Awardee</span></div><div id="headerSubInfo" style="font-size:11px;color:#6b7280;display:none;"></div>
+    </div>
+    <a href="profile.html" class="header-avatar-btn" id="navUserBtn">
+      <span class="header-avatar" id="headerAvatar">?</span>
+    </a>
+  </div>
+</header>
+  <main class="app-content">
+
+  <!-- TOP BAR: judul + keterangan sejajar -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="rekap-top-bar">
+      <div class="rtb-guide">
+        <span class="hero-badge">Rekap Aktivitas</span>
+        <h1 class="card-title card-title--big" style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00a79d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Rekap Progress Awardee
+        </h1>
+        <!-- Identitas awardee — hanya tampil untuk non-admin -->
+        <div id="bannerIdentitas" style="display:none;margin-top:10px;padding:14px 18px;background:linear-gradient(90deg,#ea6000 0%,#f97316 45%,#FEB23E 100%);border-radius:12px;color:#fff;">
+          <div style="font-size:11px;opacity:.75;font-weight:600;letter-spacing:.6px;text-transform:uppercase;margin-bottom:3px;" id="bannerNim"></div>
+          <div style="font-size:18px;font-weight:800;margin-bottom:6px;" id="bannerNama"></div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;" id="bannerMeta"></div>
+        </div>
+        <p class="card-text" id="bannerDesc" style="margin-top:4px;">Cari rekap kehadiran dan partisipasi awardee berdasarkan No Induk atau nama.</p>
+      </div>
+      <div class="rtb-legend guide-placeholder" style="margin:0;min-width:260px;">
+        <span class="guide-placeholder-label">Keterangan Status</span>
+        <ul class="list" style="margin-top:8px;">
+          <li style="display:flex;align-items:center;gap:8px;"><span class="status-badge status-ok"></span><span>Hadir — menghadiri kegiatan</span></li>
+          <li style="display:flex;align-items:center;gap:8px;"><span class="status-badge status-no"></span><span>Tidak Hadir — tidak menghadiri kegiatan</span></li>
+          <li style="display:flex;align-items:center;gap:8px;"><span class="status-badge status-tp">TP</span><span>Tugas Pengganti — kehadiran diganti tugas</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM + HASIL: full width -->
+  <section class="card card--form-panel">
+
+    <div class="alert alert--warning" id="searchAlert">
+      <strong>Perhatian.</strong>
+      <span>Ketik No Induk atau nama lengkap, lalu pilih dari daftar yang muncul untuk menampilkan rekap aktivitas.</span>
+    </div>
+
+    <!-- INPUT NAMA / NIM -->
+    <form class="nim-form" id="nimForm" onsubmit="return false;">
+      <label for="fNoInduk" class="nim-label">Ketik No Induk atau Nama</label>
+      <p class="nim-info">Pilihan akan muncul otomatis saat kamu mengetik.</p>
+
+      <div class="nim-field-wrapper">
+        <input
+          id="fNoInduk"
+          type="text"
+          class="nim-input"
+          placeholder="Contoh: I25010001 atau Budi Santoso"
+          autocomplete="off"
+        />
+        <div id="nimSuggest" class="nim-suggestion-box"></div>
+      </div>
+
+      <p class="nim-hint">Pilih nama dari daftar, lalu rekap aktivitas akan muncul di bawah.</p>
+
+      <!-- Filter Tambahan (lipat) -->
+      <div style="margin-top:10px;">
+        <button type="button" class="filter-toggle-btn" onclick="toggleExtraFilters()">
+          <span id="filterToggleIcon">＋</span> Filter Tambahan
+        </button>
+        <div id="extraFilters" style="display:none; margin-top:10px;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+            <input id="fNama" class="nim-input" style="margin-top:0;" placeholder="Nama" autocomplete="off" />
+            <input id="fKampus" class="nim-input" style="margin-top:0;" placeholder="Kampus" autocomplete="off" />
+            <input id="fKelompok" class="nim-input" style="margin-top:0;" placeholder="Kelompok" autocomplete="off" />
+
+            <select id="fPeriode" style="display:none;"><option value="">Semua Periode</option></select>
+
+            <div class="periode-dropdown" id="periodeDropdown" style="margin-top:0;">
+              <button type="button" class="periode-btn" id="periodeBtn" aria-haspopup="listbox" aria-expanded="false">
+                <span class="periode-btn-label" id="periodeBtnLabel">Semua Periode</span>
+                <span class="periode-btn-caret">▼</span>
+              </button>
+              <div class="periode-panel" id="periodePanel">
+                <div class="periode-panel-head">
+                  <div class="periode-panel-title">Pilih Periode</div>
+                  <div class="periode-panel-actions">
+                    <button type="button" class="periode-mini-btn" id="periodeSelectAll">All</button>
+                    <button type="button" class="periode-mini-btn" id="periodeClear">Clear</button>
+                  </div>
+                </div>
+                <div id="periodeList"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-full" style="margin-top:14px;background:#f1f5f9;color:#374151;border:1.5px solid #e5e7eb;font-weight:600;padding:10px;" onclick="resetFilter()">
+        Reset Pencarian
+      </button>
+    </form>
+
+    <!-- HASIL REKAP -->
+    <div id="rekapResult" style="margin-top:20px;">
+
+      <!-- Empty state -->
+      <div id="emptyState" class="tips-box" style="text-align:center;padding:28px 16px;">
+        <div style="margin-bottom:10px;"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+        <div style="font-size:14px;font-weight:600;color:#374151;margin-bottom:4px;">Belum ada data</div>
+        <div style="font-size:12px;color:#6b7280;">Masukkan No Induk atau nama untuk menampilkan rekap.</div>
+      </div>
+
+      <!-- Loading state (untuk awardee sebelum data selesai dimuat) -->
+      <div id="loadingState" style="display:none;text-align:center;padding:40px 16px;">
+        <div style="width:36px;height:36px;border:3px solid #e5e7eb;border-top-color:#00A59F;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;"></div>
+        <div style="font-size:13px;color:#6b7280;font-weight:600;">Memuat rekap aktivitas...</div>
+      </div>
+
+      <!-- KPI strip -->
+      <div id="kpiStrip" style="display:none; margin-bottom:14px;">
+        <div class="kpi-strip-grid">
+          <div class="kpi-chip"><span class="kpi-chip-label">Pre</span><strong class="kpi-chip-val" id="kpiPre">-</strong></div>
+          <div class="kpi-chip"><span class="kpi-chip-label">Post</span><strong class="kpi-chip-val" id="kpiPost">-</strong></div>
+          <div class="kpi-chip"><span class="kpi-chip-label">Assess</span><strong class="kpi-chip-val" id="kpiAssessment">-</strong></div>
+          <div class="kpi-chip"><span class="kpi-chip-label">Mentor</span><strong class="kpi-chip-val" id="kpiMentoring">-</strong></div>
+          <div class="kpi-chip"><span class="kpi-chip-label">Binaan</span><strong class="kpi-chip-val" id="kpiPembinaan">-</strong></div>
+          <div class="kpi-chip"><span class="kpi-chip-label">Al-Qur'an</span><strong class="kpi-chip-val" id="kpiAlQuran">-</strong></div>
+        </div>
+      </div>
+
+      <!-- Rekap section -->
+      <div id="rekapSection" style="display:none;">
+
+        <!-- DESKTOP: table -->
+        <div class="rekap-desktop">
+          <div class="table-wrap">
+            <table class="rekap-table">
+              <thead>
+                <tr>
+                  <th>No Induk</th>
+                  <th>Nama</th>
+                  <th>Kampus</th>
+                  <th>Kel</th>
+                  <th>Bulan</th>
+                  <th>Pre Test</th>
+                  <th>Post Test</th>
+                  <th>Assessment</th>
+                  <th>Mentoring</th>
+                  <th>Pembinaan</th>
+                  <th>Kelas Al-Qur'an</th>
+                </tr>
+              </thead>
+              <tbody id="rekapBody"></tbody>
+            </table>
+          </div>
+          <div class="pagination">
+            <button onclick="goFirst()">First</button>
+            <button onclick="goPrev()">Prev</button>
+            <span id="pageInfo"></span>
+            <button onclick="goNext()">Next</button>
+            <button onclick="goLast()">Last</button>
+          </div>
+        </div>
+
+        <!-- MOBILE: cards -->
+        <div class="rekap-mobile" id="rekapMobile"></div>
+
+        <!-- QUARTERLY SUMMARY -->
+        <div id="quarterlySummary" style="margin-top:24px;"></div>
+
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- GLOBAL AUTOCOMPLETE -->
+<div id="globalSuggest" class="suggestion-global"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+/* ================= DETEKSI AWARDEE — jalankan segera ================= */
+(function() {
+  try {
+    const cached = JSON.parse(sessionStorage.getItem('_bsi_auth') || 'null');
+    if (cached && cached.role !== 'admin' && cached.nis) {
+      // Langsung sembunyikan form & empty state, tampilkan loading
+      document.getElementById('searchAlert').style.display  = 'none';
+      document.getElementById('nimForm').style.display      = 'none';
+      document.getElementById('emptyState').style.display   = 'none';
+      document.getElementById('loadingState').style.display = 'block';
+    }
+  } catch (_) {}
+})();
+
+/* ================= EXTRA FILTERS TOGGLE ================= */
+function toggleExtraFilters() {
+  const el = document.getElementById("extraFilters");
+  const icon = document.getElementById("filterToggleIcon");
+  const open = el.style.display === "none" || el.style.display === "";
+  el.style.display = open ? "block" : "none";
+  icon.textContent = open ? "－" : "＋";
+}
+
+/* ================= NAV ================= */
+function toggleNav() {
+  document.getElementById("mobileNav").classList.toggle("nav-open");
+}
+
+document.addEventListener("click", function (e) {
+  const nav = document.getElementById("mobileNav");
+  const toggle = document.querySelector(".nav-toggle");
+
+  if (!nav.contains(e.target) && !toggle.contains(e.target)) {
+    nav.classList.remove("nav-open");
+  }
+});
+
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 768) {
+    document.getElementById("mobileNav").classList.remove("nav-open");
+  }
+});
+
+/* ================= CONFIG ================= */
+const SUPABASE_URL = "https://iyfwaqwmnmjfagszttts.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5ZndhcXdtbm1qZmFnc3p0dHRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NTEwMTgsImV4cCI6MjA4MzQyNzAxOH0.f2xb_aQDIj4tIPKwTTC9dgIi-9qFv0G252T5uo9XwXo";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const PAGE_SIZE = 20;
+let rawData = [];
+let filteredData = [];
+let currentPage = 1;
+
+/* ================= MULTI PERIODE STATE ================= */
+let selectedPeriode = [];
+
+/* ================= URL FILTER (FROM HOME) ================= */
+const _qs = new URLSearchParams(window.location.search);
+const _filterType = (_qs.get("type") || "").trim().toLowerCase();   // peserta | kampus | kelompok
+const _filterValue = (_qs.get("value") || "").trim();
+
+/* ================= UTIL ================= */
+function monthLabel(d) {
+  const [y, m] = d.split("-");
+  const M = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+  return `${M[m-1]} ${y}`;
+}
+
+function icon(v) {
+  // ⬅️ FIX UTAMA: kalau null / undefined / kosong → kosongkan cell
+  if (v === null || v === undefined || String(v).trim() === "") {
+    return `
+      <td class="td-center"></td>
+    `;
+  }
+
+  const val = String(v).trim();
+
+  if (val === "✅") {
+    return `
+      <td class="td-center">
+        <span class="status-badge status-ok" title="Hadir"></span>
+      </td>`;
+  }
+
+  if (val === "TP") {
+    return `
+      <td class="td-center">
+        <span class="status-badge status-tp" title="Tugas Pengganti">TP</span>
+      </td>`;
+  }
+
+  // ⬅️ hanya muncul kalau memang ADA nilai tapi bukan OK / TP
+  return `
+    <td class="td-center">
+      <span class="status-badge status-no" title="Tidak Hadir"></span>
+    </td>`;
+}
+
+
+/* ================= AUTOCOMPLETE ================= */
+const globalSuggest = document.getElementById("globalSuggest");
+
+function setupSuggest(input, values) {
+  input.addEventListener("input", () => {
+    const q = input.value.toLowerCase().trim();
+    globalSuggest.innerHTML = "";
+
+    if (!q) {
+      globalSuggest.style.display = "none";
+      applyFilter();
+      return;
+    }
+
+    const match = values.filter(v =>
+      v.toLowerCase().includes(q)
+    ).slice(0, 12);
+
+    if (!match.length) {
+      globalSuggest.style.display = "none";
+      applyFilter();
+      return;
+    }
+
+    match.forEach(v => {
+      const div = document.createElement("div");
+      div.textContent = v;
+      div.onclick = () => {
+        input.value = v;
+        globalSuggest.style.display = "none";
+        applyFilter();
+      };
+      globalSuggest.appendChild(div);
+    });
+
+    const rect = input.getBoundingClientRect();
+    globalSuggest.style.left = rect.left + "px";
+    globalSuggest.style.top = rect.bottom + window.scrollY + "px";
+    globalSuggest.style.width = rect.width + "px";
+    globalSuggest.style.display = "block";
+
+    applyFilter();
+  });
+}
+
+document.addEventListener("click", (e) => {
+  if (!globalSuggest.contains(e.target)) {
+    globalSuggest.style.display = "none";
+  }
+});
+
+/* ================= KPI ================= */
+function renderKPI(rows) {
+  function pct(key) {
+    const stat = pctVal(rows, key);
+    return stat ? stat.pct + "%" : "-";
+  }
+  document.getElementById("kpiPre").textContent        = pct("pre_test");
+  document.getElementById("kpiPost").textContent       = pct("post_test");
+  document.getElementById("kpiAssessment").textContent = pct("assessment");
+  document.getElementById("kpiMentoring").textContent  = pct("mentoring");
+  document.getElementById("kpiPembinaan").textContent  = pct("pembinaan");
+  document.getElementById("kpiAlQuran").textContent    = pct("kelas_al_quran");
+}
+
+/* ================= GLOBAL DATE HELPERS ================= */
+function toValidDate(v) {
+  if (v instanceof Date && !isNaN(v.getTime())) return v;
+  if (typeof v === "number") {
+    const d = new Date(Math.round((v - 25569) * 86400 * 1000));
+    if (!isNaN(d.getTime())) return d;
+  }
+  if (typeof v === "string") {
+    const s = v.trim();
+    if (/^\d{4}-\d{2}-\d{2}/.test(s)) { const d = new Date(s); if (!isNaN(d.getTime())) return d; }
+    if (/^\d{4}-\d{2}$/.test(s))       { const d = new Date(s + "-01"); if (!isNaN(d.getTime())) return d; }
+    if (/^[A-Za-zÀ-ÿ]{3}\s+\d{4}$/.test(s)) return null;
+    const d = new Date(s);
+    if (!isNaN(d.getTime())) return d;
+  }
+  return null;
+}
+
+const MONTH_ID = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+
+function monthLabelSafe(v) {
+  if (typeof v === "string" && /^[A-Za-zÀ-ÿ]{3}\s+\d{4}$/.test(v.trim())) return v.trim();
+  const d = toValidDate(v);
+  if (!d) return (v ?? "-").toString();
+  return `${MONTH_ID[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function periodeFolderGeser(v) {
+    const d = toValidDate(v);
+
+    // Jika tidak bisa diparse (mis. r.tanggal sudah "Des 2025"),
+    // maka kita anggap itu sudah label periode yang benar.
+    if (!d) return monthLabelSafe(v);
+
+    const y = d.getFullYear();
+    const m = d.getMonth(); // 0=Jan..11=Dec
+
+    let startYear = y;
+    let startMonth;
+
+    if (m === 11) {                // Des
+      startMonth = 11;             // Des tahun ini
+    } else if (m === 0 || m === 1) { // Jan/Feb
+      startYear = y - 1;
+      startMonth = 11;             // Des tahun sebelumnya
+    } else if (m >= 2 && m <= 4) { // Mar-Apr-Mei
+      startMonth = 2;
+    } else if (m >= 5 && m <= 7) { // Jun-Jul-Agu
+      startMonth = 5;
+    } else {                       // Sep-Okt-Nov (8..10)
+      startMonth = 8;
+    }
+
+    return monthLabelSafe(new Date(startYear, startMonth, 1));
+}
+
+/* ================= TABLE ================= */
+function renderTable() {
+  rekapBody.innerHTML = "";
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const rows = filteredData.slice(start, start + PAGE_SIZE);
+
+  const GAS_BASE_URL =
+    "https://script.google.com/macros/s/AKfycbwvKRX-v8Kn9xifu3Qda9soh4alsfyBhsYuRI1y6p2ruTikanaIg4Q6rQtYL83AyAw9/exec";
+
+  rows.forEach(r => {
+    const tampilPeriode = monthLabelSafe(r.tanggal);     // tampil di tabel sesuai tanggal row
+    const periodeFolder = periodeFolderGeser(r.tanggal); // folder/file per 3 bulan geser
+
+    const nim = r.no_induk;
+
+    const reportUrl =
+      `${GAS_BASE_URL}?periode=${encodeURIComponent(periodeFolder)}&nim=${encodeURIComponent(nim)}`;
+
+    rekapBody.innerHTML += `
+      <tr>
+        <td>${r.no_induk ?? ""}</td>
+        <td class="td-bold">${r.nama ?? ""}</td>
+        <td>${r.kampus ?? ""}</td>
+        <td>${r.kelompok ?? ""}</td>
+        <td>${tampilPeriode}</td>
+        ${icon(r.pre_test)}
+        ${icon(r.post_test)}
+        ${icon(r.assessment)}
+        ${icon(r.mentoring)}
+        ${icon(r.pembinaan)}
+        ${icon(r.kelas_al_quran)}
+      </tr>
+    `;
+  });
+
+  pageInfo.textContent =
+    `Page ${currentPage} / ${Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE))}`;
+}
+
+/* ================= MOBILE CARD RENDERER ================= */
+function iconMobile(v) {
+  if (v === null || v === undefined || String(v).trim() === "") {
+    return `<span class="status-badge" style="background:#f3f4f6;border:2px solid #e5e7eb;"></span>`;
+  }
+  const val = String(v).trim();
+  if (val === "✅") return `<span class="status-badge status-ok" title="Hadir"></span>`;
+  if (val === "TP")  return `<span class="status-badge status-tp" title="Tugas Pengganti">TP</span>`;
+  return `<span class="status-badge status-no" title="Tidak Hadir"></span>`;
+}
+
+function renderMobileCards() {
+  const container = document.getElementById("rekapMobile");
+  container.innerHTML = "";
+
+  if (!filteredData.length) {
+    container.innerHTML = `<div class="empty-state"><p>Tidak ada data ditemukan.</p></div>`;
+    return;
+  }
+
+  // Group by no_induk
+  const byNim = {};
+  filteredData.forEach(r => {
+    const key = r.no_induk || "-";
+    if (!byNim[key]) byNim[key] = [];
+    byNim[key].push(r);
+  });
+
+  const ACTS = [
+    { key: "pre_test",   label: "Pre\nTest" },
+    { key: "post_test",  label: "Post\nTest" },
+    { key: "assessment", label: "Assess\nment" },
+    { key: "mentoring",  label: "Mentor\ning" },
+    { key: "pembinaan",    label: "Pem\nbinaan" },
+    { key: "kelas_al_quran", label: "Al-\nQur'an" },
+  ];
+
+  Object.entries(byNim).forEach(([nim, rows]) => {
+    const first = rows[0];
+
+    const wrap = document.createElement("div");
+    wrap.style.marginBottom = "20px";
+
+    // Hitung KPI untuk awardee ini
+    const KPI_ACTS = [
+      { key: "pre_test",       label: "Pre" },
+      { key: "post_test",      label: "Post" },
+      { key: "assessment",     label: "Assess" },
+      { key: "mentoring",      label: "Mentor" },
+      { key: "pembinaan",      label: "Binaan" },
+      { key: "kelas_al_quran", label: "Al-Qur'an" },
+    ];
+    const kpiHtml = KPI_ACTS.map(a => {
+      const ev = rows.filter(r => r[a.key] !== null && r[a.key] !== undefined && String(r[a.key]).trim() !== "");
+      const val = ev.length
+        ? Math.round(ev.filter(r => r[a.key] === "✅" || r[a.key] === "TP").length / ev.length * 100) + "%"
+        : "–";
+      return `<div class="mobile-kpi-item"><span class="mk-label">${a.label}</span><span class="mk-val">${val}</span></div>`;
+    }).join("");
+
+    // Header awardee
+    wrap.innerHTML = `
+      <div class="awardee-header">
+        <div class="aw-nim">${nim}</div>
+        <div class="aw-nama">${first.nama ?? "-"}</div>
+        <div class="aw-meta">${first.kampus ?? ""} ${first.kelompok ? "· Kel " + first.kelompok : ""}</div>
+      </div>
+      <div class="mobile-kpi-strip">${kpiHtml}</div>
+      <div class="periode-cards" id="pc_${nim.replace(/\W/g,'_')}"></div>
+    `;
+    container.appendChild(wrap);
+
+    const pcContainer = wrap.querySelector(`#pc_${nim.replace(/\W/g,'_')}`);
+
+    rows.forEach(r => {
+      const label = monthLabelSafe(r.tanggal);
+      const card = document.createElement("div");
+      card.className = "periode-card";
+      card.innerHTML = `
+        <div class="periode-card-head">
+          <svg class="pc-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1f3c88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>${label}</span>
+        </div>
+        <div class="activity-grid">
+          ${ACTS.map(a => `
+            <div class="activity-item">
+              ${iconMobile(r[a.key])}
+              <span class="act-label">${a.label.replace('\n','<br>')}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      pcContainer.appendChild(card);
+    });
+  });
+}
+
+/* ================= MULTI PERIODE UI HELPERS ================= */
+function updatePeriodeBtnLabel() {
+  const labelEl = document.getElementById("periodeBtnLabel");
+  if (!selectedPeriode.length) {
+    labelEl.textContent = "Semua Periode";
+    return;
+  }
+  if (selectedPeriode.length === 1) {
+    labelEl.textContent = selectedPeriode[0];
+    return;
+  }
+  labelEl.textContent = `${selectedPeriode[0]} +${selectedPeriode.length - 1}`;
+}
+
+function syncHiddenSelect() {
+  // hidden select tetap ada (compat), kita set selected biar konsisten
+  const opts = Array.from(fPeriode.options);
+  opts.forEach(o => {
+    if (!o.value) return; // skip option "Semua Periode"
+    o.selected = selectedPeriode.includes(o.value);
+  });
+}
+
+function rebuildSelectedPeriodeFromChecks() {
+  const checks = Array.from(document.querySelectorAll('#periodeList input[type="checkbox"]:checked'));
+  selectedPeriode = checks.map(c => c.value);
+  updatePeriodeBtnLabel();
+  syncHiddenSelect();
+}
+
+/* ================= FILTER ================= */
+function applyFilter() {
+  const nimVal = fNoInduk.value.trim();
+
+  const emptyEl = document.getElementById("emptyState");
+  const rekapEl = document.getElementById("rekapSection");
+  const kpiEl   = document.getElementById("kpiStrip");
+
+  if (!nimVal) {
+    rekapEl.style.display = "none";
+    kpiEl.style.display   = "none";
+    emptyEl.style.display = "block";
+    return;
+  }
+
+  emptyEl.style.display = "none";
+  rekapEl.style.display = "block";
+  kpiEl.style.display   = "block";
+
+  filteredData = rawData
+    .filter(r =>
+      (r.no_induk || "").toLowerCase().includes(nimVal.toLowerCase()) &&
+      (!fNama.value || (r.nama || "").toLowerCase().includes(fNama.value.toLowerCase())) &&
+      (!fKampus.value || (r.kampus || "").toLowerCase().includes(fKampus.value.toLowerCase())) &&
+      (!fKelompok.value || (r.kelompok || "").toLowerCase().includes(fKelompok.value.toLowerCase())) &&
+      (selectedPeriode.length === 0 || selectedPeriode.includes(monthLabel(r.tanggal)))
+    )
+    .sort((a, b) => {
+      const nimCmp = (a.no_induk || "").localeCompare((b.no_induk || ""), "id");
+      if (nimCmp !== 0) return nimCmp;
+      return (a.tanggal || "").localeCompare((b.tanggal || ""), "id");
+    });
+
+  currentPage = 1;
+  renderKPI(filteredData);
+  renderTable();
+  renderMobileCards();
+  renderQuarterly(filteredData);
+}
+
+function resetFilter() {
+  fNoInduk.value = "";
+  const _ns = document.getElementById("nimSuggest");
+  if (_ns) _ns.style.display = "none";
+  document.getElementById("kpiStrip").style.display = "none";
+  fNama.value = "";
+  fKampus.value = "";
+  fKelompok.value = "";
+
+  // reset hidden select juga
+  fPeriode.value = "";
+
+  // reset multi periode
+  selectedPeriode = [];
+  const checks = document.querySelectorAll('#periodeList input[type="checkbox"]');
+  checks.forEach(c => c.checked = false);
+  updatePeriodeBtnLabel();
+  syncHiddenSelect();
+
+  applyFilter();
+
+  // opsional: bersihkan query string agar kembali "normal"
+  // history.replaceState(null, "", "rekap.html");
+}
+
+/* ================= PAGINATION ================= */
+function goFirst(){ currentPage = 1; renderTable(); }
+function goPrev(){ if(currentPage > 1){ currentPage--; renderTable(); } }
+function goNext(){
+  const maxPage = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
+  if(currentPage < maxPage){
+    currentPage++;
+    renderTable();
+  }
+}
+function goLast(){
+  currentPage = Math.max(1, Math.ceil(filteredData.length / PAGE_SIZE));
+  renderTable();
+}
+
+/* ================= LOAD DATA ================= */
+async function init() {
+  let all = [];
+  let from = 0;
+
+  while (true) {
+    const { data, error } = await supabaseClient
+      .from("rekap_bsi")
+      .select("no_induk,nama,kampus,kelompok,tanggal,pre_test,post_test,assessment,mentoring,pembinaan,kelas_al_quran")
+      .range(from, from + 999);
+
+    if (error || !data || !data.length) break;
+
+    all = all.concat(data);
+    if (data.length < 1000) break;
+    from += 1000;
+  }
+
+  rawData = filteredData = all;
+
+  // Build unique awardee list (deduplicated by no_induk)
+  const awardeeMap = {};
+  all.forEach(r => {
+    if (r.no_induk && !awardeeMap[r.no_induk]) {
+      awardeeMap[r.no_induk] = { nim: r.no_induk, nama: r.nama || "", kampus: r.kampus || "" };
+    }
+  });
+  const awardeeList = Object.values(awardeeMap);
+
+  // Rich NIM suggest dropdown (pakai class nim-suggestion-box dari style.css)
+  const nimSuggest = document.getElementById("nimSuggest");
+
+  function showNimSuggest(q) {
+    nimSuggest.innerHTML = "";
+    if (!q) { nimSuggest.style.display = "none"; return; }
+
+    const matches = awardeeList.filter(a =>
+      a.nim.toLowerCase().includes(q) || a.nama.toLowerCase().includes(q)
+    ).slice(0, 15);
+
+    if (!matches.length) { nimSuggest.style.display = "none"; return; }
+
+    matches.forEach(a => {
+      const item = document.createElement("div");
+      item.className = "nim-suggestion-item";
+      item.innerHTML = `<strong>${a.nim}</strong><span>${a.nama} — ${a.kampus}</span>`;
+      item.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        fNoInduk.value = a.nim;
+        nimSuggest.style.display = "none";
+        applyFilter();
+      });
+      nimSuggest.appendChild(item);
+    });
+    nimSuggest.style.display = "block";
+  }
+
+  fNoInduk.addEventListener("input", () => {
+    showNimSuggest(fNoInduk.value.trim().toLowerCase());
+    applyFilter();
+  });
+  fNoInduk.addEventListener("blur", () => {
+    setTimeout(() => { nimSuggest.style.display = "none"; }, 150);
+  });
+  fNoInduk.addEventListener("focus", () => {
+    if (fNoInduk.value.trim()) showNimSuggest(fNoInduk.value.trim().toLowerCase());
+  });
+
+  setupSuggest(fNama, [...new Set(all.map(r => (r.nama || "")).filter(Boolean))]);
+  setupSuggest(fKampus, [...new Set(all.map(r => (r.kampus || "")).filter(Boolean))]);
+  setupSuggest(fKelompok, [...new Set(all.map(r => (r.kelompok || "")).filter(Boolean))]);
+
+  /* ===== PERIODE SOURCE ===== */
+  const periodeArr = [...new Set(all.map(r => monthLabel(r.tanggal)))]
+    .sort((a,b) => {
+      return a.localeCompare(b, "id");
+    });
+
+  /* ===== Populate hidden select (compat) ===== */
+  // Pastikan option default tetap ada
+  // Lalu tambahkan option periode
+  periodeArr.forEach(p => fPeriode.add(new Option(p, p)));
+
+  /* ===== Build custom checkbox list ===== */
+  const list = document.getElementById("periodeList");
+  list.innerHTML = "";
+
+  periodeArr.forEach(p => {
+    // <label> = klik di mana saja aktif
+    const label = document.createElement("label");
+    label.className = "periode-item";
+    label.innerHTML = `
+      <input type="checkbox" value="${p}">
+      <span>${p}</span>
+    `;
+    // Saat klik label, checkbox auto toggle; kita cukup sync state di change
+    const cb = label.querySelector("input");
+    cb.addEventListener("change", () => {
+      rebuildSelectedPeriodeFromChecks();
+      applyFilter();
+    });
+    list.appendChild(label);
+  });
+
+  /* ===== Buttons All / Clear ===== */
+  document.getElementById("periodeSelectAll").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('#periodeList input[type="checkbox"]').forEach(c => c.checked = true);
+    rebuildSelectedPeriodeFromChecks();
+    applyFilter();
+  });
+
+  document.getElementById("periodeClear").addEventListener("click", (e) => {
+    e.stopPropagation();
+    document.querySelectorAll('#periodeList input[type="checkbox"]').forEach(c => c.checked = false);
+    rebuildSelectedPeriodeFromChecks();
+    applyFilter();
+  });
+
+  /* ================= AUTO-FILL FILTER FROM HOME ================= */
+  if (_filterType && _filterValue) {
+    // value dari URL harus aman (decode)
+    const v = decodeURIComponent(_filterValue);
+
+    if (_filterType === "peserta") {
+      // best effort: isi Nama; jika Home nanti kirim no_induk, tetap bisa dicari di Nama via includes? (tidak), tapi default Home kirim nama.
+      fNama.value = v;
+    } else if (_filterType === "kampus") {
+      fKampus.value = v;
+    } else if (_filterType === "kelompok") {
+      fKelompok.value = v;
+    }
+  }
+
+  // init label periode
+  updatePeriodeBtnLabel();
+
+  // ── Auto-fill NIM dari session untuk awardee ──
+  try {
+    const cached = JSON.parse(sessionStorage.getItem('_bsi_auth') || 'null');
+    if (cached && cached.role !== 'admin' && cached.nis) {
+      fNoInduk.value = cached.nis;
+      document.getElementById('searchAlert').style.display  = 'none';
+      document.getElementById('nimForm').style.display      = 'none';
+      document.getElementById('loadingState').style.display = 'none';
+
+      // Isi banner identitas dari mahasiswa_bsi
+      const sample = all.find(r => (r.no_induk || '').toLowerCase() === cached.nis.toLowerCase());
+      if (sample) {
+        let mhs = {};
+        try {
+          const { data: mhsData } = await supabaseClient
+            .from('mahasiswa_bsi')
+            .select('no_induk,nama,kampus,kelompok,fakultas,prodi,cluster,lecture,email,wa,status')
+            .eq('no_induk', sample.no_induk)
+            .maybeSingle();
+          if (mhsData) mhs = mhsData;
+        } catch (_) {}
+        document.getElementById('bannerNim').textContent  = sample.no_induk;
+        document.getElementById('bannerNama').textContent = mhs.nama || sample.nama || cached.name || '';
+        const pills = [
+          mhs.kampus    || sample.kampus,
+          mhs.kelompok  ? 'Kelompok ' + mhs.kelompok  : (sample.kelompok ? 'Kelompok ' + sample.kelompok : null),
+          mhs.fakultas,
+          mhs.prodi,
+          mhs.cluster   ? 'Cluster: ' + mhs.cluster   : null,
+          mhs.lecture   ? 'Lecture: ' + mhs.lecture    : null,
+        ].filter(Boolean);
+        document.getElementById('bannerMeta').innerHTML = pills.map(p =>
+          `<span style="background:rgba(255,255,255,.2);border-radius:20px;padding:2px 10px;font-size:11px;font-weight:600;white-space:nowrap;">${p}</span>`
+        ).join('');
+        document.getElementById('bannerIdentitas').style.display = 'block';
+        document.getElementById('bannerDesc').style.display      = 'none';
+      }
+    }
+  } catch (_) {}
+
+  applyFilter();
+}
+
+/* ================= QUARTERLY SUMMARY ================= */
+const QTR_ACTS = [
+  { key: "pembinaan",      label: "Pembinaan" },
+  { key: "mentoring",      label: "Mentoring" },
+  { key: "kelas_al_quran", label: "Al-Qur'an" },
+];
+
+// Quarter range label: "Des 2025" → "Des 2025 – Feb 2026"
+const MONTH_ID_FULL = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+function qtrRangeLabel(startLabel) {
+  // startLabel contoh: "Des 2025"
+  const parts = startLabel.split(" ");
+  const mIdx  = MONTH_ID_FULL.indexOf(parts[0]);
+  const yr    = parseInt(parts[1]);
+  if (mIdx < 0 || isNaN(yr)) return startLabel;
+  // end bulan = startMonth + 2
+  const endMIdx = (mIdx + 2) % 12;
+  const endYr   = mIdx + 2 >= 12 ? yr + 1 : yr;
+  return `${startLabel} – ${MONTH_ID_FULL[endMIdx]} ${endYr}`;
+}
+
+function pctVal(rows, key) {
+  const ev = rows.filter(r => r[key] !== null && r[key] !== undefined && String(r[key]).trim() !== "");
+  if (!ev.length) return null;
+  const ok = ev.filter(r => r[key] === "✅" || r[key] === "TP").length;
+  return { ok, total: ev.length, pct: Math.round((ok / ev.length) * 100) };
+}
+
+function colorClass(v) {
+  if (v === null) return "";
+  if (v >= 80) return "high";
+  if (v >= 50) return "mid";
+  return "low";
+}
+
+function renderQuarterly(rows) {
+  const container = document.getElementById("quarterlySummary");
+  container.innerHTML = "";
+  if (!rows.length) return;
+
+  // Group by quarter (periodeFolderGeser)
+  const groups = {};
+  rows.forEach(r => {
+    const key = periodeFolderGeser(r.tanggal);
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(r);
+  });
+
+  // Sort quarter keys chronologically
+  const sortedKeys = Object.keys(groups).sort((a, b) => {
+    const toDate = s => {
+      const [m, y] = s.split(" ");
+      return new Date(parseInt(y), MONTH_ID_FULL.indexOf(m), 1);
+    };
+    return toDate(a) - toDate(b);
+  });
+
+  if (!sortedKeys.length) return;
+
+  // Title
+  const title = document.createElement("div");
+  title.className = "qtr-section-title";
+  title.innerHTML = `
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1f3c88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+    Ringkasan per Kuartal
+  `;
+  container.appendChild(title);
+
+  const cardsWrap = document.createElement("div");
+  cardsWrap.className = "qtr-cards";
+
+  sortedKeys.forEach((qKey, idx) => {
+    const qRows = groups[qKey];
+    const range = qtrRangeLabel(qKey);
+
+    // Hitung per aktivitas
+    const actData = QTR_ACTS.map(a => ({
+      label: a.label,
+      key: a.key,
+      stat: pctVal(qRows, a.key),
+    }));
+
+    // Rata-rata (abaikan null)
+    const valid = actData.filter(a => a.stat !== null);
+    const avg   = valid.length ? Math.round(valid.reduce((s, a) => s + a.stat.pct, 0) / valid.length) : null;
+    const avgClass = avg !== null ? colorClass(avg) : "";
+
+    const totalOk    = valid.reduce((s, a) => s + a.stat.ok, 0);
+    const totalAll   = valid.reduce((s, a) => s + a.stat.total, 0);
+
+    const card = document.createElement("div");
+    card.className = "qtr-card";
+    card.innerHTML = `
+      <div class="qtr-card-head">
+        <div>
+          <div class="qtr-card-title">Kuartal ${idx + 1}</div>
+          <div class="qtr-card-range">${range}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${avg !== null ? `
+            <span style="font-size:11px;color:#6b7280;font-weight:500;">${totalOk} dari ${totalAll} kegiatan</span>
+            <span class="qtr-avg-badge avg-${avgClass}">${avg}% rata-rata</span>
+          ` : `<span class="qtr-avg-badge">–</span>`}
+        </div>
+      </div>
+      <div class="qtr-detail-grid">
+        ${actData.map(a => {
+          if (!a.stat) return `
+            <div class="qtr-detail-item">
+              <span class="qtr-detail-label">${a.label}</span>
+              <span class="qtr-detail-pct" style="color:#d1d5db;">–</span>
+              <span style="font-size:10px;color:#9ca3af;">Belum ada data</span>
+              <div class="qtr-detail-bar"><div class="qtr-detail-bar-fill" style="width:0%"></div></div>
+            </div>`;
+          const cls = colorClass(a.stat.pct);
+          return `
+            <div class="qtr-detail-item">
+              <span class="qtr-detail-label">${a.label}</span>
+              <span class="qtr-detail-pct pct-${cls}">${a.stat.pct}%</span>
+              <span style="font-size:11px;color:#6b7280;font-weight:600;">${a.stat.ok} <span style="font-weight:400;">dari</span> ${a.stat.total}</span>
+              <div class="qtr-detail-bar">
+                <div class="qtr-detail-bar-fill bar-${cls}" style="width:${a.stat.pct}%"></div>
+              </div>
+            </div>`;
+        }).join("")}
+      </div>
+    `;
+    cardsWrap.appendChild(card);
+  });
+
+  container.appendChild(cardsWrap);
+}
+
+/* ===== Dropdown open/close logic (mobile friendly) ===== */
+const periodeBtn = document.getElementById("periodeBtn");
+const periodePanel = document.getElementById("periodePanel");
+const periodeDropdown = document.getElementById("periodeDropdown");
+
+periodeBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  const isOpen = periodePanel.classList.toggle("open");
+  periodeBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+});
+
+document.addEventListener("click", (e) => {
+  if (!periodeDropdown.contains(e.target)) {
+    periodePanel.classList.remove("open");
+    periodeBtn.setAttribute("aria-expanded", "false");
+  }
+});
+
+/* ===== NOTE: sebelumnya ada listener fPeriode change. sekarang hidden select, tidak dipakai user langsung. ===== */
+/* fPeriode.addEventListener("change", applyFilter); */
+
+init();
+</script>
+
+<!-- MOBILE BOTTOM NAV -->
+<script src="assets/auth.js"></script>
+  </main>
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+</script>
+<nav class="mob-nav" id="mobNav">
+  <a href="index.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="list-form.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="12" height="4" rx="1"/></svg>
+    <span>Form</span>
+  </a>
+  <a href="rekap.html" class="mob-nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <span>Rekap</span>
+  </a>
+  <a href="lapor.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>Lapor</span>
+  </a>
+  <a href="admin.html" id="mobNavAdmin" class="mob-nav-item" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span>Admin</span>
+  </a>
+  <a href="profile.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profil</span>
+  </a>
+</nav>
+</body>
+</html>

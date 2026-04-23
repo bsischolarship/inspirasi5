@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laporan & Ekspor | BSI Scholarship Inspirasi</title>
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    .rp-page { max-width: 1200px; margin: 0 auto; padding: 28px 20px 80px; }
+    .rp-ph h1 { font-size: 22px; font-weight: 800; color: #111827; margin: 0 0 4px; }
+    .rp-ph p  { font-size: 13px; color: #6b7280; margin: 0 0 24px; }
+
+    /* STATS */
+    .rp-stats { display: grid; grid-template-columns: repeat(5,1fr); gap: 14px; margin-bottom: 28px; }
+    .rp-stat  { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:14px; }
+    .rp-stat-icon { width:44px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .rp-stat-icon svg { width:21px; height:21px; }
+    .si--teal   { background:#ccfbf1; color:#0d9488; }
+    .si--blue   { background:#dbeafe; color:#1d4ed8; }
+    .si--green  { background:#dcfce7; color:#15803d; }
+    .si--orange { background:#fef3c7; color:#d97706; }
+    .si--purple { background:#ede9fe; color:#7c3aed; }
+    .rp-stat-val { font-size:24px; font-weight:800; color:#111827; line-height:1; }
+    .rp-stat-lbl { font-size:11px; color:#6b7280; margin-top:3px; }
+    .rp-stat-note { font-size:10px; color:#9ca3af; margin-top:4px; line-height:1.3; }
+
+    /* SKELETON */
+    .skeleton { background:linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 50%,#f3f4f6 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:8px; }
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    /* TABS */
+    .rp-tabs { display:flex; gap:0; border-bottom:2px solid #e5e7eb; margin-bottom:20px; overflow-x:auto; scrollbar-width:none; }
+    .rp-tabs::-webkit-scrollbar { display:none; }
+    .rp-tab {
+      padding:10px 16px; font-size:12.5px; font-weight:600; color:#9ca3af;
+      background:none; border:none; border-bottom:3px solid transparent; margin-bottom:-2px;
+      cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px;
+      transition:color .15s, border-color .15s, background .15s;
+      border-radius:6px 6px 0 0;
+    }
+    .rp-tab:hover { color:#374151; background:#f9fafb; }
+    .rp-tab[data-tab="semua"]        { --tc:#0f766e; }
+    .rp-tab[data-tab="rekap"]        { --tc:#0d9488; }
+    .rp-tab[data-tab="awardee"]     { --tc:#1d4ed8; }
+    .rp-tab[data-tab="skor"]        { --tc:#d97706; }
+    .rp-tab[data-tab="kampus"]      { --tc:#7c3aed; }
+    .rp-tab[data-tab="kelompok"]    { --tc:#dc2626; }
+    .rp-tab.active { color:var(--tc,#0055a5); border-bottom-color:var(--tc,#0055a5); background:#fff; }
+    .rp-tab.active svg { color:var(--tc,#0055a5); }
+    .rp-tab-badge {
+      font-size:10px; font-weight:700; padding:1px 6px; border-radius:99px;
+      background:#f3f4f6; color:#6b7280;
+    }
+    .rp-tab.active .rp-tab-badge { background:color-mix(in srgb,var(--tc,#0055a5) 12%,#fff); color:var(--tc,#0055a5); }
+    .rp-tab-panel { display:none; }
+    .rp-tab-panel.active { display:block; }
+
+    /* TOOLBAR */
+    .tbl-toolbar {
+      display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+      background:#fff; border:1px solid #e5e7eb; border-radius:14px 14px 0 0;
+      padding:12px 16px; border-bottom:1px solid #f1f5f9;
+    }
+    #panel-semua    .tbl-toolbar { border-top:3px solid #0f766e; }
+    #panel-rekap    .tbl-toolbar { border-top:3px solid #0d9488; }
+    #panel-awardee  .tbl-toolbar { border-top:3px solid #1d4ed8; }
+    #panel-skor     .tbl-toolbar { border-top:3px solid #d97706; }
+    #panel-kampus   .tbl-toolbar { border-top:3px solid #7c3aed; }
+    #panel-kelompok .tbl-toolbar { border-top:3px solid #dc2626; }
+    #panel-semua    .tbl-toolbar-title { color:#0f766e; }
+    #panel-rekap    .tbl-toolbar-title { color:#0d9488; }
+    #panel-awardee  .tbl-toolbar-title { color:#1d4ed8; }
+    #panel-skor     .tbl-toolbar-title { color:#d97706; }
+    #panel-kampus   .tbl-toolbar-title { color:#7c3aed; }
+    #panel-kelompok .tbl-toolbar-title { color:#dc2626; }
+    .tbl-toolbar-title { font-size:13px; font-weight:800; color:#111827; margin-right:4px; flex-shrink:0; }
+    .tbl-search {
+      display:flex; align-items:center; gap:7px;
+      background:#f9fafb; border:1.5px solid #e5e7eb; border-radius:8px;
+      padding:6px 11px; min-width:180px; flex:1;
+    }
+    .tbl-search input { background:none; border:none; outline:none; font-size:12.5px; color:#374151; width:100%; }
+    .tbl-search svg { color:#9ca3af; flex-shrink:0; }
+    .tbl-filter {
+      padding:7px 10px; font-size:12.5px; border:1.5px solid #e5e7eb;
+      border-radius:8px; background:#f9fafb; color:#374151; outline:none; cursor:pointer;
+    }
+    .tbl-filter:focus { border-color:#0055a5; }
+    .btn-dl {
+      padding:8px 16px; border:none; border-radius:9px; font-size:12.5px; font-weight:700;
+      cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+      transition:all .15s; white-space:nowrap; background:#0055a5; color:#fff;
+    }
+    .btn-dl:hover { background:#00429e; }
+    .btn-dl:disabled { opacity:.5; cursor:not-allowed; }
+    .btn-dl svg { width:14px; height:14px; }
+    .btn-dl--spin svg { animation:spin .8s linear infinite; }
+    @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+    /* TABLE */
+    .tbl-wrap { background:#fff; border:1px solid #e5e7eb; border-radius:0 0 14px 14px; border-top:none; overflow:hidden; }
+    .tbl-scroll { overflow-x:auto; overflow-y:visible; scrollbar-width:thin; scrollbar-color:#d1d5db #f9fafb; }
+    .tbl-scroll::-webkit-scrollbar { height:6px; }
+    .tbl-scroll::-webkit-scrollbar-track { background:#f9fafb; }
+    .tbl-scroll::-webkit-scrollbar-thumb { background:#d1d5db; border-radius:3px; }
+    .rp-table { width:max-content; min-width:100%; border-collapse:collapse; font-size:12.5px; }
+    .rp-table th {
+      background:#f8fafc; padding:9px 14px; text-align:left;
+      font-size:10.5px; font-weight:700; color:#64748b; text-transform:uppercase;
+      letter-spacing:.05em; border-bottom:2px solid #e5e7eb; white-space:nowrap;
+      position:sticky; top:0; z-index:1;
+    }
+    .rp-table th:first-child { border-radius:0; }
+    .rp-table td { padding:9px 14px; border-bottom:1px solid #f1f5f9; color:#374151; vertical-align:middle; white-space:nowrap; }
+    .rp-table tbody tr:last-child td { border-bottom:none; }
+    .rp-table tbody tr:hover td { background:#f8fafc; }
+    .rp-table td.td-name { font-weight:600; color:#111827; white-space:normal; min-width:120px; max-width:200px; }
+    .rp-table td.td-mono { font-family:monospace; font-size:11.5px; color:#374151; }
+
+    .badge-h   { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:700; background:#dcfce7; color:#15803d; }
+    .badge-a   { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:700; background:#f3f4f6; color:#9ca3af; }
+    .pct-chip  { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:700; }
+    .pct-high  { background:#dcfce7; color:#15803d; }
+    .pct-mid   { background:#fef9c3; color:#92400e; }
+    .pct-low   { background:#fee2e2; color:#b91c1c; }
+
+    /* PAGINATION */
+    .tbl-footer {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:11px 16px; border-top:1px solid #f3f4f6;
+      background:#fff; font-size:12px; color:#6b7280; flex-wrap:wrap; gap:8px;
+    }
+    .pg-btns { display:flex; gap:4px; }
+    .btn-pg {
+      padding:4px 10px; border:1.5px solid #e5e7eb; border-radius:7px;
+      background:#fff; font-size:12px; font-weight:600; color:#374151;
+      cursor:pointer; transition:all .15s; min-width:32px; text-align:center;
+    }
+    .btn-pg:hover:not(:disabled) { background:#f3f4f6; }
+    .btn-pg.active { background:#0055a5; color:#fff; border-color:#0055a5; }
+    .btn-pg:disabled { opacity:.35; cursor:not-allowed; }
+
+    /* EMPTY */
+    .tbl-empty { text-align:center; padding:48px 20px; color:#9ca3af; }
+    .tbl-empty svg { width:40px; height:40px; margin-bottom:10px; opacity:.3; }
+    .tbl-empty p { font-size:13px; margin:0; }
+
+    /* TOAST */
+    #rpToast {
+      position:fixed; bottom:24px; right:24px; z-index:9999;
+      display:flex; align-items:center; gap:10px; padding:12px 18px;
+      border-radius:12px; font-size:13px; font-weight:500;
+      box-shadow:0 8px 24px rgba(0,0,0,.14);
+      transform:translateY(80px); opacity:0; transition:all .25s ease;
+      pointer-events:none; max-width:320px;
+    }
+    #rpToast.show { transform:translateY(0); opacity:1; }
+    #rpToast.ok   { background:#fff; border-left:4px solid #16a34a; color:#111827; }
+    #rpToast.err  { background:#fff; border-left:4px solid #dc2626; color:#111827; }
+    #rpToast.info { background:#fff; border-left:4px solid #0055a5; color:#111827; }
+
+    @media(max-width:1100px){ .rp-stats{ grid-template-columns:repeat(3,1fr); } }
+    @media(max-width:900px){ .rp-stats{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:600px){
+      .rp-stats{ grid-template-columns:repeat(2,1fr); }
+      .tbl-toolbar{ flex-direction:column; align-items:stretch; }
+      .tbl-search{ min-width:unset; }
+    }
+  </style>
+</head>
+
+<body data-page="admin-rekap">
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/logo.png" alt="BSI">
+    <div class="sidebar-brand-text">
+      <div class="sidebar-brand-title">BSIS Inspirasi</div>
+      <span class="sidebar-brand-sub">Batch 5</span>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Menu</div>
+    <a href="index.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-5H9v5H4a1 1 0 0 1-1-1V9.5z"/></svg>Home</a>
+    <a href="list-form.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>List Form</a>
+    <a href="rekap.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Rekap Aktivitas</a>
+    <a href="lapor.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Lapor</a>
+    <div class="sidebar-admin-group" id="adminGroup" style="display:none;">
+      <div class="sidebar-section-label" style="margin-top:16px;">Portal Admin</div>
+      <a href="admin.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Kelola Pengguna</a>
+      <a href="admin-forms.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14l2 2 4-4"/></svg>Kelola Form</a>
+      <a href="admin-awardee.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Data Awardee</a>
+      <a href="admin-pengumuman.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Pengumuman</a>
+      <a href="admin-rekap.html" class="sidebar-link active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Laporan & Ekspor</a>
+      <a href="admin-settings.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Pengaturan</a>
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <a href="profile.html" class="sidebar-link" id="sidebarUserLink">
+      <span class="sidebar-user-avatar" id="sidebarAvatar">?</span>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebarEmail">Memuat...</div>
+        <div class="sidebar-user-role" id="sidebarRole">BSI Scholarship</div>
+      </div>
+    </a>
+    <button class="sidebar-logout" onclick="authLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Keluar dari Akun
+    </button>
+  </div>
+  <div class="sidebar-copyright">&copy; 2026 BSI Scholarship Inspirasi</div>
+</aside>
+
+<div class="app-main">
+  <header class="app-header">
+    <button class="app-header-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="app-header-title">Laporan & Ekspor</div>
+    <div class="app-header-right">
+      <div class="header-user-info" id="headerUserInfo">
+        <div class="header-greeting"><span id="headerGreeting">Selamat Datang,</span> <strong id="headerName">...</strong> <span class="header-role-badge" id="headerRoleBadge">Administrator</span></div>
+        <div id="headerSubInfo" style="font-size:11px;color:#6b7280;display:none;"></div>
+      </div>
+      <a href="profile.html" class="header-avatar-btn"><span class="header-avatar" id="headerAvatar">?</span></a>
+    </div>
+  </header>
+
+  <main class="app-content">
+    <div class="rp-page">
+
+      <div class="rp-ph">
+        <h1>Laporan &amp; Ekspor Data</h1>
+        <p>Lihat preview data langsung di tabel, filter sesuai kebutuhan, lalu unduh dalam format Excel.</p>
+      </div>
+
+      <!-- STATS -->
+      <div class="rp-stats" id="rpStats">
+        <div class="rp-stat"><div class="rp-stat-icon si--teal skeleton" style="width:44px;height:44px"></div><div style="flex:1"><div class="skeleton" style="width:70px;height:26px;margin-bottom:5px"></div><div class="skeleton" style="width:110px;height:11px"></div></div></div>
+        <div class="rp-stat"><div class="rp-stat-icon si--blue skeleton" style="width:44px;height:44px"></div><div style="flex:1"><div class="skeleton" style="width:70px;height:26px;margin-bottom:5px"></div><div class="skeleton" style="width:110px;height:11px"></div></div></div>
+        <div class="rp-stat"><div class="rp-stat-icon si--orange skeleton" style="width:44px;height:44px"></div><div style="flex:1"><div class="skeleton" style="width:70px;height:26px;margin-bottom:5px"></div><div class="skeleton" style="width:110px;height:11px"></div></div></div>
+        <div class="rp-stat"><div class="rp-stat-icon si--purple skeleton" style="width:44px;height:44px"></div><div style="flex:1"><div class="skeleton" style="width:70px;height:26px;margin-bottom:5px"></div><div class="skeleton" style="width:110px;height:11px"></div></div></div>
+      </div>
+
+      <!-- TABS -->
+      <div class="rp-tabs">
+        <button class="rp-tab active" data-tab="semua" onclick="switchTab('semua',this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/></svg>
+          Semua Kegiatan
+          <span class="rp-tab-badge" id="badge-semua">—</span>
+        </button>
+        <button class="rp-tab" data-tab="rekap" onclick="switchTab('rekap',this)" style="margin-left:0">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Rekap Kehadiran
+          <span class="rp-tab-badge" id="badge-rekap">—</span>
+        </button>
+        <button class="rp-tab" data-tab="awardee" onclick="switchTab('awardee',this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Data Awardee
+          <span class="rp-tab-badge" id="badge-awardee">—</span>
+        </button>
+        <button class="rp-tab" data-tab="skor" onclick="switchTab('skor',this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Skor Partisipasi
+          <span class="rp-tab-badge" id="badge-skor">—</span>
+        </button>
+        <button class="rp-tab" data-tab="kampus" onclick="switchTab('kampus',this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Per Kampus
+          <span class="rp-tab-badge" id="badge-kampus">—</span>
+        </button>
+        <button class="rp-tab" data-tab="kelompok" onclick="switchTab('kelompok',this)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Per Kelompok
+          <span class="rp-tab-badge" id="badge-kelompok">—</span>
+        </button>
+      </div>
+
+      <!-- TAB: SEMUA KEGIATAN -->
+      <div class="rp-tab-panel active" id="panel-semua">
+        <div class="tbl-toolbar">
+          <span class="tbl-toolbar-title">Semua Kegiatan</span>
+          <div class="tbl-search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Cari nama / NIM..." oninput="filterPanel('semua')" id="q-semua"/>
+          </div>
+          <select class="tbl-filter" id="fk-semua" onchange="filterPanel('semua')"><option value="">Semua Kampus</option></select>
+          <select class="tbl-filter" id="fkl-semua" onchange="filterPanel('semua')"><option value="">Semua Kelompok</option></select>
+          <select class="tbl-filter" id="fg-semua" onchange="filterPanel('semua')"><option value="">Semua Kegiatan</option></select>
+          <select class="tbl-filter" id="fst-semua" onchange="filterPanel('semua')">
+            <option value="">Semua Status</option>
+            <option value="H">Hadir</option>
+            <option value="TH">Tidak Hadir</option>
+          </select>
+          <button class="btn-dl" id="btn-dl-semua" onclick="downloadTab('semua')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Unduh Excel
+          </button>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-scroll"><table class="rp-table"><thead id="head-semua"></thead><tbody id="body-semua"><tr><td colspan="8" style="padding:40px;text-align:center;color:#9ca3af">Memuat data...</td></tr></tbody></table></div>
+          <div class="tbl-footer"><span id="info-semua">—</span><div class="pg-btns" id="pg-semua"></div></div>
+        </div>
+      </div>
+
+      <!-- TAB: REKAP -->
+      <div class="rp-tab-panel" id="panel-rekap">
+        <div class="tbl-toolbar">
+          <span class="tbl-toolbar-title">Rekap Kehadiran</span>
+          <div class="tbl-search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Cari nama / NIM..." oninput="filterPanel('rekap')" id="q-rekap"/>
+          </div>
+          <select class="tbl-filter" id="fk-rekap" onchange="filterPanel('rekap')"><option value="">Semua Kampus</option></select>
+          <select class="tbl-filter" id="fkl-rekap" onchange="filterPanel('rekap')"><option value="">Semua Kelompok</option></select>
+          <select class="tbl-filter" id="fb-rekap" onchange="filterPanel('rekap')"><option value="">Semua Bulan</option></select>
+          <button class="btn-dl" id="btn-dl-rekap" onclick="downloadTab('rekap')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Unduh Excel
+          </button>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-scroll"><table class="rp-table"><thead id="head-rekap"></thead><tbody id="body-rekap"><tr><td colspan="11" style="padding:40px;text-align:center;color:#9ca3af">Memuat data...</td></tr></tbody></table></div>
+          <div class="tbl-footer"><span id="info-rekap">—</span><div class="pg-btns" id="pg-rekap"></div></div>
+        </div>
+      </div>
+
+      <!-- TAB: AWARDEE -->
+      <div class="rp-tab-panel" id="panel-awardee">
+        <div class="tbl-toolbar">
+          <span class="tbl-toolbar-title">Data Awardee</span>
+          <div class="tbl-search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Cari nama / NIM / email..." oninput="filterPanel('awardee')" id="q-awardee"/>
+          </div>
+          <select class="tbl-filter" id="fk-awardee" onchange="filterPanel('awardee')"><option value="">Semua Kampus</option></select>
+          <select class="tbl-filter" id="fkl-awardee" onchange="filterPanel('awardee')"><option value="">Semua Kelompok</option></select>
+          <select class="tbl-filter" id="fs-awardee" onchange="filterPanel('awardee')"><option value="">Semua Status</option></select>
+          <button class="btn-dl" id="btn-dl-awardee" onclick="downloadTab('awardee')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Unduh Excel
+          </button>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-scroll"><table class="rp-table"><thead id="head-awardee"></thead><tbody id="body-awardee"><tr><td colspan="11" style="padding:40px;text-align:center;color:#9ca3af">Memuat data...</td></tr></tbody></table></div>
+          <div class="tbl-footer"><span id="info-awardee">—</span><div class="pg-btns" id="pg-awardee"></div></div>
+        </div>
+      </div>
+
+      <!-- TAB: SKOR -->
+      <div class="rp-tab-panel" id="panel-skor">
+        <div class="tbl-toolbar">
+          <span class="tbl-toolbar-title">Skor Partisipasi Awardee</span>
+          <div class="tbl-search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Cari nama / NIM..." oninput="filterPanel('skor')" id="q-skor"/>
+          </div>
+          <select class="tbl-filter" id="fk-skor" onchange="filterPanel('skor')"><option value="">Semua Kampus</option></select>
+          <select class="tbl-filter" id="fkl-skor" onchange="filterPanel('skor')"><option value="">Semua Kelompok</option></select>
+          <button class="btn-dl" id="btn-dl-skor" onclick="downloadTab('skor')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Unduh Excel
+          </button>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-scroll"><table class="rp-table"><thead id="head-skor"></thead><tbody id="body-skor"><tr><td colspan="13" style="padding:40px;text-align:center;color:#9ca3af">Memuat data...</td></tr></tbody></table></div>
+          <div class="tbl-footer"><span id="info-skor">—</span><div class="pg-btns" id="pg-skor"></div></div>
+        </div>
+      </div>
+
+      <!-- TAB: KAMPUS -->
+      <div class="rp-tab-panel" id="panel-kampus">
+        <div class="tbl-toolbar">
+          <span class="tbl-toolbar-title">Rekap per Kampus</span>
+          <div class="tbl-search" style="max-width:220px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Cari nama kampus..." oninput="filterPanel('kampus')" id="q-kampus"/>
+          </div>
+          <button class="btn-dl" id="btn-dl-kampus" onclick="downloadTab('kampus')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Unduh Excel
+          </button>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-scroll"><table class="rp-table"><thead id="head-kampus"></thead><tbody id="body-kampus"><tr><td colspan="8" style="padding:40px;text-align:center;color:#9ca3af">Memuat data...</td></tr></tbody></table></div>
+          <div class="tbl-footer"><span id="info-kampus">—</span><div class="pg-btns" id="pg-kampus"></div></div>
+        </div>
+      </div>
+
+      <!-- TAB: KELOMPOK -->
+      <div class="rp-tab-panel" id="panel-kelompok">
+        <div class="tbl-toolbar">
+          <span class="tbl-toolbar-title">Rekap per Kelompok</span>
+          <div class="tbl-search" style="max-width:220px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Cari kelompok..." oninput="filterPanel('kelompok')" id="q-kelompok"/>
+          </div>
+          <button class="btn-dl" id="btn-dl-kelompok" onclick="downloadTab('kelompok')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Unduh Excel
+          </button>
+        </div>
+        <div class="tbl-wrap">
+          <div class="tbl-scroll"><table class="rp-table"><thead id="head-kelompok"></thead><tbody id="body-kelompok"><tr><td colspan="6" style="padding:40px;text-align:center;color:#9ca3af">Memuat data...</td></tr></tbody></table></div>
+          <div class="tbl-footer"><span id="info-kelompok">—</span><div class="pg-btns" id="pg-kelompok"></div></div>
+        </div>
+      </div>
+
+    </div><!-- /rp-page -->
+  </main>
+</div>
+
+<div id="rpToast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="scripts/main.js"></script>
+<script src="assets/auth.js"></script>
+<script>
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('show');}
+
+/* =============================================
+   CONFIG
+============================================= */
+const sb   = () => window._supabase;
+const ACTS = [
+  { key:'pembinaan',      label:'Pembinaan'      },
+  { key:'mentoring',      label:'Mentoring'      },
+  { key:'pre_test',       label:'Pre Test'       },
+  { key:'post_test',      label:'Post Test'      },
+  { key:'assessment',     label:'Self Assessment'},
+  { key:'kelas_al_quran', label:'Al-Quran'       },
+];
+const PER_PAGE = 15;
+
+// Sama persis dengan rekap.html: hanya "✅" atau "TP" yang dianggap Hadir
+const isFilled = v => v !== null && v !== undefined && String(v).trim() !== '';
+function isH(v) { return v === '✅' || v === 'TP'; }
+
+/* =============================================
+   RAW DATA
+============================================= */
+let _rekap = [];
+let _mhs   = [];
+
+// Computed tables (filtered view)
+const _views = { semua:[], rekap:[], awardee:[], skor:[], kampus:[], kelompok:[] };
+const _pages = { semua:1, rekap:1, awardee:1, skor:1, kampus:1, kelompok:1 };
+
+async function fetchAll(table, cols) {
+  let rows=[], from=0;
+  while(true){
+    const {data,error} = await sb().from(table).select(cols).range(from,from+999);
+    if(error) throw error;
+    rows=rows.concat(data||[]);
+    if(!data||data.length<1000) break;
+    from+=1000;
+  }
+  return rows;
+}
+
+/* =============================================
+   INIT
+============================================= */
+async function init(){
+  window.addEventListener('load',()=>{
+    setTimeout(()=>{ if(window._authRole&&window._authRole!=='admin') location.replace('index.html'); },1500);
+  });
+  try {
+    [_rekap, _mhs] = await Promise.all([
+      fetchAll('rekap_bsi','no_induk,nama,kampus,kelompok,tanggal,pre_test,post_test,assessment,mentoring,pembinaan,kelas_al_quran'),
+      fetchAll('mahasiswa_bsi','no_induk,nama,kampus,kelompok,fakultas,prodi,cluster,lecture,email,wa,status'),
+    ]);
+  } catch(e){ toast('Gagal memuat data: '+e.message,'err'); return; }
+
+  buildSemua();
+  buildSkor();
+  buildKampus();
+  buildKelompok();
+  renderStats();
+  populateFilters();
+  renderAllTabs();
+}
+
+/* =============================================
+   BUILD COMPUTED TABLES
+============================================= */
+let _semuaData   = [];
+let _skorData    = [];
+let _kampusData  = [];
+let _kelompokData= [];
+
+function buildSemua(){
+  _semuaData = [];
+  _rekap.forEach(r => {
+    ACTS.forEach(a => {
+      const v = r[a.key];
+      if (!isFilled(v)) return;
+      _semuaData.push({
+        no_induk: r.no_induk,
+        nama: r.nama,
+        kampus: r.kampus,
+        kelompok: r.kelompok,
+        tanggal: r.tanggal,
+        kegiatan: a.label,
+        kegiatan_key: a.key,
+        hadir: isH(v),
+      });
+    });
+  });
+}
+
+function buildSkor(){
+  const map={};
+  _rekap.forEach(r=>{
+    const nim=r.no_induk; if(!nim) return;
+    if(!map[nim]) map[nim]={nim,nama:r.nama,kampus:r.kampus,kelompok:r.kelompok};
+    ACTS.forEach(a=>{
+      if(!isFilled(r[a.key])) return;
+      map[nim]['h_'+a.key]=(map[nim]['h_'+a.key]||0)+(isH(r[a.key])?1:0);
+      map[nim]['s_'+a.key]=(map[nim]['s_'+a.key]||0)+1;
+    });
+  });
+  _skorData=Object.values(map).map(v=>{
+    const tH=ACTS.reduce((s,a)=>s+(v['h_'+a.key]||0),0);
+    const tP=ACTS.reduce((s,a)=>s+(v['s_'+a.key]||0),0);
+    return {...v,totalH:tH,totalP:tP,pct:tP>0?+(tH/tP*100).toFixed(1):0};
+  }).sort((a,b)=>b.pct-a.pct);
+}
+
+function buildKampus(){
+  const map={};
+  _mhs.forEach(m=>{ if(m.kampus){if(!map[m.kampus])map[m.kampus]={kampus:m.kampus,awardee:0};map[m.kampus].awardee++;} });
+  _rekap.forEach(r=>{
+    if(!r.kampus||!map[r.kampus]) return;
+    const k=map[r.kampus];
+    ACTS.forEach(a=>{
+      if(!isFilled(r[a.key])) return;
+      k['h_'+a.key]=(k['h_'+a.key]||0)+(isH(r[a.key])?1:0);
+      k['s_'+a.key]=(k['s_'+a.key]||0)+1;
+    });
+  });
+  _kampusData=Object.values(map).map(v=>{
+    const tH=ACTS.reduce((s,a)=>s+(v['h_'+a.key]||0),0);
+    const tP=ACTS.reduce((s,a)=>s+(v['s_'+a.key]||0),0);
+    return {...v,totalH:tH,totalP:tP,pct:tP>0?+(tH/tP*100).toFixed(1):0};
+  }).sort((a,b)=>b.pct-a.pct);
+}
+
+function buildKelompok(){
+  const map={};
+  _rekap.forEach(r=>{
+    if(!r.kelompok) return;
+    if(!map[r.kelompok]) map[r.kelompok]={kelompok:r.kelompok,kampus:r.kampus};
+    ACTS.forEach(a=>{
+      if(!isFilled(r[a.key])) return;
+      map[r.kelompok]['h_'+a.key]=(map[r.kelompok]['h_'+a.key]||0)+(isH(r[a.key])?1:0);
+      map[r.kelompok]['s_'+a.key]=(map[r.kelompok]['s_'+a.key]||0)+1;
+    });
+  });
+  _kelompokData=Object.values(map).map(v=>{
+    const tH=ACTS.reduce((s,a)=>s+(v['h_'+a.key]||0),0);
+    const tP=ACTS.reduce((s,a)=>s+(v['s_'+a.key]||0),0);
+    return {...v,totalH:tH,totalP:tP,pct:tP>0?+(tH/tP*100).toFixed(1):0};
+  }).sort((a,b)=>a.kelompok.localeCompare(b.kelompok));
+}
+
+/* =============================================
+   STATS
+============================================= */
+function renderStats(){
+  const tH=_rekap.reduce((s,r)=>s+ACTS.filter(a=>isH(r[a.key])).length,0);
+  const tP=_rekap.reduce((s,r)=>s+ACTS.filter(a=>isFilled(r[a.key])).length,0);
+  const avg=tP>0?Math.round(tH/tP*100):0;
+  const last=_rekap.map(r=>r.tanggal).filter(Boolean).sort().at(-1);
+  const lastLabel=last?new Date(last).toLocaleDateString('id-ID',{month:'long',year:'numeric'}):'—';
+
+  document.getElementById('rpStats').innerHTML=`
+    <div class="rp-stat"><div class="rp-stat-icon si--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div><div class="rp-stat-val">${_rekap.length.toLocaleString('id-ID')}</div><div class="rp-stat-lbl">Total Data Rekap</div></div></div>
+    <div class="rp-stat"><div class="rp-stat-icon si--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div><div class="rp-stat-val">${_mhs.length.toLocaleString('id-ID')}</div><div class="rp-stat-lbl">Total Awardee</div></div></div>
+    <div class="rp-stat"><div class="rp-stat-icon si--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="13" y2="18"/></svg></div><div><div class="rp-stat-val">${_semuaData.length.toLocaleString('id-ID')}</div><div class="rp-stat-lbl">Total Kegiatan</div><div class="rp-stat-note">Semua entri aktivitas tercatat</div></div></div>
+    <div class="rp-stat"><div class="rp-stat-icon si--orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="rp-stat-val">${avg}%</div><div class="rp-stat-lbl">Rata-rata Partisipasi</div><div class="rp-stat-note">Semua kegiatan</div></div></div>
+    <div class="rp-stat"><div class="rp-stat-icon si--purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div><div class="rp-stat-val" style="font-size:17px;padding-top:4px">${lastLabel}</div><div class="rp-stat-lbl">Data Terakhir</div></div></div>`;
+
+  document.getElementById('badge-semua').textContent    = _semuaData.length.toLocaleString('id-ID');
+  document.getElementById('badge-rekap').textContent    = _rekap.length.toLocaleString('id-ID');
+  document.getElementById('badge-awardee').textContent  = _mhs.length.toLocaleString('id-ID');
+  document.getElementById('badge-skor').textContent     = _skorData.length.toLocaleString('id-ID');
+  document.getElementById('badge-kampus').textContent   = _kampusData.length;
+  document.getElementById('badge-kelompok').textContent = _kelompokData.length;
+}
+
+/* =============================================
+   POPULATE FILTERS
+============================================= */
+function populateFilters(){
+  const kampusList   = [...new Set([..._rekap.map(r=>r.kampus),..._mhs.map(m=>m.kampus)].filter(Boolean))].sort();
+  const kelompokList = [...new Set([..._rekap.map(r=>r.kelompok),..._mhs.map(m=>m.kelompok)].filter(Boolean))].sort();
+  const statusList   = [...new Set(_mhs.map(m=>m.status).filter(Boolean))].sort();
+  const bulanSet     = new Set();
+  _rekap.forEach(r=>{ if(r.tanggal){ const d=new Date(r.tanggal); bulanSet.add(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`); } });
+  const bulanList=[...bulanSet].sort().reverse();
+
+  // kampus selects
+  ['fk-semua','fk-rekap','fk-awardee','fk-skor'].forEach(id=>{
+    const sel=document.getElementById(id);
+    kampusList.forEach(k=>sel.insertAdjacentHTML('beforeend',`<option value="${k}">${k}</option>`));
+  });
+  // kelompok selects
+  ['fkl-semua','fkl-rekap','fkl-awardee','fkl-skor'].forEach(id=>{
+    const sel=document.getElementById(id);
+    kelompokList.forEach(k=>sel.insertAdjacentHTML('beforeend',`<option value="${k}">${k}</option>`));
+  });
+  // kegiatan select
+  const fgSemua=document.getElementById('fg-semua');
+  ACTS.forEach(a=>fgSemua.insertAdjacentHTML('beforeend',`<option value="${a.key}">${a.label}</option>`));
+  // status
+  const fsa=document.getElementById('fs-awardee');
+  statusList.forEach(s=>fsa.insertAdjacentHTML('beforeend',`<option value="${s}">${s}</option>`));
+  // bulan
+  const fb=document.getElementById('fb-rekap');
+  bulanList.forEach(b=>{
+    const [y,m]=b.split('-');
+    const lbl=new Date(+y,+m-1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});
+    fb.insertAdjacentHTML('beforeend',`<option value="${b}">${lbl}</option>`);
+  });
+}
+
+/* =============================================
+   FILTER + RENDER ALL TABS
+============================================= */
+function renderAllTabs(){
+  filterPanel('semua');
+  filterPanel('rekap');
+  filterPanel('awardee');
+  filterPanel('skor');
+  filterPanel('kampus');
+  filterPanel('kelompok');
+}
+
+window.filterPanel = function(tab){
+  _pages[tab]=1;
+  const q=(document.getElementById('q-'+tab)||{}).value?.toLowerCase()||'';
+  switch(tab){
+    case 'semua':{
+      const k=(document.getElementById('fk-semua')||{}).value||'';
+      const kl=(document.getElementById('fkl-semua')||{}).value||'';
+      const g=(document.getElementById('fg-semua')||{}).value||'';
+      const st=(document.getElementById('fst-semua')||{}).value||'';
+      _views.semua=_semuaData.filter(r=>{
+        if(k&&r.kampus!==k) return false;
+        if(kl&&r.kelompok!==kl) return false;
+        if(g&&r.kegiatan_key!==g) return false;
+        if(st==='H'&&!r.hadir) return false;
+        if(st==='TH'&&r.hadir) return false;
+        if(q&&!((r.no_induk||'').toLowerCase().includes(q)||(r.nama||'').toLowerCase().includes(q))) return false;
+        return true;
+      });
+      break;
+    }
+    case 'rekap':{
+      const k=(document.getElementById('fk-rekap')||{}).value||'';
+      const kl=(document.getElementById('fkl-rekap')||{}).value||'';
+      const b=(document.getElementById('fb-rekap')||{}).value||'';
+      _views.rekap=_rekap.filter(r=>{
+        if(k&&r.kampus!==k) return false;
+        if(kl&&r.kelompok!==kl) return false;
+        if(b&&(!r.tanggal||!r.tanggal.startsWith(b))) return false;
+        if(q&&!((r.no_induk||'').toLowerCase().includes(q)||(r.nama||'').toLowerCase().includes(q))) return false;
+        return true;
+      });
+      break;
+    }
+    case 'awardee':{
+      const k=(document.getElementById('fk-awardee')||{}).value||'';
+      const kl=(document.getElementById('fkl-awardee')||{}).value||'';
+      const s=(document.getElementById('fs-awardee')||{}).value||'';
+      _views.awardee=_mhs.filter(m=>{
+        if(k&&m.kampus!==k) return false;
+        if(kl&&m.kelompok!==kl) return false;
+        if(s&&m.status!==s) return false;
+        if(q&&!((m.no_induk||'').toLowerCase().includes(q)||(m.nama||'').toLowerCase().includes(q)||(m.email||'').toLowerCase().includes(q))) return false;
+        return true;
+      });
+      break;
+    }
+    case 'skor':{
+      const k=(document.getElementById('fk-skor')||{}).value||'';
+      const kl=(document.getElementById('fkl-skor')||{}).value||'';
+      _views.skor=_skorData.filter(v=>{
+        if(k&&v.kampus!==k) return false;
+        if(kl&&v.kelompok!==kl) return false;
+        if(q&&!((v.nim||'').toLowerCase().includes(q)||(v.nama||'').toLowerCase().includes(q))) return false;
+        return true;
+      });
+      break;
+    }
+    case 'kampus':
+      _views.kampus=_kampusData.filter(v=>!q||v.kampus.toLowerCase().includes(q));
+      break;
+    case 'kelompok':
+      _views.kelompok=_kelompokData.filter(v=>!q||v.kelompok.toLowerCase().includes(q));
+      break;
+  }
+  renderTable(tab);
+};
+
+/* =============================================
+   RENDER TABLE
+============================================= */
+const HEADERS = {
+  semua:    ['No','No Induk','Nama','Kampus','Kelompok','Tanggal','Kegiatan','Status'],
+  rekap:    ['No','No Induk','Nama','Kampus','Kelompok','Tanggal','Pembinaan','Mentoring','Pre Test','Post Test','Self Assessment','Al-Quran'],
+  awardee:  ['No','No Induk','Nama','Kampus','Kelompok','Fakultas','Prodi','Cluster','Lecture','Email','WA','Status'],
+  skor:     ['No','No Induk','Nama','Kampus','Kelompok','Pembinaan','Mentoring','Pre Test','Post Test','Assessment','Al-Quran','Total Hadir','Total Sesi','%'],
+  kampus:   ['No','Kampus','Awardee','Pembinaan','Mentoring','Pre Test','Post Test','Assessment','Al-Quran','Total Hadir','Total Sesi','%'],
+  kelompok: ['No','Kelompok','Kampus','Pembinaan','Mentoring','Pre Test','Post Test','Assessment','Al-Quran','Total Hadir','Total Sesi','%'],
+};
+
+function renderTable(tab){
+  const data=_views[tab];
+  const page=_pages[tab];
+  const total=data.length;
+  const totalPages=Math.max(1,Math.ceil(total/PER_PAGE));
+  const start=(page-1)*PER_PAGE;
+  const slice=data.slice(start,start+PER_PAGE);
+
+  // Header
+  document.getElementById('head-'+tab).innerHTML=
+    '<tr>'+HEADERS[tab].map(h=>`<th>${h}</th>`).join('')+'</tr>';
+
+  // Body
+  if(!slice.length){
+    const cols=HEADERS[tab].length;
+    document.getElementById('body-'+tab).innerHTML=
+      `<tr><td colspan="${cols}"><div class="tbl-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><p>Tidak ada data</p></div></td></tr>`;
+    document.getElementById('info-'+tab).textContent='Tidak ada data';
+    document.getElementById('pg-'+tab).innerHTML='';
+    return;
+  }
+
+  document.getElementById('body-'+tab).innerHTML=slice.map((r,i)=>{
+    const no=start+i+1;
+    switch(tab){
+      case 'semua': return `<tr>
+        <td style="color:#9ca3af;width:40px">${no}</td>
+        <td class="td-mono">${r.no_induk||'—'}</td>
+        <td class="td-name">${r.nama||'—'}</td>
+        <td>${r.kampus||'—'}</td>
+        <td>${r.kelompok||'—'}</td>
+        <td style="white-space:nowrap">${r.tanggal||'—'}</td>
+        <td><span style="display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;background:#eff6ff;color:#1d4ed8">${r.kegiatan}</span></td>
+        <td style="text-align:center">${r.hadir
+          ?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>'
+          :'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+        }</td>
+      </tr>`;
+      case 'rekap': return `<tr>
+        <td style="color:#9ca3af;width:40px">${no}</td>
+        <td class="td-mono">${r.no_induk||'—'}</td>
+        <td class="td-name">${r.nama||'—'}</td>
+        <td>${r.kampus||'—'}</td>
+        <td>${r.kelompok||'—'}</td>
+        <td style="white-space:nowrap">${r.tanggal||'—'}</td>
+        ${ACTS.map(a=>{
+          const v=r[a.key];
+          if(!isFilled(v)) return `<td style="text-align:center;color:#d1d5db">·</td>`;
+          if(isH(v))       return `<td style="text-align:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg></td>`;
+          return             `<td style="text-align:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></td>`;
+        }).join('')}
+      </tr>`;
+      case 'awardee': return `<tr>
+        <td style="color:#9ca3af;width:40px">${no}</td>
+        <td class="td-mono">${r.no_induk||'—'}</td>
+        <td class="td-name">${r.nama||'—'}</td>
+        <td>${r.kampus||'—'}</td>
+        <td>${r.kelompok||'—'}</td>
+        <td>${r.fakultas||'—'}</td>
+        <td>${r.prodi||'—'}</td>
+        <td>${r.cluster||'—'}</td>
+        <td>${r.lecture||'—'}</td>
+        <td style="font-size:11.5px">${r.email||'—'}</td>
+        <td>${r.wa||'—'}</td>
+        <td><span class="pct-chip ${r.status==='aktif'?'pct-high':r.status?'pct-mid':'pct-low'}">${r.status||'—'}</span></td>
+      </tr>`;
+      case 'skor':{
+        const cls=r.pct>=70?'pct-high':r.pct>=50?'pct-mid':'pct-low';
+        return `<tr>
+          <td style="color:#9ca3af;width:40px">${no}</td>
+          <td class="td-mono">${r.nim||'—'}</td>
+          <td class="td-name">${r.nama||'—'}</td>
+          <td>${r.kampus||'—'}</td>
+          <td>${r.kelompok||'—'}</td>
+          ${ACTS.map(a=>`<td style="text-align:center">${r['h_'+a.key]||0}/${r['s_'+a.key]||0}</td>`).join('')}
+          <td style="font-weight:700;text-align:center">${r.totalH}</td>
+          <td style="text-align:center">${r.totalP}</td>
+          <td><span class="pct-chip ${cls}">${r.pct}%</span></td>
+        </tr>`;}
+      case 'kampus':{
+        const cls=r.pct>=70?'pct-high':r.pct>=50?'pct-mid':'pct-low';
+        return `<tr>
+          <td style="color:#9ca3af;width:40px">${no}</td>
+          <td class="td-name">${r.kampus}</td>
+          <td style="text-align:center">${r.awardee||0}</td>
+          ${ACTS.map(a=>`<td style="text-align:center">${r['h_'+a.key]||0}</td>`).join('')}
+          <td style="font-weight:700;text-align:center">${r.totalH}</td>
+          <td style="text-align:center">${r.totalP}</td>
+          <td><span class="pct-chip ${cls}">${r.pct}%</span></td>
+        </tr>`;}
+      case 'kelompok':{
+        const cls=r.pct>=70?'pct-high':r.pct>=50?'pct-mid':'pct-low';
+        return `<tr>
+          <td style="color:#9ca3af;width:40px">${no}</td>
+          <td class="td-name">${r.kelompok}</td>
+          <td>${r.kampus||'—'}</td>
+          ${ACTS.map(a=>`<td style="text-align:center">${r['h_'+a.key]||0}</td>`).join('')}
+          <td style="font-weight:700;text-align:center">${r.totalH}</td>
+          <td style="text-align:center">${r.totalP}</td>
+          <td><span class="pct-chip ${cls}">${r.pct}%</span></td>
+        </tr>`;}
+    }
+  }).join('');
+
+  // Info
+  document.getElementById('info-'+tab).textContent=
+    `Menampilkan ${start+1}–${Math.min(start+PER_PAGE,total)} dari ${total.toLocaleString('id-ID')} baris`;
+
+  // Pagination
+  let pgHtml=`<button class="btn-pg" onclick="goPage('${tab}',${page-1})" ${page===1?'disabled':''}>‹</button>`;
+  for(let p=1;p<=totalPages;p++){
+    if(totalPages<=7||p===1||p===totalPages||Math.abs(p-page)<=1){
+      pgHtml+=`<button class="btn-pg${p===page?' active':''}" onclick="goPage('${tab}',${p})">${p}</button>`;
+    } else if(Math.abs(p-page)===2){
+      pgHtml+=`<button class="btn-pg" disabled style="border:none">…</button>`;
+    }
+  }
+  pgHtml+=`<button class="btn-pg" onclick="goPage('${tab}',${page+1})" ${page===totalPages?'disabled':''}>›</button>`;
+  document.getElementById('pg-'+tab).innerHTML=pgHtml;
+}
+
+window.goPage=function(tab,p){
+  const total=Math.max(1,Math.ceil(_views[tab].length/PER_PAGE));
+  if(p<1||p>total) return;
+  _pages[tab]=p;
+  renderTable(tab);
+};
+
+/* =============================================
+   TABS
+============================================= */
+window.switchTab=function(tab,btn){
+  document.querySelectorAll('.rp-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.rp-tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+};
+
+/* =============================================
+   DOWNLOAD EXCEL
+============================================= */
+function toXLSX(sheetName, headers, rows){
+  const wb=XLSX.utils.book_new();
+  const data=[headers,...rows.map(r=>r.map(v=>v==null?'':v))];
+  const ws=XLSX.utils.aoa_to_sheet(data);
+  const range=XLSX.utils.decode_range(ws['!ref']);
+  for(let c=range.s.c;c<=range.e.c;c++){
+    const cell=ws[XLSX.utils.encode_cell({r:0,c})];
+    if(cell){if(!cell.s)cell.s={};cell.s.font={bold:true};}
+  }
+  ws['!cols']=headers.map((h,i)=>({wch:Math.min(Math.max(String(h).length,...rows.map(r=>String(r[i]??'').length))+2,45)}));
+  XLSX.utils.book_append_sheet(wb,ws,sheetName.slice(0,31));
+  return wb;
+}
+
+function ts(){ const d=new Date(); return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`; }
+
+window.downloadTab=function(tab){
+  const btn=document.getElementById('btn-dl-'+tab);
+  const data=_views[tab];
+  if(!data.length){ toast('Tidak ada data untuk diunduh','info'); return; }
+  btn.disabled=true; const orig=btn.innerHTML;
+  btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px;animation:spin .8s linear infinite"><path d="M21 12a9 9 0 1 1-18 0"/></svg> Mengunduh...';
+
+  try {
+    let wb, filename;
+    switch(tab){
+      case 'semua':{
+        const H=['No Induk','Nama','Kampus','Kelompok','Tanggal','Kegiatan','Status'];
+        const R=data.map(r=>[r.no_induk,r.nama,r.kampus,r.kelompok,r.tanggal,r.kegiatan,r.hadir?'Hadir':'Tidak Hadir']);
+        wb=toXLSX('Semua Kegiatan',H,R); filename=`semua-kegiatan-${ts()}.xlsx`; break;
+      }
+      case 'rekap':{
+        const H=['No Induk','Nama','Kampus','Kelompok','Tanggal',...ACTS.map(a=>a.label)];
+        const R=data.map(r=>[r.no_induk,r.nama,r.kampus,r.kelompok,r.tanggal,...ACTS.map(a=>isH(r[a.key])?'H':'')]);
+        wb=toXLSX('Rekap Kehadiran',H,R); filename=`rekap-kehadiran-${ts()}.xlsx`; break;
+      }
+      case 'awardee':{
+        const H=['No Induk','Nama','Kampus','Kelompok','Fakultas','Prodi','Cluster','Lecture','Email','WA','Status'];
+        const R=data.map(m=>[m.no_induk,m.nama,m.kampus,m.kelompok,m.fakultas,m.prodi,m.cluster,m.lecture,m.email,m.wa,m.status]);
+        wb=toXLSX('Data Awardee',H,R); filename=`awardee-${ts()}.xlsx`; break;
+      }
+      case 'skor':{
+        const H=['No Induk','Nama','Kampus','Kelompok',...ACTS.map(a=>a.label+' H'),...ACTS.map(a=>a.label+' Sesi'),'Total H','Total Sesi','%'];
+        const R=data.map(v=>[v.nim,v.nama,v.kampus,v.kelompok,...ACTS.map(a=>v['h_'+a.key]||0),...ACTS.map(a=>v['s_'+a.key]||0),v.totalH,v.totalP,v.pct]);
+        wb=toXLSX('Skor Partisipasi',H,R); filename=`skor-partisipasi-${ts()}.xlsx`; break;
+      }
+      case 'kampus':{
+        const H=['Kampus','Awardee',...ACTS.map(a=>a.label),'Total H','Total Sesi','%'];
+        const R=data.map(v=>[v.kampus,v.awardee||0,...ACTS.map(a=>v['h_'+a.key]||0),v.totalH,v.totalP,v.pct]);
+        wb=toXLSX('Per Kampus',H,R); filename=`rekap-per-kampus-${ts()}.xlsx`; break;
+      }
+      case 'kelompok':{
+        const H=['Kelompok','Kampus',...ACTS.map(a=>a.label),'Total H','Total Sesi','%'];
+        const R=data.map(v=>[v.kelompok,v.kampus||'',...ACTS.map(a=>v['h_'+a.key]||0),v.totalH,v.totalP,v.pct]);
+        wb=toXLSX('Per Kelompok',H,R); filename=`rekap-per-kelompok-${ts()}.xlsx`; break;
+      }
+    }
+    XLSX.writeFile(wb,filename);
+    toast(`${data.length.toLocaleString('id-ID')} baris berhasil diunduh`,'ok');
+  } catch(e){ toast('Gagal: '+e.message,'err'); }
+  finally { btn.disabled=false; btn.innerHTML=orig; }
+};
+
+/* =============================================
+   TOAST
+============================================= */
+let _tt;
+function toast(msg,type='ok'){
+  const el=document.getElementById('rpToast');
+  const ico=type==='ok'?'<polyline points="20 6 9 17 4 12"/>':type==='info'?'<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/>':'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>';
+  const col=type==='ok'?'#16a34a':type==='info'?'#0055a5':'#dc2626';
+  el.className='show '+type;
+  el.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${col}" stroke-width="2.5" stroke-linecap="round">${ico}</svg><span>${msg}</span>`;
+  clearTimeout(_tt); _tt=setTimeout(()=>el.className='',4000);
+}
+
+init();
+</script>
+
+<nav class="mob-nav" id="mobNav">
+  <a href="index.html" class="mob-nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg><span>Home</span></a>
+  <a href="list-form.html" class="mob-nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="12" height="4" rx="1"/></svg><span>Form</span></a>
+  <a href="rekap.html" class="mob-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Rekap</span></a>
+  <a href="admin.html" id="mobNavAdmin" class="mob-nav-item active" style="display:none;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Admin</span></a>
+  <a href="profile.html" class="mob-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profil</span></a>
+</nav>
+</body>
+</html>

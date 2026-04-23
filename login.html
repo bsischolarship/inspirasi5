@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | BSI Scholarship Inspirasi</title>
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 30% 20%, #e0f2fe 0%, #f5f7fb 40%, #edf1f7 100%);
+      padding: 24px 16px;
+    }
+
+    .login-wrap { width: 100%; max-width: 420px; }
+
+    /* BRAND */
+    .login-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .login-brand img { width: 72px; height: 72px; object-fit: contain; }
+    .login-brand-text .brand-title { font-size: 16px; font-weight: 700; color: #111827; line-height: 1.2; }
+    .login-brand-text .brand-batch {
+      display: inline-block;
+      font-size: 11px; font-weight: 800;
+      background: linear-gradient(90deg, #FEB23E, #f97316);
+      color: #fff; border-radius: 999px; padding: 1px 8px; margin-top: 2px;
+    }
+
+    /* CARD */
+    .login-card {
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(15,23,42,.10);
+      padding: 32px 32px 28px;
+      border: 1px solid #e5e7eb;
+    }
+
+    /* TABS */
+    .login-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #f3f4f6;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+    .login-tab {
+      padding: 9px;
+      border-radius: 10px;
+      border: none;
+      background: none;
+      font-size: 13px;
+      font-weight: 600;
+      color: #6b7280;
+      cursor: pointer;
+      transition: background .18s, color .18s;
+    }
+    .login-tab.active {
+      background: #fff;
+      color: #1f3c88;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    }
+
+    /* PANEL */
+    .login-panel { display: none; }
+    .login-panel.active { display: block; }
+
+    /* FIELDS */
+    .login-field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+    .login-field label { font-size: 12px; font-weight: 600; color: #374151; }
+    .login-field .fw { position: relative; }
+    .login-field input {
+      width: 100%; box-sizing: border-box;
+      padding: 11px 38px 11px 14px;
+      border-radius: 12px;
+      border: 1.5px solid #d1d5db;
+      font-size: 14px;
+      background: #f9fafb;
+      outline: none;
+      transition: border .18s, box-shadow .18s, background .18s;
+    }
+    .login-field input:focus {
+      border-color: #00a79d;
+      box-shadow: 0 0 0 3px rgba(0,167,157,.12);
+      background: #fff;
+    }
+    .field-ico {
+      position: absolute; right: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: #9ca3af; pointer-events: none;
+    }
+    .field-ico.toggle { pointer-events: all; cursor: pointer; }
+
+    /* BUTTON */
+    .btn-auth {
+      width: 100%; padding: 13px;
+      border-radius: 14px; border: none;
+      background: linear-gradient(135deg, #1f3c88 0%, #00a79d 100%);
+      color: #fff; font-size: 15px; font-weight: 700;
+      cursor: pointer; margin-top: 4px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: opacity .18s, transform .1s;
+    }
+    .btn-auth:hover   { opacity: .92; }
+    .btn-auth:active  { transform: scale(.98); }
+    .btn-auth:disabled { opacity: .6; cursor: not-allowed; }
+
+    /* MESSAGES */
+    .auth-msg {
+      margin-top: 12px; padding: 10px 14px;
+      border-radius: 12px; font-size: 13px;
+      display: none;
+      align-items: flex-start; gap: 8px;
+    }
+    .auth-msg.err     { background:#fef2f2; border:1px solid #fecaca; color:#b91c1c; display:flex; }
+    .auth-msg.ok      { background:#f0fdf4; border:1px solid #bbf7d0; color:#15803d; display:flex; }
+    .auth-msg.pending { background:#fff7ed; border:1px solid #fed7aa; color:#9a3412; display:flex; }
+    .auth-msg.info    { background:#eff6ff; border:1px solid #bfdbfe; color:#1e3a8a; display:flex; }
+
+    /* FOOTER */
+    .login-footer { margin-top: 20px; text-align: center; font-size: 11px; color: #9ca3af; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 480px) {
+      .login-card { padding: 24px 18px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-wrap">
+  <div class="login-brand">
+    <img src="assets/logo.png" alt="Logo BSI" />
+    <div class="login-brand-text">
+      <div class="brand-title">BSI Scholarship Inspirasi</div>
+      <span class="brand-batch">Batch 5</span>
+    </div>
+  </div>
+
+  <div class="login-card">
+    <!-- LOGIN PANEL -->
+    <div class="login-panel active" id="panelLogin">
+      <form onsubmit="handleLogin(event)">
+        <div class="login-field">
+          <label>Email</label>
+          <div class="fw">
+            <input id="lEmail" type="email" placeholder="nama@email.com" required autocomplete="email" />
+            <span class="field-ico">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            </span>
+          </div>
+        </div>
+        <div class="login-field">
+          <label>Password</label>
+          <div class="fw">
+            <input id="lPw" type="password" placeholder="••••••••" required autocomplete="current-password" />
+            <span class="field-ico toggle" onclick="togglePw('lPw', this)">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </span>
+          </div>
+        </div>
+        <button type="submit" class="btn-auth" id="loginBtn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+          Masuk
+        </button>
+      </form>
+      <div class="auth-msg" id="loginMsg"></div>
+    </div>
+
+    <div class="login-footer">&copy; BSI Scholarship Inspirasi Batch 5</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL      = "https://iyfwaqwmnmjfagszttts.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5ZndhcXdtbm1qZmFnc3p0dHRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NTEwMTgsImV4cCI6MjA4MzQyNzAxOH0.f2xb_aQDIj4tIPKwTTC9dgIi-9qFv0G252T5uo9XwXo";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// Sudah login? langsung ke home
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    const { data: prof } = await sb.from("profiles").select("approved").eq("id", session.user.id).single();
+    if (prof?.approved) { window.location.replace("index.html"); return; }
+    await sb.auth.signOut();
+  }
+})();
+
+/* ===== TAB ===== */
+function switchTab(tab) {
+  document.querySelectorAll(".login-tab").forEach((t, i) =>
+    t.classList.toggle("active", (tab === "login" ? i === 0 : i === 1))
+  );
+  document.getElementById("panelLogin").classList.toggle("active", tab === "login");
+  document.getElementById("panelRegister").classList.toggle("active", tab === "register");
+}
+
+/* ===== TOGGLE PASSWORD ===== */
+function togglePw(id, btn) {
+  const input = document.getElementById(id);
+  const show  = input.type === "password";
+  input.type  = show ? "text" : "password";
+  btn.innerHTML = show
+    ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+    : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>`;
+}
+
+/* ===== MSG ===== */
+function showMsg(elId, text, type) {
+  const el  = document.getElementById(elId);
+  const ico = {
+    err:     `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+    ok:      `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>`,
+    pending: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+    info:    `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`,
+  };
+  el.className = "auth-msg " + type;
+  el.innerHTML = (ico[type] || "") + `<span>${text}</span>`;
+}
+
+function setBtnLoading(id, loading, label, icon) {
+  const btn = document.getElementById(id);
+  btn.disabled = loading;
+  btn.innerHTML = loading
+    ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg> Memproses...`
+    : icon + " " + label;
+}
+
+/* ===== LOGIN ===== */
+async function handleLogin(e) {
+  e.preventDefault();
+  setBtnLoading("loginBtn", true);
+
+  const email = document.getElementById("lEmail").value.trim();
+  const pw    = document.getElementById("lPw").value;
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
+
+  if (error) {
+    showMsg("loginMsg", "Email atau password salah.", "err");
+    setBtnLoading("loginBtn", false,
+      "Masuk",
+      `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>`
+    );
+    return;
+  }
+
+  // Cek status approved
+  const { data: prof, error: profErr } = await sb.from("profiles").select("approved, role").eq("id", data.user.id).single();
+
+  if (profErr) {
+    // RLS atau query error — coba baca via user_metadata sebagai fallback
+    console.warn("Profile query error:", profErr);
+    // Jika query gagal tapi user sudah login, tetap lanjutkan ke home
+    showMsg("loginMsg", "Login berhasil! Mengalihkan...", "ok");
+    setTimeout(() => { window.location.replace("index.html"); }, 700);
+    return;
+  }
+
+  if (!prof || !prof.approved) {
+    await sb.auth.signOut();
+    showMsg("loginMsg", "Akunmu sedang menunggu persetujuan admin. Silakan coba lagi setelah disetujui.", "pending");
+    setBtnLoading("loginBtn", false,
+      "Masuk",
+      `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>`
+    );
+    return;
+  }
+
+  showMsg("loginMsg", "Login berhasil! Mengalihkan...", "ok");
+  setTimeout(() => {
+    window.location.replace(prof.role === "admin" ? "admin.html" : "index.html");
+  }, 700);
+}
+
+/* ===== REGISTER ===== */
+async function handleRegister(e) {
+  e.preventDefault();
+
+  const name = document.getElementById("rName").value.trim();
+  const email = document.getElementById("rEmail").value.trim();
+  const pw    = document.getElementById("rPw").value;
+  const pwc   = document.getElementById("rPwC").value;
+
+  if (pw !== pwc) {
+    showMsg("registerMsg", "Konfirmasi password tidak cocok.", "err"); return;
+  }
+  if (pw.length < 6) {
+    showMsg("registerMsg", "Password minimal 6 karakter.", "err"); return;
+  }
+
+  setBtnLoading("registerBtn", true);
+
+  const { data, error } = await sb.auth.signUp({ email, password: pw, options: { data: { full_name: name } } });
+
+  if (error) {
+    showMsg("registerMsg", "Gagal mendaftar: " + error.message, "err");
+    setBtnLoading("registerBtn", false, "Kirim Pendaftaran",
+      `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>`
+    );
+    return;
+  }
+
+  // Update nama di profil (trigger sudah buat record)
+  if (data.user) {
+    await sb.from("profiles").update({ full_name: name }).eq("id", data.user.id);
+    // Langsung sign out — user harus tunggu approval
+    await sb.auth.signOut();
+  }
+
+  setBtnLoading("registerBtn", false, "Kirim Pendaftaran",
+    `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>`
+  );
+  showMsg("registerMsg",
+    "Pendaftaran berhasil! Akunmu sedang menunggu persetujuan admin. Kamu akan dihubungi setelah disetujui.",
+    "info"
+  );
+}
+</script>
+<style>@keyframes spin { to { transform: rotate(360deg); } }</style>
+</body>
+</html>

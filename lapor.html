@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lapor | BSI Scholarship Inspirasi — Batch 5</title>
+    <link rel="icon" href="assets/logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="assets/logo.png" />
+    <link rel="stylesheet" href="assets/style.css" />
+</head>
+
+<body data-page="form" data-form-slug="lapor" data-page="lapor">
+
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/logo.png" alt="BSI">
+    <div class="sidebar-brand-text">
+      <div class="sidebar-brand-title">BSIS Inspirasi</div>
+      <span class="sidebar-brand-sub">Batch 5</span>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Menu</div>
+      <a href="index.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-5H9v5H4a1 1 0 0 1-1-1V9.5z"/></svg>
+        Home
+      </a>
+      <a href="list-form.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+        List Form
+      </a>
+      <a href="rekap.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Rekap Aktivitas
+      </a>
+      <a href="lapor.html" class="sidebar-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Lapor
+      </a>
+    <div class="sidebar-admin-group" id="adminGroup" style="display:none;">
+      <div class="sidebar-section-label" style="margin-top:16px;">Portal Admin</div>
+      <a href="admin.html" id="navAdminLink" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Kelola Pengguna
+      </a>
+      <a href="admin-forms.html" class="sidebar-link" id="navAdminForms">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14l2 2 4-4"/></svg>
+        Kelola Form
+      </a>
+      <a href="admin-awardee.html" class="sidebar-link" id="navAdminAwardee">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        Data Awardee
+      </a>
+      <a href="admin-pengumuman.html" class="sidebar-link" id="navAdminAnnouncement">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Pengumuman
+      </a>
+      <a href="admin-rekap.html" class="sidebar-link" id="navAdminRekap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Laporan & Ekspor
+      </a>
+      <a href="admin-settings.html" class="sidebar-link" id="navAdminSettings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Pengaturan
+      </a>
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <a href="profile.html" class="sidebar-link" id="sidebarUserLink">
+      <span class="sidebar-user-avatar" id="sidebarAvatar">?</span>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebarEmail">Memuat...</div>
+        <div class="sidebar-user-role" id="sidebarRole">BSI Scholarship</div>
+      </div>
+    </a>
+    <button class="sidebar-logout" onclick="authLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Keluar dari Akun
+    </button>
+  </div>
+  <div class="sidebar-copyright">&copy; 2026 BSI Scholarship Inspirasi</div>
+</aside>
+<div class="app-main">
+
+<header class="app-header">
+  <button class="app-header-toggle" onclick="toggleSidebar()" aria-label="Menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="app-header-title">Lapor</div>
+    <div class="app-header-right">
+    <div class="header-user-info" id="headerUserInfo">
+      <div class="header-greeting"><span id="headerGreeting">Selamat datang,</span> <strong id="headerName">...</strong> <span class="header-role-badge" id="headerRoleBadge">Awardee</span></div><div id="headerSubInfo" style="font-size:11px;color:#6b7280;display:none;"></div>
+    </div>
+    <a href="profile.html" class="header-avatar-btn" id="navUserBtn">
+      <span class="header-avatar" id="headerAvatar">?</span>
+    </a>
+  </div>
+</header>
+  <main class="app-content">
+  <div class="page--split">
+    <section class="split-left card card--guide">
+        <div class="pill pill--blue">Informasi Penting</div>
+        <h1 class="card-title card-title--big">🚨Form Lapor</h1>
+        <p class="card-text">
+        </p>
+        <ul class="list">
+            <li>Ketik nama lengkap kamu di kolom yang tersedia.</li>
+            <li>Klik Verifikasi Identitas dan pastikan data sudah benar.</li>
+            <li>Klik Buka Google Form & Lanjutkan.</li>
+            <li>Isi Google Form, lalu klik Kirim / Submit.</li>
+            <li>Simpan bukti submit email Google Form untuk arsip pribadi.</li>
+        </ul>
+        <div class="guide-placeholder">
+            <span class="guide-placeholder-label">Tenang,jangan panik ya!</span>
+            <p>
+            Jika kamu memliki kendala terkait kehadiran, pengisian tes, kesalahan data diri, 
+            mengganti nomor WhatsApp atau email yang digunakan dalam program BSI Scholarship,
+            atau kendala yang kamu hadapi selama mengikuti program pembinaan. 
+            Silakan lapor agar data di sistem tetap akurat.
+            </p>
+        </div>
+    </section>
+
+    <section class="split-right card card--form-panel">
+            <!-- MOBILE TITLE (hanya muncul di mobile) -->
+        <div class="mobile-form-title">
+            <span class="hero-badge">Form Pengisian</span>
+            <h1 class="card-title card-title--big">🚨Form Lapor</h1>
+            <p class="card-text">
+                Form Lapor BSI Scholarship Inspirasi Batch 5.
+            </p>
+        </div>
+        <div class="alert alert--warning" id="form-banner">
+            <strong>Perhatian.</strong>
+            <span>Cukup ketik nama lengkapmu, lalu verifikasi identitas.
+Jika identitas sudah sesuai dengan dirimu, lanjutkan Buka Google Form.</span>
+        </div>
+
+        <form class="nim-form" onsubmit="return handleFormSubmit(event)">
+            <label for="nim" class="nim-label">Ketik Nama Lengkap</label>
+
+            <p class="nim-info">
+                 Nomor induk akan muncul otomatis setelah kamu mengetik nama.
+            </p>
+
+            <!-- === INPUT + AUTOCOMPLETE (DISAMAKAN DENGAN FORM YANG BERHASIL) === -->
+            <div class="nim-field-wrapper">
+                <input
+                    id="nim"
+                    name="nim"
+                    type="text"
+                    class="nim-input"
+                    placeholder="Contoh: Budi Santoso"
+                    autocomplete="off"
+                    required
+                />
+                <div id="nim-suggestions" class="nim-suggestion-box"></div>
+            </div>
+
+            <p class="nim-hint">
+                Pilih nama kamu dari daftar yang muncul. Lalu klik "Verifikasi Identitas"
+            </p>
+
+            <button type="submit" class="btn btn-success btn-full">
+                Verifikasi Identitas
+            </button>
+        </form>
+
+        <div id="cek-result" class="cek-result"></div>
+
+        <div class="tips-box">
+            <h3 class="tips-title">Tips Penting💡</h3>
+            <ul class="list">
+                <li>Kamu akan diarahkan ke Google Form untuk mengisi Form Lapor.</li>
+                <li>Di Google Form, identitas akan terisi otomatis. Tidak perlu mengisi ulang.</li>
+                <li>Jika muncul pesan “Continue current draft?”, klik tombol "Continue" lalu lanjutkan mengisi form.</li>
+                <li>Gunakan Email aktif (untuk konfirmasi dan arsip pribadi).</li>
+                <li>Jika terjadi error, coba refresh halaman.</li>
+            </ul>
+        </div>
+    </section>
+  </div>
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="scripts/main.js"></script>
+<script src="assets/auth.js"></script>
+  </main>
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+</script>
+<nav class="mob-nav" id="mobNav">
+  <a href="index.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="list-form.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="12" height="4" rx="1"/></svg>
+    <span>Form</span>
+  </a>
+  <a href="rekap.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <span>Rekap</span>
+  </a>
+  <a href="lapor.html" class="mob-nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>Lapor</span>
+  </a>
+  <a href="admin.html" id="mobNavAdmin" class="mob-nav-item" style="display:none;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span>Admin</span>
+  </a>
+  <a href="profile.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profil</span>
+  </a>
+</nav>
+</body>
+</html>

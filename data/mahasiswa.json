@@ -1,0 +1,14 @@
+[
+  {
+    "nim": "I2400001",
+    "nama": "Sharia Young Leader 1",
+    "kampus": "BSI Jakarta",
+    "email": "syll@example.com"
+  },
+  {
+    "nim": "P2400002",
+    "nama": "Sharia Young Leader 2",
+    "kampus": "BSI Bandung",
+    "email": "syl2@example.com"
+  }
+]
