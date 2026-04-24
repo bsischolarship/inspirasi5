@@ -3745,3 +3745,5 @@ body[data-page] {
   .hero--dashboard { padding: 24px 18px 20px !important; }
   .hero--dashboard .hero-title { font-size: 22px !important; }
 }
+
+.badge-lecture { background: linear-gradient(135deg,#ede9fe,#ddd6fe); color: #6d28d9; }

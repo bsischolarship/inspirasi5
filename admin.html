@@ -429,6 +429,14 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
         Galeri Saya
       </a>
+
+      <div class="sidebar-lecture-group" id="lectureGroup" style="display:none;">
+        <div class="sidebar-section-label" style="margin-top:16px;">Portal Lecturer</div>
+        <a href="lecture.html" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          Dashboard Lecturer
+        </a>
+      </div>
     <div class="sidebar-admin-group" id="adminGroup" style="display:none;">
       <div class="sidebar-section-label" style="margin-top:16px;">Portal Admin</div>
       <a href="admin.html" id="navAdminLink" class="sidebar-link active">
@@ -957,27 +965,42 @@ async function submitAddUser() {
   btn.disabled = true; btn.textContent = 'Memproses...';
 
   try {
-    const sb = window._supabase;
+    // Supabase URL + anon key (sama dengan yang ada di auth.js; anon key aman di-expose)
+    const SUPABASE_URL      = 'https://iyfwaqwmnmjfagszttts.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5ZndhcXdtbm1qZmFnc3p0dHRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NTEwMTgsImV4cCI6MjA4MzQyNzAxOH0.f2xb_aQDIj4tIPKwTTC9dgIi-9qFv0G252T5uo9XwXo';
 
-    // 1. Buat akun via Supabase Auth (sign up tanpa auto-login)
-    const { data: authData, error: authErr } = await sb.auth.admin
-      ? await sb.auth.admin.createUser({ email, password: pw, email_confirm: true, user_metadata: { full_name: name } })
-      : await sb.auth.signUp({ email, password: pw, options: { data: { full_name: name } } });
+    // Buat client terisolasi agar session admin saat ini tidak tersentuh
+    // (supabase-js default auto-signin setelah signUp → admin bakal kelogout tanpa ini)
+    const tmpClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession:    false,
+        autoRefreshToken:  false,
+        storageKey:        'signup-tmp-' + Date.now(),
+      }
+    });
 
+    // 1. Sign up via client terisolasi
+    const { data: authData, error: authErr } = await tmpClient.auth.signUp({
+      email,
+      password: pw,
+      options: { data: { full_name: name } }
+    });
     if (authErr) throw authErr;
 
-    const uid = authData?.user?.id || authData?.id;
-    if (!uid) throw new Error('Gagal mendapatkan user ID');
+    const uid = authData?.user?.id;
+    if (!uid) throw new Error('Gagal mendapatkan user ID dari Supabase');
 
-    // 2. Upsert profil dengan role & approved
-    const approved = true;
-    const { error: profErr } = await sb.from('profiles').upsert({
-      id: uid, email, full_name: name, role, approved,
+    // 2. Upsert profil via main client (admin's auth context, masih login)
+    const { error: profErr } = await window._supabase.from('profiles').upsert({
+      id: uid, email, full_name: name, role, approved: true,
     });
     if (profErr) throw profErr;
 
     msg.className = 'au-msg ok';
-    msg.textContent = `Akun "${name}" berhasil dibuat sebagai ${role}.`;
+    const needsConfirm = !authData?.user?.email_confirmed_at;
+    msg.textContent = needsConfirm
+      ? `Akun "${name}" dibuat sebagai ${role}. User perlu konfirmasi email sebelum bisa login.`
+      : `Akun "${name}" berhasil dibuat sebagai ${role}.`;
     toast(`Pengguna ${name} berhasil ditambahkan`, 'ok');
     loadUsers();
   } catch (e) {

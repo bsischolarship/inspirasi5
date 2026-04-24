@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Lecture | BSI Scholarship Inspirasi</title>
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    .lc-page { max-width: 1280px; margin: 0 auto; padding: 28px 20px 80px; }
+
+    /* Hero */
+    .lc-hero {
+      position:relative; overflow:hidden; border-radius:20px;
+      margin-bottom:20px;
+      background:
+        radial-gradient(900px 240px at -5% -20%, rgba(124, 58, 237, .15), transparent 60%),
+        radial-gradient(700px 200px at 110% 120%, rgba(13, 148, 136, .12), transparent 60%),
+        linear-gradient(135deg, #6d28d9 0%, #0d9488 100%);
+      color:#fff; padding:26px 28px;
+      box-shadow: 0 12px 30px rgba(109, 40, 217, .18);
+    }
+    .lc-hero-bg {
+      position:absolute; inset:0; pointer-events:none;
+      background-image:
+        radial-gradient(circle at 10% 80%, rgba(255,255,255,.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 20%, rgba(251,191,36,.12) 0%, transparent 45%);
+    }
+    .lc-hero-content { position:relative; z-index:1; display:flex; align-items:center; gap:22px; flex-wrap:wrap; }
+    .lc-hero-avatar {
+      width:72px; height:72px; border-radius:18px; flex-shrink:0;
+      background:linear-gradient(135deg,#fbbf24,#d97706);
+      display:flex; align-items:center; justify-content:center;
+      font-size:24px; font-weight:800; color:#fff;
+      box-shadow: 0 6px 16px rgba(217,119,6,.4);
+    }
+    .lc-hero-text { flex:1; min-width:260px; }
+    .lc-hero-label {
+      display:inline-flex; align-items:center; gap:5px;
+      background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.3);
+      padding:4px 11px; border-radius:99px; font-size:10.5px; font-weight:700;
+      letter-spacing:.05em; text-transform:uppercase; margin-bottom:8px;
+      backdrop-filter:blur(6px);
+    }
+    .lc-hero-title { font-size:24px; font-weight:800; margin:0 0 4px; letter-spacing:-.01em; line-height:1.2; }
+    .lc-hero-subtitle { font-size:13px; color:rgba(255,255,255,.85); margin:0; line-height:1.5; max-width:620px; }
+    .lc-hero-stats {
+      display:flex; align-items:center; gap:14px;
+      background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.22);
+      border-radius:14px; padding:12px 20px;
+      backdrop-filter:blur(8px);
+    }
+    .lhs-item { text-align:center; min-width:70px; }
+    .lhs-num { font-size:24px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums; }
+    .lhs-lbl { font-size:10.5px; color:rgba(255,255,255,.8); margin-top:4px; text-transform:uppercase; letter-spacing:.05em; font-weight:600; }
+    .lhs-divider { width:1px; height:36px; background:rgba(255,255,255,.28); }
+
+    /* Hero meta row (profile chips below main info) */
+    .lc-hero-meta {
+      width:100%; display:flex; flex-wrap:wrap; gap:8px;
+      padding-top:14px; margin-top:4px;
+      border-top:1px solid rgba(255,255,255,.18);
+    }
+    .lc-chip {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:5px 12px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.22);
+      border-radius:99px;
+      font-size:11.5px; font-weight:600;
+      color:rgba(255,255,255,.92);
+      backdrop-filter:blur(4px);
+      text-decoration:none;
+      transition: background .15s, transform .1s;
+    }
+    a.lc-chip:hover { background:rgba(255,255,255,.26); transform:translateY(-1px); color:#fff; }
+    .lc-chip svg { width:12px; height:12px; opacity:.85; flex-shrink:0; }
+    .lc-chip b { font-weight:700; color:#fff; }
+
+    /* Read-only notice */
+    .lc-notice {
+      display:flex; align-items:flex-start; gap:10px;
+      background:linear-gradient(90deg, #f0f7ff, #fff);
+      border:1px solid #bfdbfe; border-radius:12px;
+      padding:12px 16px; margin-bottom:18px;
+      font-size:12.5px; color:#1e3a8a; line-height:1.5;
+    }
+    .lc-notice svg { width:16px; height:16px; flex-shrink:0; color:#3b82f6; margin-top:1px; }
+    .lc-notice b { color:#1d4ed8; }
+
+    /* Stats cards grid */
+    .lc-stats { display:grid; grid-template-columns: repeat(5, 1fr); gap:14px; margin-bottom:20px; }
+    .lc-stat { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:14px 16px; display:flex; align-items:center; gap:12px; }
+    .lc-stat-icon { width:40px; height:40px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .lc-stat-icon svg { width:20px; height:20px; }
+    .si--purple { background:#ede9fe; color:#7c3aed; }
+    .si--teal   { background:#ccfbf1; color:#0d9488; }
+    .si--blue   { background:#dbeafe; color:#1d4ed8; }
+    .si--gold   { background:#fef3c7; color:#b45309; }
+    .si--pink   { background:#fce7f3; color:#be185d; }
+    .lc-stat-val { font-size:22px; font-weight:800; color:#111827; line-height:1; font-variant-numeric:tabular-nums; }
+    .lc-stat-lbl { font-size:10.5px; color:#6b7280; margin-top:3px; letter-spacing:.02em; }
+    .lc-stat-sub { font-size:9.5px; color:#9ca3af; margin-top:2px; }
+
+    /* Tabs */
+    .lc-tabs { display:flex; gap:0; border-bottom:2px solid #e5e7eb; margin-bottom:18px; overflow-x:auto; scrollbar-width:none; }
+    .lc-tabs::-webkit-scrollbar { display:none; }
+    .lc-tab {
+      padding:10px 16px; font-size:12.5px; font-weight:600; color:#9ca3af;
+      background:none; border:none; border-bottom:3px solid transparent; margin-bottom:-2px;
+      cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px;
+      transition:color .15s, border-color .15s, background .15s; border-radius:6px 6px 0 0;
+    }
+    .lc-tab:hover { color:#374151; background:#f9fafb; }
+    .lc-tab[data-tab="dashboard"]  { --tc:#7c3aed; }
+    .lc-tab[data-tab="awardee"]    { --tc:#0d9488; }
+    .lc-tab[data-tab="rekap"]      { --tc:#0055a5; }
+    .lc-tab[data-tab="prestasi"]   { --tc:#b45309; }
+    .lc-tab[data-tab="organisasi"] { --tc:#be185d; }
+    .lc-tab[data-tab="leaderboard"]{ --tc:#d97706; }
+    .lc-tab.active { color:var(--tc); border-bottom-color:var(--tc); background:#fff; }
+    .lc-tab-badge { font-size:10px; font-weight:700; padding:1px 6px; border-radius:99px; background:#f3f4f6; color:#6b7280; }
+    .lc-tab.active .lc-tab-badge { background:color-mix(in srgb,var(--tc) 12%,#fff); color:var(--tc); }
+    .lc-tab-panel { display:none; }
+    .lc-tab-panel.active { display:block; }
+
+    /* Cards for insight sections */
+    .insight-grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+    .insight-card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:18px 20px; }
+    .insight-card.full { grid-column: 1 / -1; }
+    .insight-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid #f1f5f9; }
+    .insight-title { font-size:13px; font-weight:800; color:#111827; display:flex; align-items:center; gap:7px; }
+    .insight-title svg { width:15px; height:15px; color:#6b7280; }
+    .insight-sub { font-size:11px; color:#9ca3af; }
+
+    /* Rank lists */
+    .rank-list { display:flex; flex-direction:column; gap:8px; }
+    .rank-item {
+      display:flex; align-items:center; gap:10px;
+      padding:9px 11px; border-radius:9px; background:#f9fafb;
+      font-size:12px; cursor:pointer; transition: background .12s;
+    }
+    .rank-item:hover { background:#f3f4f6; }
+    .rank-pos {
+      width:26px; height:26px; border-radius:50%; background:#e5e7eb; color:#6b7280;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800; font-size:11px; flex-shrink:0;
+    }
+    .rank-pos.gold   { background:linear-gradient(135deg,#fbbf24,#d97706); color:#fff; }
+    .rank-pos.silver { background:linear-gradient(135deg,#d4d4d8,#71717a); color:#fff; }
+    .rank-pos.bronze { background:linear-gradient(135deg,#fb923c,#c2410c); color:#fff; }
+    .rank-name { flex:1; color:#111827; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .rank-meta { color:#6b7280; font-size:11px; white-space:nowrap; }
+    .rank-count { font-weight:800; color:#78350f; font-size:13px; background:#fef3c7; padding:2px 10px; border-radius:99px; border:1px solid #fcd34d; }
+
+    /* Aspect bars */
+    .aspect-bars { display:flex; flex-direction:column; gap:10px; }
+    .asp-bar-row { display:flex; align-items:center; gap:10px; font-size:12px; }
+    .asp-bar-lbl { flex: 0 0 140px; font-weight:600; color:#374151; }
+    .asp-bar-track { flex:1; height:22px; background:#f3f4f6; border-radius:6px; overflow:hidden; }
+    .asp-bar-fill { height:100%; display:flex; align-items:center; padding-left:10px; color:#fff; font-weight:700; font-size:11px; min-width:2px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+    .bf-mind { background:linear-gradient(90deg,#34d399,#059669); }
+    .bf-acc  { background:linear-gradient(90deg,#60a5fa,#1d4ed8); }
+    .bf-self { background:linear-gradient(90deg,#fbbf24,#d97706); }
+    .asp-bar-val { flex: 0 0 auto; font-weight:800; color:#111827; font-variant-numeric: tabular-nums; min-width:60px; text-align:right; }
+
+    /* Table toolbar */
+    .tbl-toolbar {
+      display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+      background:#fff; border:1px solid #e5e7eb; border-radius:14px 14px 0 0;
+      padding:12px 16px; border-bottom:1px solid #f1f5f9;
+      border-top:3px solid var(--toolbar-color, #7c3aed);
+    }
+    .tbl-toolbar-title { font-size:13px; font-weight:800; color:var(--toolbar-color, #7c3aed); margin-right:4px; flex-shrink:0; }
+    .tbl-search {
+      display:flex; align-items:center; gap:7px;
+      background:#f9fafb; border:1.5px solid #e5e7eb; border-radius:8px;
+      padding:6px 11px; min-width:180px; flex:1;
+    }
+    .tbl-search input { background:none; border:none; outline:none; font-size:12.5px; color:#374151; width:100%; }
+    .tbl-search svg { color:#9ca3af; flex-shrink:0; }
+    .tbl-filter {
+      padding:7px 10px; font-size:12.5px; border:1.5px solid #e5e7eb;
+      border-radius:8px; background:#f9fafb; color:#374151; outline:none; cursor:pointer;
+    }
+    .tbl-filter:focus { border-color:#7c3aed; }
+    .btn-action {
+      padding:8px 14px; border:none; border-radius:9px; font-size:12.5px; font-weight:700;
+      cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+      transition:all .15s; white-space:nowrap;
+    }
+    .btn-gold { background:#d97706; color:#fff; }
+    .btn-gold:hover { background:#b45309; }
+    .btn-action svg { width:14px; height:14px; }
+
+    /* Table */
+    .tbl-wrap { background:#fff; border:1px solid #e5e7eb; border-radius:0 0 14px 14px; border-top:none; overflow:hidden; }
+    .tbl-scroll { overflow-x:auto; }
+    .lc-table { width:max-content; min-width:100%; border-collapse:collapse; font-size:12.5px; }
+    .lc-table th {
+      background:#f8fafc; padding:10px 14px; text-align:left;
+      font-size:10.5px; font-weight:700; color:#64748b; text-transform:uppercase;
+      letter-spacing:.05em; border-bottom:2px solid #e5e7eb; white-space:nowrap;
+    }
+    .lc-table td { padding:10px 14px; border-bottom:1px solid #f1f5f9; color:#374151; vertical-align:middle; white-space:nowrap; }
+    .lc-table tbody tr:last-child td { border-bottom:none; }
+    .lc-table tbody tr:hover td { background:#f8fafc; cursor:pointer; }
+    .lc-table td.td-name { font-weight:600; color:#111827; white-space:normal; min-width:140px; max-width:260px; }
+    .lc-table td.td-mono { font-family:ui-monospace,Menlo,monospace; font-size:11.5px; color:#374151; }
+    .lc-table td.td-score { font-weight:800; color:#78350f; font-variant-numeric:tabular-nums; text-align:right; }
+    .lc-table td.td-pct { font-variant-numeric:tabular-nums; text-align:right; color:#6b7280; }
+    .rank-chip {
+      display:inline-flex; align-items:center; justify-content:center;
+      min-width:32px; height:26px; padding:0 8px;
+      border-radius:8px; font-weight:800; font-size:12px;
+      background:#f3f4f6; color:#6b7280;
+    }
+    .rank-chip.r-1 { background:linear-gradient(135deg,#fbbf24,#d97706); color:#fff; }
+    .rank-chip.r-2 { background:linear-gradient(135deg,#d4d4d8,#71717a); color:#fff; }
+    .rank-chip.r-3 { background:linear-gradient(135deg,#fb923c,#c2410c); color:#fff; }
+    .mini-bar { display:inline-block; vertical-align:middle; width:70px; height:8px; background:#f3f4f6; border-radius:99px; overflow:hidden; margin-right:6px; }
+    .mini-bar-fill { height:100%; border-radius:99px; transition: width .4s ease; }
+    .mbf-mind { background:linear-gradient(90deg,#34d399,#059669); }
+    .mbf-acc  { background:linear-gradient(90deg,#60a5fa,#1d4ed8); }
+    .mbf-self { background:linear-gradient(90deg,#fbbf24,#d97706); }
+
+    /* Tingkatan/Juara badges (prestasi) */
+    .tg-badge, .jr-badge {
+      display:inline-flex; align-items:center; padding:3px 8px; border-radius:6px;
+      font-size:10.5px; font-weight:700; white-space:nowrap;
+    }
+    .tg-int { background:#fef3c7; color:#92400e; border:1px solid #fde68a; }
+    .tg-nas { background:#dbeafe; color:#1e3a8a; border:1px solid #bfdbfe; }
+    .tg-reg { background:#ccfbf1; color:#115e59; border:1px solid #99f6e4; }
+    .tg-lok { background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
+    .jr-j1  { background:#fef3c7; color:#92400e; }
+    .jr-j2  { background:#f1f5f9; color:#475569; }
+    .jr-j3  { background:#fed7aa; color:#9a3412; }
+    .jr-jh  { background:#e0e7ff; color:#4338ca; }
+    .jr-lain{ background:#f3f4f6; color:#6b7280; }
+
+    /* Pagination */
+    .tbl-footer {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:11px 16px; border-top:1px solid #f3f4f6;
+      background:#fff; font-size:12px; color:#6b7280; flex-wrap:wrap; gap:8px;
+    }
+    .pg-btns { display:flex; gap:4px; }
+    .btn-pg {
+      padding:4px 10px; border:1.5px solid #e5e7eb; border-radius:7px;
+      background:#fff; font-size:12px; font-weight:600; color:#374151;
+      cursor:pointer; transition:all .15s; min-width:32px; text-align:center;
+    }
+    .btn-pg:hover:not(:disabled) { background:#f3f4f6; }
+    .btn-pg.active { background:#7c3aed; color:#fff; border-color:#7c3aed; }
+    .btn-pg:disabled { opacity:.35; cursor:not-allowed; }
+    .tbl-empty { text-align:center; padding:56px 20px; color:#9ca3af; }
+    .tbl-empty p { font-size:13px; margin:0 0 4px; color:#6b7280; }
+    .tbl-empty small { font-size:11.5px; color:#9ca3af; }
+
+    /* Modal */
+    .lc-modal-bg {
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:500;
+      align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(2px);
+    }
+    .lc-modal-bg.show { display:flex; }
+    .lc-modal {
+      background:#fff; border-radius:18px; padding:26px;
+      max-width:760px; width:100%; max-height:92vh; overflow-y:auto;
+      box-shadow: 0 20px 50px rgba(0,0,0,.2);
+    }
+    .lc-modal-head { display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid #f1f5f9; margin-bottom:14px; }
+    .lc-modal-avatar {
+      width:54px; height:54px; border-radius:14px; flex-shrink:0;
+      background:linear-gradient(135deg,#6d28d9,#0d9488); color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800; font-size:17px;
+    }
+    .lc-modal-name { font-size:16px; font-weight:800; color:#111827; margin-bottom:3px; }
+    .lc-modal-sub { font-size:12px; color:#6b7280; }
+    .info-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:0 16px; }
+    .info-row { display:flex; flex-direction:column; padding:8px 0; border-bottom:1px dashed #f1f5f9; }
+    .ir-label { font-size:10.5px; color:#6b7280; margin-bottom:2px; text-transform:uppercase; letter-spacing:.03em; }
+    .ir-value { font-size:13px; color:#111827; font-weight:600; }
+
+    .breakdown-table { width:100%; border-collapse:collapse; font-size:12.5px; }
+    .breakdown-table th { background:#f8fafc; padding:8px 10px; text-align:left; font-size:10.5px; font-weight:700; color:#64748b; text-transform:uppercase; letter-spacing:.04em; border-bottom:1px solid #e5e7eb; }
+    .breakdown-table td { padding:8px 10px; border-bottom:1px solid #f1f5f9; color:#374151; }
+    .breakdown-table td.val { font-weight:800; color:#78350f; font-variant-numeric:tabular-nums; text-align:right; }
+    .breakdown-table td.center { text-align:center; font-variant-numeric:tabular-nums; }
+    .breakdown-table tr.group-row td { background:#fef3c7; font-weight:800; color:#78350f; }
+    .breakdown-table tr.total-row td { background:linear-gradient(135deg,#fef3c7,#fde68a); font-weight:800; color:#78350f; font-size:14px; }
+    .btn-cancel {
+      padding:9px 16px; font-size:12.5px; font-weight:600;
+      background:#fff; border:1.5px solid #e5e7eb; border-radius:9px;
+      color:#374151; cursor:pointer; transition:background .15s;
+    }
+    .btn-cancel:hover { background:#f3f4f6; }
+    .lc-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:18px; }
+
+    /* Rekap matrix */
+    .rekap-matrix { overflow-x:auto; }
+    .rekap-matrix table { min-width:800px; width:100%; border-collapse:collapse; font-size:11.5px; }
+    .rekap-matrix th, .rekap-matrix td { padding:6px 8px; border:1px solid #f1f5f9; text-align:center; white-space:nowrap; }
+    .rekap-matrix th { background:#f8fafc; font-weight:700; color:#64748b; font-size:10px; text-transform:uppercase; }
+    .rekap-matrix td.nama { text-align:left; font-weight:600; color:#111827; min-width:140px; }
+    .rekap-matrix td.pct { font-weight:800; font-variant-numeric:tabular-nums; }
+    .rekap-matrix td.pct.high { background:#dcfce7; color:#166534; }
+    .rekap-matrix td.pct.mid  { background:#fef3c7; color:#854d0e; }
+    .rekap-matrix td.pct.low  { background:#fee2e2; color:#991b1b; }
+
+    /* View toggle (leaderboard) */
+    .lb-view-toggle {
+      display:flex; gap:6px; flex-wrap:wrap;
+      background:#fff; border:1px solid #e5e7eb; border-radius:12px;
+      padding:6px; margin-bottom:12px;
+    }
+    .lvt-btn {
+      flex:1 1 auto; min-width:100px;
+      display:inline-flex; align-items:center; justify-content:center; gap:3px; flex-direction:column;
+      padding:8px 12px; font-family:inherit; font-size:12px; font-weight:700;
+      border:1.5px solid transparent; border-radius:9px; background:transparent;
+      color:#6b7280; cursor:pointer; transition:all .15s; line-height:1.15;
+    }
+    .lvt-btn:hover { background:#f9fafb; color:#374151; }
+    .lvt-btn .lvt-main { font-size:12.5px; }
+    .lvt-btn .lvt-sub { font-size:9.5px; font-weight:600; opacity:.7; }
+    .lvt-btn.active {
+      background:linear-gradient(135deg,#fef3c7,#fde68a);
+      color:#78350f; border-color:#fcd34d;
+      box-shadow:0 2px 6px rgba(217,119,6,.15);
+    }
+    @media(max-width:560px){
+      .lvt-btn { flex:1 1 calc(50% - 3px); min-width:0; }
+      .lvt-btn[data-view="all"] { flex:1 1 100%; }
+    }
+
+    /* Toast */
+    #lcToast {
+      position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+      padding: 10px 18px; font-size: 13px; font-weight: 600;
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.12);
+      opacity: 0; transform: translateY(10px); transition: all .25s ease;
+      pointer-events: none; display:flex; align-items:center; gap:8px; max-width:320px;
+    }
+    #lcToast.show { opacity:1; transform:translateY(0); }
+    #lcToast.ok { border-left: 3px solid #16a34a; }
+    #lcToast.err { border-left: 3px solid #dc2626; }
+    #lcToast.info { border-left: 3px solid #7c3aed; }
+
+    /* Not allowed guard */
+    .lc-guard {
+      min-height:70vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; padding:40px 20px; gap:8px;
+    }
+    .lc-guard svg { width:60px; height:60px; color:#ef4444; opacity:.6; margin-bottom:8px; }
+    .lc-guard h2 { font-size:18px; color:#111827; margin:0; font-weight:800; }
+    .lc-guard p { font-size:13px; color:#6b7280; max-width:400px; margin:6px 0 14px; line-height:1.5; }
+    .lc-guard a { display:inline-flex; align-items:center; gap:6px; padding:9px 16px; font-size:12.5px; font-weight:700; background:#7c3aed; color:#fff; text-decoration:none; border-radius:9px; }
+
+    /* Responsive */
+    @media(max-width:1100px){
+      .lc-stats { grid-template-columns:repeat(3,1fr); }
+      .insight-grid { grid-template-columns:1fr; }
+    }
+    @media(max-width:700px){
+      .lc-stats { grid-template-columns:repeat(2,1fr); }
+      .lc-hero-stats { width:100%; justify-content:center; }
+      .lc-hero-title { font-size:19px; }
+      .lc-hero-avatar { width:56px; height:56px; font-size:20px; }
+    }
+  </style>
+</head>
+
+<body data-page="lecture">
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <img src="assets/logo.png" alt="BSI">
+    <div class="sidebar-brand-text">
+      <div class="sidebar-brand-title">BSIS Inspirasi</div>
+      <span class="sidebar-brand-sub">Batch 5</span>
+    </div>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-label">Menu</div>
+    <a href="index.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-5H9v5H4a1 1 0 0 1-1-1V9.5z"/></svg>Home</a>
+    <a href="list-form.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>List Form</a>
+    <a href="rekap.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Rekap Aktivitas</a>
+    <a href="lapor.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Lapor</a>
+    <a href="galeri.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>Galeri Saya</a>
+
+    <div class="sidebar-lecture-group" id="lectureGroup" style="display:none;">
+      <div class="sidebar-section-label" style="margin-top:16px;">Portal Lecture</div>
+      <a href="lecture.html" class="sidebar-link active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        Dashboard Lecture
+      </a>
+    </div>
+
+    <div class="sidebar-admin-group" id="adminGroup" style="display:none;">
+      <div class="sidebar-section-label" style="margin-top:16px;">Portal Admin</div>
+      <a href="admin.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Kelola Pengguna</a>
+      <a href="admin-forms.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 14l2 2 4-4"/></svg>Kelola Form</a>
+      <a href="admin-awardee.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Data Awardee</a>
+      <a href="admin-pengumuman.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Pengumuman</a>
+      <a href="admin-rekap.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Laporan & Ekspor</a>
+      <a href="admin-prestasi.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>Kelola Prestasi</a>
+      <a href="admin-organisasi.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M20 8v6M23 11h-6"/></svg>Kelola Organisasi</a>
+      <a href="admin-leaderboard.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>Leaderboard</a>
+      <a href="admin-settings.html" class="sidebar-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Pengaturan</a>
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <a href="profile.html" class="sidebar-link" id="sidebarUserLink">
+      <span class="sidebar-user-avatar" id="sidebarAvatar">?</span>
+      <div class="sidebar-user-info">
+        <div class="sidebar-user-name" id="sidebarEmail">Memuat...</div>
+        <div class="sidebar-user-role" id="sidebarRole">BSI Scholarship</div>
+      </div>
+    </a>
+    <button class="sidebar-logout" onclick="authLogout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Keluar dari Akun
+    </button>
+  </div>
+  <div class="sidebar-copyright">&copy; 2026 BSI Scholarship Inspirasi</div>
+</aside>
+
+<div class="app-main">
+  <header class="app-header">
+    <button class="app-header-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="app-header-title">🎓 Portal Lecture</div>
+    <div class="app-header-right">
+      <div class="header-user-info" id="headerUserInfo">
+        <div class="header-greeting"><span id="headerGreeting">Selamat Datang,</span> <strong id="headerName">...</strong> <span class="header-role-badge" id="headerRoleBadge">Lecture</span></div>
+        <div id="headerSubInfo" style="font-size:11px;color:#6b7280;display:none;"></div>
+      </div>
+      <a href="profile.html" class="header-avatar-btn"><span class="header-avatar" id="headerAvatar">?</span></a>
+    </div>
+  </header>
+
+  <main class="app-content">
+    <div class="lc-page">
+
+      <!-- Guard (shown when non-lecture tries to access) -->
+      <div class="lc-guard" id="lcGuard" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <h2>Akses Khusus Lecture</h2>
+        <p>Halaman ini hanya tersedia untuk akun dengan role <b>Lecture</b>. Silakan kembali ke halaman utama.</p>
+        <a href="index.html">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Kembali ke Beranda
+        </a>
+      </div>
+
+      <!-- Main content (shown when authorized) -->
+      <div id="lcMain" style="display:none;">
+
+        <!-- Hero -->
+        <div class="lc-hero">
+          <div class="lc-hero-bg"></div>
+          <div class="lc-hero-content">
+            <div class="lc-hero-avatar" id="lcHeroAvatar">--</div>
+            <div class="lc-hero-text">
+              <div class="lc-hero-label">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>
+                <span>Lecture</span>
+                <span id="lcHeroRegion" style="display:none;">&nbsp;·&nbsp;<span id="lcHeroRegionText"></span></span>
+              </div>
+              <div class="lc-hero-title" id="lcHeroName">Memuat...</div>
+              <div class="lc-hero-subtitle" id="lcHeroSub">Panel pembimbingan awardee binaan Anda — pantau prestasi, kehadiran, organisasi, dan peringkat.</div>
+            </div>
+            <div class="lc-hero-stats">
+              <div class="lhs-item"><div class="lhs-num" id="lhsAwardee">—</div><div class="lhs-lbl">Awardee</div></div>
+              <div class="lhs-divider"></div>
+              <div class="lhs-item"><div class="lhs-num" id="lhsKampus">—</div><div class="lhs-lbl">Kampus</div></div>
+            </div>
+            <div class="lc-hero-meta" id="lcHeroMeta" style="display:none;"></div>
+          </div>
+        </div>
+
+        <div class="lc-notice">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <div><b>Mode Read-Only</b> · Portal ini menampilkan data awardee binaan Anda. Untuk perubahan data (edit/input prestasi, organisasi, kehadiran), silakan hubungi administrator. Anda tetap dapat mengunduh laporan dalam format Excel.</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="lc-stats" id="lcStats"></div>
+
+        <!-- Tabs -->
+        <div class="lc-tabs">
+          <button class="lc-tab active" data-tab="dashboard" onclick="switchTab('dashboard',this)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+            Dashboard
+          </button>
+          <button class="lc-tab" data-tab="awardee" onclick="switchTab('awardee',this)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            Daftar Awardee
+            <span class="lc-tab-badge" id="badge-awardee">—</span>
+          </button>
+          <button class="lc-tab" data-tab="rekap" onclick="switchTab('rekap',this)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Rekap Kehadiran
+          </button>
+          <button class="lc-tab" data-tab="prestasi" onclick="switchTab('prestasi',this)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>
+            Prestasi
+            <span class="lc-tab-badge" id="badge-prestasi">—</span>
+          </button>
+          <button class="lc-tab" data-tab="organisasi" onclick="switchTab('organisasi',this)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Organisasi
+            <span class="lc-tab-badge" id="badge-organisasi">—</span>
+          </button>
+          <button class="lc-tab" data-tab="leaderboard" onclick="switchTab('leaderboard',this)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+            Leaderboard
+          </button>
+        </div>
+
+        <!-- TAB: DASHBOARD -->
+        <div class="lc-tab-panel active" id="panel-dashboard">
+          <div class="insight-grid">
+            <div class="insight-card">
+              <div class="insight-head">
+                <div class="insight-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>Top Awardee (Skor Total)</div>
+                <span class="insight-sub">Peringkat keseluruhan</span>
+              </div>
+              <div id="topAwardee" class="rank-list"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            </div>
+            <div class="insight-card">
+              <div class="insight-head">
+                <div class="insight-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Top Kehadiran</div>
+                <span class="insight-sub">Mentoring + Pembinaan</span>
+              </div>
+              <div id="topHadir" class="rank-list"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            </div>
+            <div class="insight-card full">
+              <div class="insight-head">
+                <div class="insight-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>Rata-rata Pencapaian per Aspek</div>
+                <span class="insight-sub" id="dashSubtitle">Binaan Anda</span>
+              </div>
+              <div class="aspect-bars" id="aspectBars"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            </div>
+            <div class="insight-card full">
+              <div class="insight-head">
+                <div class="insight-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Butuh Perhatian</div>
+                <span class="insight-sub">Skor < 40% atau kehadiran rendah</span>
+              </div>
+              <div id="gapList"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: AWARDEE -->
+        <div class="lc-tab-panel" id="panel-awardee">
+          <div class="tbl-toolbar" style="--toolbar-color:#0d9488;">
+            <span class="tbl-toolbar-title">Daftar Awardee Binaan</span>
+            <div class="tbl-search">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="q-awardee" placeholder="Cari nama / NIM..." oninput="filterPanel('awardee')"/>
+            </div>
+            <select class="tbl-filter" id="fk-awardee" onchange="filterPanel('awardee')"><option value="">Semua Kampus</option></select>
+            <select class="tbl-filter" id="fkel-awardee" onchange="filterPanel('awardee')"><option value="">Semua Kelompok</option></select>
+            <button class="btn-action btn-gold" onclick="downloadAwardee()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Excel
+            </button>
+          </div>
+          <div class="tbl-wrap">
+            <div class="tbl-scroll"><div id="tbl-awardee"><div class="tbl-empty"><p>Memuat...</p></div></div></div>
+            <div class="tbl-footer" id="pg-awardee" style="display:none;"></div>
+          </div>
+        </div>
+
+        <!-- TAB: REKAP -->
+        <div class="lc-tab-panel" id="panel-rekap">
+          <div class="tbl-toolbar" style="--toolbar-color:#0055a5;">
+            <span class="tbl-toolbar-title">Rekap Kehadiran</span>
+            <div class="tbl-search">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="q-rekap" placeholder="Cari nama / NIM..." oninput="renderRekapMatrix()"/>
+            </div>
+            <span style="font-size:11px;color:#6b7280;flex:1;">Persentase kehadiran ✅ + TP per jenis kegiatan</span>
+            <button class="btn-action btn-gold" onclick="downloadRekap()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Excel
+            </button>
+          </div>
+          <div class="tbl-wrap">
+            <div class="rekap-matrix" id="rekap-matrix"><div class="tbl-empty"><p>Memuat...</p></div></div>
+          </div>
+        </div>
+
+        <!-- TAB: PRESTASI -->
+        <div class="lc-tab-panel" id="panel-prestasi">
+          <div class="tbl-toolbar" style="--toolbar-color:#b45309;">
+            <span class="tbl-toolbar-title">Prestasi Awardee Binaan</span>
+            <div class="tbl-search">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="q-prestasi" placeholder="Cari nama / keterangan..." oninput="renderPrestasi()"/>
+            </div>
+            <select class="tbl-filter" id="ft-prestasi" onchange="renderPrestasi()"><option value="">Semua Tingkatan</option></select>
+            <button class="btn-action btn-gold" onclick="downloadPrestasi()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Excel
+            </button>
+          </div>
+          <div class="tbl-wrap">
+            <div class="tbl-scroll"><div id="tbl-prestasi"><div class="tbl-empty"><p>Memuat...</p></div></div></div>
+            <div class="tbl-footer" id="pg-prestasi" style="display:none;"></div>
+          </div>
+        </div>
+
+        <!-- TAB: ORGANISASI -->
+        <div class="lc-tab-panel" id="panel-organisasi">
+          <div class="tbl-toolbar" style="--toolbar-color:#be185d;">
+            <span class="tbl-toolbar-title">Organisasi Awardee Binaan</span>
+            <div class="tbl-search">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="q-organisasi" placeholder="Cari nama / detail..." oninput="renderOrganisasi()"/>
+            </div>
+            <select class="tbl-filter" id="ft-organisasi" onchange="renderOrganisasi()"><option value="">Semua Tingkatan</option></select>
+            <button class="btn-action btn-gold" onclick="downloadOrganisasi()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Excel
+            </button>
+          </div>
+          <div class="tbl-wrap">
+            <div class="tbl-scroll"><div id="tbl-organisasi"><div class="tbl-empty"><p>Memuat...</p></div></div></div>
+            <div class="tbl-footer" id="pg-organisasi" style="display:none;"></div>
+          </div>
+        </div>
+
+        <!-- TAB: LEADERBOARD -->
+        <div class="lc-tab-panel" id="panel-leaderboard">
+          <div class="lb-view-toggle" role="tablist" aria-label="Pilih periode">
+            <button type="button" class="lvt-btn active" data-view="all" role="tab">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span class="lvt-main">All Time</span><span class="lvt-sub">Seluruh periode</span>
+            </button>
+            <button type="button" class="lvt-btn" data-view="q1" role="tab"><span class="lvt-main">Quartal 1</span><span class="lvt-sub">Des'25 – Feb'26</span></button>
+            <button type="button" class="lvt-btn" data-view="q2" role="tab"><span class="lvt-main">Quartal 2</span><span class="lvt-sub">Mar – Mei'26</span></button>
+            <button type="button" class="lvt-btn" data-view="q3" role="tab"><span class="lvt-main">Quartal 3</span><span class="lvt-sub">Jun – Agu'26</span></button>
+            <button type="button" class="lvt-btn" data-view="q4" role="tab"><span class="lvt-main">Quartal 4</span><span class="lvt-sub">Sep – Nov'26</span></button>
+          </div>
+          <div id="viewHintLb" style="display:none;background:linear-gradient(90deg,#fef3c7,#fff);border:1px solid #fcd34d;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#78350f;"></div>
+
+          <div class="tbl-toolbar" style="--toolbar-color:#d97706;">
+            <span class="tbl-toolbar-title">Ranking Awardee</span>
+            <div class="tbl-search">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="q-leaderboard" placeholder="Cari nama / NIM..." oninput="renderLeaderboard()"/>
+            </div>
+            <select class="tbl-filter" id="fsort-leaderboard" onchange="renderLeaderboard()">
+              <option value="total">Urutkan: Skor Total</option>
+              <option value="mindful">Urutkan: Mindful</option>
+              <option value="account">Urutkan: Accountable</option>
+              <option value="selfDev">Urutkan: Self-Development</option>
+              <option value="ipk">Urutkan: IPK</option>
+            </select>
+            <button class="btn-action btn-gold" onclick="downloadLeaderboard()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Excel
+            </button>
+          </div>
+          <div class="tbl-wrap">
+            <div class="tbl-scroll"><div id="tbl-leaderboard"><div class="tbl-empty"><p>Memuat...</p></div></div></div>
+          </div>
+        </div>
+
+      </div><!-- /lcMain -->
+
+    </div>
+  </main>
+</div>
+
+<div id="lcToast"></div>
+
+<!-- MODAL: Detail awardee -->
+<div class="lc-modal-bg" id="detailModalBg" onclick="if(event.target===this)closeDetail()">
+  <div class="lc-modal">
+    <div id="detailBody"></div>
+    <div class="lc-actions">
+      <button class="btn-cancel" onclick="closeDetail()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="scripts/main.js"></script>
+<script src="assets/auth.js"></script>
+<script>
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('show');}
+
+/* =========================================================
+   CONSTANTS
+========================================================= */
+const sb = () => window._supabase || window._authClient;
+const PER_PAGE = 15;
+
+const WEIGHTS = {
+  mentoring: 17.5, pembinaan: 17.5,
+  pre: 4, post: 4, assessment: 7,
+  prestasi: 20, organisasi: 20, ipk: 10,
+};
+const PRESTASI_MAX = 30;
+const ORG_MAX      = 25;
+
+const QUARTERS = [
+  { id:'q1', label:'Q1', sub:"Des'25–Feb'26", start:'2025-12-01', end:'2026-02-28' },
+  { id:'q2', label:'Q2', sub:"Mar–Mei'26",    start:'2026-03-01', end:'2026-05-31' },
+  { id:'q3', label:'Q3', sub:"Jun–Agu'26",    start:'2026-06-01', end:'2026-08-31' },
+  { id:'q4', label:'Q4', sub:"Sep–Nov'26",    start:'2026-09-01', end:'2026-11-30' },
+];
+function getQuartal(id){ return QUARTERS.find(q => q.id === id); }
+function inRange(dateVal, q){
+  if(!dateVal) return false;
+  const iso = String(dateVal).slice(0,10);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)){
+    const d = new Date(dateVal); if(isNaN(d.getTime())) return false;
+    return d.toISOString().slice(0,10) >= q.start && d.toISOString().slice(0,10) <= q.end;
+  }
+  return iso >= q.start && iso <= q.end;
+}
+
+/* Scoring helpers */
+function isHadir(v){ return v==='✅' || v==='TP'; }
+function isEvent(v){ return v !== null && v !== undefined && String(v).trim() !== ''; }
+function ratio(ok, tot){ return tot>0 ? ok/tot : 0; }
+function lbTingkatanBonusPrestasi(t){
+  const s = (t||'').toLowerCase();
+  if(/internasion|international|world|asia|asean/.test(s)) return 3;
+  if(/nasional|national|indonesia/.test(s)) return 2;
+  if(/regional|wilayah|provinsi/.test(s)) return 1;
+  if(/universitas|kampus|institut|politek|fakultas|jurusan/.test(s)) return 0.5;
+  return 0;
+}
+function lbJuaraBonus(j){
+  const s = (j||'').toLowerCase();
+  if(/harap/.test(s)) return 0.5;
+  if(/juara\s*1|juara\s*i\b|pertama|^1$|emas|gold/.test(s)) return 3;
+  if(/juara\s*2|juara\s*ii\b|kedua|^2$|perak|silver/.test(s)) return 2;
+  if(/juara\s*3|juara\s*iii\b|ketiga|^3$|perunggu|bronze/.test(s)) return 1;
+  return 0.3;
+}
+function lbTingkatanBonusOrg(t){
+  const s = (t||'').toLowerCase();
+  if(/internasion|international|world|asia|asean/.test(s)) return 3;
+  if(/nasional|national|indonesia/.test(s)) return 2;
+  if(/universitas|kampus|institut|politek|regional|wilayah|provinsi/.test(s)) return 1;
+  if(/fakultas/.test(s)) return 0.5;
+  if(/jurusan|prodi|himpunan|hmp\b|hmj\b|hima/.test(s)) return 0.3;
+  return 0;
+}
+function lbKeterlibatanBonus(k){
+  const s = (k||'').toLowerCase();
+  if(/^ketua$|\bketua umum\b|\bketum\b|gubernur|presiden/.test(s)) return 3;
+  if(/sekjen|sekretaris jendral|sekretaris umum|wakil ketua|^wakil\b/.test(s)) return 2.5;
+  if(/ketua divisi|ketua bidang|\bbph\b|\bdph\b|kepala bidang|kepala divisi|kepala departemen|bendahara/.test(s)) return 2;
+  if(/^staff$|^staf$|anggota|pengurus/.test(s)) return 0.5;
+  if(/volunteer|relawan/.test(s)) return 0.3;
+  return 0.3;
+}
+
+/* Tingkatan classifier */
+function classifyTingkatan(t){
+  const s=(t||'').toLowerCase();
+  if(/internasion|international/.test(s)) return { css:'tg-int', label:t||'Internasional' };
+  if(/nasional|national/.test(s))          return { css:'tg-nas', label:t||'Nasional' };
+  if(/regional|wilayah|provinsi|universitas|kampus|institut|politek|fakultas/.test(s)) return { css:'tg-reg', label:t||'Regional' };
+  return { css:'tg-lok', label:t||'Lokal' };
+}
+function classifyJuaraPrestasi(j){
+  const s=(j||'').toLowerCase();
+  if(/harap/.test(s)) return { css:'jr-jh', label:j||'Harapan' };
+  if(/juara\s*1|juara\s*i\b|^1$|emas|gold/.test(s)) return { css:'jr-j1', label:j||'Juara 1' };
+  if(/juara\s*2|juara\s*ii\b|^2$|perak|silver/.test(s)) return { css:'jr-j2', label:j||'Juara 2' };
+  if(/juara\s*3|juara\s*iii\b|^3$|perunggu|bronze/.test(s)) return { css:'jr-j3', label:j||'Juara 3' };
+  return { css:'jr-lain', label:j||'—' };
+}
+
+/* =========================================================
+   STATE
+========================================================= */
+let _raw = { mhs:[], rekap:[], prestasi:[], org:[] };
+let _ranked = [];
+let _currentView = 'all';
+let _pages = { awardee:1, prestasi:1, organisasi:1 };
+let _lecturerName = '';
+let _lecturerProfile = null;
+
+/* =========================================================
+   DATA HELPERS
+========================================================= */
+async function fetchAll(table, cols, filterFn){
+  let rows=[], from=0;
+  while(true){
+    let q = sb().from(table).select(cols);
+    if(filterFn) q = filterFn(q);
+    const { data, error } = await q.range(from, from+999);
+    if(error) throw error;
+    rows = rows.concat(data||[]);
+    if(!data || data.length < 1000) break;
+    from += 1000;
+  }
+  return rows;
+}
+
+/* =========================================================
+   INIT — auth, fetch, render
+========================================================= */
+async function init(){
+  // ── 1) Tunggu auth ──
+  let role = '';
+  try {
+    const info = window._authReady ? await window._authReady : null;
+    role = info?.role || window._authRole || '';
+    if (role !== 'lecture') {
+      document.getElementById('lcGuard').style.display = 'flex';
+      return;
+    }
+  } catch(e){
+    document.getElementById('lcGuard').style.display = 'flex';
+    return;
+  }
+
+  // ── 2) Ambil profil lecture_bsi (ditautkan via email) ──
+  const cachedAuth = JSON.parse(sessionStorage.getItem('_bsi_auth')||'{}');
+  const email = window._authEmail || cachedAuth.email || '';
+
+  try {
+    const { data: lectProf } = await sb()
+      .from('lecture_bsi')
+      .select('id,no,nama_lengkap,nama_panggilan,email,whatsapp,jenis_kelamin,region,domisili')
+      .ilike('email', email)
+      .maybeSingle();
+    _lecturerProfile = lectProf || null;
+  } catch(e){
+    console.warn('Gagal memuat profil lecture_bsi:', e);
+    _lecturerProfile = null;
+  }
+
+  _lecturerName = _lecturerProfile?.nama_lengkap || window._authName || cachedAuth.name || '';
+
+  // ── 3) Kalau profil tidak ditemukan sama sekali, guard khusus ──
+  if (!_lecturerName) {
+    const g = document.getElementById('lcGuard');
+    const h = g.querySelector('h2'); if(h) h.textContent = 'Profil Lecture Belum Terdaftar';
+    const p = g.querySelector('p');  if(p) p.innerHTML = `Email akun Anda (<b>${escH(email||'—')}</b>) belum terdaftar di tabel <code>lecture_bsi</code>. Silakan hubungi administrator untuk menambahkan data Anda terlebih dahulu.`;
+    g.style.display = 'flex';
+    return;
+  }
+
+  // Authorized
+  document.getElementById('lcMain').style.display = 'block';
+
+  try {
+    // ── 4) Fetch awardee binaan berdasarkan nama lecturer (mahasiswa_bsi.lecture) ──
+    const mhs = await fetchAll(
+      'mahasiswa_bsi',
+      'no_induk,nama,kampus,kelompok,ipk,status,fakultas,prodi,cluster,email,wa,lecture',
+      q => q.ilike('lecture', _lecturerName)
+    );
+
+    // Selalu populate hero (profil dosen tampil meski mhs kosong)
+    populateHero(mhs);
+
+    if (!mhs.length) {
+      document.getElementById('lcHeroSub').innerHTML = `Belum ada awardee yang tercatat di bawah pembimbingan <b>${escH(_lecturerName)}</b>. Jika ini keliru, silakan hubungi admin untuk memperbarui data.`;
+      renderStatsEmpty();
+      return;
+    }
+
+    const nimList = mhs.map(m => m.no_induk).filter(Boolean);
+
+    // Parallel fetch scoped to these awardees
+    const [rekap, prestasi, org] = await Promise.all([
+      fetchAll('rekap_bsi', 'no_induk,tanggal,pre_test,post_test,assessment,mentoring,pembinaan', q => q.in('no_induk', nimList)).catch(()=>[]),
+      fetchAll('prestasi_bsi', 'id,no_induk,nama,kampus,tingkatan,juara,keterangan,sertifikat,created_at', q => q.in('no_induk', nimList)).catch(()=>[]),
+      fetchAll('organisasi_bsi', 'id,no_induk,nama,kampus,tingkatan,keterlibatan,detail,created_at', q => q.in('no_induk', nimList)).catch(()=>[]),
+    ]);
+
+    _raw = { mhs, rekap, prestasi, org };
+    _ranked = computeRanked(mhs, rekap, prestasi, org, _currentView);
+
+    buildFilters();
+    wireViewToggle();
+    renderAll();
+  } catch(e){
+    console.error(e);
+    toast('Gagal memuat data: ' + (e.message||e), 'err');
+  }
+}
+
+function populateHero(mhs){
+  const name = _lecturerName || 'Lecture';
+  const init = mkInit(name);
+  document.getElementById('lcHeroAvatar').textContent = init;
+  document.getElementById('lcHeroName').textContent = name;
+  document.getElementById('sidebarAvatar').textContent = init;
+  document.getElementById('sidebarEmail').textContent = name;
+  document.getElementById('sidebarRole').textContent = 'Lecture';
+
+  const kampusSet = new Set();
+  mhs.forEach(m => { if(m.kampus) kampusSet.add(m.kampus); });
+  document.getElementById('lhsAwardee').textContent = mhs.length.toLocaleString('id-ID');
+  document.getElementById('lhsKampus').textContent  = kampusSet.size;
+
+  // Enrich hero with lecture_bsi profile data
+  const lp = _lecturerProfile;
+  if (!lp) return;
+
+  // Subtitle: greet by nama_panggilan if available
+  if (lp.nama_panggilan) {
+    if (mhs.length) {
+      document.getElementById('lcHeroSub').innerHTML = `Halo <b>${escH(lp.nama_panggilan)}</b>! Pantau perkembangan ${mhs.length} awardee binaan Anda — data kehadiran, prestasi, organisasi, dan peringkat tersedia lengkap di sini.`;
+    } else {
+      document.getElementById('lcHeroSub').innerHTML = `Halo <b>${escH(lp.nama_panggilan)}</b>! Panel pembimbingan awardee binaan Anda.`;
+    }
+  }
+
+  // Region inline on label
+  if (lp.region) {
+    const regionText = document.getElementById('lcHeroRegionText');
+    if (regionText) regionText.textContent = lp.region;
+    const regionWrap = document.getElementById('lcHeroRegion');
+    if (regionWrap) regionWrap.style.display = 'inline';
+  }
+
+  // Profile chips
+  const chips = [];
+  if (lp.nama_panggilan) {
+    chips.push(`<div class="lc-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Panggilan <b>${escH(lp.nama_panggilan)}</b></div>`);
+  }
+  if (lp.email) {
+    chips.push(`<a class="lc-chip" href="mailto:${escAttr(lp.email)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><b>${escH(lp.email)}</b></a>`);
+  }
+  const waRaw = lp.whatsapp || '';
+  const waNum = String(waRaw).replace(/^.*wa\.me\//i,'').replace(/\D/g,'');
+  if (waNum) {
+    chips.push(`<a class="lc-chip" href="https://wa.me/${waNum}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>WA <b>+${waNum}</b></a>`);
+  }
+  if (lp.region) {
+    chips.push(`<div class="lc-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Region <b>${escH(lp.region)}</b></div>`);
+  }
+  if (lp.domisili) {
+    chips.push(`<div class="lc-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-5H9v5H4a1 1 0 0 1-1-1V9.5z"/></svg>Domisili <b>${escH(lp.domisili)}</b></div>`);
+  }
+  if (chips.length) {
+    const meta = document.getElementById('lcHeroMeta');
+    meta.innerHTML = chips.join('');
+    meta.style.display = 'flex';
+  }
+}
+
+function renderAll(){
+  renderStats();
+  renderDashboard();
+  renderAwardee();
+  renderRekapMatrix();
+  renderPrestasi();
+  renderOrganisasi();
+  renderLeaderboard();
+}
+
+/* =========================================================
+   COMPUTE — ranking (reused across dashboard + leaderboard)
+========================================================= */
+function computeRanked(mhs, rekap, prestasi, org, view){
+  const q = view === 'all' ? null : getQuartal(view);
+  const rFilt = q ? rekap.filter(r => inRange(r.tanggal, q)) : rekap;
+
+  const acc = new Map();
+  mhs.forEach(m => {
+    if(!m.no_induk) return;
+    acc.set(String(m.no_induk), {
+      no_induk: String(m.no_induk),
+      nama: m.nama || '—', kampus: m.kampus || '—', kelompok: m.kelompok || '—',
+      fakultas: m.fakultas || '—', prodi: m.prodi || '—', status: m.status || '',
+      ipk: parseFloat(m.ipk) || 0, email: m.email || '', wa: m.wa || '',
+      ment:{ok:0,total:0}, pem:{ok:0,total:0}, pre:{ok:0,total:0}, post:{ok:0,total:0}, ass:{ok:0,total:0},
+      prestasiPoints:0, prestasiCount:0, orgPoints:0, orgCount:0,
+    });
+  });
+  rFilt.forEach(r => {
+    const a = acc.get(String(r.no_induk||'')); if(!a) return;
+    [['mentoring','ment'],['pembinaan','pem'],['pre_test','pre'],['post_test','post'],['assessment','ass']].forEach(([src,dst]) => {
+      if(isEvent(r[src])) { a[dst].total++; if(isHadir(r[src])) a[dst].ok++; }
+    });
+  });
+  prestasi.forEach(r => {
+    const a = acc.get(String(r.no_induk||'')); if(!a) return;
+    a.prestasiPoints += lbTingkatanBonusPrestasi(r.tingkatan) + lbJuaraBonus(r.juara);
+    a.prestasiCount++;
+  });
+  org.forEach(r => {
+    const a = acc.get(String(r.no_induk||'')); if(!a) return;
+    a.orgPoints += lbTingkatanBonusOrg(r.tingkatan) + lbKeterlibatanBonus(r.keterlibatan);
+    a.orgCount++;
+  });
+
+  const scored = Array.from(acc.values()).map(a => {
+    const mentPct=ratio(a.ment.ok,a.ment.total), pemPct=ratio(a.pem.ok,a.pem.total);
+    const prePct=ratio(a.pre.ok,a.pre.total), postPct=ratio(a.post.ok,a.post.total), assPct=ratio(a.ass.ok,a.ass.total);
+    const prestPct = Math.min(1, a.prestasiPoints / PRESTASI_MAX);
+    const orgPct   = Math.min(1, a.orgPoints / ORG_MAX);
+    const ipkPct   = Math.min(1, (a.ipk||0) / 4.0);
+    const sMent=mentPct*WEIGHTS.mentoring, sPem=pemPct*WEIGHTS.pembinaan;
+    const sPre=prePct*WEIGHTS.pre, sPost=postPct*WEIGHTS.post, sAss=assPct*WEIGHTS.assessment;
+    const sPrest=prestPct*WEIGHTS.prestasi, sOrg=orgPct*WEIGHTS.organisasi, sIpk=ipkPct*WEIGHTS.ipk;
+    const mindful=sMent+sPem, account=sPre+sPost+sAss, selfDev=sPrest+sOrg+sIpk;
+    const total=mindful+account+selfDev;
+    return { ...a, mentPct,pemPct,prePct,postPct,assPct,prestPct,orgPct,ipkPct,
+             sMent,sPem,sPre,sPost,sAss,sPrest,sOrg,sIpk, mindful,account,selfDev,total };
+  });
+  const filt = scored.filter(a => {
+    const hasAnyRekap = a.ment.total + a.pem.total + a.pre.total + a.post.total + a.ass.total > 0;
+    if(q) return hasAnyRekap;
+    return hasAnyRekap || a.prestasiCount>0 || a.orgCount>0 || a.ipk>0;
+  }).sort((a,b) => b.total - a.total);
+  filt.forEach((x,i) => x.rank = i+1);
+  return filt;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+function renderStats(){
+  const total = _raw.mhs.length;
+  const avgIpk = (_raw.mhs.filter(m=>m.ipk>0).reduce((s,m)=>s+parseFloat(m.ipk||0),0) / (_raw.mhs.filter(m=>m.ipk>0).length || 1)) || 0;
+  const totalPrestasi = _raw.prestasi.length;
+  const totalOrg = _raw.org.length;
+  const avgScore = _ranked.length ? (_ranked.reduce((s,a)=>s+a.total,0) / _ranked.length) : 0;
+
+  document.getElementById('lcStats').innerHTML = `
+    <div class="lc-stat">
+      <div class="lc-stat-icon si--purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+      <div><div class="lc-stat-val">${total}</div><div class="lc-stat-lbl">Total Awardee</div></div>
+    </div>
+    <div class="lc-stat">
+      <div class="lc-stat-icon si--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <div><div class="lc-stat-val">${avgIpk.toFixed(2)}</div><div class="lc-stat-lbl">Rata-rata IPK</div><div class="lc-stat-sub">/ 4.00</div></div>
+    </div>
+    <div class="lc-stat">
+      <div class="lc-stat-icon si--gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg></div>
+      <div><div class="lc-stat-val">${totalPrestasi}</div><div class="lc-stat-lbl">Total Prestasi</div></div>
+    </div>
+    <div class="lc-stat">
+      <div class="lc-stat-icon si--pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+      <div><div class="lc-stat-val">${totalOrg}</div><div class="lc-stat-lbl">Total Organisasi</div></div>
+    </div>
+    <div class="lc-stat">
+      <div class="lc-stat-icon si--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
+      <div><div class="lc-stat-val">${avgScore.toFixed(1)}%</div><div class="lc-stat-lbl">Rata-rata Skor</div></div>
+    </div>
+  `;
+}
+function renderStatsEmpty(){
+  document.getElementById('lcStats').innerHTML = `<div class="lc-stat full" style="grid-column:1/-1;text-align:center;padding:30px;color:#9ca3af;"><div>Belum ada data awardee.</div></div>`;
+}
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+function renderDashboard(){
+  if(!_ranked.length){
+    document.getElementById('topAwardee').innerHTML = '<div class="tbl-empty"><p>Belum ada data</p></div>';
+    document.getElementById('topHadir').innerHTML   = '<div class="tbl-empty"><p>Belum ada data</p></div>';
+    document.getElementById('aspectBars').innerHTML = '<div class="tbl-empty"><p>Belum ada data</p></div>';
+    document.getElementById('gapList').innerHTML    = '<div class="tbl-empty"><p>Belum ada data</p></div>';
+    return;
+  }
+
+  // Top 10 by total
+  document.getElementById('topAwardee').innerHTML = _ranked.slice(0,10).map((a,i) => `
+    <div class="rank-item" onclick="showDetail('${escAttr(a.no_induk)}')">
+      <span class="rank-pos ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
+      <div style="flex:1;min-width:0;">
+        <div class="rank-name">${escH(a.nama)}</div>
+        <div class="rank-meta">${escH(a.no_induk)} · ${escH(a.kampus)}</div>
+      </div>
+      <span class="rank-count">${a.total.toFixed(1)}%</span>
+    </div>`).join('');
+
+  // Top 10 by kehadiran (mindful + account)
+  const topHadir = [..._ranked].sort((a,b) => (b.mindful+b.account)-(a.mindful+a.account)).slice(0,10);
+  document.getElementById('topHadir').innerHTML = topHadir.map((a,i) => {
+    const pct = ((a.mindful+a.account)/50*100).toFixed(1);
+    return `<div class="rank-item" onclick="showDetail('${escAttr(a.no_induk)}')">
+      <span class="rank-pos ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
+      <div style="flex:1;min-width:0;">
+        <div class="rank-name">${escH(a.nama)}</div>
+        <div class="rank-meta">${escH(a.kampus)}</div>
+      </div>
+      <span class="rank-count">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  // Aspect average bars
+  const avg = (fn) => _ranked.reduce((s,a)=>s+fn(a),0) / _ranked.length;
+  const aspectRows = [
+    { lbl:'Mentoring',          val: avg(a=>a.sMent),  max:WEIGHTS.mentoring,  cls:'bf-mind' },
+    { lbl:'Pembinaan',          val: avg(a=>a.sPem),   max:WEIGHTS.pembinaan,  cls:'bf-mind' },
+    { lbl:'Pre Test',           val: avg(a=>a.sPre),   max:WEIGHTS.pre,        cls:'bf-acc'  },
+    { lbl:'Post Test',          val: avg(a=>a.sPost),  max:WEIGHTS.post,       cls:'bf-acc'  },
+    { lbl:'Quartal Assignment', val: avg(a=>a.sAss),   max:WEIGHTS.assessment, cls:'bf-acc'  },
+    { lbl:'Prestasi',           val: avg(a=>a.sPrest), max:WEIGHTS.prestasi,   cls:'bf-self' },
+    { lbl:'Organisasi',         val: avg(a=>a.sOrg),   max:WEIGHTS.organisasi, cls:'bf-self' },
+    { lbl:'IPK',                val: avg(a=>a.sIpk),   max:WEIGHTS.ipk,        cls:'bf-self' },
+  ];
+  document.getElementById('aspectBars').innerHTML = aspectRows.map(r => {
+    const pct = r.max ? (r.val/r.max*100) : 0;
+    return `<div class="asp-bar-row">
+      <div class="asp-bar-lbl">${r.lbl}</div>
+      <div class="asp-bar-track"><div class="asp-bar-fill ${r.cls}" style="width:${pct}%">${pct>15?pct.toFixed(0)+'%':''}</div></div>
+      <div class="asp-bar-val">${r.val.toFixed(2)} / ${r.max}</div>
+    </div>`;
+  }).join('');
+
+  // Gap / Butuh perhatian
+  const flagged = _ranked.filter(a => {
+    if(a.total < 40) return true;
+    let below = 0;
+    const avgM = avg(a=>a.mindful), avgA = avg(a=>a.account), avgS = avg(a=>a.selfDev);
+    if(a.mindful < avgM) below++;
+    if(a.account < avgA) below++;
+    if(a.selfDev < avgS) below++;
+    return below >= 3;
+  }).sort((a,b) => a.total - b.total).slice(0,8);
+  if(!flagged.length){
+    document.getElementById('gapList').innerHTML = '<div style="text-align:center;padding:24px;color:#10b981;font-size:13px;font-weight:600;">🎉 Semua awardee Anda dalam kondisi baik!</div>';
+  } else {
+    document.getElementById('gapList').innerHTML = '<div style="display:flex;flex-direction:column;gap:6px;">' + flagged.map(a => {
+      const weak = [];
+      if(a.mentPct < 0.6) weak.push('Mentoring '+(a.mentPct*100).toFixed(0)+'%');
+      if(a.pemPct < 0.6)  weak.push('Pembinaan '+(a.pemPct*100).toFixed(0)+'%');
+      if(a.prestasiCount===0) weak.push('0 Prestasi');
+      if(a.orgCount===0)      weak.push('0 Organisasi');
+      if(a.ipk>0 && a.ipk<3.0) weak.push('IPK '+a.ipk.toFixed(2));
+      return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#fef2f2;border:1px solid #fee2e2;border-radius:9px;cursor:pointer;" onclick="showDetail('${escAttr(a.no_induk)}')">
+        <span class="rank-chip" style="background:#fee2e2;color:#b91c1c;">#${a.rank}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;color:#111827;font-size:12.5px;">${escH(a.nama)}</div>
+          <div style="color:#6b7280;font-size:11px;">${escH(a.no_induk)} · ${escH(a.kampus)}</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px;max-width:50%;justify-content:flex-end;">${weak.slice(0,3).map(w => `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:#fee2e2;color:#b91c1c;">${escH(w)}</span>`).join('')}</div>
+        <div style="font-size:15px;font-weight:800;color:#dc2626;">${a.total.toFixed(1)}%</div>
+      </div>`;
+    }).join('') + '</div>';
+  }
+
+  document.getElementById('dashSubtitle').textContent = `${_ranked.length} awardee terdata`;
+}
+
+/* =========================================================
+   FILTERS (awardee tab)
+========================================================= */
+function buildFilters(){
+  const kamSet=new Set(), kelSet=new Set(), tgSet=new Set();
+  _raw.mhs.forEach(m => { if(m.kampus) kamSet.add(m.kampus); if(m.kelompok) kelSet.add(String(m.kelompok)); });
+  _raw.prestasi.forEach(r => { if(r.tingkatan) tgSet.add(r.tingkatan); });
+  _raw.org.forEach(r => { if(r.tingkatan) tgSet.add(r.tingkatan); });
+
+  const fk = document.getElementById('fk-awardee');
+  Array.from(kamSet).sort().forEach(k => fk.insertAdjacentHTML('beforeend', `<option value="${escAttr(k)}">${escH(k)}</option>`));
+  const fkel = document.getElementById('fkel-awardee');
+  Array.from(kelSet).sort((a,b)=>{ const na=parseInt(a,10), nb=parseInt(b,10); if(!isNaN(na)&&!isNaN(nb)) return na-nb; return a.localeCompare(b); })
+    .forEach(k => fkel.insertAdjacentHTML('beforeend', `<option value="${escAttr(k)}">${escH(k)}</option>`));
+
+  const tgHTML = Array.from(tgSet).sort().map(t => `<option value="${escAttr(t)}">${escH(t)}</option>`).join('');
+  document.getElementById('ft-prestasi').insertAdjacentHTML('beforeend', tgHTML);
+  document.getElementById('ft-organisasi').insertAdjacentHTML('beforeend', tgHTML);
+
+  // Tab badges
+  document.getElementById('badge-awardee').textContent = _raw.mhs.length.toLocaleString('id-ID');
+  document.getElementById('badge-prestasi').textContent = _raw.prestasi.length.toLocaleString('id-ID');
+  document.getElementById('badge-organisasi').textContent = _raw.org.length.toLocaleString('id-ID');
+}
+
+window.filterPanel = function(tab){
+  _pages[tab] = 1;
+  if(tab==='awardee') renderAwardee();
+};
+
+/* =========================================================
+   AWARDEE LIST
+========================================================= */
+function renderAwardee(){
+  const q = (document.getElementById('q-awardee')?.value||'').toLowerCase();
+  const fk = document.getElementById('fk-awardee')?.value||'';
+  const fkel = document.getElementById('fkel-awardee')?.value||'';
+
+  let data = _raw.mhs.filter(m => {
+    if(fk && m.kampus !== fk) return false;
+    if(fkel && String(m.kelompok) !== fkel) return false;
+    if(q){
+      const s = `${m.nama} ${m.no_induk} ${m.email||''}`.toLowerCase();
+      if(!s.includes(q)) return false;
+    }
+    return true;
+  });
+  // Sort by name
+  data.sort((a,b) => (a.nama||'').localeCompare(b.nama||''));
+
+  _views_awardee = data;
+
+  const page = _pages.awardee || 1;
+  const totalPg = Math.max(1, Math.ceil(data.length / PER_PAGE));
+  const cur = Math.min(page, totalPg);
+  _pages.awardee = cur;
+  const slice = data.slice((cur-1)*PER_PAGE, cur*PER_PAGE);
+
+  const el = document.getElementById('tbl-awardee');
+  const pgEl = document.getElementById('pg-awardee');
+  if(!data.length){
+    el.innerHTML = '<div class="tbl-empty"><p>Tidak ada awardee</p><small>Ubah filter atau kata kunci</small></div>';
+    pgEl.style.display = 'none';
+    return;
+  }
+
+  el.innerHTML = `<table class="lc-table"><thead><tr>
+    <th>#</th><th>Nama</th><th>NIM</th><th>Kampus</th><th>Fakultas</th><th>Prodi</th><th>Kel</th><th>Cluster</th><th>IPK</th><th>Status</th>
+  </tr></thead><tbody>${slice.map((m,i) => `
+    <tr onclick="showDetail('${escAttr(m.no_induk)}')">
+      <td>${(cur-1)*PER_PAGE+i+1}</td>
+      <td class="td-name">${escH(m.nama)}</td>
+      <td class="td-mono">${escH(m.no_induk)}</td>
+      <td>${escH(m.kampus||'—')}</td>
+      <td>${escH(m.fakultas||'—')}</td>
+      <td>${escH(m.prodi||'—')}</td>
+      <td>${escH(m.kelompok||'—')}</td>
+      <td>${escH(m.cluster||'—')}</td>
+      <td class="td-mono">${m.ipk?parseFloat(m.ipk).toFixed(2):'—'}</td>
+      <td><span style="padding:2px 8px;font-size:10px;border-radius:99px;background:#dcfce7;color:#166534;">${escH(m.status||'Aktif')}</span></td>
+    </tr>`).join('')}</tbody></table>`;
+
+  renderPagination('awardee', data.length, cur, totalPg, pgEl);
+}
+let _views_awardee = [];
+
+/* =========================================================
+   REKAP MATRIX
+========================================================= */
+function renderRekapMatrix(){
+  const q = (document.getElementById('q-rekap')?.value||'').toLowerCase();
+  const el = document.getElementById('rekap-matrix');
+
+  // Build per-awardee per-activity percentage
+  const byNIM = new Map();
+  _raw.mhs.forEach(m => {
+    byNIM.set(String(m.no_induk), {
+      mhs: m,
+      ment:{ok:0,total:0}, pem:{ok:0,total:0}, pre:{ok:0,total:0}, post:{ok:0,total:0}, ass:{ok:0,total:0}
+    });
+  });
+  _raw.rekap.forEach(r => {
+    const row = byNIM.get(String(r.no_induk||'')); if(!row) return;
+    [['mentoring','ment'],['pembinaan','pem'],['pre_test','pre'],['post_test','post'],['assessment','ass']].forEach(([src,dst]) => {
+      if(isEvent(r[src])) { row[dst].total++; if(isHadir(r[src])) row[dst].ok++; }
+    });
+  });
+
+  let rows = Array.from(byNIM.values()).filter(r => {
+    if(!q) return true;
+    const s = `${r.mhs.nama} ${r.mhs.no_induk}`.toLowerCase();
+    return s.includes(q);
+  }).sort((a,b) => (a.mhs.nama||'').localeCompare(b.mhs.nama||''));
+
+  if(!rows.length){
+    el.innerHTML = '<div class="tbl-empty"><p>Tidak ada data</p></div>';
+    return;
+  }
+
+  const pctCls = v => v >= 80 ? 'high' : v >= 50 ? 'mid' : 'low';
+  const fmtCell = (ok,total) => {
+    if(total === 0) return '<td class="pct" style="background:#f9fafb;color:#9ca3af;">—</td>';
+    const pct = Math.round(ok/total*100);
+    return `<td class="pct ${pctCls(pct)}" title="${ok}/${total} hadir">${pct}%</td>`;
+  };
+
+  el.innerHTML = `<table>
+    <thead><tr>
+      <th style="text-align:left;">Awardee</th>
+      <th>NIM</th><th>Kampus</th>
+      <th>Mentoring</th><th>Pembinaan</th>
+      <th>Pre Test</th><th>Post Test</th><th>Assessment</th>
+      <th>Rata-rata</th>
+    </tr></thead>
+    <tbody>${rows.map(r => {
+      const pcts = [r.ment, r.pem, r.pre, r.post, r.ass].map(x => x.total ? (x.ok/x.total) : null);
+      const valid = pcts.filter(p => p !== null);
+      const avg = valid.length ? Math.round(valid.reduce((s,v)=>s+v,0)/valid.length*100) : null;
+      return `<tr onclick="showDetail('${escAttr(r.mhs.no_induk)}')" style="cursor:pointer;">
+        <td class="nama">${escH(r.mhs.nama)}</td>
+        <td style="font-family:monospace;font-size:10.5px;">${escH(r.mhs.no_induk)}</td>
+        <td style="text-align:left;">${escH(r.mhs.kampus||'—')}</td>
+        ${fmtCell(r.ment.ok, r.ment.total)}
+        ${fmtCell(r.pem.ok,  r.pem.total)}
+        ${fmtCell(r.pre.ok,  r.pre.total)}
+        ${fmtCell(r.post.ok, r.post.total)}
+        ${fmtCell(r.ass.ok,  r.ass.total)}
+        ${avg === null ? '<td class="pct" style="background:#f9fafb;color:#9ca3af;">—</td>' : `<td class="pct ${pctCls(avg)}"><b>${avg}%</b></td>`}
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+/* =========================================================
+   PRESTASI LIST
+========================================================= */
+function renderPrestasi(){
+  const q = (document.getElementById('q-prestasi')?.value||'').toLowerCase();
+  const ft = document.getElementById('ft-prestasi')?.value||'';
+
+  let data = _raw.prestasi.filter(r => {
+    if(ft && r.tingkatan !== ft) return false;
+    if(q){
+      const s = `${r.nama||''} ${r.keterangan||''} ${r.no_induk||''} ${r.juara||''}`.toLowerCase();
+      if(!s.includes(q)) return false;
+    }
+    return true;
+  });
+  data.sort((a,b) => (b.created_at||'').localeCompare(a.created_at||''));
+
+  _views_prestasi = data;
+
+  const page = _pages.prestasi || 1;
+  const totalPg = Math.max(1, Math.ceil(data.length / PER_PAGE));
+  const cur = Math.min(page, totalPg);
+  _pages.prestasi = cur;
+  const slice = data.slice((cur-1)*PER_PAGE, cur*PER_PAGE);
+
+  const el = document.getElementById('tbl-prestasi');
+  const pgEl = document.getElementById('pg-prestasi');
+  if(!data.length){
+    el.innerHTML = '<div class="tbl-empty"><p>Belum ada prestasi</p></div>';
+    pgEl.style.display = 'none';
+    return;
+  }
+  el.innerHTML = `<table class="lc-table"><thead><tr>
+    <th>#</th><th>Nama</th><th>NIM</th><th>Tingkatan</th><th>Juara</th><th>Keterangan</th><th>Sertifikat</th>
+  </tr></thead><tbody>${slice.map((r,i) => {
+    const ct = classifyTingkatan(r.tingkatan);
+    const cj = classifyJuaraPrestasi(r.juara);
+    const hasCert = r.sertifikat && String(r.sertifikat).trim() !== '';
+    return `<tr>
+      <td>${(cur-1)*PER_PAGE+i+1}</td>
+      <td class="td-name">${escH(r.nama||'—')}</td>
+      <td class="td-mono">${escH(r.no_induk||'—')}</td>
+      <td><span class="tg-badge ${ct.css}">${escH(ct.label)}</span></td>
+      <td><span class="jr-badge ${cj.css}">${escH(cj.label)}</span></td>
+      <td style="white-space:normal;max-width:300px;">${escH(r.keterangan||'—')}</td>
+      <td>${hasCert ? `<a href="${escAttr(r.sertifikat)}" target="_blank" rel="noopener" style="color:#0055a5;font-weight:700;font-size:11px;">Buka ↗</a>` : '<span style="color:#9ca3af;font-size:11px;">—</span>'}</td>
+    </tr>`;
+  }).join('')}</tbody></table>`;
+  renderPagination('prestasi', data.length, cur, totalPg, pgEl);
+}
+let _views_prestasi = [];
+
+/* =========================================================
+   ORGANISASI LIST
+========================================================= */
+function renderOrganisasi(){
+  const q = (document.getElementById('q-organisasi')?.value||'').toLowerCase();
+  const ft = document.getElementById('ft-organisasi')?.value||'';
+
+  let data = _raw.org.filter(r => {
+    if(ft && r.tingkatan !== ft) return false;
+    if(q){
+      const s = `${r.nama||''} ${r.detail||''} ${r.no_induk||''} ${r.keterlibatan||''}`.toLowerCase();
+      if(!s.includes(q)) return false;
+    }
+    return true;
+  });
+  data.sort((a,b) => (b.created_at||'').localeCompare(a.created_at||''));
+
+  _views_organisasi = data;
+
+  const page = _pages.organisasi || 1;
+  const totalPg = Math.max(1, Math.ceil(data.length / PER_PAGE));
+  const cur = Math.min(page, totalPg);
+  _pages.organisasi = cur;
+  const slice = data.slice((cur-1)*PER_PAGE, cur*PER_PAGE);
+
+  const el = document.getElementById('tbl-organisasi');
+  const pgEl = document.getElementById('pg-organisasi');
+  if(!data.length){
+    el.innerHTML = '<div class="tbl-empty"><p>Belum ada data organisasi</p></div>';
+    pgEl.style.display = 'none';
+    return;
+  }
+  el.innerHTML = `<table class="lc-table"><thead><tr>
+    <th>#</th><th>Nama</th><th>NIM</th><th>Tingkatan</th><th>Keterlibatan</th><th>Detail</th>
+  </tr></thead><tbody>${slice.map((r,i) => {
+    const ct = classifyTingkatan(r.tingkatan);
+    return `<tr>
+      <td>${(cur-1)*PER_PAGE+i+1}</td>
+      <td class="td-name">${escH(r.nama||'—')}</td>
+      <td class="td-mono">${escH(r.no_induk||'—')}</td>
+      <td><span class="tg-badge ${ct.css}">${escH(ct.label)}</span></td>
+      <td><span class="jr-badge jr-lain">${escH(r.keterlibatan||'—')}</span></td>
+      <td style="white-space:normal;max-width:300px;">${escH(r.detail||'—')}</td>
+    </tr>`;
+  }).join('')}</tbody></table>`;
+  renderPagination('organisasi', data.length, cur, totalPg, pgEl);
+}
+let _views_organisasi = [];
+
+/* =========================================================
+   LEADERBOARD TAB
+========================================================= */
+function wireViewToggle(){
+  document.querySelectorAll('.lvt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.lvt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      _currentView = btn.dataset.view;
+
+      const hint = document.getElementById('viewHintLb');
+      if(_currentView === 'all'){
+        hint.style.display = 'none';
+      } else {
+        const q = getQuartal(_currentView);
+        hint.innerHTML = `Periode aktif: <b>${q.label} — ${q.sub}</b>. Kehadiran difilter untuk periode ini. Prestasi, organisasi & IPK tetap all-time.`;
+        hint.style.display = 'block';
+      }
+
+      _ranked = computeRanked(_raw.mhs, _raw.rekap, _raw.prestasi, _raw.org, _currentView);
+      renderStats();
+      renderDashboard();
+      renderLeaderboard();
+    });
+  });
+}
+
+function renderLeaderboard(){
+  const q = (document.getElementById('q-leaderboard')?.value||'').toLowerCase();
+  const sortMode = document.getElementById('fsort-leaderboard')?.value||'total';
+
+  let data = _ranked.filter(a => {
+    if(q){
+      const s = `${a.nama} ${a.no_induk}`.toLowerCase();
+      if(!s.includes(q)) return false;
+    }
+    return true;
+  });
+  if(sortMode === 'mindful') data.sort((a,b)=>b.mindful-a.mindful);
+  else if(sortMode === 'account') data.sort((a,b)=>b.account-a.account);
+  else if(sortMode === 'selfDev') data.sort((a,b)=>b.selfDev-a.selfDev);
+  else if(sortMode === 'ipk') data.sort((a,b)=>b.ipk-a.ipk);
+  else data.sort((a,b)=>b.total-a.total);
+
+  _views_leaderboard = data;
+
+  const el = document.getElementById('tbl-leaderboard');
+  if(!data.length){
+    el.innerHTML = '<div class="tbl-empty"><p>Belum ada data ranking</p></div>';
+    return;
+  }
+  el.innerHTML = `<table class="lc-table"><thead><tr>
+    <th style="width:60px;">Rank</th><th>Nama</th><th>NIM</th><th>Kampus</th>
+    <th class="td-score">Mindful (/35)</th>
+    <th class="td-score">Account. (/15)</th>
+    <th class="td-score">Self-Dev (/50)</th>
+    <th class="td-score">Total</th>
+    <th>IPK</th>
+  </tr></thead><tbody>${data.map(a => {
+    const rankCls = a.rank===1?'r-1':a.rank===2?'r-2':a.rank===3?'r-3':'';
+    return `<tr onclick="showDetail('${escAttr(a.no_induk)}')">
+      <td><span class="rank-chip ${rankCls}">#${a.rank}</span></td>
+      <td class="td-name">${escH(a.nama)}</td>
+      <td class="td-mono">${escH(a.no_induk)}</td>
+      <td>${escH(a.kampus)}</td>
+      <td class="td-pct"><span class="mini-bar"><span class="mini-bar-fill mbf-mind" style="width:${a.mindful/35*100}%"></span></span>${a.mindful.toFixed(2)}</td>
+      <td class="td-pct"><span class="mini-bar"><span class="mini-bar-fill mbf-acc" style="width:${a.account/15*100}%"></span></span>${a.account.toFixed(2)}</td>
+      <td class="td-pct"><span class="mini-bar"><span class="mini-bar-fill mbf-self" style="width:${a.selfDev/50*100}%"></span></span>${a.selfDev.toFixed(2)}</td>
+      <td class="td-score">${a.total.toFixed(2)}%</td>
+      <td class="td-mono">${a.ipk?a.ipk.toFixed(2):'—'}</td>
+    </tr>`;
+  }).join('')}</tbody></table>`;
+}
+let _views_leaderboard = [];
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+function renderPagination(tab, total, cur, totalPg, el){
+  if(total <= PER_PAGE){ el.style.display='none'; return; }
+  el.style.display='flex';
+  const from = (cur-1)*PER_PAGE + 1;
+  const to = Math.min(cur*PER_PAGE, total);
+  const pages=[];
+  const add = p => {
+    if(p==='...'){ pages.push('<span style="padding:0 4px;color:#9ca3af;">…</span>'); return; }
+    pages.push(`<button class="btn-pg ${p===cur?'active':''}" onclick="gotoPage('${tab}',${p})">${p}</button>`);
+  };
+  if(totalPg <= 7){ for(let i=1;i<=totalPg;i++) add(i); }
+  else {
+    add(1); if(cur>3) add('...');
+    for(let i=Math.max(2,cur-1); i<=Math.min(totalPg-1,cur+1); i++) add(i);
+    if(cur<totalPg-2) add('...');
+    add(totalPg);
+  }
+  el.innerHTML = `
+    <span>Menampilkan <b>${from.toLocaleString('id-ID')}–${to.toLocaleString('id-ID')}</b> dari ${total.toLocaleString('id-ID')}</span>
+    <div class="pg-btns">
+      <button class="btn-pg" onclick="gotoPage('${tab}',${cur-1})" ${cur<=1?'disabled':''}>‹</button>
+      ${pages.join('')}
+      <button class="btn-pg" onclick="gotoPage('${tab}',${cur+1})" ${cur>=totalPg?'disabled':''}>›</button>
+    </div>`;
+}
+window.gotoPage = (tab, p) => {
+  _pages[tab] = p;
+  if(tab==='awardee') renderAwardee();
+  else if(tab==='prestasi') renderPrestasi();
+  else if(tab==='organisasi') renderOrganisasi();
+};
+
+/* =========================================================
+   DETAIL MODAL
+========================================================= */
+window.showDetail = (nim) => {
+  const mhs = _raw.mhs.find(m => String(m.no_induk) === String(nim));
+  if(!mhs) return;
+  const a = _ranked.find(x => x.no_induk === String(nim));
+
+  const prestasi = _raw.prestasi.filter(p => String(p.no_induk) === String(nim));
+  const org      = _raw.org.filter(o => String(o.no_induk) === String(nim));
+
+  const waNum = (mhs.wa||'').replace(/^.*wa\.me\//i,'').replace(/\D/g,'');
+
+  const fmt = (v) => v.toFixed(2);
+  const pctStr = (v) => (v*100).toFixed(1) + '%';
+
+  let breakdownHTML = '';
+  if(a){
+    breakdownHTML = `
+    <h4 style="font-size:13px;font-weight:800;color:#111827;margin:18px 0 8px;">Breakdown Skor</h4>
+    <table class="breakdown-table">
+      <thead><tr><th>Komponen</th><th class="center">Detail</th><th class="center">%</th><th class="center">Bobot</th><th class="val">Skor</th></tr></thead>
+      <tbody>
+        <tr class="group-row"><td>Mindful</td><td></td><td></td><td class="center">35%</td><td class="val">${a.mindful.toFixed(2)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Mentoring</td><td class="center">${a.ment.ok}/${a.ment.total}</td><td class="center">${pctStr(a.mentPct)}</td><td class="center">17.5%</td><td class="val">${fmt(a.sMent)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Pembinaan</td><td class="center">${a.pem.ok}/${a.pem.total}</td><td class="center">${pctStr(a.pemPct)}</td><td class="center">17.5%</td><td class="val">${fmt(a.sPem)}</td></tr>
+        <tr class="group-row"><td>Accountable</td><td></td><td></td><td class="center">15%</td><td class="val">${a.account.toFixed(2)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Pre Test</td><td class="center">${a.pre.ok}/${a.pre.total}</td><td class="center">${pctStr(a.prePct)}</td><td class="center">4%</td><td class="val">${fmt(a.sPre)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Post Test</td><td class="center">${a.post.ok}/${a.post.total}</td><td class="center">${pctStr(a.postPct)}</td><td class="center">4%</td><td class="val">${fmt(a.sPost)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Assessment</td><td class="center">${a.ass.ok}/${a.ass.total}</td><td class="center">${pctStr(a.assPct)}</td><td class="center">7%</td><td class="val">${fmt(a.sAss)}</td></tr>
+        <tr class="group-row"><td>Self-Development</td><td></td><td></td><td class="center">50%</td><td class="val">${a.selfDev.toFixed(2)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Prestasi</td><td class="center">${a.prestasiCount} (${a.prestasiPoints.toFixed(1)} pts)</td><td class="center">${pctStr(a.prestPct)}</td><td class="center">20%</td><td class="val">${fmt(a.sPrest)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Organisasi</td><td class="center">${a.orgCount} (${a.orgPoints.toFixed(1)} pts)</td><td class="center">${pctStr(a.orgPct)}</td><td class="center">20%</td><td class="val">${fmt(a.sOrg)}</td></tr>
+        <tr><td>&nbsp;&nbsp;IPK</td><td class="center">${a.ipk.toFixed(2)} / 4.00</td><td class="center">${pctStr(a.ipkPct)}</td><td class="center">10%</td><td class="val">${fmt(a.sIpk)}</td></tr>
+        <tr class="total-row"><td colspan="4">Total Skor</td><td class="val">${a.total.toFixed(2)}%</td></tr>
+      </tbody>
+    </table>
+    ${_currentView !== 'all' ? `<div style="margin-top:10px;padding:9px 11px;background:linear-gradient(90deg,#fef3c7,#fff);border:1px solid #fcd34d;border-radius:10px;font-size:11.5px;color:#78350f;"><b>📅 Periode aktif: ${getQuartal(_currentView).label} — ${getQuartal(_currentView).sub}.</b> Kehadiran difilter; prestasi/organisasi/IPK all-time.</div>` : ''}`;
+  }
+
+  const prestasiHTML = prestasi.length ? `
+    <h4 style="font-size:13px;font-weight:800;color:#111827;margin:18px 0 8px;">Prestasi (${prestasi.length})</h4>
+    <div class="tbl-scroll"><table class="lc-table"><thead><tr>
+      <th>#</th><th>Tingkatan</th><th>Juara</th><th>Keterangan</th>
+    </tr></thead><tbody>${prestasi.map((p,i) => {
+      const ct = classifyTingkatan(p.tingkatan);
+      const cj = classifyJuaraPrestasi(p.juara);
+      return `<tr><td>${i+1}</td><td><span class="tg-badge ${ct.css}">${escH(ct.label)}</span></td><td><span class="jr-badge ${cj.css}">${escH(cj.label)}</span></td><td style="white-space:normal;">${escH(p.keterangan||'—')}</td></tr>`;
+    }).join('')}</tbody></table></div>` : '';
+
+  const orgHTML = org.length ? `
+    <h4 style="font-size:13px;font-weight:800;color:#111827;margin:18px 0 8px;">Organisasi (${org.length})</h4>
+    <div class="tbl-scroll"><table class="lc-table"><thead><tr>
+      <th>#</th><th>Tingkatan</th><th>Keterlibatan</th><th>Detail</th>
+    </tr></thead><tbody>${org.map((o,i) => {
+      const ct = classifyTingkatan(o.tingkatan);
+      return `<tr><td>${i+1}</td><td><span class="tg-badge ${ct.css}">${escH(ct.label)}</span></td><td><span class="jr-badge jr-lain">${escH(o.keterlibatan||'—')}</span></td><td style="white-space:normal;">${escH(o.detail||'—')}</td></tr>`;
+    }).join('')}</tbody></table></div>` : '';
+
+  document.getElementById('detailBody').innerHTML = `
+    <div class="lc-modal-head">
+      <div class="lc-modal-avatar">${mkInit(mhs.nama)}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="lc-modal-name">${escH(mhs.nama)}</div>
+        <div class="lc-modal-sub">${escH(mhs.no_induk||'—')} · ${escH(mhs.kampus||'—')}</div>
+      </div>
+      ${a ? `<div style="text-align:right;"><div style="font-size:11px;color:#9ca3af;">Rank #${a.rank}</div><div style="font-size:22px;font-weight:800;color:#78350f;">${a.total.toFixed(2)}%</div></div>` : ''}
+    </div>
+    <div class="info-grid">
+      <div class="info-row"><span class="ir-label">Fakultas</span><span class="ir-value">${escH(mhs.fakultas||'—')}</span></div>
+      <div class="info-row"><span class="ir-label">Prodi</span><span class="ir-value">${escH(mhs.prodi||'—')}</span></div>
+      <div class="info-row"><span class="ir-label">Kelompok</span><span class="ir-value">${escH(mhs.kelompok||'—')}</span></div>
+      <div class="info-row"><span class="ir-label">Cluster</span><span class="ir-value">${escH(mhs.cluster||'—')}</span></div>
+      <div class="info-row"><span class="ir-label">IPK</span><span class="ir-value">${mhs.ipk?parseFloat(mhs.ipk).toFixed(2):'—'}</span></div>
+      <div class="info-row"><span class="ir-label">Status</span><span class="ir-value">${escH(mhs.status||'Aktif')}</span></div>
+      <div class="info-row"><span class="ir-label">Email</span><span class="ir-value">${escH(mhs.email||'—')}</span></div>
+      <div class="info-row"><span class="ir-label">WhatsApp</span><span class="ir-value">${waNum ? `<a href="https://wa.me/${waNum}" target="_blank" style="color:#0d9488;">${waNum}</a>` : '—'}</span></div>
+    </div>
+    ${breakdownHTML}
+    ${prestasiHTML}
+    ${orgHTML}
+  `;
+  document.getElementById('detailModalBg').classList.add('show');
+};
+window.closeDetail = () => document.getElementById('detailModalBg').classList.remove('show');
+
+/* =========================================================
+   TABS
+========================================================= */
+window.switchTab = (tab, btn) => {
+  document.querySelectorAll('.lc-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.lc-tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+tab).classList.add('active');
+};
+
+/* =========================================================
+   EXPORT
+========================================================= */
+function toXLSX(sheetName, headers, rows){
+  const wb = XLSX.utils.book_new();
+  const data = [headers, ...rows.map(r => r.map(v => v==null?'':v))];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = headers.map((h,i) => ({ wch: Math.min(Math.max(String(h).length, ...rows.map(r => String(r[i]??'').length)) + 2, 50) }));
+  XLSX.utils.book_append_sheet(wb, ws, sheetName.slice(0,31));
+  return wb;
+}
+function ts(){ const d=new Date(); return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`; }
+function slugName(){ return (_lecturerName||'lecturer').replace(/\s+/g,'-').toLowerCase().slice(0,30); }
+
+window.downloadAwardee = () => {
+  const data = _views_awardee.length ? _views_awardee : _raw.mhs;
+  if(!data.length){ toast('Tidak ada data','info'); return; }
+  const H = ['No','Nama','NIM','Kampus','Fakultas','Prodi','Kelompok','Cluster','IPK','Status','Email','WhatsApp'];
+  const R = data.map((m,i) => [i+1,m.nama,m.no_induk,m.kampus,m.fakultas,m.prodi,m.kelompok,m.cluster,m.ipk?parseFloat(m.ipk).toFixed(2):'',m.status,m.email,m.wa]);
+  XLSX.writeFile(toXLSX('Awardee', H, R), `lecturer-${slugName()}-awardee-${ts()}.xlsx`);
+  toast(`${data.length} baris diunduh`, 'ok');
+};
+window.downloadRekap = () => {
+  if(!_raw.mhs.length){ toast('Tidak ada data','info'); return; }
+  const byNIM = new Map();
+  _raw.mhs.forEach(m => byNIM.set(String(m.no_induk), { m, ment:{ok:0,total:0}, pem:{ok:0,total:0}, pre:{ok:0,total:0}, post:{ok:0,total:0}, ass:{ok:0,total:0} }));
+  _raw.rekap.forEach(r => {
+    const row = byNIM.get(String(r.no_induk||'')); if(!row) return;
+    [['mentoring','ment'],['pembinaan','pem'],['pre_test','pre'],['post_test','post'],['assessment','ass']].forEach(([src,dst]) => {
+      if(isEvent(r[src])) { row[dst].total++; if(isHadir(r[src])) row[dst].ok++; }
+    });
+  });
+  const H = ['Nama','NIM','Kampus','Mentoring %','Mentoring (ok/total)','Pembinaan %','Pembinaan (ok/total)','Pre Test %','Pre (ok/total)','Post Test %','Post (ok/total)','Assessment %','Assessment (ok/total)'];
+  const R = Array.from(byNIM.values()).map(r => {
+    const pct = (ok,tot) => tot? Math.round(ok/tot*100)+'%' : '-';
+    return [r.m.nama, r.m.no_induk, r.m.kampus,
+      pct(r.ment.ok,r.ment.total), `${r.ment.ok}/${r.ment.total}`,
+      pct(r.pem.ok,r.pem.total),   `${r.pem.ok}/${r.pem.total}`,
+      pct(r.pre.ok,r.pre.total),   `${r.pre.ok}/${r.pre.total}`,
+      pct(r.post.ok,r.post.total), `${r.post.ok}/${r.post.total}`,
+      pct(r.ass.ok,r.ass.total),   `${r.ass.ok}/${r.ass.total}`,
+    ];
+  });
+  XLSX.writeFile(toXLSX('Rekap', H, R), `lecturer-${slugName()}-rekap-${ts()}.xlsx`);
+  toast(`${R.length} baris diunduh`, 'ok');
+};
+window.downloadPrestasi = () => {
+  const data = _views_prestasi.length ? _views_prestasi : _raw.prestasi;
+  if(!data.length){ toast('Tidak ada data','info'); return; }
+  const H = ['No','Nama','NIM','Kampus','Tingkatan','Juara','Keterangan','Sertifikat'];
+  const R = data.map((r,i) => [i+1,r.nama,r.no_induk,r.kampus,r.tingkatan,r.juara,r.keterangan,r.sertifikat]);
+  XLSX.writeFile(toXLSX('Prestasi', H, R), `lecturer-${slugName()}-prestasi-${ts()}.xlsx`);
+  toast(`${data.length} baris diunduh`, 'ok');
+};
+window.downloadOrganisasi = () => {
+  const data = _views_organisasi.length ? _views_organisasi : _raw.org;
+  if(!data.length){ toast('Tidak ada data','info'); return; }
+  const H = ['No','Nama','NIM','Kampus','Tingkatan','Keterlibatan','Detail'];
+  const R = data.map((r,i) => [i+1,r.nama,r.no_induk,r.kampus,r.tingkatan,r.keterlibatan,r.detail]);
+  XLSX.writeFile(toXLSX('Organisasi', H, R), `lecturer-${slugName()}-organisasi-${ts()}.xlsx`);
+  toast(`${data.length} baris diunduh`, 'ok');
+};
+window.downloadLeaderboard = () => {
+  const data = _views_leaderboard.length ? _views_leaderboard : _ranked;
+  if(!data.length){ toast('Tidak ada data','info'); return; }
+  const H = ['Rank','Nama','NIM','Kampus','Mentoring %','Pembinaan %','Pre %','Post %','Assessment %','Prestasi (ct)','Organisasi (ct)','IPK','Mindful','Accountable','Self-Dev','Total %'];
+  const R = data.map(a => [a.rank,a.nama,a.no_induk,a.kampus,
+    (a.mentPct*100).toFixed(1),(a.pemPct*100).toFixed(1),
+    (a.prePct*100).toFixed(1),(a.postPct*100).toFixed(1),(a.assPct*100).toFixed(1),
+    a.prestasiCount,a.orgCount,a.ipk.toFixed(2),
+    a.mindful.toFixed(2),a.account.toFixed(2),a.selfDev.toFixed(2),a.total.toFixed(2)]);
+  const viewSlug = _currentView === 'all' ? 'alltime' : _currentView;
+  XLSX.writeFile(toXLSX('Leaderboard', H, R), `lecturer-${slugName()}-leaderboard-${viewSlug}-${ts()}.xlsx`);
+  toast(`${data.length} baris diunduh`, 'ok');
+};
+
+/* =========================================================
+   HELPERS
+========================================================= */
+let _tt;
+function toast(msg, type='ok'){
+  const el = document.getElementById('lcToast');
+  const ico = type==='ok' ? '<polyline points="20 6 9 17 4 12"/>'
+            : type==='info' ? '<circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/>'
+            : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>';
+  const col = type==='ok' ? '#16a34a' : type==='info' ? '#7c3aed' : '#dc2626';
+  el.className = 'show ' + type;
+  el.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${col}" stroke-width="2.5" stroke-linecap="round">${ico}</svg><span>${msg}</span>`;
+  clearTimeout(_tt); _tt = setTimeout(() => el.className = '', 3500);
+}
+function escH(s){ return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escAttr(s){ return escH(s).replace(/`/g,'&#96;'); }
+function mkInit(name){
+  const n = String(name||'').trim(); if(!n) return '??';
+  const parts = n.split(/\s+/);
+  return parts.length >= 2 ? (parts[0][0] + parts[parts.length-1][0]).toUpperCase() : n.slice(0,2).toUpperCase();
+}
+
+init();
+</script>
+
+<nav class="mob-nav" id="mobNav">
+  <a href="index.html" class="mob-nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg><span>Home</span></a>
+  <a href="list-form.html" class="mob-nav-item"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="12" height="4" rx="1"/></svg><span>Form</span></a>
+  <a href="rekap.html" class="mob-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span>Rekap</span></a>
+  <a href="lecture.html" class="mob-nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg><span>Lecture</span></a>
+  <a href="profile.html" class="mob-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profil</span></a>
+</nav>
+
+</body>
+</html>

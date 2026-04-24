@@ -1,5 +1,9 @@
 /**
  * auth.js — zero-flicker auth untuk sidebar layout
+ * Supports roles: admin, lecture, user
+ *
+ * Untuk role 'lecture', nama otoritatif diambil dari lecture_bsi.nama_lengkap
+ * yang ditautkan via email akun (lecture_bsi.email ilike auth.email).
  */
 let _authReadyResolve;
 window._authReady = new Promise(res => { _authReadyResolve = res; });
@@ -21,13 +25,7 @@ window._authReady = new Promise(res => { _authReadyResolve = res; });
     window._authNis   = cached.nis   || "";
     window._authRole  = cached.role  || "";
     _renderUI(cached.email, cached.name, cached.role, cached.nis || "", cached.kampus || "");
-    // Langsung tampilkan admin link di sidebar + mobile nav dari cache
-    if (cached.role === "admin") {
-      const ag = document.getElementById("adminGroup");
-      if (ag) ag.style.display = "block";
-      const mobAdmin = document.getElementById("mobNavAdmin");
-      if (mobAdmin) mobAdmin.style.display = "flex";
-    }
+    _toggleRoleGroups(cached.role);
   }
 
   // ── VERIFY SESSION (async) ──
@@ -46,15 +44,29 @@ window._authReady = new Promise(res => { _authReadyResolve = res; });
       .from("profiles").select("role, full_name").eq("id", session.user.id).single();
     role        = prof?.role || "user";
     displayName = prof?.full_name || email.split("@")[0];
+
+    // Untuk role lecture, ambil nama_lengkap otoritatif dari lecture_bsi (ditautkan via email)
+    if (role === "lecture") {
+      try {
+        const { data: lect } = await window._authClient
+          .from("lecture_bsi")
+          .select("nama_lengkap")
+          .ilike("email", email)
+          .maybeSingle();
+        if (lect?.nama_lengkap) displayName = lect.nama_lengkap;
+      } catch (e) { /* ignore, fallback to profiles.full_name */ }
+    }
+
     _saveCache(email, displayName, role, cached.nis || "", cached.kampus || "");
   }
 
   window._authRole = role;
 
-  // For awardees: fetch NIS + kampus from mahasiswa_bsi
+  // For awardees (role 'user'): fetch NIS + kampus from mahasiswa_bsi
+  // Admin & lecture tidak perlu NIS lookup
   let nis = cached.nis || "";
   let kampus = cached.kampus || "";
-  if (role !== "admin" && (!nis || !kampus) && displayName) {
+  if (role !== "admin" && role !== "lecture" && (!nis || !kampus) && displayName) {
     const { data: mhs } = await window._authClient
       .from("mahasiswa_bsi").select("no_induk, kampus").eq("nama", displayName).maybeSingle();
     if (mhs) {
@@ -68,14 +80,7 @@ window._authReady = new Promise(res => { _authReadyResolve = res; });
   window._authEmail = email;
   window._authNis   = nis;
   _renderUI(email, displayName, role, nis, kampus);
-
-  // Admin link (sidebar + mobile nav)
-  if (role === "admin") {
-    const ag = document.getElementById("adminGroup");
-    if (ag) ag.style.display = "block";
-    const mobAdmin = document.getElementById("mobNavAdmin");
-    if (mobAdmin) mobAdmin.style.display = "flex";
-  }
+  _toggleRoleGroups(role);
 
   _authReadyResolve({ role, nis, name: displayName });
 }
@@ -88,6 +93,61 @@ function _readCache() {
 
 function _saveCache(email, name, role, nis = "", kampus = "") {
   try { sessionStorage.setItem("_bsi_auth", JSON.stringify({ email, name, role, nis, kampus })); } catch {}
+}
+
+// Toggle sidebar groups + mobile nav based on role
+function _toggleRoleGroups(role) {
+  const adminGroup   = document.getElementById("adminGroup");
+  const lectureGroup = document.getElementById("lectureGroup");
+  const mobAdmin     = document.getElementById("mobNavAdmin");
+  const mobLecture   = document.getElementById("mobNavLecture");
+
+  if (role === "admin") {
+    if (adminGroup)   adminGroup.style.display   = "block";
+    if (lectureGroup) lectureGroup.style.display = "none";
+    if (mobAdmin)     mobAdmin.style.display     = "flex";
+    if (mobLecture)   mobLecture.style.display   = "none";
+  } else if (role === "lecture") {
+    if (lectureGroup) lectureGroup.style.display = "block";
+    if (adminGroup)   adminGroup.style.display   = "none";
+    if (mobLecture)   mobLecture.style.display   = "flex";
+    if (mobAdmin)     mobAdmin.style.display     = "none";
+  } else {
+    if (adminGroup)   adminGroup.style.display   = "none";
+    if (lectureGroup) lectureGroup.style.display = "none";
+    if (mobAdmin)     mobAdmin.style.display     = "none";
+    if (mobLecture)   mobLecture.style.display   = "none";
+  }
+
+  // Awardee-only menu items: sembunyikan untuk role 'lecture'
+  // (mereka hanya butuh Portal Lecture + Profil)
+  const AWARDEE_HREFS = ['index.html', 'list-form.html', 'rekap.html', 'lapor.html', 'galeri.html', 'form.html'];
+  const sel = AWARDEE_HREFS.map(h => `a[href="${h}"]`).join(', ');
+  const hideAwardee = (role === 'lecture');
+  document.querySelectorAll(sel).forEach(a => {
+    // Jangan sentuh link di dalam lectureGroup/adminGroup (mereka punya aturan sendiri)
+    if (a.closest('#lectureGroup') || a.closest('#adminGroup')) return;
+    a.style.display = hideAwardee ? 'none' : '';
+  });
+
+  // Label "Menu" di sidebar — hide untuk lecture (karena semua item Menu disembunyikan)
+  const sidebar = document.querySelector('.sidebar');
+  if (sidebar) {
+    const labels = sidebar.querySelectorAll('.sidebar-section-label');
+    labels.forEach(lbl => {
+      const txt = (lbl.textContent || '').trim();
+      // Hanya target label "Menu" (bukan "Portal Lecture"/"Portal Admin")
+      if (/^Menu$/i.test(txt)) {
+        lbl.style.display = hideAwardee ? 'none' : '';
+      }
+    });
+  }
+}
+
+function _roleLabel(role) {
+  if (role === "admin")   return "Administrator";
+  if (role === "lecture") return "Lecture";
+  return "Awardee";
 }
 
 function _renderUI(email, name, role, nis = "", kampus = "") {
@@ -108,11 +168,14 @@ function _renderUI(email, name, role, nis = "", kampus = "") {
   if (hGreeting) hGreeting.textContent = "Selamat Datang,";
   if (hName)   hName.textContent   = displayName;
   if (hBadge) {
-    hBadge.textContent = role === "admin" ? "Administrator" : "Awardee";
-    hBadge.className   = "header-role-badge" + (role === "admin" ? " badge-admin" : "");
+    hBadge.textContent = _roleLabel(role);
+    let cls = "header-role-badge";
+    if (role === "admin")   cls += " badge-admin";
+    if (role === "lecture") cls += " badge-lecture";
+    hBadge.className = cls;
   }
   if (hSub) {
-    if (role !== "admin" && (nis || kampus)) {
+    if (role !== "admin" && role !== "lecture" && (nis || kampus)) {
       hSub.textContent = [nis, kampus].filter(Boolean).join(" · ");
       hSub.style.display = "block";
     } else {
@@ -126,13 +189,10 @@ function _renderUI(email, name, role, nis = "", kampus = "") {
   const sRole   = document.getElementById("sidebarRole");
   if (sAvatar) sAvatar.textContent = initials;
   if (sEmail)  sEmail.textContent  = displayName;
-  if (sRole)   sRole.textContent   = role === "admin" ? "Administrator" : "Awardee";
+  if (sRole)   sRole.textContent   = _roleLabel(role);
 
-  // Admin link (sinkron dari cache)
-  if (role === "admin") {
-    const ag = document.getElementById("adminGroup");
-    if (ag) ag.style.display = "block";
-  }
+  // Re-apply role group toggle (safety net for cached render path)
+  _toggleRoleGroups(role);
 }
 
 async function authLogout() {
