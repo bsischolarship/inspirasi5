@@ -284,6 +284,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/auth.js"></script>
+<script src="assets/multiselect.js"></script>
 <script>
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
@@ -360,6 +361,13 @@ async function loadData() {
     sel.appendChild(o);
   });
 
+  // Attach multi-select widgets (status + kampus support multi; akun stays single for binary choice)
+  if (window.BsisMultiSelect) {
+    const MS = window.BsisMultiSelect;
+    MS.attach(document.getElementById('filterStatus'), { placeholder:'Semua Status', itemLabelSingular:'Status', searchable:false });
+    MS.attach(document.getElementById('filterKampus'), { placeholder:'Semua Kampus', itemLabelSingular:'Kampus' });
+  }
+
   renderTable();
 }
 
@@ -375,6 +383,10 @@ function filterTable() {
   const akun   = document.getElementById('filterAkun').value;
   const kampus = document.getElementById('filterKampus').value;
 
+  // Multi-value support (comma-separated from BsisMultiSelect)
+  const statusSet = status ? new Set(status.split(',').filter(Boolean)) : null;
+  const kampusSet = kampus ? new Set(kampus.split(',').filter(Boolean)) : null;
+
   filteredData = allData.filter(m => {
     const hasAkun = m.email && emailSet.has(m.email.toLowerCase());
     const matchQ = !q ||
@@ -382,9 +394,9 @@ function filterTable() {
       (m.no_induk|| '').toLowerCase().includes(q) ||
       (m.email  || '').toLowerCase().includes(q) ||
       (m.kampus || '').toLowerCase().includes(q);
-    const matchS = !status || (m.status || '').toLowerCase().trim() === status;
+    const matchS = !statusSet || statusSet.has((m.status || '').toLowerCase().trim());
     const matchA = !akun || (akun === 'ada' ? hasAkun : !hasAkun);
-    const matchK = !kampus || m.kampus === kampus;
+    const matchK = !kampusSet || kampusSet.has(m.kampus);
     return matchQ && matchS && matchA && matchK;
   });
 
@@ -404,9 +416,14 @@ function updateStats() {
 
 function resetFilter() {
   document.getElementById('searchInput').value   = '';
-  document.getElementById('filterStatus').value  = '';
-  document.getElementById('filterAkun').value    = '';
-  document.getElementById('filterKampus').value  = '';
+  // For multi-select widgets, use setValues([]) to clear (updates UI too).
+  // For native selects (akun), setValues may not exist — fallback to .value = ''.
+  ['filterStatus','filterAkun','filterKampus'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (typeof el.setValues === 'function') el.setValues([]);
+    else el.value = '';
+  });
   filteredData = [...allData];
   currentPage = 1;
   updateStats();

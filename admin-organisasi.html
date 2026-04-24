@@ -1073,6 +1073,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="scripts/main.js"></script>
 <script src="assets/auth.js"></script>
+<script src="assets/multiselect.js"></script>
 <script>
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('show');}
@@ -1701,6 +1702,16 @@ function buildFilterOptions(){
   Array.from(tingkSet).sort().forEach(t => ft.insertAdjacentHTML('beforeend', `<option value="${escapeAttr(t)}">${escapeHtml(t)}</option>`));
   const fj = document.getElementById('fj-semua');
   Array.from(juaraSet).sort().forEach(j => fj.insertAdjacentHTML('beforeend', `<option value="${escapeAttr(j)}">${escapeHtml(j)}</option>`));
+
+  // Attach multi-select widgets (tf-sort and tf-limit stay single — sort mode & pagination)
+  if (window.BsisMultiSelect) {
+    const MS = window.BsisMultiSelect;
+    MS.attach(document.getElementById('fk-semua'),   { placeholder:'Semua Kampus',       itemLabelSingular:'Kampus' });
+    MS.attach(document.getElementById('ft-semua'),   { placeholder:'Semua Tingkatan',    itemLabelSingular:'Tingkatan', searchable:false });
+    MS.attach(document.getElementById('fj-semua'),   { placeholder:'Semua Keterlibatan', itemLabelSingular:'Jenis',     searchable:false });
+    MS.attach(document.getElementById('fk-awardee'), { placeholder:'Semua Kampus',       itemLabelSingular:'Kampus' });
+    MS.attach(document.getElementById('tf-fk'),      { placeholder:'Semua Kampus',       itemLabelSingular:'Kampus' });
+  }
 }
 
 /* =============================================
@@ -1712,10 +1723,16 @@ function rebuildViews(){
   const fkS = document.getElementById('fk-semua')?.value||'';
   const ftS = document.getElementById('ft-semua')?.value||'';
   const fjS = document.getElementById('fj-semua')?.value||'';
+
+  // Multi-value support
+  const fkSSet = fkS ? new Set(fkS.split(',').filter(Boolean)) : null;
+  const ftSSet = ftS ? new Set(ftS.split(',').filter(Boolean)) : null;
+  const fjSSet = fjS ? new Set(fjS.split(',').filter(Boolean)) : null;
+
   _views.semua = _raw.filter(r => {
-    if(fkS && norm(r.kampus) !== fkS) return false;
-    if(ftS && norm(r.tingkatan) !== ftS) return false;
-    if(fjS && norm(r.keterlibatan) !== fjS) return false;
+    if(fkSSet && !fkSSet.has(norm(r.kampus)))       return false;
+    if(ftSSet && !ftSSet.has(norm(r.tingkatan)))    return false;
+    if(fjSSet && !fjSSet.has(norm(r.keterlibatan))) return false;
     if(qs){
       const s = `${r.nama||''} ${r.no_induk||''} ${r.detail||''} ${r.kampus||''}`.toLowerCase();
       if(!s.includes(qs)) return false;
@@ -1727,6 +1744,7 @@ function rebuildViews(){
   // j1 → jumlah Ketua, j2 → Sekjen/Wakil, j3 → Ketua Divisi/BPH
   const qa = (document.getElementById('q-awardee')?.value||'').toLowerCase();
   const fkA = document.getElementById('fk-awardee')?.value||'';
+  const fkASet = fkA ? new Set(fkA.split(',').filter(Boolean)) : null;
   const aMap = new Map();
   _raw.forEach(r => {
     const key = (r.no_induk || r.nama || '').toString();
@@ -1751,7 +1769,7 @@ function rebuildViews(){
   });
   _views.awardee = Array.from(aMap.values())
     .filter(a => {
-      if(fkA && norm(a.kampus) !== fkA) return false;
+      if(fkASet && !fkASet.has(norm(a.kampus))) return false;
       if(qa){
         const s = `${a.nama} ${a.no_induk} ${a.kampus}`.toLowerCase();
         if(!s.includes(qa)) return false;
@@ -2143,11 +2161,12 @@ window.runTalent = (keepSelected = false) => {
 
   // Kampus filter
   const fk = document.getElementById('tf-fk').value;
+  const fkSet = fk ? new Set(fk.split(',').filter(Boolean)) : null;
 
   // Group by awardee, compute match score
   const byAwardee = new Map();
   _raw.forEach(r => {
-    if(fk && norm(r.kampus) !== fk) return;
+    if(fkSet && !fkSet.has(norm(r.kampus))) return;
     const text = [r.detail, r.keterlibatan].map(v => norm(v).toLowerCase()).join(' | ');
     if(!text.trim()) return;
 

@@ -459,6 +459,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="scripts/main.js"></script>
 <script src="assets/auth.js"></script>
+<script src="assets/multiselect.js"></script>
 <script>
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('show');}
@@ -668,6 +669,27 @@ function populateFilters(){
     const lbl=new Date(+y,+m-1).toLocaleDateString('id-ID',{month:'long',year:'numeric'});
     fb.insertAdjacentHTML('beforeend',`<option value="${b}">${lbl}</option>`);
   });
+
+  // Attach multi-select widgets to all filter dropdowns
+  if (window.BsisMultiSelect) {
+    const MS = window.BsisMultiSelect;
+    // Tab Semua
+    MS.attach(document.getElementById('fk-semua'),   { placeholder:'Semua Kampus',    itemLabelSingular:'Kampus' });
+    MS.attach(document.getElementById('fkl-semua'),  { placeholder:'Semua Kelompok',  itemLabelSingular:'Kelompok' });
+    MS.attach(document.getElementById('fg-semua'),   { placeholder:'Semua Kegiatan',  itemLabelSingular:'Kegiatan', searchable:false });
+    MS.attach(document.getElementById('fst-semua'),  { placeholder:'Semua Status',    itemLabelSingular:'Status',   searchable:false });
+    // Tab Rekap
+    MS.attach(document.getElementById('fk-rekap'),   { placeholder:'Semua Kampus',    itemLabelSingular:'Kampus' });
+    MS.attach(document.getElementById('fkl-rekap'),  { placeholder:'Semua Kelompok',  itemLabelSingular:'Kelompok' });
+    MS.attach(document.getElementById('fb-rekap'),   { placeholder:'Semua Bulan',     itemLabelSingular:'Bulan', searchable:false });
+    // Tab Awardee
+    MS.attach(document.getElementById('fk-awardee'), { placeholder:'Semua Kampus',    itemLabelSingular:'Kampus' });
+    MS.attach(document.getElementById('fkl-awardee'),{ placeholder:'Semua Kelompok',  itemLabelSingular:'Kelompok' });
+    MS.attach(document.getElementById('fs-awardee'), { placeholder:'Semua Status',    itemLabelSingular:'Status', searchable:false });
+    // Tab Skor
+    MS.attach(document.getElementById('fk-skor'),    { placeholder:'Semua Kampus',    itemLabelSingular:'Kampus' });
+    MS.attach(document.getElementById('fkl-skor'),   { placeholder:'Semua Kelompok',  itemLabelSingular:'Kelompok' });
+  }
 }
 
 /* =============================================
@@ -685,55 +707,62 @@ function renderAllTabs(){
 window.filterPanel = function(tab){
   _pages[tab]=1;
   const q=(document.getElementById('q-'+tab)||{}).value?.toLowerCase()||'';
+  // Helper: build Set from comma-separated value, or null when empty
+  const toSet = v => v ? new Set(String(v).split(',').filter(Boolean)) : null;
   switch(tab){
     case 'semua':{
-      const k=(document.getElementById('fk-semua')||{}).value||'';
-      const kl=(document.getElementById('fkl-semua')||{}).value||'';
-      const g=(document.getElementById('fg-semua')||{}).value||'';
-      const st=(document.getElementById('fst-semua')||{}).value||'';
+      const kSet =toSet((document.getElementById('fk-semua')||{}).value||'');
+      const klSet=toSet((document.getElementById('fkl-semua')||{}).value||'');
+      const gSet =toSet((document.getElementById('fg-semua')||{}).value||'');
+      const stSet=toSet((document.getElementById('fst-semua')||{}).value||'');
       _views.semua=_semuaData.filter(r=>{
-        if(k&&r.kampus!==k) return false;
-        if(kl&&r.kelompok!==kl) return false;
-        if(g&&r.kegiatan_key!==g) return false;
-        if(st==='H'&&!r.hadir) return false;
-        if(st==='TH'&&r.hadir) return false;
+        if(kSet  && !kSet.has(r.kampus))        return false;
+        if(klSet && !klSet.has(String(r.kelompok))) return false;
+        if(gSet  && !gSet.has(r.kegiatan_key))  return false;
+        if(stSet){
+          const code = r.hadir ? 'H' : 'TH';
+          if(!stSet.has(code)) return false;
+        }
         if(q&&!((r.no_induk||'').toLowerCase().includes(q)||(r.nama||'').toLowerCase().includes(q))) return false;
         return true;
       });
       break;
     }
     case 'rekap':{
-      const k=(document.getElementById('fk-rekap')||{}).value||'';
-      const kl=(document.getElementById('fkl-rekap')||{}).value||'';
-      const b=(document.getElementById('fb-rekap')||{}).value||'';
+      const kSet =toSet((document.getElementById('fk-rekap')||{}).value||'');
+      const klSet=toSet((document.getElementById('fkl-rekap')||{}).value||'');
+      const bSet =toSet((document.getElementById('fb-rekap')||{}).value||'');
       _views.rekap=_rekap.filter(r=>{
-        if(k&&r.kampus!==k) return false;
-        if(kl&&r.kelompok!==kl) return false;
-        if(b&&(!r.tanggal||!r.tanggal.startsWith(b))) return false;
+        if(kSet  && !kSet.has(r.kampus))        return false;
+        if(klSet && !klSet.has(String(r.kelompok))) return false;
+        if(bSet){
+          const ym = String(r.tanggal||'').slice(0,7);
+          if(!ym || !bSet.has(ym)) return false;
+        }
         if(q&&!((r.no_induk||'').toLowerCase().includes(q)||(r.nama||'').toLowerCase().includes(q))) return false;
         return true;
       });
       break;
     }
     case 'awardee':{
-      const k=(document.getElementById('fk-awardee')||{}).value||'';
-      const kl=(document.getElementById('fkl-awardee')||{}).value||'';
-      const s=(document.getElementById('fs-awardee')||{}).value||'';
+      const kSet =toSet((document.getElementById('fk-awardee')||{}).value||'');
+      const klSet=toSet((document.getElementById('fkl-awardee')||{}).value||'');
+      const sSet =toSet((document.getElementById('fs-awardee')||{}).value||'');
       _views.awardee=_mhs.filter(m=>{
-        if(k&&m.kampus!==k) return false;
-        if(kl&&m.kelompok!==kl) return false;
-        if(s&&m.status!==s) return false;
+        if(kSet  && !kSet.has(m.kampus))        return false;
+        if(klSet && !klSet.has(String(m.kelompok))) return false;
+        if(sSet  && !sSet.has(m.status))        return false;
         if(q&&!((m.no_induk||'').toLowerCase().includes(q)||(m.nama||'').toLowerCase().includes(q)||(m.email||'').toLowerCase().includes(q))) return false;
         return true;
       });
       break;
     }
     case 'skor':{
-      const k=(document.getElementById('fk-skor')||{}).value||'';
-      const kl=(document.getElementById('fkl-skor')||{}).value||'';
+      const kSet =toSet((document.getElementById('fk-skor')||{}).value||'');
+      const klSet=toSet((document.getElementById('fkl-skor')||{}).value||'');
       _views.skor=_skorData.filter(v=>{
-        if(k&&v.kampus!==k) return false;
-        if(kl&&v.kelompok!==kl) return false;
+        if(kSet  && !kSet.has(v.kampus))        return false;
+        if(klSet && !klSet.has(String(v.kelompok))) return false;
         if(q&&!((v.nim||'').toLowerCase().includes(q)||(v.nama||'').toLowerCase().includes(q))) return false;
         return true;
       });

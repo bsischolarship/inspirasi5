@@ -695,6 +695,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="scripts/main.js"></script>
 <script src="assets/auth.js"></script>
+<script src="assets/multiselect.js"></script>
 <script>
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('show');}
@@ -1126,6 +1127,13 @@ function buildFilters(){
   const fkel = document.getElementById('fkel-ranking');
   Array.from(kelSet).sort((a,b)=>{ const na=parseInt(a,10), nb=parseInt(b,10); if(!isNaN(na)&&!isNaN(nb)) return na-nb; return a.localeCompare(b); })
     .forEach(k => fkel.insertAdjacentHTML('beforeend', `<option value="${escAttr(k)}">${escH(k)}</option>`));
+
+  // Attach multi-select widgets (fsort-ranking stays as native select — sort mode is single-value by nature)
+  if (window.BsisMultiSelect) {
+    const MS = window.BsisMultiSelect;
+    MS.attach(fk,   { placeholder:'Semua Kampus',   itemLabelSingular:'Kampus' });
+    MS.attach(fkel, { placeholder:'Semua Kelompok', itemLabelSingular:'Kelompok' });
+  }
 }
 
 window.filterPanel = function(tab){
@@ -1143,9 +1151,13 @@ function renderRanking(){
   const fkel = document.getElementById('fkel-ranking')?.value||'';
   const sortMode = document.getElementById('fsort-ranking')?.value||'total';
 
+  // Multi-value support
+  const fkSet   = fk   ? new Set(fk.split(',').filter(Boolean))   : null;
+  const fkelSet = fkel ? new Set(fkel.split(',').filter(Boolean)) : null;
+
   let data = _ranked.filter(a => {
-    if(fk && a.kampus !== fk) return false;
-    if(fkel && String(a.kelompok) !== fkel) return false;
+    if(fkSet   && !fkSet.has(String(a.kampus||'')))   return false;
+    if(fkelSet && !fkelSet.has(String(a.kelompok||''))) return false;
     if(q){
       const s = `${a.nama} ${a.no_induk}`.toLowerCase();
       if(!s.includes(q)) return false;

@@ -897,6 +897,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="scripts/main.js"></script>
 <script src="assets/auth.js"></script>
+<script src="assets/multiselect.js"></script>
 <script>
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('show');}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('show');}
@@ -2053,6 +2054,15 @@ function buildFilters(){
   document.getElementById('badge-awardee').textContent = _raw.mhs.length.toLocaleString('id-ID');
   document.getElementById('badge-prestasi').textContent = _raw.prestasi.length.toLocaleString('id-ID');
   document.getElementById('badge-organisasi').textContent = _raw.org.length.toLocaleString('id-ID');
+
+  // Attach multi-select widgets to filter dropdowns (after options are populated)
+  if (window.BsisMultiSelect) {
+    const MS = window.BsisMultiSelect;
+    MS.attach(document.getElementById('fk-awardee'),    { placeholder:'Semua Kampus',    itemLabelSingular:'Kampus' });
+    MS.attach(document.getElementById('fkel-awardee'),  { placeholder:'Semua Kelompok',  itemLabelSingular:'Kelompok' });
+    MS.attach(document.getElementById('ft-prestasi'),   { placeholder:'Semua Tingkatan', itemLabelSingular:'Tingkatan' });
+    MS.attach(document.getElementById('ft-organisasi'), { placeholder:'Semua Tingkatan', itemLabelSingular:'Tingkatan' });
+  }
 }
 
 window.filterPanel = function(tab){
@@ -2068,9 +2078,13 @@ function renderAwardee(){
   const fk = document.getElementById('fk-awardee')?.value||'';
   const fkel = document.getElementById('fkel-awardee')?.value||'';
 
+  // Multi-value support: split comma-separated values into Sets for O(1) lookup
+  const fkSet   = fk   ? new Set(fk.split(',').filter(Boolean))   : null;
+  const fkelSet = fkel ? new Set(fkel.split(',').filter(Boolean)) : null;
+
   let data = _raw.mhs.filter(m => {
-    if(fk && m.kampus !== fk) return false;
-    if(fkel && String(m.kelompok) !== fkel) return false;
+    if(fkSet   && !fkSet.has(String(m.kampus||'')))   return false;
+    if(fkelSet && !fkelSet.has(String(m.kelompok||''))) return false;
     if(q){
       const s = `${m.nama} ${m.no_induk} ${m.email||''}`.toLowerCase();
       if(!s.includes(q)) return false;
@@ -2156,6 +2170,14 @@ function _rekapBuildFilters(){
     const label = `${mNames[parseInt(m,10)-1]||m} ${y}`;
     fb.insertAdjacentHTML('beforeend', `<option value="${escAttr(b)}">${escH(label)}</option>`);
   });
+
+  // Attach multi-select widgets to rekap filters
+  if (window.BsisMultiSelect) {
+    const MS = window.BsisMultiSelect;
+    MS.attach(fk,  { placeholder:'Semua Kampus',   itemLabelSingular:'Kampus' });
+    MS.attach(fkl, { placeholder:'Semua Kelompok', itemLabelSingular:'Kelompok' });
+    MS.attach(fb,  { placeholder:'Semua Bulan',    itemLabelSingular:'Bulan', searchable:false });
+  }
 }
 
 window.renderRekap = function(){
@@ -2163,6 +2185,11 @@ window.renderRekap = function(){
   const fk = document.getElementById('fk-rekap')?.value||'';
   const fkl= document.getElementById('fkl-rekap')?.value||'';
   const fb = document.getElementById('fb-rekap')?.value||'';
+
+  // Multi-value support
+  const fkSet  = fk  ? new Set(fk.split(',').filter(Boolean))  : null;
+  const fklSet = fkl ? new Set(fkl.split(',').filter(Boolean)) : null;
+  const fbSet  = fb  ? new Set(fb.split(',').filter(Boolean))  : null;
 
   // Enrich setiap rekap row dengan kampus/kelompok dari mahasiswa_bsi (kalau kosong di rekap_bsi)
   const mhsMap = new Map();
@@ -2177,9 +2204,12 @@ window.renderRekap = function(){
       kelompok: r.kelompok || m?.kelompok || '—',
     };
   }).filter(r => {
-    if(fk && r.kampus !== fk) return false;
-    if(fkl && String(r.kelompok) !== fkl) return false;
-    if(fb && (!r.tanggal || !String(r.tanggal).startsWith(fb))) return false;
+    if(fkSet  && !fkSet.has(String(r.kampus||'')))   return false;
+    if(fklSet && !fklSet.has(String(r.kelompok||''))) return false;
+    if(fbSet) {
+      const ym = String(r.tanggal||'').slice(0,7);
+      if(!ym || !fbSet.has(ym)) return false;
+    }
     if(q){
       const s = `${r.nama} ${r.no_induk}`.toLowerCase();
       if(!s.includes(q)) return false;
@@ -2271,9 +2301,10 @@ function _renderPgRekap(total, cur, totalPg, el){
 function renderPrestasi(){
   const q = (document.getElementById('q-prestasi')?.value||'').toLowerCase();
   const ft = document.getElementById('ft-prestasi')?.value||'';
+  const ftSet = ft ? new Set(ft.split(',').filter(Boolean)) : null;
 
   let data = _raw.prestasi.filter(r => {
-    if(ft && r.tingkatan !== ft) return false;
+    if(ftSet && !ftSet.has(String(r.tingkatan||''))) return false;
     if(q){
       const s = `${r.nama||''} ${r.keterangan||''} ${r.no_induk||''} ${r.juara||''}`.toLowerCase();
       if(!s.includes(q)) return false;
@@ -2323,9 +2354,10 @@ let _views_prestasi = [];
 function renderOrganisasi(){
   const q = (document.getElementById('q-organisasi')?.value||'').toLowerCase();
   const ft = document.getElementById('ft-organisasi')?.value||'';
+  const ftSet = ft ? new Set(ft.split(',').filter(Boolean)) : null;
 
   let data = _raw.org.filter(r => {
-    if(ft && r.tingkatan !== ft) return false;
+    if(ftSet && !ftSet.has(String(r.tingkatan||''))) return false;
     if(q){
       const s = `${r.nama||''} ${r.detail||''} ${r.no_induk||''} ${r.keterlibatan||''}`.toLowerCase();
       if(!s.includes(q)) return false;

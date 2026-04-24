@@ -752,6 +752,14 @@
       opt.value = k; opt.textContent = k;
       sel.appendChild(opt);
     });
+
+    // Attach multi-select widgets
+    if (window.BsisMultiSelect) {
+      const MS = window.BsisMultiSelect;
+      MS.attach(document.getElementById("filterRole"),   { placeholder:'Semua Role',   itemLabelSingular:'Role',   searchable:false });
+      MS.attach(document.getElementById("filterStatus"), { placeholder:'Semua Status', itemLabelSingular:'Status', searchable:false });
+      MS.attach(document.getElementById("filterKampus"), { placeholder:'Semua Kampus', itemLabelSingular:'Kampus' });
+    }
   }
 
   /* ---- RENDER TABLE ---- */
@@ -858,11 +866,20 @@
     const status  = document.getElementById("filterStatus")?.value || "";
     const kampus  = document.getElementById("filterKampus")?.value || "";
 
+    // Multi-value support (comma-separated from BsisMultiSelect)
+    const roleSet   = role   ? new Set(role.split(',').filter(Boolean))   : null;
+    const statusSet = status ? new Set(status.split(',').filter(Boolean)) : null;
+    const kampusSet = kampus ? new Set(kampus.split(',').filter(Boolean)) : null;
+
     let filtered = allUsers;
-    if (role) filtered = filtered.filter(u => u.role === role);
-    if (status === "approved") filtered = filtered.filter(u => u.approved);
-    if (status === "pending")  filtered = filtered.filter(u => !u.approved && u.role !== "admin");
-    if (kampus) filtered = filtered.filter(u => u.mhs?.kampus === kampus);
+    if (roleSet)   filtered = filtered.filter(u => roleSet.has(u.role));
+    if (statusSet) filtered = filtered.filter(u => {
+      // User is "approved" if u.approved; "pending" if !approved and not admin
+      if (statusSet.has('approved') && u.approved) return true;
+      if (statusSet.has('pending')  && !u.approved && u.role !== "admin") return true;
+      return false;
+    });
+    if (kampusSet) filtered = filtered.filter(u => kampusSet.has(u.mhs?.kampus));
     if (q) filtered = filtered.filter(u => {
       const s = `${u.full_name || ""} ${u.email} ${u.mhs?.no_induk || ""} ${u.mhs?.kampus || ""}`.toLowerCase();
       return s.includes(q);
@@ -1033,6 +1050,7 @@ async function submitAddUser() {
 }
 </script>
 <script src="assets/auth.js"></script>
+<script src="assets/multiselect.js"></script>
   </main>
 </div>
 
