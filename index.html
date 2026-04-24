@@ -375,13 +375,6 @@
         Galeri Saya
       </a>
 
-      <div class="sidebar-lecture-group" id="lectureGroup" style="display:none;">
-        <div class="sidebar-section-label" style="margin-top:16px;">Portal Lecturer</div>
-        <a href="lecture.html" class="sidebar-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-          Dashboard Lecturer
-        </a>
-      </div>
     <div class="sidebar-admin-group" id="adminGroup" style="display:none;">
       <div class="sidebar-section-label" style="margin-top:16px;">Portal Admin</div>
       <a href="admin.html" id="navAdminLink" class="sidebar-link">
@@ -409,6 +402,33 @@
         Pengaturan
       </a>
     </div>
+      <div class="sidebar-lecture-group" id="lectureGroup" style="display:none;">
+        <div class="sidebar-section-label" style="margin-top:16px;">Portal Lecture</div>
+        <a href="lecture.html#dashboard" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+          Dashboard
+        </a>
+        <a href="lecture.html#awardee" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          Daftar Awardee
+        </a>
+        <a href="lecture.html#rekap" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Rekap Kehadiran
+        </a>
+        <a href="lecture.html#prestasi" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>
+          Prestasi
+        </a>
+        <a href="lecture.html#organisasi" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Organisasi
+        </a>
+        <a href="lecture.html#leaderboard" class="sidebar-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+          Leaderboard
+        </a>
+      </div>
   </div>
   <div class="sidebar-footer">
     <a href="profile.html" class="sidebar-link" id="sidebarUserLink">
@@ -502,6 +522,631 @@
 
     </div>
 </section>
+
+<!-- =================== HOME FILTER BAR =================== -->
+<section class="hf-section" id="homeFilterSection" style="margin-bottom:18px;">
+  <style>
+    .hf-section{width:100%;}
+    .hf-card{
+      background:linear-gradient(135deg,#ffffff 0%,#f8fafc 100%);
+      border:1px solid #e5e7eb;border-radius:16px;
+      box-shadow:0 2px 8px rgba(15,23,42,.04);
+      /* Tidak pakai overflow:hidden supaya dropdown multi-select bisa muncul keluar dari card */
+      transition:box-shadow .2s ease, border-color .2s ease;
+    }
+    .hf-card:hover{ box-shadow:0 4px 14px rgba(15,23,42,.06); border-color:#d1d5db; }
+    .hf-bar{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:12px 16px;cursor:pointer;user-select:none;
+    }
+    .hf-bar-left{ display:flex;align-items:center;gap:12px;min-width:0;flex:1; }
+    .hf-bar-icon{
+      width:38px;height:38px;border-radius:10px;flex-shrink:0;
+      background:linear-gradient(135deg,#0055a5 0%,#00a79d 100%);
+      color:#fff;display:flex;align-items:center;justify-content:center;
+      box-shadow:0 2px 6px rgba(0,85,165,.25);
+    }
+    .hf-bar-icon svg{width:18px;height:18px;}
+    .hf-bar-info{ min-width:0; }
+    .hf-bar-title{
+      font-size:13.5px;font-weight:700;color:#111827;
+      display:flex;align-items:center;gap:8px;line-height:1.2;
+    }
+    .hf-bar-sub{
+      font-size:11.5px;color:#6b7280;margin-top:2px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      max-width:420px;
+    }
+    .hf-bar-right{ display:flex;align-items:center;gap:8px;flex-shrink:0; }
+    .hf-count-badge{
+      display:inline-flex;align-items:center;gap:4px;
+      background:linear-gradient(135deg,#fef3c7,#fde68a);
+      color:#78350f;border:1px solid #fcd34d;
+      padding:3px 10px;border-radius:99px;
+      font-size:11px;font-weight:700;letter-spacing:.02em;
+    }
+    .hf-toggle{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:7px 12px;border-radius:10px;border:1.5px solid #e5e7eb;
+      background:#fff;color:#374151;font-size:12px;font-weight:600;
+      cursor:pointer;transition:all .15s;
+    }
+    .hf-toggle:hover{ border-color:#0055a5;color:#0055a5;background:#f0f9ff; }
+    .hf-toggle .hf-chev{
+      width:12px;height:12px;transition:transform .2s;
+    }
+    .hf-toggle.open .hf-chev{ transform:rotate(180deg); }
+    .hf-panel{
+      display:none;
+      border-top:1px solid #e5e7eb;
+      padding:16px;
+      background:#fafbfc;
+      /* Bottom corners matching parent card's border-radius (since card no longer clips overflow) */
+      border-bottom-left-radius:16px;
+      border-bottom-right-radius:16px;
+    }
+    .hf-panel.open{ display:block; animation: hfSlide .22s ease; }
+    @keyframes hfSlide{ from{opacity:0;transform:translateY(-4px);} to{opacity:1;transform:none;} }
+    .hf-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+      margin-bottom:12px;
+    }
+    .hf-field{ display:flex;flex-direction:column;gap:5px;min-width:0; }
+    .hf-label{
+      font-size:11px;font-weight:700;color:#6b7280;
+      text-transform:uppercase;letter-spacing:.04em;
+      display:flex;align-items:center;gap:5px;
+    }
+    .hf-label svg{ width:11px;height:11px;color:#9ca3af; }
+    .hf-input{
+      padding:9px 12px;font-size:13px;font-family:inherit;
+      border:1.5px solid #e5e7eb;border-radius:9px;
+      background:#fff;color:#111827;outline:none;
+      transition:border-color .15s, box-shadow .15s;
+      width:100%;box-sizing:border-box;
+    }
+    .hf-input:hover{ border-color:#d1d5db; }
+    .hf-input:focus{
+      border-color:#0055a5;
+      box-shadow:0 0 0 3px rgba(0,85,165,.1);
+    }
+    .hf-input[disabled]{ background:#f3f4f6;color:#9ca3af;cursor:not-allowed; }
+
+    /* -------- Multi-select dropdown -------- */
+    .hf-ms{ position:relative; }
+    .hf-ms-trigger{
+      width:100%;box-sizing:border-box;
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+      padding:9px 12px;font-size:13px;font-family:inherit;font-weight:500;
+      border:1.5px solid #e5e7eb;border-radius:9px;
+      background:#fff;color:#6b7280;outline:none;cursor:pointer;
+      transition:border-color .15s, box-shadow .15s, background .15s;
+      text-align:left;
+    }
+    .hf-ms-trigger:hover{ border-color:#d1d5db; }
+    .hf-ms-trigger:focus,
+    .hf-ms-trigger.is-open{
+      border-color:#0055a5;
+      box-shadow:0 0 0 3px rgba(0,85,165,.1);
+    }
+    .hf-ms-label{
+      flex:1;min-width:0;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+    .hf-ms-label.has-value{ color:#0055a5;font-weight:600; }
+    .hf-ms-chev{
+      width:12px;height:12px;flex-shrink:0;color:#9ca3af;
+      transition:transform .2s;
+    }
+    .hf-ms-trigger.is-open .hf-ms-chev{ transform:rotate(180deg);color:#0055a5; }
+    .hf-ms-dropdown{
+      position:absolute;top:calc(100% + 4px);left:0;right:0;
+      z-index:50;
+      background:#fff;border:1px solid #e5e7eb;
+      border-radius:10px;
+      box-shadow:0 8px 24px rgba(15,23,42,.12);
+      max-height:320px;display:flex;flex-direction:column;
+      animation: hfMsDrop .18s ease;
+    }
+    /* Respect HTML `hidden` attribute — must come AFTER the display:flex rule */
+    .hf-ms-dropdown[hidden]{ display:none !important; }
+    @keyframes hfMsDrop{ from{opacity:0;transform:translateY(-4px);} to{opacity:1;transform:none;} }
+    .hf-ms-search-wrap{
+      position:relative;padding:8px 8px 6px;
+      border-bottom:1px solid #f3f4f6;
+    }
+    .hf-ms-search-wrap svg{
+      position:absolute;left:18px;top:50%;transform:translateY(-50%);
+      width:12px;height:12px;color:#9ca3af;pointer-events:none;
+    }
+    .hf-ms-search{
+      width:100%;box-sizing:border-box;
+      padding:7px 10px 7px 28px;font-size:12.5px;font-family:inherit;
+      border:1px solid #e5e7eb;border-radius:7px;background:#f9fafb;
+      outline:none;transition:all .15s;
+    }
+    .hf-ms-search:focus{ border-color:#0055a5;background:#fff; }
+    .hf-ms-quick{
+      display:flex;align-items:center;gap:6px;
+      padding:6px 10px;border-bottom:1px solid #f3f4f6;
+      background:#fafbfc;
+    }
+    .hf-ms-action{
+      padding:4px 10px;font-size:11px;font-weight:700;font-family:inherit;
+      border:1px solid #e5e7eb;border-radius:6px;background:#fff;
+      color:#374151;cursor:pointer;transition:all .15s;
+    }
+    .hf-ms-action:hover{ border-color:#0055a5;color:#0055a5;background:#f0f9ff; }
+    .hf-ms-count{
+      margin-left:auto;font-size:10.5px;color:#6b7280;font-weight:600;
+      letter-spacing:.02em;
+    }
+    .hf-ms-options{
+      overflow-y:auto;overflow-x:hidden;
+      padding:4px;flex:1;
+    }
+    .hf-ms-options::-webkit-scrollbar{ width:6px; }
+    .hf-ms-options::-webkit-scrollbar-thumb{ background:#d1d5db;border-radius:3px; }
+    .hf-ms-options::-webkit-scrollbar-track{ background:transparent; }
+    .hf-ms-opt{
+      display:flex;align-items:center;gap:9px;
+      padding:7px 10px;border-radius:7px;cursor:pointer;
+      font-size:12.5px;color:#374151;
+      transition:background .12s;
+    }
+    .hf-ms-opt:hover{ background:#f3f4f6; }
+    .hf-ms-opt.is-checked{ background:#eff6ff;color:#1e3a8a;font-weight:600; }
+    .hf-ms-opt input{
+      position:absolute;opacity:0;pointer-events:none;
+    }
+    .hf-ms-check{
+      width:17px;height:17px;flex-shrink:0;
+      border:1.5px solid #d1d5db;border-radius:5px;
+      background:#fff;
+      display:flex;align-items:center;justify-content:center;
+      transition:all .12s;
+    }
+    .hf-ms-check svg{
+      width:11px;height:11px;color:#fff;opacity:0;
+      transition:opacity .1s;
+    }
+    .hf-ms-opt.is-checked .hf-ms-check{
+      background:linear-gradient(135deg,#0055a5 0%,#00a79d 100%);
+      border-color:#0055a5;
+    }
+    .hf-ms-opt.is-checked .hf-ms-check svg{ opacity:1; }
+    .hf-ms-txt{
+      flex:1;min-width:0;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+    .hf-ms-empty{
+      padding:20px 12px;text-align:center;color:#9ca3af;
+      font-size:12px;
+    }
+    .hf-field--search{ grid-column:1 / -1; }
+    .hf-actions{
+      display:flex;align-items:center;justify-content:flex-end;gap:10px;
+      padding-top:12px;border-top:1px dashed #e5e7eb;
+    }
+    .hf-active-chips{
+      display:flex;flex-wrap:wrap;gap:6px;flex:1;
+      margin-right:10px;
+    }
+    .hf-chip{
+      display:inline-flex;align-items:center;gap:5px;
+      padding:4px 10px;border-radius:99px;
+      background:#dbeafe;border:1px solid #93c5fd;color:#1e3a8a;
+      font-size:11.5px;font-weight:600;
+    }
+    .hf-chip svg{ width:10px;height:10px; cursor:pointer; opacity:.7; }
+    .hf-chip svg:hover{ opacity:1; }
+    .hf-btn{
+      padding:9px 16px;border-radius:10px;border:none;
+      font-size:12.5px;font-weight:700;font-family:inherit;
+      cursor:pointer;transition:all .15s;
+      display:inline-flex;align-items:center;gap:6px;
+    }
+    .hf-btn svg{ width:13px;height:13px; }
+    .hf-btn-reset{
+      background:#fff;color:#6b7280;border:1.5px solid #e5e7eb;
+    }
+    .hf-btn-reset:hover{ border-color:#dc2626;color:#dc2626;background:#fef2f2; }
+    .hf-btn-apply{
+      background:linear-gradient(135deg,#0055a5 0%,#00a79d 100%);
+      color:#fff;box-shadow:0 2px 6px rgba(0,85,165,.25);
+    }
+    .hf-btn-apply:hover{ box-shadow:0 4px 12px rgba(0,85,165,.35);transform:translateY(-1px); }
+    .hf-btn-apply:active{ transform:translateY(0); }
+
+    @media (max-width:900px){
+      .hf-grid{ grid-template-columns:repeat(2,1fr); }
+      .hf-bar-sub{ max-width:180px; }
+    }
+    @media (max-width:560px){
+      .hf-grid{ grid-template-columns:1fr; }
+      .hf-bar{ padding:10px 12px; }
+      .hf-bar-sub{ display:none; }
+      .hf-actions{ flex-direction:column-reverse;align-items:stretch; }
+      .hf-btn{ width:100%;justify-content:center; }
+      .hf-active-chips{ margin-right:0;margin-bottom:8px; }
+    }
+  </style>
+  <div class="hf-card">
+    <div class="hf-bar" onclick="toggleHomeFilter()">
+      <div class="hf-bar-left">
+        <div class="hf-bar-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        </div>
+        <div class="hf-bar-info">
+          <div class="hf-bar-title">
+            Filter Data
+            <span class="hf-count-badge" id="hfCountBadge" style="display:none;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <span id="hfCountText">0 filter aktif</span>
+            </span>
+          </div>
+          <div class="hf-bar-sub" id="hfBarSub">Menampilkan semua data</div>
+        </div>
+      </div>
+      <div class="hf-bar-right">
+        <button type="button" class="hf-toggle" id="hfToggleBtn" aria-expanded="false">
+          <span id="hfToggleLabel">Buka Filter</span>
+          <svg class="hf-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="hf-panel" id="hfPanel">
+      <div class="hf-grid">
+        <div class="hf-field">
+          <label class="hf-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            Kampus
+          </label>
+          <div class="hf-ms" data-field="kampus">
+            <button type="button" class="hf-ms-trigger" aria-haspopup="listbox" aria-expanded="false" onclick="hfToggleDropdown('kampus', event)">
+              <span class="hf-ms-label" id="hfMsLabel-kampus">Semua Kampus</span>
+              <svg class="hf-ms-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="hf-ms-dropdown" id="hfMsDropdown-kampus" hidden>
+              <div class="hf-ms-search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="hf-ms-search" placeholder="Cari kampus..." oninput="hfFilterOptions('kampus', this.value)" />
+              </div>
+              <div class="hf-ms-quick">
+                <button type="button" class="hf-ms-action" onclick="hfSelectAll('kampus')">Pilih Semua</button>
+                <button type="button" class="hf-ms-action" onclick="hfClearAll('kampus')">Batalkan</button>
+                <span class="hf-ms-count" id="hfMsCount-kampus">0 dipilih</span>
+              </div>
+              <div class="hf-ms-options" id="hfMsOptions-kampus">
+                <div class="hf-ms-empty">Memuat pilihan...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hf-field">
+          <label class="hf-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Kelompok
+          </label>
+          <div class="hf-ms" data-field="kelompok">
+            <button type="button" class="hf-ms-trigger" aria-haspopup="listbox" aria-expanded="false" onclick="hfToggleDropdown('kelompok', event)">
+              <span class="hf-ms-label" id="hfMsLabel-kelompok">Semua Kelompok</span>
+              <svg class="hf-ms-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="hf-ms-dropdown" id="hfMsDropdown-kelompok" hidden>
+              <div class="hf-ms-search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="hf-ms-search" placeholder="Cari kelompok..." oninput="hfFilterOptions('kelompok', this.value)" />
+              </div>
+              <div class="hf-ms-quick">
+                <button type="button" class="hf-ms-action" onclick="hfSelectAll('kelompok')">Pilih Semua</button>
+                <button type="button" class="hf-ms-action" onclick="hfClearAll('kelompok')">Batalkan</button>
+                <span class="hf-ms-count" id="hfMsCount-kelompok">0 dipilih</span>
+              </div>
+              <div class="hf-ms-options" id="hfMsOptions-kelompok">
+                <div class="hf-ms-empty">Memuat pilihan...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hf-field">
+          <label class="hf-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Periode (Bulan)
+          </label>
+          <div class="hf-ms" data-field="bulan">
+            <button type="button" class="hf-ms-trigger" aria-haspopup="listbox" aria-expanded="false" onclick="hfToggleDropdown('bulan', event)">
+              <span class="hf-ms-label" id="hfMsLabel-bulan">Semua Periode</span>
+              <svg class="hf-ms-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="hf-ms-dropdown" id="hfMsDropdown-bulan" hidden>
+              <div class="hf-ms-quick">
+                <button type="button" class="hf-ms-action" onclick="hfSelectAll('bulan')">Pilih Semua</button>
+                <button type="button" class="hf-ms-action" onclick="hfClearAll('bulan')">Batalkan</button>
+                <span class="hf-ms-count" id="hfMsCount-bulan">0 dipilih</span>
+              </div>
+              <div class="hf-ms-options" id="hfMsOptions-bulan"></div>
+            </div>
+          </div>
+        </div>
+        <div class="hf-field">
+          <label class="hf-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            Lecture (Pembimbing)
+          </label>
+          <div class="hf-ms" data-field="lecture">
+            <button type="button" class="hf-ms-trigger" aria-haspopup="listbox" aria-expanded="false" onclick="hfToggleDropdown('lecture', event)">
+              <span class="hf-ms-label" id="hfMsLabel-lecture">Semua Lecture</span>
+              <svg class="hf-ms-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="hf-ms-dropdown" id="hfMsDropdown-lecture" hidden>
+              <div class="hf-ms-search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" class="hf-ms-search" placeholder="Cari nama lecture..." oninput="hfFilterOptions('lecture', this.value)" />
+              </div>
+              <div class="hf-ms-quick">
+                <button type="button" class="hf-ms-action" onclick="hfSelectAll('lecture')">Pilih Semua</button>
+                <button type="button" class="hf-ms-action" onclick="hfClearAll('lecture')">Batalkan</button>
+                <span class="hf-ms-count" id="hfMsCount-lecture">0 dipilih</span>
+              </div>
+              <div class="hf-ms-options" id="hfMsOptions-lecture">
+                <div class="hf-ms-empty">Memuat pilihan...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hf-field hf-field--search">
+          <label class="hf-label" for="hfSearch">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Cari Nama / NIM
+          </label>
+          <input type="text" id="hfSearch" class="hf-input" placeholder="Ketik nama atau NIM..." />
+        </div>
+      </div>
+      <div class="hf-actions">
+        <div class="hf-active-chips" id="hfActiveChips"></div>
+        <button type="button" class="hf-btn hf-btn-reset" onclick="resetHomeFilter()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          Reset
+        </button>
+        <button type="button" class="hf-btn hf-btn-apply" onclick="applyHomeFilter()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Terapkan Filter
+        </button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // ============ HOME FILTER — multi-select ============
+    // State per field: array of selected values
+    const HF_FIELDS  = ['kampus','kelompok','bulan','lecture'];
+    const HF_LABELS  = { kampus:'Kampus', kelompok:'Kelompok', bulan:'Periode', lecture:'Lecture', q:'Pencarian' };
+    const HF_PLUR    = { kampus:'Semua Kampus', kelompok:'Semua Kelompok', bulan:'Semua Periode', lecture:'Semua Lecture' };
+    const HF_STATE   = { kampus:[], kelompok:[], bulan:[], lecture:[] };
+    const HF_OPTIONS = { kampus:[], kelompok:[], bulan:[], lecture:[] };
+    // Static labels for periode (YYYY-MM -> display)
+    const HF_BULAN_LABELS = {
+      '2025-12':'Des 2025','2026-01':'Jan 2026','2026-02':'Feb 2026','2026-03':'Mar 2026',
+      '2026-04':'Apr 2026','2026-05':'Mei 2026','2026-06':'Jun 2026','2026-07':'Jul 2026',
+      '2026-08':'Agu 2026','2026-09':'Sep 2026','2026-10':'Okt 2026','2026-11':'Nov 2026',
+    };
+    HF_OPTIONS.bulan = Object.keys(HF_BULAN_LABELS);
+
+    // Toggle panel
+    window.toggleHomeFilter = function(){
+      const panel = document.getElementById('hfPanel');
+      const btn   = document.getElementById('hfToggleBtn');
+      const lbl   = document.getElementById('hfToggleLabel');
+      const open  = !panel.classList.contains('open');
+      panel.classList.toggle('open', open);
+      btn.classList.toggle('open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      if(lbl) lbl.textContent = open ? 'Tutup Filter' : 'Buka Filter';
+    };
+
+    // ---------- Multi-select helpers ----------
+    function hfEsc(s){
+      return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function hfRenderOptions(field, filterText){
+      const box = document.getElementById('hfMsOptions-'+field);
+      if(!box) return;
+      const all = HF_OPTIONS[field] || [];
+      const q = (filterText||'').trim().toLowerCase();
+      const selected = new Set(HF_STATE[field]);
+      const filtered = q ? all.filter(v => {
+        const label = field === 'bulan' ? HF_BULAN_LABELS[v] || v : v;
+        return v.toLowerCase().includes(q) || String(label).toLowerCase().includes(q);
+      }) : all.slice();
+      if(!filtered.length){
+        box.innerHTML = '<div class="hf-ms-empty">Tidak ada pilihan</div>';
+        return;
+      }
+      box.innerHTML = filtered.map(v => {
+        const label = field === 'bulan' ? (HF_BULAN_LABELS[v] || v) : v;
+        const checked = selected.has(v) ? 'checked' : '';
+        return `<label class="hf-ms-opt${selected.has(v) ? ' is-checked' : ''}">
+          <input type="checkbox" value="${hfEsc(v)}" ${checked} onchange="hfToggleItem('${field}', this.value, this.checked)"/>
+          <span class="hf-ms-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+          <span class="hf-ms-txt">${hfEsc(label)}</span>
+        </label>`;
+      }).join('');
+    }
+    function hfUpdateLabelCount(field){
+      const state = HF_STATE[field] || [];
+      const lbl   = document.getElementById('hfMsLabel-'+field);
+      const cnt   = document.getElementById('hfMsCount-'+field);
+      if(lbl){
+        if(state.length === 0){
+          lbl.textContent = HF_PLUR[field];
+          lbl.classList.remove('has-value');
+        } else if(state.length === 1){
+          const v = state[0];
+          lbl.textContent = field === 'bulan' ? (HF_BULAN_LABELS[v] || v) : v;
+          lbl.classList.add('has-value');
+        } else {
+          lbl.textContent = state.length + ' ' + HF_LABELS[field] + ' dipilih';
+          lbl.classList.add('has-value');
+        }
+      }
+      if(cnt) cnt.textContent = state.length + ' dipilih';
+    }
+    window.hfToggleItem = function(field, value, checked){
+      const arr = HF_STATE[field] || [];
+      if(checked){
+        if(!arr.includes(value)) arr.push(value);
+      } else {
+        const i = arr.indexOf(value);
+        if(i >= 0) arr.splice(i, 1);
+      }
+      HF_STATE[field] = arr;
+      // Toggle checked style on the label
+      const opt = document.querySelector(`#hfMsOptions-${field} input[value="${CSS.escape(value)}"]`);
+      if(opt){ opt.closest('.hf-ms-opt').classList.toggle('is-checked', checked); }
+      hfUpdateLabelCount(field);
+    };
+    window.hfToggleDropdown = function(field, ev){
+      if(ev){ ev.stopPropagation(); }
+      // Close other dropdowns first
+      HF_FIELDS.forEach(f => {
+        if(f === field) return;
+        const dd = document.getElementById('hfMsDropdown-'+f);
+        const tr = document.querySelector(`.hf-ms[data-field="${f}"] .hf-ms-trigger`);
+        if(dd){ dd.hidden = true; }
+        if(tr){ tr.setAttribute('aria-expanded', 'false'); tr.classList.remove('is-open'); }
+      });
+      const dd = document.getElementById('hfMsDropdown-'+field);
+      const tr = document.querySelector(`.hf-ms[data-field="${field}"] .hf-ms-trigger`);
+      if(!dd) return;
+      const open = dd.hidden;
+      dd.hidden = !open;
+      if(tr){ tr.setAttribute('aria-expanded', String(open)); tr.classList.toggle('is-open', open); }
+      if(open){
+        hfRenderOptions(field, '');
+        const sr = dd.querySelector('.hf-ms-search');
+        if(sr){ sr.value = ''; setTimeout(() => sr.focus(), 30); }
+      }
+    };
+    window.hfFilterOptions = function(field, text){ hfRenderOptions(field, text); };
+    window.hfSelectAll = function(field){
+      const visibleVals = Array.from(document.querySelectorAll(`#hfMsOptions-${field} input[type=checkbox]`)).map(i => i.value);
+      const set = new Set(HF_STATE[field]);
+      visibleVals.forEach(v => set.add(v));
+      HF_STATE[field] = Array.from(set);
+      hfRenderOptions(field, document.querySelector(`#hfMsDropdown-${field} .hf-ms-search`)?.value || '');
+      hfUpdateLabelCount(field);
+    };
+    window.hfClearAll = function(field){
+      HF_STATE[field] = [];
+      hfRenderOptions(field, document.querySelector(`#hfMsDropdown-${field} .hf-ms-search`)?.value || '');
+      hfUpdateLabelCount(field);
+    };
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+      if(!e.target.closest || !e.target.closest('.hf-ms')){
+        HF_FIELDS.forEach(f => {
+          const dd = document.getElementById('hfMsDropdown-'+f);
+          const tr = document.querySelector(`.hf-ms[data-field="${f}"] .hf-ms-trigger`);
+          if(dd){ dd.hidden = true; }
+          if(tr){ tr.setAttribute('aria-expanded', 'false'); tr.classList.remove('is-open'); }
+        });
+      }
+    });
+
+    // Apply: build URL with comma-separated multi values
+    window.applyHomeFilter = function(){
+      const params = new URLSearchParams();
+      HF_FIELDS.forEach(f => {
+        const arr = HF_STATE[f] || [];
+        if(arr.length) params.set(f, arr.join(','));
+      });
+      const q = document.getElementById('hfSearch').value.trim();
+      if(q) params.set('q', q);
+      const qs = params.toString();
+      window.location.href = 'index.html' + (qs ? '?' + qs : '');
+    };
+    window.resetHomeFilter = function(){ window.location.href = 'index.html'; };
+
+    // Pre-fill state from URL (comma-separated values)
+    (function prefillHomeFilter(){
+      const u = new URLSearchParams(window.location.search);
+      HF_FIELDS.forEach(f => {
+        const raw = u.get(f);
+        if(raw){
+          HF_STATE[f] = raw.split(',').map(x => x.trim()).filter(Boolean);
+        }
+      });
+      const qv = u.get('q');
+      if(qv){
+        const el = document.getElementById('hfSearch');
+        if(el) el.value = qv;
+      }
+      // For 'bulan', options are static — populate now
+      hfUpdateLabelCount('bulan');
+      // For others, UpdateLabelCount also called after _populateHomeFilterOptions
+      HF_FIELDS.forEach(f => hfUpdateLabelCount(f));
+      // Update badge + summary
+      hfUpdateSummary();
+      // Enter to apply in search input
+      const sInp = document.getElementById('hfSearch');
+      if(sInp){ sInp.addEventListener('keydown', e => { if(e.key === 'Enter') window.applyHomeFilter(); }); }
+    })();
+
+    function hfUpdateSummary(){
+      const u = new URLSearchParams(window.location.search);
+      const parts = [];
+      HF_FIELDS.forEach(f => {
+        const arr = HF_STATE[f] || [];
+        if(arr.length){
+          const txt = arr.length === 1
+            ? (f === 'bulan' ? (HF_BULAN_LABELS[arr[0]] || arr[0]) : arr[0])
+            : (arr.length + ' dipilih');
+          parts.push({ key:f, value:txt, count:arr.length });
+        }
+      });
+      const qv = u.get('q');
+      if(qv) parts.push({ key:'q', value:qv, count:1 });
+
+      const totalActive = parts.length;
+      const badge = document.getElementById('hfCountBadge');
+      const txt   = document.getElementById('hfCountText');
+      const sub   = document.getElementById('hfBarSub');
+      const chipBox = document.getElementById('hfActiveChips');
+      if(totalActive > 0){
+        if(badge) badge.style.display = 'inline-flex';
+        if(txt)   txt.textContent = totalActive + ' filter aktif';
+        if(sub)   sub.textContent = parts.map(p => HF_LABELS[p.key] + ': ' + p.value).join(' • ');
+        if(chipBox){
+          chipBox.innerHTML = parts.map(p =>
+            `<span class="hf-chip">${HF_LABELS[p.key]}: <b>${hfEsc(p.value)}</b></span>`
+          ).join('');
+        }
+      } else {
+        if(badge) badge.style.display = 'none';
+        if(sub)   sub.textContent = 'Menampilkan semua data';
+        if(chipBox) chipBox.innerHTML = '';
+      }
+    }
+
+    // Helper used by main IIFE to populate kampus/kelompok/lecture options from loaded data
+    window._populateHomeFilterOptions = function(kampusList, kelompokList, lectureList){
+      HF_OPTIONS.kampus   = Array.isArray(kampusList)   ? kampusList   : [];
+      HF_OPTIONS.kelompok = Array.isArray(kelompokList) ? kelompokList : [];
+      HF_OPTIONS.lecture  = Array.isArray(lectureList)  ? lectureList  : [];
+      // If the dropdown is currently open, re-render; otherwise render on next open
+      ['kampus','kelompok','lecture'].forEach(f => {
+        const dd = document.getElementById('hfMsDropdown-'+f);
+        if(dd && !dd.hidden) hfRenderOptions(f, '');
+        // Prune state values that no longer exist in options
+        const opts = new Set(HF_OPTIONS[f]);
+        HF_STATE[f] = (HF_STATE[f] || []).filter(v => opts.has(v));
+        hfUpdateLabelCount(f);
+      });
+      hfUpdateSummary();
+    };
+  </script>
+</section>
+<!-- ============ END HOME FILTER BAR ============ -->
 
 <section class="kpi-grid">
   <div class="card card--kpi kpi-blue">
@@ -802,7 +1447,8 @@
 <!-- =================== LEADERBOARD AWARDEE =================== -->
 <section id="lbSection" style="margin-top:28px;">
   <style>
-    .lb-wrap{max-width:1200px;margin:0 auto;padding:0 4px;}
+    /* Match full width of .app-content so leaderboard aligns with sections above */
+    .lb-wrap{width:100%;margin:0;padding:0;}
     .lb-hero{
       background:linear-gradient(135deg,#fef3c7 0%,#fde68a 50%,#ffedd5 100%);
       border:1px solid #fcd34d;border-radius:18px;padding:22px 24px;
@@ -1181,6 +1827,118 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ✅ hadirin kalau OK / TP
   const isH = v => v === "✅" || v === "TP";
+
+  // ================ HOME FILTER (URL params, multi-value) ================
+  // Build nim → { kampus, kelompok, lecture } map from mahasiswa_bsi (non-awardee only)
+  // and collect unique values for dropdown options.
+  let _nimToLecture = new Map();
+  let _lectureOptions = [];
+  try {
+    if (!_isAwardee) {
+      // Fetch mahasiswa_bsi so we can filter by lecture and enrich rows
+      let mFrom = 0;
+      const mAll = [];
+      while (true) {
+        const { data, error } = await sb
+          .from("mahasiswa_bsi")
+          .select("no_induk,kampus,kelompok,lecture")
+          .range(mFrom, mFrom + PAGE_SIZE - 1);
+        if (error) { console.warn('mahasiswa_bsi fetch error:', error); break; }
+        if (!data || data.length === 0) break;
+        mAll.push(...data);
+        if (data.length < PAGE_SIZE) break;
+        mFrom += PAGE_SIZE;
+      }
+      const lectureSet = new Set();
+      mAll.forEach(m => {
+        if (m.no_induk) {
+          _nimToLecture.set(String(m.no_induk), {
+            kampus:   m.kampus   || '',
+            kelompok: m.kelompok || '',
+            lecture:  m.lecture  || '',
+          });
+        }
+        if (m.lecture && String(m.lecture).trim()) lectureSet.add(String(m.lecture).trim());
+      });
+      _lectureOptions = Array.from(lectureSet).sort((a,b) => a.localeCompare(b, 'id'));
+    }
+  } catch(e){ console.warn('fetch mahasiswa_bsi (for filter) failed:', e); }
+
+  // Populate dropdowns BEFORE filtering, so user can see all available options.
+  try {
+    const kampusSet   = new Set();
+    const kelompokSet = new Set();
+    // Primary source: rows (rekap). Supplement with mahasiswa_bsi (richer kampus/kelompok per student).
+    rows.forEach(r => {
+      if (r.kampus   && String(r.kampus).trim())   kampusSet.add(String(r.kampus).trim());
+      if (r.kelompok && String(r.kelompok).trim()) kelompokSet.add(String(r.kelompok).trim());
+    });
+    _nimToLecture.forEach(v => {
+      if (v.kampus   && v.kampus.trim())   kampusSet.add(v.kampus.trim());
+      if (v.kelompok && v.kelompok.trim()) kelompokSet.add(v.kelompok.trim());
+    });
+    const kampusList   = Array.from(kampusSet).sort((a,b) => a.localeCompare(b, 'id'));
+    const kelompokList = Array.from(kelompokSet).sort((a,b) => a.localeCompare(b, 'id'));
+    if (typeof window._populateHomeFilterOptions === 'function') {
+      window._populateHomeFilterOptions(kampusList, kelompokList, _lectureOptions);
+    }
+  } catch(e){ console.warn('populate filter options failed:', e); }
+
+  // Apply URL multi-value filter params to rows before any processing.
+  try {
+    const _uf = new URLSearchParams(window.location.search);
+    const _multi = (key) => {
+      const raw = _uf.get(key);
+      if (!raw) return [];
+      return raw.split(',').map(x => x.trim()).filter(Boolean);
+    };
+    const _fKampus   = _multi('kampus');
+    const _fKelompok = _multi('kelompok');
+    const _fBulan    = _multi('bulan');    // YYYY-MM values
+    const _fLecture  = _multi('lecture');
+    const _fQ        = (_uf.get('q') || '').trim().toLowerCase();
+
+    if (_fKampus.length) {
+      const set = new Set(_fKampus);
+      rows = rows.filter(r => {
+        // Fall back to mahasiswa_bsi if rekap row is missing kampus
+        const k = String(r.kampus || _nimToLecture.get(String(r.no_induk))?.kampus || '').trim();
+        return set.has(k);
+      });
+    }
+    if (_fKelompok.length) {
+      const set = new Set(_fKelompok);
+      rows = rows.filter(r => {
+        const g = String(r.kelompok || _nimToLecture.get(String(r.no_induk))?.kelompok || '').trim();
+        return set.has(g);
+      });
+    }
+    if (_fBulan.length) {
+      const set = new Set(_fBulan);
+      rows = rows.filter(r => {
+        const raw = r.tanggal || r.created_at || '';
+        if (!raw) return false;
+        const d = new Date(raw);
+        if (isNaN(d)) return false;
+        const ym = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+        return set.has(ym);
+      });
+    }
+    if (_fLecture.length) {
+      const set = new Set(_fLecture);
+      rows = rows.filter(r => {
+        const lec = _nimToLecture.get(String(r.no_induk || ''))?.lecture || '';
+        return set.has(lec.trim());
+      });
+    }
+    if (_fQ) {
+      rows = rows.filter(r =>
+        String(r.nama     || '').toLowerCase().includes(_fQ) ||
+        String(r.no_induk || '').toLowerCase().includes(_fQ)
+      );
+    }
+  } catch(e){ console.warn('apply URL filter failed:', e); }
+  // =========================================================
 
   // ✅ dianggap "ada nilainya" kalau tidak kosong/null
   const isFilled = v => v !== null && v !== undefined && String(v).trim() !== "";
@@ -2648,9 +3406,9 @@ const arrKelompok= Object.values(kelompok)
       const mePill = (myKey && a.no_induk === myKey) ? '<span class="lb-badge-me">Kamu</span>' : '';
       const isMe = (myKey && a.no_induk === myKey) ? 'is-me' : '';
       // Bars: mindful / accountable / self-dev (normalized to their individual max)
-      const mindPct  = Math.round(a.mindful / 35 * 100);
-      const accPct   = Math.round(a.account / 15 * 100);
-      const selfPct  = Math.round(a.selfDev / 50 * 100);
+      const mindPct  = Math.min(100, Math.round(a.mindful / 35 * 100));
+      const accPct   = Math.min(100, Math.round(a.account / 15 * 100));
+      const selfPct  = Math.min(100, Math.round(a.selfDev / 50 * 100));
       return `<div class="lb-row ${isMe}" data-nim="${escAttr(a.no_induk)}" onclick="showLbDetail('${escAttr(a.no_induk)}')">
         <div class="lb-rank ${rankCls}">${a.rank}</div>
         <div class="lb-person">

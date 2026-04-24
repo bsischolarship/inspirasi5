@@ -111,6 +111,9 @@ const OPERATOR_ALLOW_HANDLERS = new Set([
   'toggleSidebar', 'closeSidebar', 'switchTab', 'scrollToMe',
   'authLogout',
 
+  // Navigasi internal Portal Lecture (hash-based tab switching)
+  'navigateLecture',
+
   // Pagination
   'goPage', 'gotoPage',
 
@@ -121,11 +124,20 @@ const OPERATOR_ALLOW_HANDLERS = new Set([
   // View detail — read-only modals
   'showDetail', 'openDetail', 'openAwardeeDetail', 'openAwardeeDetailForTalent',
 
+  // Home filter (multi-select) — read-only, hanya ubah URL + re-render client-side
+  'toggleHomeFilter', 'applyHomeFilter', 'resetHomeFilter',
+  'hfToggleDropdown', 'hfToggleItem', 'hfSelectAll', 'hfClearAll', 'hfFilterOptions',
+
   // Inline event guard — onclick="if(event.target===this)closeXXX()"
   'if',
 ]);
-// Prefix yang selalu aman (close*, download*)
-const OPERATOR_ALLOW_PREFIX = /^(close|download)/;
+// Prefix yang selalu aman — fungsi read-only yang hanya update UI dari data yang sudah di-fetch:
+//   close*    — tutup modal/dropdown
+//   download* — ekspor data yang sudah di-memory (tanpa tulis ke DB)
+//   render*   — re-render tabel/chart dari state yang ada (filter, sort, search)
+//   navigate* — navigasi antar tab/panel (tidak modifikasi data)
+//   show*     — buka modal/detail (read-only viewer)
+const OPERATOR_ALLOW_PREFIX = /^(close|download|render|navigate|show)/;
 
 function _isOperatorAllowed(handlerName) {
   if (!handlerName) return true; // no handler → likely safe (e.g. href link)
@@ -139,6 +151,44 @@ function _injectOperatorStyles() {
   _operatorStylesInjected = true;
 
   const css = `
+/* =========================================================================
+   GLOBAL: modal close button (X) — sticky di top-right, ikut saat scroll
+   Pattern: kasih ke kontainer modal yang sudah overflow-y:auto
+========================================================================= */
+.modal-close-x {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  align-self: flex-end;      /* dorong ke kanan jika parent flex */
+  margin-left: auto;          /* dorong ke kanan jika parent block */
+  margin-bottom: -38px;       /* tumpang tindih dengan content di bawah */
+  margin-right: 0;
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 50%;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  transition: background .15s, border-color .15s, color .15s, transform .2s;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  flex-shrink: 0;
+}
+.modal-close-x:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+  transform: rotate(90deg);
+}
+.modal-close-x:active { transform: rotate(90deg) scale(0.92); }
+.modal-close-x svg { width: 16px; height: 16px; pointer-events: none; }
+
+/* Modal containers perlu position:relative untuk sticky context yang benar */
+.lb-modal, .pr-modal, .lc-modal, .st-modal, .modal-body {
+  position: relative;
+}
+
 /* =========================================================================
    OPERATOR ROLE — VISUAL HIDING (cosmetic, JS interceptor is the real gate)
 ========================================================================= */
@@ -208,14 +258,39 @@ body[data-role="operator"] .app-content select:not([disabled]) {
 body[data-role="operator"] .app-content input[type="search"],
 body[data-role="operator"] .app-content input[placeholder*="Cari" i],
 body[data-role="operator"] .app-content input[placeholder*="Search" i],
+body[data-role="operator"] .app-content input[placeholder*="Ketik" i],
+body[data-role="operator"] .app-content input[id^="q-"],
+body[data-role="operator"] .app-content input[id="tfQuery"],
+body[data-role="operator"] .app-content input[id^="tf-"],
+body[data-role="operator"] .app-content input[id^="search"],
+body[data-role="operator"] .app-content input[id$="Search"],
+body[data-role="operator"] .app-content input[id$="Query"],
 body[data-role="operator"] .app-content .tbl-search input,
+body[data-role="operator"] .app-content .tf-searchbox input,
 body[data-role="operator"] .app-content .tbl-filter,
+body[data-role="operator"] .app-content .tf-filter,
 body[data-role="operator"] .app-content .lb-filter,
 body[data-role="operator"] .app-content .lb-filter-search {
   pointer-events: auto !important;
   background-color: #fff !important;
   color: #374151 !important;
-  cursor: text;
+  cursor: text !important;
+}
+
+/* Select search/filter juga boleh jalan */
+body[data-role="operator"] .app-content select.tbl-filter,
+body[data-role="operator"] .app-content select.tf-filter,
+body[data-role="operator"] .app-content select.lb-filter,
+body[data-role="operator"] .app-content select[id^="f-"],
+body[data-role="operator"] .app-content select[id^="fk-"],
+body[data-role="operator"] .app-content select[id^="fkel-"],
+body[data-role="operator"] .app-content select[id^="ft-"],
+body[data-role="operator"] .app-content select[id^="tf-"],
+body[data-role="operator"] .app-content select[id^="fsort-"] {
+  pointer-events: auto !important;
+  background-color: #fff !important;
+  color: #374151 !important;
+  cursor: pointer !important;
 }
 
 /* Hide kolom aksi kalau ditandai */
@@ -253,8 +328,11 @@ function _attachOperatorInterceptor() {
     if (!el) return;
 
     const raw = el.getAttribute('onclick') || '';
-    // Ekstrak nama fungsi pertama (e.g. "foo()" → "foo", "if(...)bar()" → "if")
-    const m = raw.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)/);
+    // Ekstrak nama fungsi pertama. Skip prefix 'return ' agar:
+    //   "return navigateLecture(...)"  → "navigateLecture" (bukan "return")
+    //   "navigateLecture(...)"          → "navigateLecture"
+    //   "if(event.target===this)closeX()" → "if"
+    const m = raw.match(/^\s*(?:return\s+)?([a-zA-Z_$][a-zA-Z0-9_$]*)/);
     const fnName = m ? m[1] : '';
 
     if (_isOperatorAllowed(fnName)) return; // allowed
@@ -283,7 +361,7 @@ function _attachOperatorInterceptor() {
     if (!el) return;
 
     const raw = el.getAttribute('onchange') || '';
-    const m = raw.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)/);
+    const m = raw.match(/^\s*(?:return\s+)?([a-zA-Z_$][a-zA-Z0-9_$]*)/);
     const fnName = m ? m[1] : '';
 
     if (_isOperatorAllowed(fnName)) return; // allowed (filter/search)
@@ -317,6 +395,14 @@ function _toggleRoleGroups(role) {
   if (lectureGroup) lectureGroup.style.display = showLecture ? "block" : "none";
   if (mobAdmin)     mobAdmin.style.display     = showAdmin   ? "flex"  : "none";
   if (mobLecture)   mobLecture.style.display   = showLecture ? "flex"  : "none";
+
+  // Rename "Portal Admin" → "Portal Operator" untuk role operator
+  if (adminGroup) {
+    const adminLabel = adminGroup.querySelector('.sidebar-section-label');
+    if (adminLabel) {
+      adminLabel.textContent = (role === 'operator') ? 'Portal Operator' : 'Portal Admin';
+    }
+  }
 
   // Menu awardee yang disembunyikan untuk lecture & operator (selain Home):
   //   List Form, Rekap, Lapor, Galeri, Form
