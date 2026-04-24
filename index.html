@@ -370,6 +370,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Lapor
       </a>
+      <a href="galeri.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        Galeri Saya
+      </a>
     <div class="sidebar-admin-group" id="adminGroup" style="display:none;">
       <div class="sidebar-section-label" style="margin-top:16px;">Portal Admin</div>
       <a href="admin.html" id="navAdminLink" class="sidebar-link">
@@ -786,6 +790,336 @@
 
   
 </section>
+
+<!-- =================== LEADERBOARD AWARDEE =================== -->
+<section id="lbSection" style="margin-top:28px;">
+  <style>
+    .lb-wrap{max-width:1200px;margin:0 auto;padding:0 4px;}
+    .lb-hero{
+      background:linear-gradient(135deg,#fef3c7 0%,#fde68a 50%,#ffedd5 100%);
+      border:1px solid #fcd34d;border-radius:18px;padding:22px 24px;
+      position:relative;overflow:hidden;margin-bottom:18px;
+    }
+    .lb-hero::before{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(circle at 90% 20%,rgba(251,191,36,.25),transparent 55%),
+                 radial-gradient(circle at 10% 90%,rgba(249,115,22,.18),transparent 50%);
+      pointer-events:none;
+    }
+    .lb-hero-inner{position:relative;z-index:1;display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+    .lb-hero-icon{
+      width:60px;height:60px;border-radius:16px;flex-shrink:0;
+      background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 6px 16px rgba(217,119,6,.3);
+    }
+    .lb-hero-icon svg{width:30px;height:30px;}
+    .lb-hero-text{flex:1;min-width:220px;}
+    .lb-hero-title{font-size:20px;font-weight:800;color:#78350f;margin:0 0 4px;line-height:1.2;}
+    .lb-hero-subtitle{font-size:12.5px;color:#92400e;line-height:1.5;}
+    .lb-hero-subtitle b{color:#78350f;}
+    .lb-hero-stats{display:flex;gap:10px;flex-wrap:wrap;}
+    .lb-hero-stat{
+      background:rgba(255,255,255,.75);border:1px solid rgba(252,211,77,.6);
+      border-radius:10px;padding:8px 14px;min-width:95px;
+    }
+    .lb-hero-stat .num{font-size:18px;font-weight:800;color:#78350f;line-height:1;}
+    .lb-hero-stat .lbl{font-size:10.5px;color:#a16207;margin-top:3px;text-transform:uppercase;letter-spacing:.04em;}
+
+    /* View toggle (All Time / Quartal) */
+    .lb-view-toggle{
+      display:flex; gap:6px; flex-wrap:wrap;
+      background:#fff; border:1px solid #e5e7eb; border-radius:12px;
+      padding:6px; margin-bottom:10px;
+    }
+    .lvt-btn{
+      flex:1 1 auto; min-width:90px;
+      display:inline-flex; align-items:center; justify-content:center; gap:6px; flex-direction:column;
+      padding:8px 12px; font-family:inherit; font-size:12px; font-weight:700;
+      border:1.5px solid transparent; border-radius:9px; background:transparent;
+      color:#6b7280; cursor:pointer; transition:all .15s; line-height:1.15;
+    }
+    .lvt-btn:hover{ background:#f9fafb; color:#374151; }
+    .lvt-btn .lvt-main{ font-size:12.5px; }
+    .lvt-btn .lvt-sub{ font-size:9.5px; font-weight:600; opacity:.7; letter-spacing:.02em; }
+    .lvt-btn.active{
+      background:linear-gradient(135deg,#fef3c7,#fde68a);
+      color:#78350f; border-color:#fcd34d;
+      box-shadow:0 2px 6px rgba(217,119,6,.15);
+    }
+    .lvt-btn.active .lvt-sub{ opacity:.85; }
+    .lvt-btn svg{ color:inherit; flex-shrink:0; }
+    @media(max-width:560px){
+      .lvt-btn{ flex:1 1 calc(50% - 3px); min-width:0; }
+      .lvt-btn[data-view="all"]{ flex:1 1 100%; }
+    }
+
+    /* Filters bar */
+    .lb-filters{
+      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+      background:#fff;border:1px solid #e5e7eb;border-radius:12px;
+      padding:10px 14px;margin-bottom:14px;
+    }
+    .lb-filters-label{font-size:11.5px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.04em;}
+    .lb-filters select,.lb-filters input{
+      padding:7px 11px;font-size:12.5px;border:1.5px solid #e5e7eb;border-radius:8px;
+      background:#f9fafb;color:#374151;outline:none;
+    }
+    .lb-filters input{flex:1;min-width:160px;}
+    .lb-filters select:focus,.lb-filters input:focus{border-color:#d97706;background:#fff;}
+    .lb-me-btn{
+      padding:7px 14px;font-size:12.5px;font-weight:700;cursor:pointer;
+      background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border:none;
+      border-radius:8px;display:inline-flex;align-items:center;gap:5px;
+      box-shadow:0 2px 6px rgba(217,119,6,.25);transition:transform .12s;
+    }
+    .lb-me-btn:hover{transform:translateY(-1px);}
+    .lb-me-btn svg{width:13px;height:13px;}
+
+    /* Podium */
+    .lb-podium{
+      display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:10px;
+      margin-bottom:14px;align-items:end;
+    }
+    .lb-pod{
+      background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;padding:14px 12px 12px;
+      text-align:center;position:relative;transition:transform .15s;
+    }
+    .lb-pod:hover{transform:translateY(-2px);}
+    .lb-pod.rank-1{
+      background:linear-gradient(180deg,#fef3c7 0%,#fff 70%);
+      border-color:#f59e0b;padding-top:18px;
+    }
+    .lb-pod.rank-2{background:linear-gradient(180deg,#f1f5f9 0%,#fff 70%);border-color:#94a3b8;}
+    .lb-pod.rank-3{background:linear-gradient(180deg,#fed7aa 0%,#fff 70%);border-color:#ea580c;}
+    .lb-pod-crown{
+      width:32px;height:32px;border-radius:50%;
+      display:inline-flex;align-items:center;justify-content:center;
+      margin-bottom:4px;color:#fff;
+    }
+    .lb-pod.rank-1 .lb-pod-crown{background:linear-gradient(135deg,#fbbf24,#d97706);}
+    .lb-pod.rank-2 .lb-pod-crown{background:linear-gradient(135deg,#d4d4d8,#71717a);}
+    .lb-pod.rank-3 .lb-pod-crown{background:linear-gradient(135deg,#fb923c,#c2410c);}
+    .lb-pod-crown svg{width:18px;height:18px;}
+    .lb-pod-avatar{
+      width:48px;height:48px;border-radius:50%;margin:2px auto 8px;
+      background:linear-gradient(135deg,#0055a5,#0d9488);color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:15px;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.15);
+    }
+    .lb-pod-name{font-size:13px;font-weight:800;color:#111827;line-height:1.3;margin-bottom:2px;}
+    .lb-pod-meta{font-size:10.5px;color:#6b7280;line-height:1.4;margin-bottom:8px;}
+    .lb-pod-score{font-size:22px;font-weight:800;color:#78350f;line-height:1;font-variant-numeric:tabular-nums;}
+    .lb-pod.rank-2 .lb-pod-score{color:#52525b;}
+    .lb-pod.rank-3 .lb-pod-score{color:#c2410c;}
+    .lb-pod-score-lbl{font-size:9.5px;color:#9ca3af;margin-top:2px;text-transform:uppercase;letter-spacing:.05em;}
+
+    /* Ranking list */
+    .lb-list{
+      background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;
+    }
+    .lb-row{
+      display:grid;grid-template-columns:48px 1fr 120px 1fr;gap:14px;
+      align-items:center;padding:12px 16px;
+      border-bottom:1px solid #f1f5f9;transition:background .12s;
+    }
+    .lb-row:last-child{border-bottom:none;}
+    .lb-row:hover{background:#fafafa;cursor:pointer;}
+    .lb-row.is-me{background:linear-gradient(90deg,#fef3c7 0%,#fff 70%);border-left:4px solid #d97706;}
+    .lb-row.is-me:hover{background:linear-gradient(90deg,#fef3c7 0%,#fffbeb 70%);}
+
+    .lb-rank{
+      width:36px;height:36px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;font-size:14px;background:#f3f4f6;color:#6b7280;flex-shrink:0;
+    }
+    .lb-rank.r-gold{background:linear-gradient(135deg,#fbbf24,#d97706);color:#fff;}
+    .lb-rank.r-silver{background:linear-gradient(135deg,#d4d4d8,#71717a);color:#fff;}
+    .lb-rank.r-bronze{background:linear-gradient(135deg,#fb923c,#c2410c);color:#fff;}
+
+    .lb-person{display:flex;align-items:center;gap:10px;min-width:0;}
+    .lb-avatar{
+      width:36px;height:36px;border-radius:10px;flex-shrink:0;
+      background:linear-gradient(135deg,#0055a5,#0d9488);color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;font-size:12.5px;
+    }
+    .lb-info{flex:1;min-width:0;}
+    .lb-name{font-size:13px;font-weight:700;color:#111827;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+    .lb-sub{font-size:11px;color:#6b7280;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.4;}
+    .lb-badge-me{
+      display:inline-block;background:#d97706;color:#fff;font-size:9px;font-weight:800;
+      padding:1px 6px;border-radius:99px;margin-left:6px;text-transform:uppercase;letter-spacing:.05em;
+      vertical-align:1px;
+    }
+
+    .lb-score-box{text-align:center;}
+    .lb-score-big{font-size:19px;font-weight:800;color:#78350f;line-height:1;font-variant-numeric:tabular-nums;}
+    .lb-score-lbl{font-size:9.5px;color:#9ca3af;margin-top:2px;text-transform:uppercase;letter-spacing:.05em;}
+
+    /* Mini bars per aspect */
+    .lb-bars{display:flex;flex-direction:column;gap:3px;min-width:0;}
+    .lb-bar{display:flex;align-items:center;gap:8px;font-size:10.5px;}
+    .lb-bar-lbl{flex:0 0 60px;color:#6b7280;font-weight:600;line-height:1;}
+    .lb-bar-track{flex:1;height:8px;background:#f1f5f9;border-radius:99px;overflow:hidden;position:relative;}
+    .lb-bar-fill{height:100%;border-radius:99px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+    .lb-bar-fill.mind{background:linear-gradient(90deg,#34d399,#10b981);}
+    .lb-bar-fill.acc{background:linear-gradient(90deg,#60a5fa,#3b82f6);}
+    .lb-bar-fill.self{background:linear-gradient(90deg,#fbbf24,#d97706);}
+    .lb-bar-pct{flex:0 0 auto;min-width:62px;text-align:right;font-weight:700;color:#374151;font-variant-numeric:tabular-nums;display:inline-flex;align-items:baseline;justify-content:flex-end;gap:5px;}
+    .lb-bar-pct-pct{font-size:9.5px;font-weight:700;color:#d97706;background:#fef3c7;padding:1px 5px;border-radius:4px;line-height:1.4;letter-spacing:.01em;}
+
+    /* Pagination */
+    .lb-footer{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:12px 16px;border-top:1px solid #f1f5f9;flex-wrap:wrap;gap:10px;
+      font-size:12px;color:#6b7280;background:#fafafa;
+    }
+    .lb-pg-btns{display:flex;gap:4px;}
+    .lb-pg-btn{
+      padding:5px 11px;border:1.5px solid #e5e7eb;border-radius:7px;
+      background:#fff;font-size:12px;font-weight:600;color:#374151;
+      cursor:pointer;transition:all .12s;min-width:32px;text-align:center;
+    }
+    .lb-pg-btn:hover:not(:disabled){background:#f3f4f6;}
+    .lb-pg-btn.active{background:#d97706;color:#fff;border-color:#d97706;}
+    .lb-pg-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+    /* Empty + loading */
+    .lb-empty,.lb-loading{
+      text-align:center;padding:40px 20px;color:#9ca3af;font-size:13px;
+    }
+    .lb-loading::before{
+      content:'';display:inline-block;width:16px;height:16px;border:2.5px solid #e5e7eb;
+      border-top-color:#d97706;border-radius:50%;animation:lbspin .7s linear infinite;
+      margin-right:8px;vertical-align:-3px;
+    }
+    @keyframes lbspin{to{transform:rotate(360deg);}}
+
+    /* Formula toggle */
+    .lb-formula{
+      background:#fff;border:1px solid #e5e7eb;border-radius:12px;
+      margin-top:14px;overflow:hidden;
+    }
+    .lb-formula summary{
+      padding:12px 16px;cursor:pointer;font-size:12.5px;font-weight:700;color:#374151;
+      display:flex;align-items:center;gap:8px;list-style:none;transition:background .12s;
+    }
+    .lb-formula summary::-webkit-details-marker{display:none;}
+    .lb-formula summary:hover{background:#f9fafb;}
+    .lb-formula summary svg.ico{width:14px;height:14px;color:#d97706;}
+    .lb-formula summary svg.chev{width:12px;height:12px;color:#9ca3af;margin-left:auto;transition:transform .2s;}
+    .lb-formula[open] summary svg.chev{transform:rotate(180deg);}
+    .lb-formula-body{padding:4px 16px 16px;}
+    .lb-formula-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px;}
+    .lb-formula-table th{
+      background:#f8fafc;padding:8px 10px;text-align:left;font-size:10.5px;font-weight:700;
+      color:#64748b;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid #e5e7eb;
+    }
+    .lb-formula-table td{padding:8px 10px;border-bottom:1px solid #f1f5f9;color:#374151;}
+    .lb-formula-table td.val{font-weight:800;color:#78350f;font-variant-numeric:tabular-nums;text-align:right;}
+    .lb-formula-table tr.group-row td{background:#fef3c7;font-weight:800;color:#78350f;}
+
+    @media(max-width:780px){
+      .lb-row{grid-template-columns:40px 1fr 80px;gap:10px;}
+      .lb-row .lb-bars{display:none;}
+      .lb-podium{grid-template-columns:1fr;}
+      .lb-podium .lb-pod.rank-1{order:1;}
+      .lb-podium .lb-pod.rank-2{order:2;}
+      .lb-podium .lb-pod.rank-3{order:3;}
+      .lb-hero-title{font-size:17px;}
+    }
+  </style>
+
+  <div class="lb-wrap">
+    <div class="lb-hero">
+      <div class="lb-hero-inner">
+        <div class="lb-hero-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        </div>
+        <div class="lb-hero-text">
+          <div class="lb-hero-title">🏆 Leaderboard Awardee</div>
+          <div class="lb-hero-subtitle">Peringkat awardee berdasarkan <b>Mindful (35%)</b>, <b>Accountable (15%)</b>, dan <b>Self-Development (50%)</b>.</div>
+        </div>
+        <div class="lb-hero-stats">
+          <div class="lb-hero-stat"><div class="num" id="lbStatTotal">—</div><div class="lbl">Total Awardee</div></div>
+          <div class="lb-hero-stat"><div class="num" id="lbStatAvg">—</div><div class="lbl">Rata-rata Skor</div></div>
+          <div class="lb-hero-stat"><div class="num" id="lbStatTop">—</div><div class="lbl">Skor Tertinggi</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lb-view-toggle" role="tablist" aria-label="Pilih periode">
+      <button type="button" class="lvt-btn active" data-view="all" role="tab">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span class="lvt-main">All Time</span>
+      </button>
+      <button type="button" class="lvt-btn" data-view="q1" role="tab">
+        <span class="lvt-main">Q1</span><span class="lvt-sub">Des'25–Feb'26</span>
+      </button>
+      <button type="button" class="lvt-btn" data-view="q2" role="tab">
+        <span class="lvt-main">Q2</span><span class="lvt-sub">Mar–Mei'26</span>
+      </button>
+      <button type="button" class="lvt-btn" data-view="q3" role="tab">
+        <span class="lvt-main">Q3</span><span class="lvt-sub">Jun–Agu'26</span>
+      </button>
+      <button type="button" class="lvt-btn" data-view="q4" role="tab">
+        <span class="lvt-main">Q4</span><span class="lvt-sub">Sep–Nov'26</span>
+      </button>
+    </div>
+
+    <div class="lb-filters">
+      <span class="lb-filters-label">Filter</span>
+      <select id="lbFilterKampus"><option value="">Semua Kampus</option></select>
+      <select id="lbFilterKelompok"><option value="">Semua Kelompok</option></select>
+      <input type="text" id="lbSearch" placeholder="Cari nama atau NIM..." />
+      <button type="button" class="lb-me-btn" id="lbMeBtn" onclick="scrollToMe()" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Posisi Saya
+      </button>
+    </div>
+
+    <div id="lbPodium" class="lb-podium" style="display:none;"></div>
+
+    <div id="lbTable" class="lb-list">
+      <div class="lb-loading">Memuat leaderboard...</div>
+    </div>
+
+    <details class="lb-formula">
+      <summary>
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span>Bagaimana skor dihitung?</span>
+        <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div class="lb-formula-body">
+        <p style="margin:0 0 8px;font-size:12px;color:#4b5563;line-height:1.55;">
+          Skor akhir (<b>maksimum 100%</b>) adalah penjumlahan tiga aspek dengan bobot berikut:
+        </p>
+        <table class="lb-formula-table">
+          <thead><tr><th>Aspek</th><th style="text-align:center;">Bobot Aspek</th><th>Aktivitas</th><th class="val">Bobot Aktivitas</th></tr></thead>
+          <tbody>
+            <tr class="group-row"><td>Mindful</td><td style="text-align:center;">35%</td><td>—</td><td class="val">—</td></tr>
+            <tr><td></td><td></td><td>Mentoring (kehadiran)</td><td class="val">17,5%</td></tr>
+            <tr><td></td><td></td><td>Pembinaan (kehadiran)</td><td class="val">17,5%</td></tr>
+            <tr class="group-row"><td>Accountable</td><td style="text-align:center;">15%</td><td>—</td><td class="val">—</td></tr>
+            <tr><td></td><td></td><td>Pre Test (kehadiran)</td><td class="val">4%</td></tr>
+            <tr><td></td><td></td><td>Post Test (kehadiran)</td><td class="val">4%</td></tr>
+            <tr><td></td><td></td><td>Quartal Assignment (assessment)</td><td class="val">7%</td></tr>
+            <tr class="group-row"><td>Self-Development</td><td style="text-align:center;">50%</td><td>—</td><td class="val">—</td></tr>
+            <tr><td></td><td></td><td>Prestasi (dinormalisasi ke 30 poin)</td><td class="val">20%</td></tr>
+            <tr><td></td><td></td><td>Organisasi (dinormalisasi ke 25 poin)</td><td class="val">20%</td></tr>
+            <tr><td></td><td></td><td>IPK (ipk/4,0 × 10%)</td><td class="val">10%</td></tr>
+            <tr style="background:#f0fdf4;"><td colspan="3" style="font-weight:800;color:#065f46;">Maximum Score</td><td class="val" style="color:#065f46;">100%</td></tr>
+          </tbody>
+        </table>
+        <p style="margin:10px 0 0;font-size:11.5px;color:#6b7280;line-height:1.55;">
+          <b>Kehadiran</b> dihitung dari rekap aktivitas (simbol ✅ dan TP dihitung hadir). <b>Prestasi</b> dan <b>Organisasi</b> memakai poin berbasis tingkatan + capaian/keterlibatan (bisa dilihat detailnya di halaman Kelola Prestasi/Organisasi). <b>IPK</b> diambil langsung dari data mahasiswa.
+        </p>
+      </div>
+    </details>
+  </div>
+</section>
+<!-- =================== END LEADERBOARD =================== -->
 
 </main>
 
@@ -2003,6 +2337,501 @@ const arrKelompok= Object.values(kelompok)
 </script>
 
 <script src="assets/auth.js"></script>
+
+<!-- ========== LEADERBOARD LOGIC ========== -->
+<script>
+(async function initLeaderboard(){
+  // Wait for supabase client
+  let tries = 0;
+  while (!window._supabase && tries++ < 50) await new Promise(r => setTimeout(r, 100));
+  const sb = window._supabase;
+  if(!sb){ document.getElementById('lbTable').innerHTML = '<div class="lb-empty">Gagal memuat data.</div>'; return; }
+
+  // ======= Scoring helpers =======
+  const LB_PRESTASI_MAX = 30;   // cap points → 20%
+  const LB_ORG_MAX      = 25;   // cap points → 20%
+
+  function lbTingkatanBonusPrestasi(t){
+    const s = (t||'').toLowerCase();
+    if(/internasion|international|world|asia|asean/.test(s)) return 3;
+    if(/nasional|national|indonesia/.test(s))                return 2;
+    if(/regional|wilayah|provinsi|province/.test(s))         return 1;
+    if(/universitas|kampus|institut|politek|fakultas|jurusan/.test(s)) return 0.5;
+    return 0;
+  }
+  function lbJuaraBonus(j){
+    const s = (j||'').toLowerCase();
+    if(/harap/.test(s))                                            return 0.5;
+    if(/juara\s*1|juara\s*i\b|pertama|^1$|emas|gold/.test(s))       return 3;
+    if(/juara\s*2|juara\s*ii\b|kedua|^2$|perak|silver/.test(s))     return 2;
+    if(/juara\s*3|juara\s*iii\b|ketiga|^3$|perunggu|bronze/.test(s))return 1;
+    return 0.3;
+  }
+  function lbTingkatanBonusOrg(t){
+    const s = (t||'').toLowerCase();
+    if(/internasion|international|world|asia|asean/.test(s))                         return 3;
+    if(/nasional|national|indonesia/.test(s))                                         return 2;
+    if(/universitas|kampus|institut|politek|regional|wilayah|provinsi|province/.test(s)) return 1;
+    if(/fakultas/.test(s))                                                            return 0.5;
+    if(/jurusan|prodi|himpunan|hmp\b|hmj\b|hima/.test(s))                             return 0.3;
+    return 0;
+  }
+  function lbKeterlibatanBonus(k){
+    const s = (k||'').toLowerCase();
+    if(/^ketua$|\bketua umum\b|\bketum\b|gubernur|presiden/.test(s))                   return 3;
+    if(/sekjen|sekretaris jendral|sekretaris umum|wakil ketua|^wakil\b/.test(s))       return 2.5;
+    if(/ketua divisi|ketua bidang|\bbph\b|\bdph\b|kepala bidang|kepala divisi|kepala departemen|bendahara/.test(s)) return 2;
+    if(/^staff$|^staf$|anggota|pengurus/.test(s))                                      return 0.5;
+    if(/volunteer|relawan/.test(s))                                                    return 0.3;
+    return 0.3;
+  }
+  function lbPct(ok,total){ return total>0 ? (ok/total) : 0; }
+  function isHadir(v){ return v==='✅' || v==='TP'; }
+  function isEvent(v){ return v !== null && v !== undefined && String(v).trim() !== ''; }
+
+  // ======= Fetch all data in parallel =======
+  async function fetchAll(table, cols){
+    let rows=[], from=0;
+    while(true){
+      const { data, error } = await sb.from(table).select(cols).range(from, from+999);
+      if(error) throw error;
+      rows = rows.concat(data||[]);
+      if(!data || data.length < 1000) break;
+      from += 1000;
+    }
+    return rows;
+  }
+
+  let mahasiswaRows, rekapRows, prestasiRows, orgRows;
+  try {
+    [mahasiswaRows, rekapRows, prestasiRows, orgRows] = await Promise.all([
+      fetchAll('mahasiswa_bsi', 'no_induk,nama,kampus,kelompok,ipk,status'),
+      fetchAll('rekap_bsi', 'no_induk,nama,tanggal,pre_test,post_test,assessment,mentoring,pembinaan'),
+      fetchAll('prestasi_bsi', 'no_induk,tingkatan,juara').catch(()=>[]),
+      fetchAll('organisasi_bsi', 'no_induk,tingkatan,keterlibatan').catch(()=>[]),
+    ]);
+  } catch(e){
+    console.error('Leaderboard fetch error:', e);
+    document.getElementById('lbTable').innerHTML = '<div class="lb-empty">Gagal memuat data: ' + (e.message||e) + '</div>';
+    return;
+  }
+
+  // ======= Quartal definitions =======
+  // Q1 starts Dec 2025, each quartal = 3 months
+  const QUARTERS = [
+    { id:'q1', label:'Q1', sub:"Des'25–Feb'26", start:'2025-12-01', end:'2026-02-28' },
+    { id:'q2', label:'Q2', sub:"Mar–Mei'26",    start:'2026-03-01', end:'2026-05-31' },
+    { id:'q3', label:'Q3', sub:"Jun–Agu'26",    start:'2026-06-01', end:'2026-08-31' },
+    { id:'q4', label:'Q4', sub:"Sep–Nov'26",    start:'2026-09-01', end:'2026-11-30' },
+  ];
+  function getQuartal(id){ return QUARTERS.find(q => q.id === id); }
+  function inRange(dateVal, q){
+    if(!dateVal) return false;
+    const iso = String(dateVal).slice(0, 10);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)){
+      const d = new Date(dateVal);
+      if(isNaN(d.getTime())) return false;
+      const iso2 = d.toISOString().slice(0, 10);
+      return iso2 >= q.start && iso2 <= q.end;
+    }
+    return iso >= q.start && iso <= q.end;
+  }
+
+  // ======= Compute ranking — takes view id ('all' or 'q1'..'q4') =======
+  const WEIGHTS = {
+    mentoring: 17.5, pembinaan: 17.5,
+    pre: 4, post: 4, assessment: 7,
+    prestasi: 20, organisasi: 20, ipk: 10,
+  };
+
+  function computeRanked(view){
+    const q = view === 'all' ? null : getQuartal(view);
+
+    // Filter rekap by quartal tanggal (only rekap gets filtered)
+    const rekapFiltered = q ? rekapRows.filter(r => inRange(r.tanggal, q)) : rekapRows;
+
+    // Aggregate per awardee
+    const acc = new Map();
+    mahasiswaRows.forEach(m => {
+      if(!m.no_induk) return;
+      acc.set(String(m.no_induk), {
+        no_induk: String(m.no_induk),
+        nama: m.nama || '—',
+        kampus: m.kampus || '—',
+        kelompok: m.kelompok || '—',
+        ipk: parseFloat(m.ipk) || 0,
+        status: m.status || '',
+        ment: {ok:0,total:0}, pem: {ok:0,total:0},
+        pre: {ok:0,total:0}, post: {ok:0,total:0}, ass: {ok:0,total:0},
+        prestasiPoints: 0, prestasiCount: 0,
+        orgPoints: 0, orgCount: 0,
+      });
+    });
+
+    rekapFiltered.forEach(r => {
+      const a = acc.get(String(r.no_induk||''));
+      if(!a) return;
+      [['mentoring','ment'],['pembinaan','pem'],['pre_test','pre'],['post_test','post'],['assessment','ass']]
+        .forEach(([src,dst]) => {
+          if(isEvent(r[src])) {
+            a[dst].total++;
+            if(isHadir(r[src])) a[dst].ok++;
+          }
+        });
+    });
+
+    // Prestasi/organisasi/IPK always all-time
+    prestasiRows.forEach(r => {
+      const a = acc.get(String(r.no_induk||''));
+      if(!a) return;
+      a.prestasiPoints += lbTingkatanBonusPrestasi(r.tingkatan) + lbJuaraBonus(r.juara);
+      a.prestasiCount++;
+    });
+    orgRows.forEach(r => {
+      const a = acc.get(String(r.no_induk||''));
+      if(!a) return;
+      a.orgPoints += lbTingkatanBonusOrg(r.tingkatan) + lbKeterlibatanBonus(r.keterlibatan);
+      a.orgCount++;
+    });
+
+    const scored = Array.from(acc.values()).map(a => {
+      const mentPct = lbPct(a.ment.ok, a.ment.total);
+      const pemPct  = lbPct(a.pem.ok,  a.pem.total);
+      const prePct  = lbPct(a.pre.ok,  a.pre.total);
+      const postPct = lbPct(a.post.ok, a.post.total);
+      const assPct  = lbPct(a.ass.ok,  a.ass.total);
+      const prestPct = Math.min(1, a.prestasiPoints / LB_PRESTASI_MAX);
+      const orgPct   = Math.min(1, a.orgPoints / LB_ORG_MAX);
+      const ipkPct   = Math.min(1, (a.ipk||0) / 4.0);
+
+      const sMent  = mentPct * WEIGHTS.mentoring;
+      const sPem   = pemPct  * WEIGHTS.pembinaan;
+      const sPre   = prePct  * WEIGHTS.pre;
+      const sPost  = postPct * WEIGHTS.post;
+      const sAss   = assPct  * WEIGHTS.assessment;
+      const sPrest = prestPct * WEIGHTS.prestasi;
+      const sOrg   = orgPct   * WEIGHTS.organisasi;
+      const sIpk   = ipkPct   * WEIGHTS.ipk;
+
+      const mindful  = sMent + sPem;
+      const account  = sPre + sPost + sAss;
+      const selfDev  = sPrest + sOrg + sIpk;
+      const total    = mindful + account + selfDev;
+
+      return {
+        ...a,
+        mentPct, pemPct, prePct, postPct, assPct, prestPct, orgPct, ipkPct,
+        sMent, sPem, sPre, sPost, sAss, sPrest, sOrg, sIpk,
+        mindful, account, selfDev, total,
+      };
+    });
+
+    // Membership rule:
+    //   All Time → has any data at all
+    //   Quartal  → must have ≥1 rekap event in that quartal (agar ranking bermakna)
+    const r = scored.filter(a => {
+      const hasRekap = a.ment.total + a.pem.total + a.pre.total + a.post.total + a.ass.total > 0;
+      if(q){
+        return hasRekap;  // strict: quartal view butuh aktivitas rekap di Q itu
+      }
+      return hasRekap || a.prestasiCount > 0 || a.orgCount > 0 || a.ipk > 0;
+    }).sort((a,b) => b.total - a.total);
+
+    r.forEach((x,i) => x.rank = i+1);
+    return r;
+  }
+
+  // Mutable ranked (switches on view change)
+  let ranked = computeRanked('all');
+  let currentView = 'all';
+
+  // ======= Populate filters =======
+  const kampusSet = new Set(), kelSet = new Set();
+  ranked.forEach(a => { if(a.kampus) kampusSet.add(a.kampus); if(a.kelompok) kelSet.add(String(a.kelompok)); });
+  const fk = document.getElementById('lbFilterKampus');
+  Array.from(kampusSet).sort().forEach(k => fk.insertAdjacentHTML('beforeend', `<option value="${escAttr(k)}">${escH(k)}</option>`));
+  const fkel = document.getElementById('lbFilterKelompok');
+  Array.from(kelSet).sort((a,b) => {
+    const na = parseInt(a,10), nb = parseInt(b,10);
+    if(!isNaN(na) && !isNaN(nb)) return na - nb;
+    return a.localeCompare(b);
+  }).forEach(k => fkel.insertAdjacentHTML('beforeend', `<option value="${escAttr(k)}">${escH(k)}</option>`));
+
+  // ======= Stats cards =======
+  function updateStats(){
+    document.getElementById('lbStatTotal').textContent = ranked.length.toLocaleString('id-ID');
+    const avg = ranked.length ? (ranked.reduce((s,a)=>s+a.total,0) / ranked.length) : 0;
+    document.getElementById('lbStatAvg').textContent = avg.toFixed(1) + '%';
+    const top = ranked[0]?.total || 0;
+    document.getElementById('lbStatTop').textContent = top.toFixed(1) + '%';
+  }
+  updateStats();
+
+  // ======= Pagination state =======
+  let state = { page:1, perPage:10, filtered: ranked.slice() };
+  const myKey = (window._authNis ? String(window._authNis) : null);
+
+  function applyFilters(){
+    const q    = document.getElementById('lbSearch').value.trim().toLowerCase();
+    const kam  = document.getElementById('lbFilterKampus').value;
+    const kel  = document.getElementById('lbFilterKelompok').value;
+    state.filtered = ranked.filter(a => {
+      if(kam && a.kampus !== kam) return false;
+      if(kel && String(a.kelompok) !== kel) return false;
+      if(q){
+        const s = `${a.nama} ${a.no_induk}`.toLowerCase();
+        if(!s.includes(q)) return false;
+      }
+      return true;
+    });
+    state.page = 1;
+    render();
+  }
+
+  function initials(name){
+    const n = (name||'').trim();
+    if(!n) return '??';
+    const parts = n.split(/\s+/);
+    return parts.length >= 2 ? (parts[0][0] + parts[parts.length-1][0]).toUpperCase() : n.slice(0,2).toUpperCase();
+  }
+  function escH(s){ return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function escAttr(s){ return escH(s).replace(/`/g,'&#96;'); }
+
+  function render(){
+    // Podium (show top 3 of the filtered view, only on page 1)
+    const podium = document.getElementById('lbPodium');
+    if(state.page === 1 && state.filtered.length >= 3){
+      podium.style.display = 'grid';
+      const top3 = state.filtered.slice(0,3);
+      // order in DOM: rank2, rank1, rank3 for podium effect
+      const ordered = [top3[1], top3[0], top3[2]];
+      const rankMap = [2,1,3];
+      podium.innerHTML = ordered.map((a,i) => {
+        const r = rankMap[i];
+        const crown = r===1 ? '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7z"/></svg>'
+                    : r===2 ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>'
+                    : '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26"/></svg>';
+        return `<div class="lb-pod rank-${r}" onclick="showLbDetail('${escAttr(a.no_induk)}')">
+          <div class="lb-pod-crown">${crown}</div>
+          <div class="lb-pod-avatar">${escH(initials(a.nama))}</div>
+          <div class="lb-pod-name">${escH(a.nama)}</div>
+          <div class="lb-pod-meta">${escH(a.kampus)}</div>
+          <div class="lb-pod-score">${a.total.toFixed(1)}%</div>
+          <div class="lb-pod-score-lbl">Skor Total</div>
+        </div>`;
+      }).join('');
+    } else {
+      podium.style.display = 'none';
+    }
+
+    // List
+    const wrap = document.getElementById('lbTable');
+    if(!state.filtered.length){
+      wrap.innerHTML = '<div class="lb-empty">Tidak ada awardee yang cocok filter.</div>';
+      return;
+    }
+    const totalPg = Math.max(1, Math.ceil(state.filtered.length / state.perPage));
+    state.page = Math.min(state.page, totalPg);
+    const start = (state.page - 1) * state.perPage;
+    const slice = state.filtered.slice(start, start + state.perPage);
+
+    const rowsHTML = slice.map(a => {
+      const rankCls = a.rank===1 ? 'r-gold' : a.rank===2 ? 'r-silver' : a.rank===3 ? 'r-bronze' : '';
+      const mePill = (myKey && a.no_induk === myKey) ? '<span class="lb-badge-me">Kamu</span>' : '';
+      const isMe = (myKey && a.no_induk === myKey) ? 'is-me' : '';
+      // Bars: mindful / accountable / self-dev (normalized to their individual max)
+      const mindPct  = Math.round(a.mindful / 35 * 100);
+      const accPct   = Math.round(a.account / 15 * 100);
+      const selfPct  = Math.round(a.selfDev / 50 * 100);
+      return `<div class="lb-row ${isMe}" data-nim="${escAttr(a.no_induk)}" onclick="showLbDetail('${escAttr(a.no_induk)}')">
+        <div class="lb-rank ${rankCls}">${a.rank}</div>
+        <div class="lb-person">
+          <div class="lb-avatar">${escH(initials(a.nama))}</div>
+          <div class="lb-info">
+            <div class="lb-name">${escH(a.nama)}${mePill}</div>
+            <div class="lb-sub">${escH(a.no_induk)} · ${escH(a.kampus)}${a.kelompok ? ' · Kel ' + escH(a.kelompok) : ''}</div>
+          </div>
+        </div>
+        <div class="lb-score-box">
+          <div class="lb-score-big">${a.total.toFixed(1)}%</div>
+          <div class="lb-score-lbl">Skor Total</div>
+        </div>
+        <div class="lb-bars">
+          <div class="lb-bar"><span class="lb-bar-lbl">Mindful</span><div class="lb-bar-track"><div class="lb-bar-fill mind" style="width:${mindPct}%"></div></div><span class="lb-bar-pct">${a.mindful.toFixed(1)}<small class="lb-bar-pct-pct">${mindPct}%</small></span></div>
+          <div class="lb-bar"><span class="lb-bar-lbl">Account.</span><div class="lb-bar-track"><div class="lb-bar-fill acc" style="width:${accPct}%"></div></div><span class="lb-bar-pct">${a.account.toFixed(1)}<small class="lb-bar-pct-pct">${accPct}%</small></span></div>
+          <div class="lb-bar"><span class="lb-bar-lbl">Self-Dev</span><div class="lb-bar-track"><div class="lb-bar-fill self" style="width:${selfPct}%"></div></div><span class="lb-bar-pct">${a.selfDev.toFixed(1)}<small class="lb-bar-pct-pct">${selfPct}%</small></span></div>
+        </div>
+      </div>`;
+    }).join('');
+
+    // Pagination
+    const pageBtns = [];
+    const add = p => {
+      if(p === '...'){ pageBtns.push('<span style="padding:0 4px;color:#9ca3af;">…</span>'); return; }
+      pageBtns.push(`<button class="lb-pg-btn ${p===state.page?'active':''}" onclick="lbGotoPage(${p})">${p}</button>`);
+    };
+    if(totalPg <= 7){ for(let i=1;i<=totalPg;i++) add(i); }
+    else {
+      add(1);
+      if(state.page > 3) add('...');
+      for(let i=Math.max(2,state.page-1); i<=Math.min(totalPg-1,state.page+1); i++) add(i);
+      if(state.page < totalPg-2) add('...');
+      add(totalPg);
+    }
+
+    wrap.innerHTML = rowsHTML + `<div class="lb-footer">
+      <span>Menampilkan <b>${(start+1).toLocaleString('id-ID')}–${Math.min(start+state.perPage, state.filtered.length).toLocaleString('id-ID')}</b> dari ${state.filtered.length.toLocaleString('id-ID')} awardee</span>
+      <div class="lb-pg-btns">
+        <button class="lb-pg-btn" onclick="lbGotoPage(${state.page-1})" ${state.page<=1?'disabled':''}>‹</button>
+        ${pageBtns.join('')}
+        <button class="lb-pg-btn" onclick="lbGotoPage(${state.page+1})" ${state.page>=totalPg?'disabled':''}>›</button>
+      </div>
+    </div>`;
+  }
+
+  window.lbGotoPage = (p) => { state.page = p; render(); window.scrollTo({top: document.getElementById('lbSection').offsetTop - 10, behavior:'smooth'}); };
+
+  // Detail popup
+  window.showLbDetail = (nim) => {
+    const a = ranked.find(x => x.no_induk === String(nim));
+    if(!a) return;
+    const weights = WEIGHTS;
+    const fmt = (v) => v.toFixed(2);
+    const pctStr = (v) => (v*100).toFixed(1) + '%';
+    const html = `
+      <div class="lb-modal-bg" onclick="if(event.target===this)closeLbModal()">
+        <div class="lb-modal">
+          <button class="lb-modal-close" onclick="closeLbModal()">×</button>
+          <div class="lb-modal-head">
+            <div class="lb-modal-avatar">${escH(initials(a.nama))}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="lb-modal-name">${escH(a.nama)}</div>
+              <div class="lb-modal-sub">${escH(a.no_induk)} · ${escH(a.kampus)} · Kelompok ${escH(a.kelompok)}</div>
+            </div>
+            <div class="lb-modal-score">
+              <div class="lb-modal-rank">#${a.rank}</div>
+              <div class="lb-modal-total">${a.total.toFixed(1)}%</div>
+              <div class="lb-modal-total-lbl">Skor Total</div>
+            </div>
+          </div>
+          <table class="lb-formula-table" style="margin-top:14px;">
+            <thead><tr><th>Komponen</th><th style="text-align:center;">Detail</th><th style="text-align:center;">Persentase</th><th style="text-align:center;">Bobot</th><th class="val">Skor</th></tr></thead>
+            <tbody>
+              <tr class="group-row"><td>Mindful</td><td></td><td></td><td style="text-align:center;">35%</td><td class="val">${a.mindful.toFixed(2)}</td></tr>
+              <tr><td>&nbsp;&nbsp;Mentoring</td><td style="text-align:center;">${a.ment.ok}/${a.ment.total}</td><td style="text-align:center;">${pctStr(a.mentPct)}</td><td style="text-align:center;">17,5%</td><td class="val">${fmt(a.sMent)}</td></tr>
+              <tr><td>&nbsp;&nbsp;Pembinaan</td><td style="text-align:center;">${a.pem.ok}/${a.pem.total}</td><td style="text-align:center;">${pctStr(a.pemPct)}</td><td style="text-align:center;">17,5%</td><td class="val">${fmt(a.sPem)}</td></tr>
+              <tr class="group-row"><td>Accountable</td><td></td><td></td><td style="text-align:center;">15%</td><td class="val">${a.account.toFixed(2)}</td></tr>
+              <tr><td>&nbsp;&nbsp;Pre Test</td><td style="text-align:center;">${a.pre.ok}/${a.pre.total}</td><td style="text-align:center;">${pctStr(a.prePct)}</td><td style="text-align:center;">4%</td><td class="val">${fmt(a.sPre)}</td></tr>
+              <tr><td>&nbsp;&nbsp;Post Test</td><td style="text-align:center;">${a.post.ok}/${a.post.total}</td><td style="text-align:center;">${pctStr(a.postPct)}</td><td style="text-align:center;">4%</td><td class="val">${fmt(a.sPost)}</td></tr>
+              <tr><td>&nbsp;&nbsp;Quartal Assignment</td><td style="text-align:center;">${a.ass.ok}/${a.ass.total}</td><td style="text-align:center;">${pctStr(a.assPct)}</td><td style="text-align:center;">7%</td><td class="val">${fmt(a.sAss)}</td></tr>
+              <tr class="group-row"><td>Self-Development</td><td></td><td></td><td style="text-align:center;">50%</td><td class="val">${a.selfDev.toFixed(2)}</td></tr>
+              <tr><td>&nbsp;&nbsp;Prestasi</td><td style="text-align:center;">${a.prestasiCount} (${a.prestasiPoints.toFixed(1)} pts)</td><td style="text-align:center;">${pctStr(a.prestPct)}</td><td style="text-align:center;">20%</td><td class="val">${fmt(a.sPrest)}</td></tr>
+              <tr><td>&nbsp;&nbsp;Organisasi</td><td style="text-align:center;">${a.orgCount} (${a.orgPoints.toFixed(1)} pts)</td><td style="text-align:center;">${pctStr(a.orgPct)}</td><td style="text-align:center;">20%</td><td class="val">${fmt(a.sOrg)}</td></tr>
+              <tr><td>&nbsp;&nbsp;IPK</td><td style="text-align:center;">${a.ipk.toFixed(2)} / 4.00</td><td style="text-align:center;">${pctStr(a.ipkPct)}</td><td style="text-align:center;">10%</td><td class="val">${fmt(a.sIpk)}</td></tr>
+              <tr style="background:#fef3c7;"><td colspan="4" style="font-weight:800;color:#78350f;">Total Skor</td><td class="val" style="color:#78350f;font-size:15px;">${a.total.toFixed(2)}%</td></tr>
+            </tbody>
+          </table>
+          ${currentView !== 'all' ? `<div style="margin-top:12px;padding:10px 12px;background:linear-gradient(90deg,#fef3c7,#fff);border:1px solid #fcd34d;border-radius:10px;font-size:11.5px;color:#78350f;line-height:1.55;"><b>📅 Periode aktif: ${getQuartal(currentView).label} — ${getQuartal(currentView).sub}.</b> Angka kehadiran (Mentoring, Pembinaan, Pre/Post, Assessment) hanya mencakup periode ini; Prestasi, Organisasi, dan IPK tetap all-time.</div>` : ''}
+        </div>
+      </div>`;
+    let host = document.getElementById('lbModalHost');
+    if(!host){ host = document.createElement('div'); host.id = 'lbModalHost'; document.body.appendChild(host); }
+    host.innerHTML = html;
+  };
+  window.closeLbModal = () => { const h = document.getElementById('lbModalHost'); if(h) h.innerHTML = ''; };
+
+  // Scroll to me
+  if(myKey && ranked.some(a => a.no_induk === myKey)){
+    document.getElementById('lbMeBtn').style.display = 'inline-flex';
+  }
+  window.scrollToMe = () => {
+    if(!myKey) return;
+    const idx = state.filtered.findIndex(a => a.no_induk === myKey);
+    if(idx === -1) return;
+    state.page = Math.floor(idx / state.perPage) + 1;
+    render();
+    setTimeout(() => {
+      const el = document.querySelector(`.lb-row[data-nim="${myKey}"]`);
+      if(el){ el.scrollIntoView({behavior:'smooth', block:'center'}); el.style.animation = 'lbpulse 1.8s ease 1'; }
+    }, 120);
+  };
+
+  // View toggle: All Time ↔ Quartal
+  function switchView(view){
+    currentView = view;
+    ranked = computeRanked(view);
+    // Reset page to 1 and refresh everything
+    state.page = 1;
+    updateStats();
+
+    // Update hero subtitle with context
+    const sub = document.querySelector('.lb-hero-subtitle');
+    if(sub){
+      if(view === 'all'){
+        sub.innerHTML = 'Peringkat awardee berdasarkan <b>Mindful (35%)</b>, <b>Accountable (15%)</b>, dan <b>Self-Development (50%)</b>.';
+      } else {
+        const q = getQuartal(view);
+        sub.innerHTML = `Kehadiran difilter untuk <b>${q.label} · ${q.sub}</b>. Prestasi, organisasi, dan IPK tetap all-time.`;
+      }
+    }
+
+    // Re-apply existing filters on the new dataset
+    applyFilters();
+  }
+
+  // Event wiring
+  document.querySelectorAll('.lvt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.lvt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      switchView(btn.dataset.view);
+    });
+  });
+  document.getElementById('lbFilterKampus').addEventListener('change', applyFilters);
+  document.getElementById('lbFilterKelompok').addEventListener('change', applyFilters);
+  document.getElementById('lbSearch').addEventListener('input', applyFilters);
+
+  render();
+})();
+</script>
+
+<style>
+  @keyframes lbpulse { 0%,100%{background:inherit;} 50%{background:#fde68a;} }
+  .lb-modal-bg{
+    position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;
+    display:flex;align-items:center;justify-content:center;padding:16px;
+    backdrop-filter:blur(2px);animation:lbfade .15s ease;
+  }
+  @keyframes lbfade{from{opacity:0}to{opacity:1}}
+  .lb-modal{
+    background:#fff;border-radius:18px;padding:24px;max-width:680px;width:100%;
+    max-height:92vh;overflow-y:auto;position:relative;
+    box-shadow:0 20px 50px rgba(0,0,0,.3);
+  }
+  .lb-modal-close{
+    position:absolute;top:14px;right:14px;width:32px;height:32px;
+    background:#f3f4f6;border:none;border-radius:8px;cursor:pointer;
+    font-size:20px;line-height:1;color:#6b7280;
+  }
+  .lb-modal-close:hover{background:#e5e7eb;color:#111827;}
+  .lb-modal-head{display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid #f1f5f9;}
+  .lb-modal-avatar{
+    width:56px;height:56px;border-radius:14px;flex-shrink:0;
+    background:linear-gradient(135deg,#0055a5,#0d9488);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;
+  }
+  .lb-modal-name{font-size:16px;font-weight:800;color:#111827;margin-bottom:3px;}
+  .lb-modal-sub{font-size:12px;color:#6b7280;}
+  .lb-modal-score{text-align:right;flex-shrink:0;}
+  .lb-modal-rank{font-size:11px;font-weight:700;color:#9ca3af;}
+  .lb-modal-total{font-size:24px;font-weight:800;color:#78350f;line-height:1;margin:2px 0;}
+  .lb-modal-total-lbl{font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;}
+  @media(max-width:500px){
+    .lb-modal{padding:18px 16px;}
+    .lb-modal-head{flex-wrap:wrap;}
+    .lb-modal-score{width:100%;text-align:left;padding-top:8px;border-top:1px dashed #f1f5f9;}
+  }
+</style>
   </main>
 </div>
 
