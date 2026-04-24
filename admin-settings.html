@@ -464,7 +464,7 @@ const sb = () => window._supabase;
 async function loadProfile() {
   window.addEventListener('load', () => {
     setTimeout(() => {
-      if (window._authRole && window._authRole !== 'admin') location.replace('index.html');
+      if (window._authRole && window._authRole !== 'admin' && window._authRole !== 'operator') location.replace('index.html');
 
       const name  = window._authName  || '—';
       const email = window._authEmail || '—';

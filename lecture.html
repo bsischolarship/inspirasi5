@@ -823,7 +823,8 @@ async function init(){
   try {
     const info = window._authReady ? await window._authReady : null;
     role = info?.role || window._authRole || '';
-    if (role !== 'lecture') {
+    // Allow lecture, admin, operator
+    if (role !== 'lecture' && role !== 'admin' && role !== 'operator') {
       document.getElementById('lcGuard').style.display = 'flex';
       return;
     }
@@ -832,60 +833,77 @@ async function init(){
     return;
   }
 
-  // ── 2) Ambil profil lecture_bsi (ditautkan via email) ──
+  const isAdminView = (role === 'admin' || role === 'operator');
   const cachedAuth = JSON.parse(sessionStorage.getItem('_bsi_auth')||'{}');
   const email = window._authEmail || cachedAuth.email || '';
 
-  try {
-    const { data: lectProf } = await sb()
-      .from('lecture_bsi')
-      .select('id,no,nama_lengkap,nama_panggilan,email,whatsapp,jenis_kelamin,region,domisili')
-      .ilike('email', email)
-      .maybeSingle();
-    _lecturerProfile = lectProf || null;
-  } catch(e){
-    console.warn('Gagal memuat profil lecture_bsi:', e);
+  // ── 2) Lecture: ambil profil dari lecture_bsi. Admin/operator: skip.
+  if (!isAdminView) {
+    try {
+      const { data: lectProf } = await sb()
+        .from('lecture_bsi')
+        .select('id,no,nama_lengkap,nama_panggilan,email,whatsapp,jenis_kelamin,region,domisili')
+        .ilike('email', email)
+        .maybeSingle();
+      _lecturerProfile = lectProf || null;
+    } catch(e){
+      console.warn('Gagal memuat profil lecture_bsi:', e);
+      _lecturerProfile = null;
+    }
+
+    _lecturerName = _lecturerProfile?.nama_lengkap || window._authName || cachedAuth.name || '';
+
+    if (!_lecturerName) {
+      const g = document.getElementById('lcGuard');
+      const h = g.querySelector('h2'); if(h) h.textContent = 'Profil Lecture Belum Terdaftar';
+      const p = g.querySelector('p');  if(p) p.innerHTML = `Email akun Anda (<b>${escH(email||'—')}</b>) belum terdaftar di tabel <code>lecture_bsi</code>. Silakan hubungi administrator untuk menambahkan data Anda terlebih dahulu.`;
+      g.style.display = 'flex';
+      return;
+    }
+  } else {
+    // Admin/operator: gunakan nama auth, tanpa profil lecture_bsi
     _lecturerProfile = null;
-  }
-
-  _lecturerName = _lecturerProfile?.nama_lengkap || window._authName || cachedAuth.name || '';
-
-  // ── 3) Kalau profil tidak ditemukan sama sekali, guard khusus ──
-  if (!_lecturerName) {
-    const g = document.getElementById('lcGuard');
-    const h = g.querySelector('h2'); if(h) h.textContent = 'Profil Lecture Belum Terdaftar';
-    const p = g.querySelector('p');  if(p) p.innerHTML = `Email akun Anda (<b>${escH(email||'—')}</b>) belum terdaftar di tabel <code>lecture_bsi</code>. Silakan hubungi administrator untuk menambahkan data Anda terlebih dahulu.`;
-    g.style.display = 'flex';
-    return;
+    _lecturerName = window._authName || cachedAuth.name || (role === 'admin' ? 'Administrator' : 'Operator');
   }
 
   // Authorized
   document.getElementById('lcMain').style.display = 'block';
 
   try {
-    // ── 4) Fetch awardee binaan berdasarkan nama lecturer (mahasiswa_bsi.lecture) ──
-    const mhs = await fetchAll(
-      'mahasiswa_bsi',
-      'no_induk,nama,kampus,kelompok,ipk,status,fakultas,prodi,cluster,email,wa,lecture',
-      q => q.ilike('lecture', _lecturerName)
-    );
+    // ── 3) Fetch awardee — lecture: scoped by nama_lengkap. admin/operator: semua.
+    const cols = 'no_induk,nama,kampus,kelompok,ipk,status,fakultas,prodi,cluster,email,wa,lecture';
+    const mhs = isAdminView
+      ? await fetchAll('mahasiswa_bsi', cols)
+      : await fetchAll('mahasiswa_bsi', cols, q => q.ilike('lecture', _lecturerName));
 
-    // Selalu populate hero (profil dosen tampil meski mhs kosong)
-    populateHero(mhs);
+    // Populate hero (profil dosen atau admin view)
+    populateHero(mhs, isAdminView, role);
 
     if (!mhs.length) {
-      document.getElementById('lcHeroSub').innerHTML = `Belum ada awardee yang tercatat di bawah pembimbingan <b>${escH(_lecturerName)}</b>. Jika ini keliru, silakan hubungi admin untuk memperbarui data.`;
+      document.getElementById('lcHeroSub').innerHTML = isAdminView
+        ? `Belum ada awardee yang tercatat di database.`
+        : `Belum ada awardee yang tercatat di bawah pembimbingan <b>${escH(_lecturerName)}</b>. Jika ini keliru, silakan hubungi admin untuk memperbarui data.`;
       renderStatsEmpty();
       return;
     }
 
+    // Fetch related data — lecture: scoped by nimList. admin/operator: semua.
+    const rekapCols    = 'no_induk,tanggal,pre_test,post_test,assessment,mentoring,pembinaan';
+    const prestasiCols = 'id,no_induk,nama,kampus,tingkatan,juara,keterangan,sertifikat,created_at';
+    const orgCols      = 'id,no_induk,nama,kampus,tingkatan,keterlibatan,detail,created_at';
+
     const nimList = mhs.map(m => m.no_induk).filter(Boolean);
 
-    // Parallel fetch scoped to these awardees
     const [rekap, prestasi, org] = await Promise.all([
-      fetchAll('rekap_bsi', 'no_induk,tanggal,pre_test,post_test,assessment,mentoring,pembinaan', q => q.in('no_induk', nimList)).catch(()=>[]),
-      fetchAll('prestasi_bsi', 'id,no_induk,nama,kampus,tingkatan,juara,keterangan,sertifikat,created_at', q => q.in('no_induk', nimList)).catch(()=>[]),
-      fetchAll('organisasi_bsi', 'id,no_induk,nama,kampus,tingkatan,keterlibatan,detail,created_at', q => q.in('no_induk', nimList)).catch(()=>[]),
+      isAdminView
+        ? fetchAll('rekap_bsi', rekapCols).catch(()=>[])
+        : fetchAll('rekap_bsi', rekapCols, q => q.in('no_induk', nimList)).catch(()=>[]),
+      isAdminView
+        ? fetchAll('prestasi_bsi', prestasiCols).catch(()=>[])
+        : fetchAll('prestasi_bsi', prestasiCols, q => q.in('no_induk', nimList)).catch(()=>[]),
+      isAdminView
+        ? fetchAll('organisasi_bsi', orgCols).catch(()=>[])
+        : fetchAll('organisasi_bsi', orgCols, q => q.in('no_induk', nimList)).catch(()=>[]),
     ]);
 
     _raw = { mhs, rekap, prestasi, org };
@@ -900,21 +918,40 @@ async function init(){
   }
 }
 
-function populateHero(mhs){
+function populateHero(mhs, isAdminView, role){
+  isAdminView = isAdminView || false;
   const name = _lecturerName || 'Lecture';
   const init = mkInit(name);
   document.getElementById('lcHeroAvatar').textContent = init;
   document.getElementById('lcHeroName').textContent = name;
   document.getElementById('sidebarAvatar').textContent = init;
   document.getElementById('sidebarEmail').textContent = name;
-  document.getElementById('sidebarRole').textContent = 'Lecture';
+
+  // Sidebar role text berbeda per role
+  const roleTxt = (role === 'admin') ? 'Administrator'
+                : (role === 'operator') ? 'Operator'
+                : 'Lecture';
+  document.getElementById('sidebarRole').textContent = roleTxt;
 
   const kampusSet = new Set();
   mhs.forEach(m => { if(m.kampus) kampusSet.add(m.kampus); });
   document.getElementById('lhsAwardee').textContent = mhs.length.toLocaleString('id-ID');
   document.getElementById('lhsKampus').textContent  = kampusSet.size;
 
-  // Enrich hero with lecture_bsi profile data
+  // Hero label text
+  const labelMain = document.querySelector('.lc-hero-label > span');
+  if (labelMain && !labelMain.id) {
+    // First span (the main label "Lecture")
+    labelMain.textContent = (role === 'admin' ? 'Administrator' : role === 'operator' ? 'Operator' : 'Lecture');
+  }
+
+  // Admin/operator view: no per-lecturer profile chips — pakai subtitle global
+  if (isAdminView) {
+    document.getElementById('lcHeroSub').innerHTML = `Dashboard pembimbingan <b>seluruh awardee</b> (${mhs.length.toLocaleString('id-ID')} orang) — pantau kehadiran, prestasi, organisasi, dan peringkat dari semua batch.`;
+    return;
+  }
+
+  // Lecture view — enrich dengan lecture_bsi
   const lp = _lecturerProfile;
   if (!lp) return;
 

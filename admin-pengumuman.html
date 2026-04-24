@@ -289,7 +289,7 @@ function closeSidebar() {
 
 window.addEventListener('load', () => {
   setTimeout(() => {
-    if (window._authRole && window._authRole !== 'admin') {
+    if (window._authRole && window._authRole !== 'admin' && window._authRole !== 'operator') {
       window.location.replace('index.html');
     }
   }, 1500);

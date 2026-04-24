@@ -1146,7 +1146,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // ── Auth dulu sebelum fetch rows ──
   const _authInfo      = await window._authReady;
-  const _ADMIN_ROLES   = ['admin','administrator','operator','mentor'];
+  const _ADMIN_ROLES   = ['admin','administrator','operator','mentor','lecture'];
   const _roleRaw       = (_authInfo?.role || window._authRole || '').toLowerCase();
   const _isAwardee     = !!_roleRaw && !_ADMIN_ROLES.includes(_roleRaw);
   const _myNis         = _authInfo?.nis  || window._authNis  || '';

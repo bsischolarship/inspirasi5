@@ -1461,7 +1461,7 @@ async function init(){
     // tunggu auth beres & pastikan admin
     if (window._authReady) {
       const info = await window._authReady;
-      if (info.role !== 'admin') { location.replace('index.html'); return; }
+      if (info.role !== 'admin' && info.role !== 'operator') { location.replace('index.html'); return; }
     }
 
     _raw = await fetchAll();

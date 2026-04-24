@@ -659,7 +659,7 @@
   if (!session) { location.replace("login.html"); return; }
 
   const { data: prof } = await sb.from("profiles").select("role, approved").eq("id", session.user.id).single();
-  if (!prof || prof.role !== "admin") { location.replace("index.html"); return; }
+  if (!prof || prof.role !== "admin" && prof.role !== "operator") { location.replace("index.html"); return; }
 
   let allUsers = [];
   const myId = session.user.id;
