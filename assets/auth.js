@@ -15,6 +15,15 @@ window._authReady = new Promise(res => { _authReadyResolve = res; });
 let _operatorStylesInjected = false;
 let _operatorInterceptorAttached = false;
 
+// Auto-logout state — dideklarasi SEBELUM IIFE (function declarations hoisted, tapi let/const tidak)
+const _AUTO_LOGOUT_MS = 10 * 60 * 1000;     // 10 menit
+const _AUTO_LOGOUT_WARN_MS = 30 * 1000;     // 30 detik warning sebelum logout
+let _autoLogoutTimer = null;
+let _autoLogoutWarnTimer = null;
+let _autoLogoutCountdownTimer = null;
+let _autoLogoutWarningEl = null;
+let _autoLogoutListenersAttached = false;
+
 (async () => {
   const SUPABASE_URL      = "https://iyfwaqwmnmjfagszttts.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5ZndhcXdtbm1qZmFnc3p0dHRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NTEwMTgsImV4cCI6MjA4MzQyNzAxOH0.f2xb_aQDIj4tIPKwTTC9dgIi-9qFv0G252T5uo9XwXo";
@@ -36,6 +45,7 @@ let _operatorInterceptorAttached = false;
     window._authRole  = cached.role  || "";
     _renderUI(cached.email, cached.name, cached.role, cached.nis || "", cached.kampus || "");
     _toggleRoleGroups(cached.role);
+    _startAutoLogout();
   }
 
   // ── VERIFY SESSION (async) ──
@@ -87,6 +97,9 @@ let _operatorInterceptorAttached = false;
   window._authNis   = nis;
   _renderUI(email, displayName, role, nis, kampus);
   _toggleRoleGroups(role);
+
+  // Start auto-logout monitoring (10 menit inactivity)
+  _startAutoLogout();
 
   _authReadyResolve({ role, nis, name: displayName });
 }
@@ -424,6 +437,24 @@ function _toggleRoleGroups(role) {
     a.style.display = '';
   });
 
+  // galeri-peringatan.html: tiap role punya container dedicated-nya sendiri.
+  // Sembunyikan link DI LUAR container yang dimiliki role tsb agar tidak duplikat:
+  //   - admin/operator → keep "Kelola Peringatan" di #adminGroup
+  //   - lecture        → keep "Galeri Peringatan" di #lectureGroup
+  //   - user (awardee) → keep yang di main menu (default behavior)
+  const _keeperContainer = {
+    admin:    '#adminGroup',
+    operator: '#adminGroup',
+    lecture:  '#lectureGroup',
+  };
+  const _keepSelector = _keeperContainer[role];
+  if (_keepSelector) {
+    document.querySelectorAll('a[href="galeri-peringatan.html"]').forEach(a => {
+      if (a.closest(_keepSelector)) return; // keep this one
+      a.style.display = 'none';              // hide duplicates elsewhere
+    });
+  }
+
   // Label "Menu" → selalu tampil karena Home selalu visible
   const sidebar = document.querySelector('.sidebar');
   if (sidebar) {
@@ -440,6 +471,47 @@ function _toggleRoleGroups(role) {
   if (role === 'operator') {
     _attachOperatorInterceptor();
   }
+
+  // Auto-scroll sidebar so the active menu link is visible
+  // (UX: kalau active menu di posisi bawah, sidebar otomatis scroll ke sana)
+  _scrollSidebarToActive();
+}
+
+/* Cari `.sidebar-link.active` dan scroll sidebar agar link tersebut terlihat.
+   Dipanggil setelah role groups di-toggle (height sudah final). */
+function _scrollSidebarToActive() {
+  // Tunggu 1 frame supaya layout sudah settle setelah display:block/none
+  requestAnimationFrame(() => {
+    const active = document.querySelector('.sidebar a.sidebar-link.active, .sidebar .sidebar-link.active');
+    if (!active) return;
+
+    // Cari parent scrollable terdekat
+    let scrollParent = active.parentElement;
+    while (scrollParent && scrollParent !== document.body) {
+      const overflowY = getComputedStyle(scrollParent).overflowY;
+      if (overflowY === 'auto' || overflowY === 'scroll' || scrollParent.classList.contains('sidebar')) {
+        break;
+      }
+      scrollParent = scrollParent.parentElement;
+    }
+    if (!scrollParent) return;
+
+    const linkRect      = active.getBoundingClientRect();
+    const containerRect = scrollParent.getBoundingClientRect();
+
+    // Cek apakah active link sudah cukup terlihat (≥80% nampak di viewport sidebar)
+    const fullyVisible =
+      linkRect.top >= containerRect.top &&
+      linkRect.bottom <= containerRect.bottom;
+
+    if (fullyVisible) return;
+
+    // Scroll instant ke posisi yang menampilkan active link + ruang di sekitarnya
+    // (tanpa animasi — langsung di posisi sejak page load, tidak ada gerakan)
+    // Target: posisi tengah-bawah container, agar 1-2 menu di atasnya juga kelihatan
+    const targetOffset = active.offsetTop - (scrollParent.clientHeight * 0.45);
+    scrollParent.scrollTop = Math.max(0, targetOffset);
+  });
 }
 
 function _roleLabel(role) {
@@ -465,20 +537,51 @@ function _renderUI(email, name, role, nis = "", kampus = "") {
   if (hAvatar) hAvatar.textContent = initials;
   if (hGreeting) hGreeting.textContent = "Selamat Datang,";
   if (hName)   hName.textContent   = displayName;
-  if (hBadge) {
-    hBadge.textContent = _roleLabel(role);
+if (hBadge) {
+    // Icon per role (SVG Lucide style)
+    const ICONS = {
+      admin:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
+      operator: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>',
+      lecture:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>',
+      awardee:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
+    };
+    const key = ICONS[role] ? role : 'awardee';
     let cls = "header-role-badge";
     if (role === "admin")    cls += " badge-admin";
     if (role === "operator") cls += " badge-operator";
     if (role === "lecture")  cls += " badge-lecture";
     hBadge.className = cls;
+    hBadge.innerHTML = ICONS[key] + '<span>' + _roleLabel(role) + '</span>';
   }
+
   if (hSub) {
-    if (role !== "admin" && role !== "operator" && role !== "lecture" && (nis || kampus)) {
-      hSub.textContent = [nis, kampus].filter(Boolean).join(" · ");
-      hSub.style.display = "block";
+    // Icon mini untuk sub-info
+    const pinIco  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+    const idIco   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>';
+    const keyIco  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="M10.85 12.15 19 4"/><path d="m18 5 3 3"/><path d="m15 8 3 3"/></svg>';
+    const eyeIco  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+    const bookIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
+    const sep = '<span style="color:#d1d5db;margin:0 2px;">·</span>';
+
+    let html = '';
+    if (role === 'admin') {
+      html = keyIco + '<span>Akses Penuh</span>' + sep + '<span>Batch 5</span>';
+    } else if (role === 'operator') {
+      html = eyeIco + '<span>Penyelenggara</span>' + sep + '<span>Akses Luas</span>';
+    } else if (role === 'lecture') {
+      html = bookIco + '<span>Pembina BSIS</span>' + sep + '<span>Batch 5</span>';
+    } else if (nis || kampus) {
+      const parts = [];
+      if (nis)    parts.push(idIco + '<span>' + nis + '</span>');
+      if (kampus) parts.push(pinIco + '<span>' + kampus + '</span>');
+      html = parts.join(sep);
+    }
+
+    if (html) {
+      hSub.innerHTML = html;
+      hSub.style.display = 'inline-flex';
     } else {
-      hSub.style.display = "none";
+      hSub.style.display = 'none';
     }
   }
 
@@ -493,7 +596,151 @@ function _renderUI(email, name, role, nis = "", kampus = "") {
 }
 
 async function authLogout() {
+  _stopAutoLogout();
   sessionStorage.removeItem("_bsi_auth");
   await window._authClient.auth.signOut();
   window.location.replace("login.html");
 }
+
+/* ===========================================================
+   AUTO-LOGOUT — logout user setelah X menit tidak ada aktivitas
+   Aktivitas yang dipantau: mouse, keyboard, scroll, touch, click
+   State variables sudah dideklarasi di atas (sebelum IIFE) untuk
+   menghindari TDZ error saat IIFE memanggil _startAutoLogout()
+=========================================================== */
+
+function _resetAutoLogoutActivity() {
+  if (_autoLogoutTimer) clearTimeout(_autoLogoutTimer);
+  if (_autoLogoutWarnTimer) clearTimeout(_autoLogoutWarnTimer);
+  if (_autoLogoutCountdownTimer) clearInterval(_autoLogoutCountdownTimer);
+  // Hide warning if visible (user kembali aktif)
+  if (_autoLogoutWarningEl) {
+    _autoLogoutWarningEl.remove();
+    _autoLogoutWarningEl = null;
+  }
+  // Schedule warning + logout
+  _autoLogoutWarnTimer = setTimeout(_showAutoLogoutWarning, _AUTO_LOGOUT_MS - _AUTO_LOGOUT_WARN_MS);
+  _autoLogoutTimer     = setTimeout(_doAutoLogout, _AUTO_LOGOUT_MS);
+}
+
+function _showAutoLogoutWarning() {
+  // Build warning modal jika belum ada
+  if (_autoLogoutWarningEl) _autoLogoutWarningEl.remove();
+  _autoLogoutWarningEl = document.createElement('div');
+  _autoLogoutWarningEl.id = '_authIdleWarning';
+  _autoLogoutWarningEl.style.cssText = `
+    position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,.55);
+    display:flex;align-items:center;justify-content:center;padding:16px;
+    backdrop-filter:blur(2px);animation:authIdleFadeIn .2s ease;
+  `;
+  _autoLogoutWarningEl.innerHTML = `
+    <style>
+      @keyframes authIdleFadeIn { from{opacity:0} to{opacity:1} }
+      @keyframes authIdleSlideUp { from{transform:translateY(8px);opacity:0} to{transform:translateY(0);opacity:1} }
+      @keyframes authIdlePulse {
+        0%,100%{transform:scale(1)} 50%{transform:scale(1.06)}
+      }
+    </style>
+    <div style="background:#fff;border-radius:14px;max-width:440px;width:100%;overflow:hidden;
+                box-shadow:0 24px 48px -12px rgba(0,0,0,.35);animation:authIdleSlideUp .25s ease .05s both;">
+      <div style="padding:20px 22px 16px;border-bottom:1px solid #f3f4f6;display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:44px;height:44px;flex-shrink:0;background:#fef3c7;border-radius:11px;
+                    display:flex;align-items:center;justify-content:center;color:#b45309;
+                    animation:authIdlePulse 1.6s ease-in-out infinite;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <h3 style="font-size:15px;font-weight:800;margin:0;color:#111827;letter-spacing:-.2px;">
+            Sesi akan berakhir
+          </h3>
+          <p style="font-size:12.5px;color:#6b7280;margin:3px 0 0;line-height:1.5;">
+            Anda tidak aktif beberapa menit. Demi keamanan akun, sistem akan
+            otomatis keluar dalam <b id="_authIdleCount" style="color:#b45309;">${_AUTO_LOGOUT_WARN_MS/1000}</b> detik.
+          </p>
+        </div>
+      </div>
+      <div style="padding:14px 22px 18px;display:flex;justify-content:flex-end;gap:8px;background:#f9fafb;">
+        <button type="button" onclick="authLogout()" style="
+          padding:9px 16px;background:#fff;color:#4b5563;border:1.5px solid #e5e7eb;
+          border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;">
+          Keluar Sekarang
+        </button>
+        <button type="button" id="_authIdleStay" style="
+          padding:9px 18px;background:linear-gradient(135deg,#1f3c88 0%,#2563eb 100%);
+          color:#fff;border:none;border-radius:9px;font-size:12.5px;font-weight:800;
+          cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;
+          box-shadow:0 4px 10px -2px rgba(31,60,136,.4);">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Tetap di Sini
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(_autoLogoutWarningEl);
+
+  // "Tetap di Sini" → reset activity timer (perpanjang sesi)
+  const stayBtn = _autoLogoutWarningEl.querySelector('#_authIdleStay');
+  if (stayBtn) stayBtn.onclick = () => _resetAutoLogoutActivity();
+
+  // Live countdown
+  let remaining = Math.floor(_AUTO_LOGOUT_WARN_MS / 1000);
+  const countEl = _autoLogoutWarningEl.querySelector('#_authIdleCount');
+  _autoLogoutCountdownTimer = setInterval(() => {
+    remaining--;
+    if (countEl) countEl.textContent = remaining;
+    if (remaining <= 0) {
+      clearInterval(_autoLogoutCountdownTimer);
+      _autoLogoutCountdownTimer = null;
+    }
+  }, 1000);
+}
+
+async function _doAutoLogout() {
+  if (_autoLogoutCountdownTimer) clearInterval(_autoLogoutCountdownTimer);
+  if (_autoLogoutWarningEl) {
+    _autoLogoutWarningEl.remove();
+    _autoLogoutWarningEl = null;
+  }
+  // Set flag agar login.html bisa tampilkan pesan
+  try { sessionStorage.setItem('_bsi_idle_logout', '1'); } catch(e) {}
+  await authLogout();
+}
+
+function _startAutoLogout() {
+  if (_autoLogoutListenersAttached) {
+    _resetAutoLogoutActivity();
+    return;
+  }
+  // Pasang activity listener (passive untuk performance)
+  const events = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+  events.forEach(ev => {
+    document.addEventListener(ev, _onUserActivity, { passive: true, capture: true });
+  });
+  _autoLogoutListenersAttached = true;
+  _resetAutoLogoutActivity();
+}
+
+function _onUserActivity() {
+  // Throttle: hanya reset timer jika lebih dari 1 detik sejak reset terakhir
+  const now = Date.now();
+  if (_onUserActivity._last && now - _onUserActivity._last < 1000) return;
+  _onUserActivity._last = now;
+  // Jika warning sedang tampil, JANGAN reset otomatis — user harus klik "Tetap di Sini"
+  // (ini biar warning tidak hilang seketika saat mouse bergerak sedikit)
+  if (_autoLogoutWarningEl) return;
+  _resetAutoLogoutActivity();
+}
+
+function _stopAutoLogout() {
+  if (_autoLogoutTimer) { clearTimeout(_autoLogoutTimer); _autoLogoutTimer = null; }
+  if (_autoLogoutWarnTimer) { clearTimeout(_autoLogoutWarnTimer); _autoLogoutWarnTimer = null; }
+  if (_autoLogoutCountdownTimer) { clearInterval(_autoLogoutCountdownTimer); _autoLogoutCountdownTimer = null; }
+  if (_autoLogoutWarningEl) { _autoLogoutWarningEl.remove(); _autoLogoutWarningEl = null; }
+}
+
+// Expose untuk debugging / pembatalan eksplisit
+window._bsiAutoLogout = { reset: _resetAutoLogoutActivity, stop: _stopAutoLogout, start: _startAutoLogout };

@@ -3747,3 +3747,142 @@ body[data-page] {
 }
 
 .badge-lecture { background: linear-gradient(135deg,#ede9fe,#ddd6fe); color: #6d28d9; }
+
+.sidebar-brand-title,
+.sidebar-brand-sub {
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   HEADER GREETING + ROLE BADGE — richer design
+========================================================= */
+
+.header-user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  line-height: 1.25;
+}
+
+.header-greeting {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #6b7280;
+  font-weight: 400;
+}
+.header-greeting strong {
+  color: #0055a5;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+
+#headerSubInfo {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+#headerSubInfo svg {
+  width: 11px; height: 11px;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+/* ---- AVATAR ---- */
+.header-avatar-btn {
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #dbeafe, #e0f2fe);
+  transition: transform .18s, box-shadow .18s;
+}
+.header-avatar-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 85, 165, 0.18);
+}
+.header-avatar {
+  width: 34px; height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1f3c88, #0055a5);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 50%;
+  letter-spacing: 0.3px;
+}
+
+/* =========================================================
+   ROLE BADGE — tinggi specificity + !important biar menang
+========================================================= */
+header.app-header .header-role-badge,
+.app-header .header-role-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 3px 10px 3px 7px !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  border-radius: 999px !important;
+  line-height: 1.5 !important;
+  vertical-align: middle !important;
+
+  /* DEFAULT = AWARDEE — biru */
+  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%) !important;
+  color: #1e40af !important;
+  border: 1px solid #bfdbfe !important;
+  box-shadow: 0 1px 2px rgba(30, 64, 175, 0.08) !important;
+}
+
+.app-header .header-role-badge svg {
+  width: 12px !important;
+  height: 12px !important;
+  flex-shrink: 0;
+  stroke: currentColor;
+  fill: none;
+}
+
+/* LECTURE — emerald */
+.app-header .header-role-badge.badge-lecture {
+  background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%) !important;
+  color: #047857 !important;
+  border-color: #a7f3d0 !important;
+  box-shadow: 0 1px 2px rgba(4, 120, 87, 0.1) !important;
+}
+
+/* OPERATOR — violet */
+.app-header .header-role-badge.badge-operator {
+  background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%) !important;
+  color: #6d28d9 !important;
+  border-color: #ddd6fe !important;
+  box-shadow: 0 1px 2px rgba(109, 40, 217, 0.1) !important;
+}
+
+/* ADMIN — amber/gold */
+.app-header .header-role-badge.badge-admin {
+  background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%) !important;
+  color: #b45309 !important;
+  border-color: #fde68a !important;
+  box-shadow: 0 1px 2px rgba(180, 83, 9, 0.1) !important;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .header-greeting { font-size: 12px; gap: 6px; }
+  .header-greeting strong { font-size: 12.5px; }
+  .app-header .header-role-badge {
+    font-size: 9.5px !important;
+    padding: 2px 8px 2px 6px !important;
+  }
+  .app-header .header-role-badge svg { width: 10px !important; height: 10px !important; }
+  .header-avatar { width: 32px; height: 32px; font-size: 11px; }
+}
