@@ -399,10 +399,8 @@ function _toggleRoleGroups(role) {
   // Set body data-role untuk CSS targeting
   if (document.body) document.body.dataset.role = role || '';
 
-  // Portal Admin: visible untuk admin & operator
-  // Portal Lecture: visible untuk lecture, admin, & operator
   const showAdmin   = (role === "admin" || role === "operator");
-  const showLecture = (role === "lecture" || role === "admin" || role === "operator");
+  const showLecture = (role === "lecture");
 
   if (adminGroup)   adminGroup.style.display   = showAdmin   ? "block" : "none";
   if (lectureGroup) lectureGroup.style.display = showLecture ? "block" : "none";
@@ -423,7 +421,7 @@ function _toggleRoleGroups(role) {
   //   user → tampilan awardee personal
   //   admin/operator/lecture → tampilan global (data agregat semua awardee)
   const AWARDEE_NONHOME = ['list-form.html', 'rekap.html', 'lapor.html', 'galeri.html', 'form.html'];
-  const hideNonHome = (role === 'lecture' || role === 'operator');
+  const hideNonHome = (role === 'lecture' || role === 'operator' || role === 'admin');
 
   AWARDEE_NONHOME.forEach(h => {
     document.querySelectorAll(`a[href="${h}"]`).forEach(a => {
@@ -472,9 +470,38 @@ function _toggleRoleGroups(role) {
     _attachOperatorInterceptor();
   }
 
+  // Mark active sidebar link based on current URL
+  _markActiveSidebarLink();
+
   // Auto-scroll sidebar so the active menu link is visible
-  // (UX: kalau active menu di posisi bawah, sidebar otomatis scroll ke sana)
   _scrollSidebarToActive();
+}
+
+/* Deteksi halaman saat ini dan set class active ke sidebar link yang sesuai.
+   Transisi dimatikan sementara agar tidak ada flash visual. */
+function _markActiveSidebarLink() {
+  const page = (window.location.pathname.split('/').pop() || 'index.html').split('#')[0] || 'index.html';
+
+  // Matikan semua transisi sidebar sementara
+  const noTransStyle = document.createElement('style');
+  noTransStyle.id = '_bsi_no_trans';
+  noTransStyle.textContent = '.sidebar-link, .sidebar-link * { transition: none !important; }';
+  document.head.appendChild(noTransStyle);
+
+  // Hapus active yang salah, pasang yang benar
+  document.querySelectorAll('.sidebar-link.active').forEach(el => el.classList.remove('active'));
+  const match = Array.from(document.querySelectorAll('.sidebar-link[href]')).find(a => {
+    return (a.getAttribute('href') || '').split('#')[0] === page;
+  });
+  if (match) match.classList.add('active');
+
+  // Aktifkan kembali transisi setelah 1 frame (setelah browser paint)
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const el = document.getElementById('_bsi_no_trans');
+      if (el) el.remove();
+    });
+  });
 }
 
 /* Cari `.sidebar-link.active` dan scroll sidebar agar link tersebut terlihat.
@@ -744,3 +771,276 @@ function _stopAutoLogout() {
 
 // Expose untuk debugging / pembatalan eksplisit
 window._bsiAutoLogout = { reset: _resetAutoLogoutActivity, stop: _stopAutoLogout, start: _startAutoLogout };
+
+// ===== SIDEBAR RIPPLE =====
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.addEventListener('mousedown', e => {
+      const rect = link.getBoundingClientRect();
+      const rx = ((e.clientX - rect.left) / rect.width * 100).toFixed(1) + '%';
+      const ry = ((e.clientY - rect.top)  / rect.height * 100).toFixed(1) + '%';
+      link.style.setProperty('--rx', rx);
+      link.style.setProperty('--ry', ry);
+      link.classList.add('rippling');
+      setTimeout(() => link.classList.remove('rippling'), 400);
+    });
+  });
+});
+
+// ===== GLOBAL LOADING ANIMATION =====
+(function () {
+  const style = document.createElement('style');
+  style.textContent = `
+    .bsi-memuat-wrap {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; padding: 36px 20px; width: 100%;
+    }
+    .bsi-memuat-ring {
+      position: relative; width: 56px; height: 56px; flex-shrink: 0;
+    }
+    .bsi-memuat-ring svg.bsi-ring-svg {
+      position: absolute; inset: 0;
+      animation: bsiRingSpin 1.1s cubic-bezier(.6,.1,.4,.9) infinite;
+    }
+    @keyframes bsiRingSpin { to { transform: rotate(360deg); } }
+    .bsi-memuat-ring .bsi-ring-inner {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .bsi-memuat-ring .bsi-ring-inner img {
+      width: 28px; height: 28px; object-fit: contain;
+      animation: bsiLogoPulse 1.1s ease-in-out infinite;
+    }
+    @keyframes bsiLogoPulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.7; transform:scale(.85); }
+    }
+    .bsi-memuat-skels {
+      display: flex; flex-direction: column;
+      gap: 8px; width: 100%; max-width: 320px;
+    }
+    .bsi-skel-row {
+      height: 10px; border-radius: 6px;
+      background: linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%);
+      background-size: 400% 100%;
+      animation: bsiShimmer 1.4s ease infinite;
+    }
+    .bsi-skel-row:nth-child(2) { width:80%; animation-delay:.12s; }
+    .bsi-skel-row:nth-child(3) { width:55%; animation-delay:.24s; }
+    @keyframes bsiShimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .bsi-memuat-label {
+      font-size: 13px; font-weight: 600; color: #374151;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .bsi-memuat-dots span {
+      display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+      background: #0055a5;
+      animation: bsiDotBounce 1.1s ease-in-out infinite;
+    }
+    .bsi-memuat-dots span:nth-child(2) { animation-delay:.18s; background:#00a59f; }
+    .bsi-memuat-dots span:nth-child(3) { animation-delay:.36s; background:#feb23e; }
+    @keyframes bsiDotBounce {
+      0%,80%,100% { transform:translateY(0); opacity:.4; }
+      40%          { transform:translateY(-5px); opacity:1; }
+    }
+  `;
+  document.head.appendChild(style);
+
+  function _buildLoader(text) {
+    const wrap = document.createElement('div');
+    wrap.className = 'bsi-memuat-wrap';
+    wrap.setAttribute('data-bsi-loader', '1'); // marker to skip observer
+    wrap.innerHTML = `
+      <div class="bsi-memuat-skels">
+        <div class="bsi-skel-row"></div>
+        <div class="bsi-skel-row"></div>
+        <div class="bsi-skel-row"></div>
+      </div>
+      <div class="bsi-memuat-ring">
+        <svg class="bsi-ring-svg" width="56" height="56" viewBox="0 0 56 56" fill="none">
+          <circle cx="28" cy="28" r="23" stroke="#e5e7eb" stroke-width="3.5"/>
+          <path d="M28 5 a23 23 0 0 1 19.9 11.5" stroke="url(#bsiGradDef)" stroke-width="3.5" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="bsiGradDef" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#0055a5"/>
+              <stop offset="50%" stop-color="#00a59f"/>
+              <stop offset="100%" stop-color="#feb23e"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="bsi-ring-inner"><img src="assets/logo.png" alt=""></div>
+      </div>
+      <div class="bsi-memuat-label">
+        ${text || 'Memuat data'}
+        <span class="bsi-memuat-dots"><span></span><span></span><span></span></span>
+      </div>`;
+    return wrap;
+  }
+
+  function _upgrade(el) {
+    // skip if already upgraded, inside a loader, or not a "Memuat" text node
+    if (!el || el.getAttribute('data-bsi-loader') || el.closest('[data-bsi-loader]')) return;
+    if (el.getAttribute('data-bsi-done')) return;
+    const txt = (el.textContent || '').trim();
+    if (!/^memuat/i.test(txt) || txt.length > 80) return;
+    el.setAttribute('data-bsi-done', '1');
+    const label = txt.replace(/\.{1,3}$/, '').trim();
+    // disconnect observer, do DOM change, reconnect — avoids re-triggering
+    _obs.disconnect();
+    el.replaceWith(_buildLoader(label));
+    _obs.observe(document.body, _obsOpts);
+  }
+
+  function _scanAll() {
+    document.querySelectorAll('.tbl-empty p, .tbl-empty span').forEach(_upgrade);
+  }
+
+  const _obsOpts = { childList: true, subtree: true };
+  const _obs = new MutationObserver(mutations => {
+    for (const m of mutations) {
+      for (const node of m.addedNodes) {
+        if (node.nodeType !== 1) continue;
+        if (node.getAttribute('data-bsi-loader') || node.closest('[data-bsi-loader]')) continue;
+        // only process <p> or <span> inside .tbl-empty
+        node.querySelectorAll('.tbl-empty p, .tbl-empty span').forEach(_upgrade);
+        if (node.classList.contains('tbl-empty')) node.querySelectorAll('p, span').forEach(_upgrade);
+      }
+    }
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      _scanAll();
+      _obs.observe(document.body, _obsOpts);
+    });
+  } else {
+    _scanAll();
+    _obs.observe(document.body, _obsOpts);
+  }
+})();
+
+// ===== PAGE TRANSITION & PROGRESS BAR =====
+(function () {
+  /* ── inject styles ── */
+  const s = document.createElement('style');
+  s.textContent = `
+    /* progress bar */
+    #_bsi_bar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, #0055a5, #00a59f, #feb23e);
+      background-size: 200% 100%;
+      border-radius: 0 3px 3px 0;
+      z-index: 99999;
+      transition: width 0.25s cubic-bezier(.4,0,.2,1), opacity 0.3s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #_bsi_bar.running {
+      opacity: 1;
+      animation: _bsi_shimmer 1.2s linear infinite;
+    }
+    #_bsi_bar.done {
+      width: 100% !important;
+      opacity: 0;
+      transition: width 0.15s ease, opacity 0.35s ease 0.15s;
+    }
+    @keyframes _bsi_shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* glow dot at tip */
+    #_bsi_bar::after {
+      content: '';
+      position: absolute;
+      right: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #00a59f;
+      box-shadow: 0 0 8px 2px rgba(0,165,159,0.7);
+    }
+
+    /* page fade */
+    #_bsi_curtain {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      z-index: 99998;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+    }
+    #_bsi_curtain.visible { opacity: 0.45; pointer-events: all; }
+
+    /* content fade-in on load */
+    .app-content, .main-content, main {
+      animation: _bsi_fadein 0.28s ease both;
+    }
+    @keyframes _bsi_fadein {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  `;
+  document.head.appendChild(s);
+
+  /* ── create elements ── */
+  const bar     = document.createElement('div'); bar.id = '_bsi_bar';
+  const curtain = document.createElement('div'); curtain.id = '_bsi_curtain';
+  document.body.appendChild(bar);
+  document.body.appendChild(curtain);
+
+  let _prog = 0, _raf, _timer;
+
+  function _start() {
+    clearTimeout(_timer);
+    cancelAnimationFrame(_raf);
+    _prog = 0;
+    bar.style.transition = 'width 0.25s cubic-bezier(.4,0,.2,1), opacity 0.3s ease';
+    bar.style.width = '0%';
+    bar.classList.remove('done');
+    bar.classList.add('running');
+    curtain.classList.add('visible');
+
+    // animate progress: fast to 70%, then slow crawl
+    function tick() {
+      if (_prog < 70)       _prog += 3;
+      else if (_prog < 85)  _prog += 0.5;
+      else if (_prog < 95)  _prog += 0.1;
+      bar.style.width = _prog + '%';
+      if (_prog < 95) _raf = requestAnimationFrame(tick);
+    }
+    _timer = setTimeout(() => { _raf = requestAnimationFrame(tick); }, 30);
+  }
+
+  function _done() {
+    cancelAnimationFrame(_raf);
+    bar.classList.add('done');
+    curtain.classList.remove('visible');
+    setTimeout(() => {
+      bar.classList.remove('running', 'done');
+      bar.style.width = '0%';
+    }, 600);
+  }
+
+  /* ── intercept sidebar link clicks ── */
+  document.addEventListener('click', e => {
+    const link = e.target.closest('.sidebar-link');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('javascript') || href === window.location.pathname.split('/').pop()) return;
+    if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+    _start();
+  });
+
+  /* ── finish bar when new page is ready ── */
+  window.addEventListener('pageshow', _done);
+  document.addEventListener('DOMContentLoaded', _done);
+})();
