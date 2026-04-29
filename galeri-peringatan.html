@@ -2698,6 +2698,210 @@
     .gp-empty p { font-size: 12.5px; margin: 0; }
 
     /* ===== MODAL ===== */
+    /* Inline detail panels (replaces modals) */
+    .gp-inline-back-bar {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 18px;
+    }
+    .gp-inline-back-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 7px 16px; border-radius: 10px;
+      background: #f1f5f9; border: 1.5px solid #e2e8f0;
+      font-size: 13px; font-weight: 600; color: #374151;
+      cursor: pointer; transition: background .15s, border-color .15s, transform .1s;
+      flex-shrink: 0;
+    }
+    .gp-inline-back-btn:hover { background: #e2e8f0; border-color: #cbd5e1; transform: translateX(-2px); }
+    .gp-inline-back-title {
+      font-size: 14px; font-weight: 600; color: #6b7280;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .gp-inline-detail-head {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1.5px solid #f1f5f9;
+    }
+    .gp-inline-detail-title { font-size: 22px; font-weight: 800; color: #111827; margin: 0 0 4px; }
+    .gp-inline-detail-sub   { font-size: 13px; color: #6b7280; margin: 0; }
+
+    /* ── SP Document Preview panel ─────────────────────── */
+    .gp-spdoc-toolbar {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .gp-spdoc-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 18px; border-radius: 10px; font-size: 13px; font-weight: 700;
+      cursor: pointer; border: none; transition: background .15s, transform .1s, box-shadow .15s;
+    }
+    .gp-spdoc-btn:active { transform: scale(.97); }
+    .gp-spdoc-btn.primary {
+      background: linear-gradient(135deg,#0055a5,#0077cc);
+      color: #fff; box-shadow: 0 4px 14px rgba(0,85,165,.35);
+    }
+    .gp-spdoc-btn.primary:hover { box-shadow: 0 6px 18px rgba(0,85,165,.45); }
+    .gp-spdoc-btn.success {
+      background: linear-gradient(135deg,#059669,#10b981);
+      color: #fff; box-shadow: 0 4px 14px rgba(5,150,105,.3);
+    }
+    .gp-spdoc-btn.success:hover { box-shadow: 0 6px 18px rgba(5,150,105,.4); }
+    .gp-spdoc-btn.secondary {
+      background: #f1f5f9; color: #374151;
+      border: 1.5px solid #e2e8f0;
+    }
+    .gp-spdoc-btn.secondary:hover { background: #e2e8f0; }
+    .gp-spdoc-btn.warning {
+      background: linear-gradient(135deg,#d97706,#f59e0b);
+      color: #fff; box-shadow: 0 4px 14px rgba(217,119,6,.3);
+    }
+    .gp-spdoc-preview-wrap {
+      background: #e5e7eb; border-radius: 16px; padding: 32px;
+      display: flex; justify-content: center; min-height: 400px;
+    }
+    /* A4 document — exact page size, flex column so footer always at bottom */
+    #gpSpDocA4, #gpSpFormDocA4 {
+      width: 210mm; height: 282mm;
+      background: #fff;
+      box-shadow: 0 8px 40px rgba(0,0,0,.18);
+      border-radius: 4px;
+      padding: 8mm 13mm 0;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 10.5pt;
+      color: #1a1a1a;
+      line-height: 1.4;
+      box-sizing: border-box;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+    .sp-doc-main-content { flex: 1; overflow: hidden; }
+    .sp-doc-header {
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 3px solid #0055a5;
+      padding-bottom: 7px; margin-bottom: 3px;
+    }
+    .sp-doc-logo { width: 50px; height: 50px; object-fit: contain; flex-shrink: 0; }
+    .sp-doc-header-text { flex: 1; }
+    .sp-doc-org { font-size: 8.5pt; color: #555; font-family: Arial, sans-serif; }
+    .sp-doc-title-main {
+      font-size: 13pt; font-weight: 700; color: #0055a5;
+      font-family: Arial, sans-serif; line-height: 1.2;
+    }
+    .sp-doc-subtitle { font-size: 8pt; color: #666; font-family: Arial, sans-serif; }
+    .sp-doc-header-right { text-align: right; font-size: 8pt; color: #555; font-family: Arial, sans-serif; }
+    .sp-doc-header-right strong { color: #0055a5; font-size: 9.5pt; }
+    .sp-doc-divider2 { height: 1px; background: #e5e7eb; margin: 4px 0 8px; }
+    .sp-doc-doc-title {
+      text-align: center; margin: 0 0 2px;
+      font-size: 13.5pt; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: #1a1a1a;
+      font-family: Arial, sans-serif;
+    }
+    .sp-doc-doc-num {
+      text-align: center; font-size: 8.5pt; color: #555;
+      font-family: Arial, sans-serif; margin-bottom: 8px;
+    }
+    .sp-doc-badge-row {
+      display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;
+    }
+    .sp-doc-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 11px; border-radius: 999px;
+      font-size: 8.5pt; font-weight: 700; font-family: Arial, sans-serif;
+    }
+    .sp-doc-badge.sp-num { background: #fef3c7; color: #92400e; border: 1.5px solid #fbbf24; }
+    .sp-doc-badge.sp-kuartal { background: #eff6ff; color: #1e40af; border: 1.5px solid #93c5fd; }
+    .sp-doc-badge.sp-pct { background: #fee2e2; color: #991b1b; border: 1.5px solid #fca5a5; }
+    .sp-doc-section-title {
+      font-size: 9.5pt; font-weight: 700; color: #0055a5;
+      font-family: Arial, sans-serif; text-transform: uppercase;
+      letter-spacing: .5px; margin: 8px 0 4px;
+      border-left: 3px solid #0055a5; padding-left: 8px;
+    }
+    .sp-doc-table {
+      width: 100%; border-collapse: collapse; font-size: 10pt;
+      font-family: Arial, sans-serif; margin-bottom: 4px;
+    }
+    .sp-doc-table td { padding: 2.5px 8px; vertical-align: top; }
+    .sp-doc-table td:first-child { width: 38%; color: #555; }
+    .sp-doc-table td:nth-child(2) { width: 4%; text-align: center; }
+    .sp-doc-table td:nth-child(3) { font-weight: 600; }
+    .sp-doc-attend-table {
+      width: 100%; border-collapse: collapse; font-size: 9.5pt;
+      font-family: Arial, sans-serif; margin-bottom: 4px;
+    }
+    .sp-doc-attend-table th {
+      background: #0055a5; color: #fff; padding: 4px 8px;
+      text-align: center; font-weight: 700;
+    }
+    .sp-doc-attend-table th:first-child { text-align: left; }
+    .sp-doc-attend-table td { padding: 3px 8px; border-bottom: 1px solid #e5e7eb; }
+    .sp-doc-attend-table td:not(:first-child) { text-align: center; }
+    .sp-doc-attend-table tr:nth-child(even) td { background: #f8fafc; }
+    .sp-doc-attend-total td {
+      background: #eff6ff !important; font-weight: 700;
+      border-top: 2px solid #93c5fd;
+    }
+    .sp-doc-warning-box {
+      background: #fff7ed; border: 1.5px solid #fed7aa;
+      border-radius: 7px; padding: 7px 12px; margin: 6px 0;
+      font-family: Arial, sans-serif; font-size: 9.5pt;
+    }
+    .sp-doc-warning-title {
+      font-weight: 700; color: #c2410c; margin-bottom: 4px;
+      font-size: 10pt;
+    }
+    .sp-doc-sanksi-text { color: #431407; line-height: 1.5; }
+    .sp-doc-kendala-box {
+      background: #f9fafb; border: 1px solid #e5e7eb;
+      border-radius: 6px; padding: 6px 10px; font-size: 9pt;
+      font-family: Arial, sans-serif; margin: 5px 0; color: #374151;
+    }
+    .sp-doc-signature-row {
+      display: flex; justify-content: space-between; margin-top: 8px;
+      font-family: Arial, sans-serif; font-size: 9pt;
+    }
+    .sp-doc-sign-block { text-align: center; min-width: 110px; }
+    .sp-doc-sign-line {
+      width: 110px; border-bottom: 1px solid #555;
+      margin: 20px auto 3px;
+    }
+    .sp-doc-sign-name { font-weight: 700; font-size: 9.5pt; }
+    .sp-doc-sign-role { color: #555; font-size: 8pt; }
+    .sp-doc-footer {
+      border-top: 1px solid #e5e7eb; padding: 4px 0 5px;
+      font-size: 7.5pt; color: #9ca3af;
+      font-family: Arial, sans-serif;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-shrink: 0;
+    }
+    .sp-doc-confidential {
+      display: inline-block; background: #fee2e2; color: #991b1b;
+      font-size: 7pt; font-weight: 700; padding: 1px 6px; border-radius: 4px;
+      letter-spacing: .5px;
+    }
+    /* Email settings modal */
+    .gp-smtp-panel {
+      background: #fff; border: 1.5px solid #e5e7eb;
+      border-radius: 16px; padding: 22px 24px; margin-bottom: 20px;
+    }
+    .gp-smtp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .gp-smtp-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    @media (max-width: 640px) {
+      .gp-smtp-grid, .gp-smtp-grid.cols-3 { grid-template-columns: 1fr; }
+      .gp-spdoc-preview-wrap { padding: 10px; }
+      #gpSpDocA4 { width: 100%; min-height: auto; padding: 8mm; }
+    }
+
+    /* Inline SP form */
+    .gp-sp-inline-body { background: #fff; border: 1.5px solid #e5e7eb; border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+    .gp-sp-inline-body .gp-modal-body { padding: 20px 24px; }
+    .gp-sp-inline-foot {
+      display: flex; justify-content: flex-end; gap: 10px;
+      padding: 14px 24px; background: #f9fafb;
+      border-top: 1.5px solid #e5e7eb; border-radius: 0 0 16px 16px;
+    }
+
+    /* Keep modal CSS only for PDF picker (still uses modal) */
     .gp-modal-overlay {
       display: none; position: fixed; inset: 0;
       background: rgba(15,23,42,.55);
@@ -3231,6 +3435,391 @@
 </header>
 
 <main class="app-content">
+  <!-- ===================================================== -->
+  <!-- INLINE DETAIL PANEL (replaces both detail modals)    -->
+  <!-- ===================================================== -->
+  <div id="gpInlineDetail" style="display:none;">
+    <div class="gp-inline-back-bar">
+      <button class="gp-inline-back-btn" id="gpInlineBackBtn" onclick="closeInlinePanel()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Kembali
+      </button>
+      <div class="gp-inline-back-title" id="gpInlineBackTitle"></div>
+    </div>
+    <div id="gpInlineDetailHead" class="gp-inline-detail-head">
+      <div>
+        <h2 id="gpDetailTitle" class="gp-inline-detail-title">Detail Awardee</h2>
+        <p id="gpDetailSub" class="gp-inline-detail-sub">Riwayat peringatan &amp; rekap kehadiran</p>
+      </div>
+    </div>
+    <div id="gpDetailBody"></div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- INLINE KPI DETAIL PANEL                               -->
+  <!-- ===================================================== -->
+  <div id="gpInlineKpiDetail" style="display:none;">
+    <div class="gp-inline-back-bar">
+      <button class="gp-inline-back-btn" onclick="closeInlinePanel()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Kembali
+      </button>
+      <div class="gp-inline-back-title" id="gpKpiDetailBreadcrumb">Detail KPI</div>
+    </div>
+    <div id="gpInlineKpiDetailHead" class="gp-inline-detail-head">
+      <div>
+        <h2 class="gp-inline-detail-title" id="gpKpiDetailTitle">Detail KPI</h2>
+        <p class="gp-inline-detail-sub" id="gpKpiDetailSub">Rincian data dan breakdown</p>
+      </div>
+    </div>
+    <div id="gpKpiDetailBody"></div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- INLINE SP DOCUMENT PREVIEW (merged into form panel)  -->
+  <!-- ===================================================== -->
+  <div id="gpInlineSpDoc" style="display:none;" aria-hidden="true">
+    <div class="gp-inline-back-bar">
+      <button class="gp-inline-back-btn" onclick="closeSpDoc()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Kembali
+      </button>
+      <div class="gp-inline-back-title" id="gpSpDocBreadcrumb">Surat Peringatan</div>
+    </div>
+    <div class="gp-inline-detail-head">
+      <div>
+        <h2 class="gp-inline-detail-title">Preview Surat Peringatan</h2>
+        <p class="gp-inline-detail-sub" id="gpSpDocSubtitle">Periksa dokumen sebelum mengunduh atau mengirimkan</p>
+      </div>
+    </div>
+    <!-- Action toolbar -->
+    <div class="gp-spdoc-toolbar">
+      <button class="gp-spdoc-btn primary" onclick="downloadSpPdf()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Unduh PDF
+      </button>
+      <button class="gp-spdoc-btn success" id="gpSpDocEmailBtn" onclick="openSpEmailPanel()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Kirim ke Awardee
+      </button>
+      <button class="gp-spdoc-btn secondary" onclick="openSmtpSettings()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Pengaturan Email
+      </button>
+    </div>
+    <!-- Email send panel (hidden by default) -->
+    <div id="gpSpEmailPanel" style="display:none;" class="gp-smtp-panel" style="margin-bottom:18px;">
+      <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055a5" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Kirim Surat Peringatan via Email
+      </div>
+      <div class="gp-smtp-grid" style="margin-bottom:10px;">
+        <div class="gp-form-row">
+          <label>Email Awardee <span class="req">*</span></label>
+          <input type="email" id="gpSpEmailTo" placeholder="email@awardee.com" />
+        </div>
+        <div class="gp-form-row">
+          <label>CC (opsional)</label>
+          <input type="email" id="gpSpEmailCc" placeholder="lecture@bsi.ac.id" />
+        </div>
+      </div>
+      <div class="gp-form-row" style="margin-bottom:10px;">
+        <label>Pesan Tambahan (opsional)</label>
+        <textarea id="gpSpEmailMsg" rows="3" placeholder="Assalamu'alaikum, terlampir surat peringatan kehadiran Anda..."></textarea>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="gp-spdoc-btn secondary" onclick="document.getElementById('gpSpEmailPanel').style.display='none'">Batal</button>
+        <button class="gp-spdoc-btn success" onclick="sendSpEmail()" id="gpSpSendEmailBtn">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Kirim Email
+        </button>
+      </div>
+    </div>
+    <!-- SMTP Settings panel (hidden by default) -->
+    <div id="gpSmtpSettingsPanel" style="display:none;" class="gp-smtp-panel">
+      <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055a5" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Pengaturan Email (EmailJS)
+      </div>
+      <p style="font-size:12px;color:#6b7280;margin-bottom:14px;">Gunakan <a href="https://www.emailjs.com" target="_blank" rel="noopener" style="color:#0055a5;font-weight:600;">EmailJS</a> untuk mengirim email langsung dari browser. Daftar gratis, hubungkan akun Gmail/SMTP Anda, lalu isi konfigurasi di bawah.</p>
+      <div class="gp-smtp-grid cols-3" style="margin-bottom:12px;">
+        <div class="gp-form-row">
+          <label>Public Key <span class="req">*</span></label>
+          <input type="text" id="gpSmtpPublicKey" placeholder="xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+          <div class="gp-form-hint">Di EmailJS → Account → Public Key</div>
+        </div>
+        <div class="gp-form-row">
+          <label>Service ID <span class="req">*</span></label>
+          <input type="text" id="gpSmtpServiceId" placeholder="service_xxxxxxx" autocomplete="off" />
+          <div class="gp-form-hint">Di EmailJS → Email Services</div>
+        </div>
+        <div class="gp-form-row">
+          <label>Template ID <span class="req">*</span></label>
+          <input type="text" id="gpSmtpTemplateId" placeholder="template_xxxxxxx" autocomplete="off" />
+          <div class="gp-form-hint">Di EmailJS → Email Templates</div>
+        </div>
+      </div>
+      <div class="gp-smtp-grid" style="margin-bottom:12px;">
+        <div class="gp-form-row">
+          <label>Nama Pengirim</label>
+          <input type="text" id="gpSmtpFromName" placeholder="BSI Scholarship Inspirasi Batch 5" />
+        </div>
+        <div class="gp-form-row">
+          <label>Reply-To Email</label>
+          <input type="email" id="gpSmtpReplyTo" placeholder="scholarship@bsi.ac.id" />
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;">
+        <button class="gp-spdoc-btn secondary" onclick="document.getElementById('gpSmtpSettingsPanel').style.display='none'">Tutup</button>
+        <button class="gp-spdoc-btn primary" onclick="saveSmtpSettings()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Simpan Pengaturan
+        </button>
+      </div>
+    </div>
+    <!-- A4 document preview -->
+    <div class="gp-spdoc-preview-wrap">
+      <div id="gpSpDocA4"><!-- filled by JS --></div>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- INLINE SP FORM PANEL (admin only)                    -->
+  <!-- ===================================================== -->
+  <div id="gpInlineSpForm" style="display:none;">
+    <div class="gp-inline-back-bar">
+      <button class="gp-inline-back-btn" onclick="closeSpModal()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Kembali
+      </button>
+      <div class="gp-inline-back-title" id="gpSpModalTitle">Tambah Surat Peringatan</div>
+    </div>
+    <div class="gp-inline-detail-head">
+      <div>
+        <h2 class="gp-inline-detail-title" id="gpSpFormHeading">Tambah Surat Peringatan</h2>
+        <p class="gp-inline-detail-sub">Isi data SP. Kolom bertanda <span style="color:#dc2626;">*</span> wajib diisi.</p>
+      </div>
+    </div>
+    <div class="gp-sp-inline-body">
+      <div class="gp-modal-body">
+        <input type="hidden" id="gpSpEditId" />
+
+        <div class="gp-form-grid">
+          <div class="gp-form-row">
+            <label>Awardee yang perlu SP <span class="req">*</span></label>
+            <select id="gpSpNoInduk">
+              <option value="">— Pilih awardee —</option>
+            </select>
+            <div class="gp-form-hint" id="gpSpAwardeeHint">Hanya menampilkan awardee dengan kehadiran &lt;75% di kuartal berjalan dan belum punya SP.</div>
+            <label style="display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:11.5px;font-weight:600;color:#6b7280;cursor:pointer;">
+              <input type="checkbox" id="gpSpShowAllAwardees" style="width:13px;height:13px;cursor:pointer;" onchange="renderToggleEligibleList()" />
+              Tampilkan semua awardee (termasuk yang sudah punya SP / aman)
+            </label>
+          </div>
+          <div class="gp-form-row">
+            <label>Nama Awardee</label>
+            <input type="text" id="gpSpNama" placeholder="Otomatis terisi" readonly />
+          </div>
+        </div>
+
+        <div class="gp-form-grid cols-3">
+          <div class="gp-form-row">
+            <label>Kampus</label>
+            <input type="text" id="gpSpKampus" placeholder="Otomatis terisi" readonly />
+          </div>
+          <div class="gp-form-row">
+            <label>Kelompok</label>
+            <input type="text" id="gpSpKelompok" placeholder="Otomatis terisi" readonly />
+          </div>
+          <div class="gp-form-row">
+            <label>Status Awardee</label>
+            <input type="text" id="gpSpStatusAwardee" placeholder="Otomatis terisi" readonly />
+          </div>
+        </div>
+
+        <div class="gp-form-grid">
+          <div class="gp-form-row">
+            <label>Lecture / Pembina</label>
+            <input type="text" id="gpSpLecture" list="gpSpLectureList" placeholder="Otomatis terisi · ketik untuk cari" autocomplete="off" />
+            <datalist id="gpSpLectureList"></datalist>
+            <div class="gp-form-hint">Auto dari NIM. Klik dropdown untuk pilih dari daftar lecture_bsi.</div>
+          </div>
+          <div class="gp-form-row">
+            <label>Kuartal <span class="req">*</span></label>
+            <select id="gpSpKuartal">
+              <option value="">— Pilih Kuartal —</option>
+            </select>
+            <div class="gp-form-hint">Tersedia Kuartal 1 s/d Kuartal 10 (Des 2025 – Mei 2028).</div>
+          </div>
+        </div>
+
+        <div class="gp-form-grid cols-3">
+          <div class="gp-form-row">
+            <label>Persentase Kehadiran (%)</label>
+            <input type="number" id="gpSpPersentase" placeholder="Auto-hitung" min="0" max="100" step="0.1" />
+            <div class="gp-form-hint" id="gpSpPctHint">Akan dihitung otomatis dari rekap_bsi (pembinaan + mentoring + Al-Qur'an Jan–Mar).</div>
+            <button type="button" id="gpSpPctDetailBtn" onclick="renderToggleAttendanceDetail()" style="display:none;margin-top:6px;padding:6px 10px;font-size:11.5px;font-weight:700;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:8px;cursor:pointer;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="vertical-align:-2px;margin-right:3px;"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              Lihat detail per sesi
+            </button>
+          </div>
+          <div class="gp-form-row">
+            <label>Status SP</label>
+            <select id="gpSpStatus">
+              <option value="Aktif">Aktif</option>
+              <option value="Selesai">Selesai</option>
+              <option value="Dicabut">Dicabut</option>
+            </select>
+          </div>
+          <div class="gp-form-row">
+            <label>Link SP (Drive/Doc)</label>
+            <input type="url" id="gpSpLink" placeholder="https://..." />
+          </div>
+        </div>
+
+        <!-- Expandable persentase detail (per-session breakdown) -->
+        <div id="gpSpAttendanceDetail" style="display:none;margin:6px 0 16px;padding:14px;background:#f9fafb;border:1px solid var(--gp-border);border-radius:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:12px;font-weight:800;color:#374151;">Rincian Sesi Kehadiran</div>
+            <button type="button" onclick="renderToggleAttendanceDetail()" style="background:none;border:none;color:#6b7280;cursor:pointer;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-1px;margin-right:3px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Tutup</button>
+          </div>
+          <div id="gpSpAttendanceDetailBody"></div>
+        </div>
+
+        <div class="gp-form-row">
+          <label>Sanksi <span class="req">*</span></label>
+          <textarea id="gpSpSanksi" rows="3" placeholder="Contoh: Perlu perbaikan kehadiran pembinaan dan mentoring. Jika 3 bulan kedepan tidak ada perbaikan maka biaya UKT akan ditahan"></textarea>
+        </div>
+
+        <div class="gp-form-row">
+          <label>Temuan Kendala</label>
+          <textarea id="gpSpKendala" rows="4" placeholder="Catatan dari hasil follow-up dengan awardee. Pisahkan poin dengan tanda - agar rapi."></textarea>
+        </div>
+
+        <div class="gp-form-row">
+          <div class="gp-toggle-row">
+            <input type="checkbox" id="gpSpDikirim" />
+            <label for="gpSpDikirim" style="display:inline-flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Surat Peringatan sudah dikirim ke Awardee</label>
+          </div>
+        </div>
+      </div>
+      <div class="gp-sp-inline-foot">
+        <button class="gp-btn-cancel" onclick="closeSpModal()">Batal</button>
+        <button class="gp-spdoc-btn" onclick="renderSpFormPreview()" style="background:linear-gradient(135deg,#7c3aed,#a855f7);color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.35);font-size:12.5px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="1" fill="currentColor"/></svg>
+          Lihat Tampilan SP
+        </button>
+        <button class="gp-btn-save btn-confirm" onclick="saveSp()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Simpan & Cetak
+        </button>
+      </div>
+    </div>
+
+    <!-- ── SP Document Preview (integrated below form) ────── -->
+    <div id="gpSpFormDocSection" style="margin-top:28px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1.5px solid #f1f5f9;">
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:800;color:#111827;">Preview Surat Peringatan</div>
+          <div style="font-size:12.5px;color:#6b7280;margin-top:2px;" id="gpSpFormDocSubtitle">Pilih awardee &amp; kuartal untuk melihat preview dokumen</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="gp-spdoc-btn primary" id="gpSpFormDownloadBtn" onclick="downloadSpFormPdf()" style="opacity:.4;pointer-events:none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Unduh PDF
+          </button>
+          <button class="gp-spdoc-btn success" id="gpSpFormEmailBtn" onclick="openSpFormEmailPanel()" style="opacity:.4;pointer-events:none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Kirim Email
+          </button>
+          <button class="gp-spdoc-btn secondary" onclick="openSmtpSettings()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            Pengaturan Email
+          </button>
+        </div>
+      </div>
+
+      <!-- Email send panel -->
+      <div id="gpSpFormEmailPanel" style="display:none;" class="gp-smtp-panel" style="margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:12px;display:flex;align-items:center;gap:8px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0055a5" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Kirim Surat Peringatan via Email
+        </div>
+        <div class="gp-smtp-grid" style="margin-bottom:10px;">
+          <div class="gp-form-row">
+            <label>Email Awardee <span class="req">*</span></label>
+            <input type="email" id="gpSpFormEmailTo" placeholder="email@awardee.com" />
+          </div>
+          <div class="gp-form-row">
+            <label>CC (opsional)</label>
+            <input type="email" id="gpSpFormEmailCc" placeholder="lecture@bsi.ac.id" />
+          </div>
+        </div>
+        <div class="gp-form-row" style="margin-bottom:10px;">
+          <label>Pesan Tambahan (opsional)</label>
+          <textarea id="gpSpFormEmailMsg" rows="2" placeholder="Assalamu'alaikum, terlampir surat peringatan kehadiran Anda..."></textarea>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button class="gp-spdoc-btn secondary" onclick="document.getElementById('gpSpFormEmailPanel').style.display='none'">Batal</button>
+          <button class="gp-spdoc-btn success" onclick="sendSpFormEmail()" id="gpSpFormSendBtn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Kirim Email
+          </button>
+        </div>
+      </div>
+
+      <!-- SMTP Settings (shared) -->
+      <div id="gpSmtpSettingsPanel" style="display:none;" class="gp-smtp-panel">
+        <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:12px;">Pengaturan Email (EmailJS)</div>
+        <p style="font-size:12px;color:#6b7280;margin-bottom:14px;">Gunakan <a href="https://www.emailjs.com" target="_blank" rel="noopener" style="color:#0055a5;font-weight:600;">EmailJS</a> untuk mengirim email dari browser. Daftar gratis, hubungkan Gmail/SMTP Anda.</p>
+        <div class="gp-smtp-grid cols-3" style="margin-bottom:12px;">
+          <div class="gp-form-row">
+            <label>Public Key <span class="req">*</span></label>
+            <input type="text" id="gpSmtpPublicKey" placeholder="xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+            <div class="gp-form-hint">EmailJS → Account → Public Key</div>
+          </div>
+          <div class="gp-form-row">
+            <label>Service ID <span class="req">*</span></label>
+            <input type="text" id="gpSmtpServiceId" placeholder="service_xxxxxxx" autocomplete="off" />
+            <div class="gp-form-hint">EmailJS → Email Services</div>
+          </div>
+          <div class="gp-form-row">
+            <label>Template ID <span class="req">*</span></label>
+            <input type="text" id="gpSmtpTemplateId" placeholder="template_xxxxxxx" autocomplete="off" />
+            <div class="gp-form-hint">EmailJS → Email Templates</div>
+          </div>
+        </div>
+        <div class="gp-smtp-grid" style="margin-bottom:12px;">
+          <div class="gp-form-row">
+            <label>Nama Pengirim</label>
+            <input type="text" id="gpSmtpFromName" placeholder="BSI Scholarship Inspirasi Batch 5" />
+          </div>
+          <div class="gp-form-row">
+            <label>Reply-To Email</label>
+            <input type="email" id="gpSmtpReplyTo" placeholder="scholarship@bsi.ac.id" />
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button class="gp-spdoc-btn secondary" onclick="document.getElementById('gpSmtpSettingsPanel').style.display='none'">Tutup</button>
+          <button class="gp-spdoc-btn primary" onclick="saveSmtpSettings()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Simpan Pengaturan
+          </button>
+        </div>
+      </div>
+
+      <!-- A4 preview -->
+      <div class="gp-spdoc-preview-wrap" id="gpSpFormDocWrap">
+        <div id="gpSpFormDocA4">
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:#9ca3af;font-family:Arial,sans-serif;font-size:13px;gap:12px;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Pilih awardee &amp; kuartal di form atas, lalu klik <strong>Lihat Tampilan SP</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Loading state -->
   <div id="gpLoading" class="gp-loading">
     <!-- skeleton cards -->
@@ -3585,42 +4174,6 @@
   </div>
 
   <!-- ===================================================== -->
-  <!-- DETAIL MODAL (lecture/admin click row)                -->
-  <!-- ===================================================== -->
-  <div class="gp-modal-overlay" id="gpDetailModal" onclick="if(event.target===this)closeDetailModal()">
-    <div class="gp-modal">
-      <div class="gp-modal-head">
-        <div>
-          <h3 id="gpDetailTitle">Detail Awardee</h3>
-          <p id="gpDetailSub">Riwayat peringatan & rekap kehadiran</p>
-        </div>
-        <button class="gp-modal-close" onclick="closeDetailModal()" aria-label="Tutup">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-      <div class="gp-modal-body" id="gpDetailBody"></div>
-    </div>
-  </div>
-
-  <!-- ===================================================== -->
-  <!-- KPI DETAIL MODAL (click on any KPI to drill down)    -->
-  <!-- ===================================================== -->
-  <div class="gp-modal-overlay" id="gpKpiDetailModal" onclick="if(event.target===this)closeKpiDetail()">
-    <div class="gp-modal" style="max-width:780px;">
-      <div class="gp-modal-head">
-        <div>
-          <h3 id="gpKpiDetailTitle">Detail KPI</h3>
-          <p id="gpKpiDetailSub">Rincian data dan breakdown</p>
-        </div>
-        <button class="gp-modal-close" onclick="closeKpiDetail()" aria-label="Tutup">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-      <div class="gp-modal-body" id="gpKpiDetailBody"></div>
-    </div>
-  </div>
-
-  <!-- ===================================================== -->
   <!-- PDF SCOPE PICKER MODAL                                 -->
   <!-- ===================================================== -->
   <div class="gp-modal-overlay" id="gpPdfPickerModal" onclick="if(event.target===this)closePdfPicker()">
@@ -3682,131 +4235,6 @@
     </div>
   </div>
 
-  <!-- ===================================================== -->
-  <!-- SP CRUD MODAL (admin only)                            -->
-  <!-- ===================================================== -->
-  <div class="gp-modal-overlay" id="gpSpModal" onclick="if(event.target===this)closeSpModal()">
-    <div class="gp-modal">
-      <div class="gp-modal-head">
-        <div>
-          <h3 id="gpSpModalTitle">Tambah Surat Peringatan</h3>
-          <p>Isi data SP. Kolom bertanda <span style="color:#dc2626;">*</span> wajib diisi.</p>
-        </div>
-        <button class="gp-modal-close" onclick="closeSpModal()" aria-label="Tutup">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-      <div class="gp-modal-body">
-        <input type="hidden" id="gpSpEditId" />
-
-        <div class="gp-form-grid">
-          <div class="gp-form-row">
-            <label>Awardee yang perlu SP <span class="req">*</span></label>
-            <select id="gpSpNoInduk">
-              <option value="">— Pilih awardee —</option>
-            </select>
-            <div class="gp-form-hint" id="gpSpAwardeeHint">Hanya menampilkan awardee dengan kehadiran &lt;75% di kuartal berjalan dan belum punya SP.</div>
-            <label style="display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:11.5px;font-weight:600;color:#6b7280;cursor:pointer;">
-              <input type="checkbox" id="gpSpShowAllAwardees" style="width:13px;height:13px;cursor:pointer;" onchange="renderToggleEligibleList()" />
-              Tampilkan semua awardee (termasuk yang sudah punya SP / aman)
-            </label>
-          </div>
-          <div class="gp-form-row">
-            <label>Nama Awardee</label>
-            <input type="text" id="gpSpNama" placeholder="Otomatis terisi" readonly />
-          </div>
-        </div>
-
-        <div class="gp-form-grid cols-3">
-          <div class="gp-form-row">
-            <label>Kampus</label>
-            <input type="text" id="gpSpKampus" placeholder="Otomatis terisi" readonly />
-          </div>
-          <div class="gp-form-row">
-            <label>Kelompok</label>
-            <input type="text" id="gpSpKelompok" placeholder="Otomatis terisi" readonly />
-          </div>
-          <div class="gp-form-row">
-            <label>Status Awardee</label>
-            <input type="text" id="gpSpStatusAwardee" placeholder="Otomatis terisi" readonly />
-          </div>
-        </div>
-
-        <div class="gp-form-grid">
-          <div class="gp-form-row">
-            <label>Lecture / Pembina</label>
-            <input type="text" id="gpSpLecture" list="gpSpLectureList" placeholder="Otomatis terisi · ketik untuk cari" autocomplete="off" />
-            <datalist id="gpSpLectureList"></datalist>
-            <div class="gp-form-hint">Auto dari NIM. Klik dropdown untuk pilih dari daftar lecture_bsi.</div>
-          </div>
-          <div class="gp-form-row">
-            <label>Kuartal <span class="req">*</span></label>
-            <select id="gpSpKuartal">
-              <option value="">— Pilih Kuartal —</option>
-            </select>
-            <div class="gp-form-hint">Tersedia Kuartal 1 s/d Kuartal 10 (Des 2025 – Mei 2028).</div>
-          </div>
-        </div>
-
-        <div class="gp-form-grid cols-3">
-          <div class="gp-form-row">
-            <label>Persentase Kehadiran (%)</label>
-            <input type="number" id="gpSpPersentase" placeholder="Auto-hitung" min="0" max="100" step="0.1" />
-            <div class="gp-form-hint" id="gpSpPctHint">Akan dihitung otomatis dari rekap_bsi (pembinaan + mentoring + Al-Qur'an Jan–Mar).</div>
-            <button type="button" id="gpSpPctDetailBtn" onclick="renderToggleAttendanceDetail()" style="display:none;margin-top:6px;padding:6px 10px;font-size:11.5px;font-weight:700;background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;border-radius:8px;cursor:pointer;">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" style="vertical-align:-2px;margin-right:3px;"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
-              Lihat detail per sesi
-            </button>
-          </div>
-          <div class="gp-form-row">
-            <label>Status SP</label>
-            <select id="gpSpStatus">
-              <option value="Aktif">Aktif</option>
-              <option value="Selesai">Selesai</option>
-              <option value="Dicabut">Dicabut</option>
-            </select>
-          </div>
-          <div class="gp-form-row">
-            <label>Link SP (Drive/Doc)</label>
-            <input type="url" id="gpSpLink" placeholder="https://..." />
-          </div>
-        </div>
-
-        <!-- Expandable persentase detail (per-session breakdown) -->
-        <div id="gpSpAttendanceDetail" style="display:none;margin:6px 0 16px;padding:14px;background:#f9fafb;border:1px solid var(--gp-border);border-radius:10px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <div style="font-size:12px;font-weight:800;color:#374151;">Rincian Sesi Kehadiran</div>
-            <button type="button" onclick="renderToggleAttendanceDetail()" style="background:none;border:none;color:#6b7280;cursor:pointer;font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-1px;margin-right:3px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Tutup</button>
-          </div>
-          <div id="gpSpAttendanceDetailBody"></div>
-        </div>
-
-        <div class="gp-form-row">
-          <label>Sanksi <span class="req">*</span></label>
-          <textarea id="gpSpSanksi" rows="3" placeholder="Contoh: Perlu perbaikan kehadiran pembinaan dan mentoring. Jika 3 bulan kedepan tidak ada perbaikan maka biaya UKT akan ditahan"></textarea>
-        </div>
-
-        <div class="gp-form-row">
-          <label>Temuan Kendala</label>
-          <textarea id="gpSpKendala" rows="4" placeholder="Catatan dari hasil follow-up dengan awardee. Pisahkan poin dengan tanda - agar rapi."></textarea>
-        </div>
-
-        <div class="gp-form-row">
-          <div class="gp-toggle-row">
-            <input type="checkbox" id="gpSpDikirim" />
-            <label for="gpSpDikirim" style="display:inline-flex;align-items:center;gap:6px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Surat Peringatan sudah dikirim ke Awardee</label>
-          </div>
-        </div>
-      </div>
-      <div class="gp-modal-foot">
-        <button class="gp-btn-cancel" onclick="closeSpModal()">Batal</button>
-        <button class="gp-btn-save btn-confirm" onclick="saveSp()">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-          Simpan
-        </button>
-      </div>
-    </div>
-  </div>
 </main>
 </div>
 
@@ -3851,6 +4279,9 @@ function closeSidebar() {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
@@ -5585,6 +6016,13 @@ function renderNeedsSpSection(){
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Buatkan SP
           </button>
+          ${(()=>{
+            const lastSp = _gpSpAll.filter(s=>String(s.no_induk)===String(m.no_induk)).sort((a,b)=>new Date(b.created_at)-new Date(a.created_at))[0];
+            return lastSp ? `<button type="button" class="gp-needs-sp-tbl-action" style="background:#eff6ff;color:#0055a5;border-color:#bfdbfe;" onclick="event.stopPropagation();openSpDoc('${escA(lastSp.id)}')" title="Generate & Cetak SP terakhir">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+              Cetak SP
+            </button>` : '';
+          })()}
         </div>
       </td>
     </tr>`;
@@ -6053,6 +6491,9 @@ function renderAdminTable(){
             <button type="button" class="gp-allsp-tbl-action-btn" onclick="openDetail('${escA(s.no_induk)}', '${escA(s.id)}')" title="Lihat detail">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
+            <button type="button" class="gp-allsp-tbl-action-btn" onclick="openSpDoc('${escA(s.id)}')" title="Generate & Cetak SP" style="color:#0055a5;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+            </button>
             <button type="button" class="gp-allsp-tbl-action-btn btn-edit" onclick="openSpModal('${escA(s.id)}')" title="Edit">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
             </button>
@@ -6144,13 +6585,18 @@ window.openDetail = function(noInduk, focusSpId){
   _gpAwardeeNoInduk = oldAwardeeNoInduk;
 
   document.getElementById('gpDetailBody').innerHTML = html;
-  document.getElementById('gpDetailModal').classList.add('show');
 
-  // Auto-scroll to focused SP
-  setTimeout(() => {
-    const focusEl = document.getElementById('gpFocusSp');
-    if (focusEl) focusEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }, 100);
+  // Show inline panel, hide current view
+  const _views = ['gpAdmin','gpLecture','gpAwardee'];
+  let _activeView = null;
+  _views.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.style.display !== 'none') { _activeView = id; el.style.display = 'none'; }
+  });
+  window._gpDetailPrevView = _activeView;
+  document.getElementById('gpInlineDetail').style.display = '';
+  document.getElementById('gpInlineBackTitle').textContent = displayName + (displayNim ? ' · ' + displayNim : '');
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if (c) c.scrollTop = 0; });
 };
 
 function renderSpCardForDetail(s, noInduk){
@@ -6171,6 +6617,10 @@ function renderSpCardForDetail(s, noInduk){
         <span class="gp-sp-status ${dikirim?'sent':'unsent'}">${dikirim ? `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Sudah dikirim` : `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Belum dikirim`}</span>
         ${(_gpRole === 'admin' && !isOperator) ? `
           <div style="margin-left:auto;display:flex;gap:6px;">
+            <button class="gp-btn-secondary btn-icon" style="padding:5px 10px;font-size:11px;color:#0055a5;border-color:#bfdbfe;background:#eff6ff;" onclick="closeDetailModal();openSpDoc('${escA(s.id)}')">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+              Cetak SP
+            </button>
             <button class="gp-btn-secondary btn-icon edit" style="padding:5px 10px;font-size:11px;" onclick="closeDetailModal();openSpModal('${escA(s.id)}')">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               Edit
@@ -6196,8 +6646,15 @@ function renderSpCardForDetail(s, noInduk){
     </div>`;
 }
 
-window.closeDetailModal = function(){
-  document.getElementById('gpDetailModal').classList.remove('show');
+window.closeDetailModal = function(){ window.closeInlinePanel(); };
+window.closeInlinePanel = function(){
+  document.getElementById('gpInlineDetail').style.display = 'none';
+  document.getElementById('gpInlineKpiDetail').style.display = 'none';
+  const prev = window._gpDetailPrevView || window._gpKpiPrevView;
+  if (prev) { const el = document.getElementById(prev); if (el) el.style.display = ''; }
+  window._gpDetailPrevView = null;
+  window._gpKpiPrevView = null;
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if (c) c.scrollTop = 0; });
 };
 
 /* =========================================================
@@ -6904,7 +7361,7 @@ window.showInsightDimDetail = function(dimType, key){
   document.getElementById('gpKpiDetailTitle').textContent = `${dimLbl}: ${g.key}`;
   document.getElementById('gpKpiDetailSub').textContent = `Insight detail dengan rincian hitungan & daftar awardee`;
   document.getElementById('gpKpiDetailBody').innerHTML = html;
-  document.getElementById('gpKpiDetailModal').classList.add('show');
+  _showInlineKpiPanel();
 };
 
 window.showInsightActivityDetail = function(actKey){
@@ -7022,7 +7479,7 @@ window.showInsightActivityDetail = function(actKey){
   document.getElementById('gpKpiDetailTitle').textContent = `Aktivitas: ${a.key}`;
   document.getElementById('gpKpiDetailSub').textContent = 'Insight detail per kegiatan';
   document.getElementById('gpKpiDetailBody').innerHTML = html;
-  document.getElementById('gpKpiDetailModal').classList.add('show');
+  _showInlineKpiPanel();
 };
 
 window.showInsightQuarterDetail = function(ord){
@@ -7130,7 +7587,7 @@ window.showInsightQuarterDetail = function(ord){
   document.getElementById('gpKpiDetailTitle').textContent = `Kuartal ${q.ord}: ${q.range}`;
   document.getElementById('gpKpiDetailSub').textContent = 'Insight detail per kuartal';
   document.getElementById('gpKpiDetailBody').innerHTML = html;
-  document.getElementById('gpKpiDetailModal').classList.add('show');
+  _showInlineKpiPanel();
 };
 
 window.showSpIterDetail = function(level){
@@ -7246,7 +7703,7 @@ window.showSpIterDetail = function(level){
   document.getElementById('gpKpiDetailTitle').textContent = `Iterasi SP: ${titleMap[level] || level}`;
   document.getElementById('gpKpiDetailSub').textContent = `${list.length} awardee · sebaran kampus/kelompok/lecture & daftar lengkap`;
   document.getElementById('gpKpiDetailBody').innerHTML = html;
-  document.getElementById('gpKpiDetailModal').classList.add('show');
+  _showInlineKpiPanel();
 };
 
 window.showInsightDimAll = function(dimType){
@@ -7277,7 +7734,7 @@ window.showInsightDimAll = function(dimType){
   document.getElementById('gpKpiDetailTitle').textContent = `Semua ${dimLbl} (${list.length})`;
   document.getElementById('gpKpiDetailSub').textContent = `Diurutkan berdasarkan tingkat SP tertinggi`;
   document.getElementById('gpKpiDetailBody').innerHTML = html;
-  document.getElementById('gpKpiDetailModal').classList.add('show');
+  _showInlineKpiPanel();
 };
 
 /* =========================================================
@@ -8835,7 +9292,7 @@ window.showNeedsSpDetail = function(noInduk, qStartLabel){
   document.getElementById('gpKpiDetailTitle').textContent = 'Detail Keputusan SP';
   document.getElementById('gpKpiDetailSub').textContent = `${m.nama} · ${qOrd} · ${qF}`;
   document.getElementById('gpKpiDetailBody').innerHTML = html;
-  document.getElementById('gpKpiDetailModal').classList.add('show');
+  _showInlineKpiPanel();
 };
 
 window.showAwardeeSpStatusDetail = function(){
@@ -9080,7 +9537,7 @@ window.showAwardeeSpStatusDetail = function(){
   document.getElementById('gpKpiDetailTitle').textContent = 'Detail Status Surat Peringatan';
   document.getElementById('gpKpiDetailSub').textContent = 'Rincian lengkap kehadiran, riwayat SP, dan rekomendasi';
   document.getElementById('gpKpiDetailBody').innerHTML = html;
-  document.getElementById('gpKpiDetailModal').classList.add('show');
+  _showInlineKpiPanel();
 };
 
 window.showKpiDetail = function(type){
@@ -9118,12 +9575,25 @@ window.showKpiDetail = function(type){
   const bodyContent = renderKpiDetailBody(type, qFilter);
   bodyEl.innerHTML = headerHtml + bodyContent;
 
-  document.getElementById('gpKpiDetailModal').classList.add('show');
+  _showInlineKpiPanel();
 };
 
-window.closeKpiDetail = function(){
-  document.getElementById('gpKpiDetailModal').classList.remove('show');
-};
+window.closeKpiDetail = function(){ window.closeInlinePanel(); };
+
+function _showInlineKpiPanel(){
+  const _kviews = ['gpAdmin','gpLecture','gpAwardee'];
+  let _kActive = null;
+  _kviews.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.style.display !== 'none') { _kActive = id; el.style.display = 'none'; }
+  });
+  window._gpKpiPrevView = _kActive;
+  document.getElementById('gpInlineKpiDetail').style.display = '';
+  const titleEl = document.getElementById('gpKpiDetailTitle');
+  const bc = document.getElementById('gpKpiDetailBreadcrumb');
+  if (bc && titleEl) bc.textContent = titleEl.textContent;
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if (c) c.scrollTop = 0; });
+}
 
 function computeKpiSummary(type, qFilter){
   switch(type) {
@@ -9258,58 +9728,147 @@ function renderKpiSpList(qFilter){
 
   if (!list.length) return '<div class="gp-empty" style="padding:30px;"><p style="font-weight:700;color:#16a34a;">Tidak ada SP di periode ini.</p><p style="font-size:12px;">Pertahankan kondisi ini!</p></div>';
 
-  // Stats: by quarter
-  const byQ = {};
-  list.forEach(s => {
-    const q = normalizeKuartalField(s.kuartal, s.created_at) || '?';
-    byQ[q] = (byQ[q] || 0) + 1;
-  });
+  const isSent  = s => s.dikirim === true || s.dikirim === 'TRUE' || s.dikirim === 'true' || s.dikirim === 1;
+  const sent    = list.filter(isSent).length;
+  const pending = list.length - sent;
+  const sentPct = Math.round(sent / list.length * 100);
 
-  let html = '';
+  // Unique awardees & kampus
+  const uniqNim    = new Set(list.map(s => String(s.no_induk))).size;
+  const uniqKampus = new Set(list.map(s => s.kampus||'?')).size;
+
+  // By quarter
+  const byQ = {};
+  list.forEach(s => { const q = normalizeKuartalField(s.kuartal, s.created_at)||'?'; byQ[q]=(byQ[q]||0)+1; });
+
+  // Avg % kehadiran
+  const pcts = list.map(s => getSpComputedPct(s)).filter(p => !isNaN(p));
+  const avgPct = pcts.length ? Math.round(pcts.reduce((a,b)=>a+b,0)/pcts.length) : null;
+
+  const styleTag = `<style>
+    @keyframes splist-in  { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes splist-bar { from{width:0} to{width:var(--w)} }
+    @keyframes splist-num { 0%{transform:scale(.6);opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+    @keyframes ring-sent  { 0%,100%{box-shadow:0 0 0 0 rgba(22,163,74,.3)} 50%{box-shadow:0 0 0 5px rgba(22,163,74,0)} }
+    @keyframes ring-pend  { 0%,100%{box-shadow:0 0 0 0 rgba(217,119,6,.3)} 50%{box-shadow:0 0 0 5px rgba(217,119,6,0)} }
+    .splist-item { animation: splist-in .3s ease both; }
+    .splist-bar  { animation: splist-bar .65s cubic-bezier(.4,0,.2,1) both; width:var(--w); }
+    .splist-num  { animation: splist-num .4s cubic-bezier(.34,1.56,.64,1) both; }
+  </style>`;
+
+  // Hero stat cards
+  let html = styleTag + `
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;">
+    <div style="background:linear-gradient(135deg,#fff7ed,#fed7aa33);border:1.5px solid #fed7aa;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div class="splist-num" style="font-size:22px;font-weight:800;color:#c2410c;line-height:1.1;animation-delay:.04s">${list.length}</div>
+      <div style="font-size:10.5px;color:#9a3412;font-weight:600;margin-top:3px;">Total SP</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#faf5ff,#ede9fe);border:1.5px solid #ddd6fe;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div class="splist-num" style="font-size:22px;font-weight:800;color:#7c3aed;line-height:1.1;animation-delay:.08s">${uniqNim}</div>
+      <div style="font-size:10.5px;color:#6d28d9;font-weight:600;margin-top:3px;">Awardee</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#dcfce7,#bbf7d033);border:1.5px solid #86efac;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div class="splist-num" style="font-size:22px;font-weight:800;color:#15803d;line-height:1.1;animation-delay:.12s">${sent}</div>
+      <div style="font-size:10.5px;color:#166534;font-weight:600;margin-top:3px;">Terkirim</div>
+      <div style="font-size:9.5px;color:#22c55e;margin-top:1px;">${sentPct}%</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#fef3c7,#fde68a33);border:1.5px solid #fde68a;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div class="splist-num" style="font-size:22px;font-weight:800;color:#b45309;line-height:1.1;animation-delay:.16s">${pending}</div>
+      <div style="font-size:10.5px;color:#92400e;font-weight:600;margin-top:3px;">Pending</div>
+      <div style="font-size:9.5px;color:#d97706;margin-top:1px;">belum dikirim</div>
+    </div>
+  </div>
+
+  <!-- Sent progress bar -->
+  <div style="background:#fff;border:1.5px solid #f1f5f9;border-radius:14px;padding:14px 16px;margin-bottom:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span style="font-size:11.5px;font-weight:700;color:#374151;">Progress Pengiriman SP</span>
+      <span style="font-size:12px;font-weight:800;color:${sentPct>=80?'#15803d':sentPct>=50?'#b45309':'#dc2626'};">${sentPct}% terkirim</span>
+    </div>
+    <div style="height:12px;border-radius:8px;background:#f1f5f9;overflow:hidden;position:relative;">
+      <div class="splist-bar" style="--w:${sentPct}%;height:100%;background:linear-gradient(90deg,#16a34a,#22c55e);border-radius:8px;"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:11px;color:#9ca3af;">
+      <span><span style="color:#16a34a;font-weight:700;">${sent}</span> sudah terkirim</span>
+      <span><span style="color:#d97706;font-weight:700;">${pending}</span> masih pending</span>
+    </div>
+  </div>
+
+  <!-- Extra stats row -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+    <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px;">
+      <div style="width:36px;height:36px;border-radius:10px;background:#eff6ff;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div>
+        <div style="font-size:17px;font-weight:800;color:#1d4ed8;line-height:1.1;">${uniqKampus}</div>
+        <div style="font-size:10.5px;color:#3b82f6;font-weight:600;">Kampus Terdampak</div>
+      </div>
+    </div>
+    <div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px;">
+      <div style="width:36px;height:36px;border-radius:10px;background:#fef3c7;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div>
+        <div style="font-size:17px;font-weight:800;color:#b45309;line-height:1.1;">${avgPct != null ? avgPct+'%' : '–'}</div>
+        <div style="font-size:10.5px;color:#d97706;font-weight:600;">Rata-rata Kehadiran</div>
+      </div>
+    </div>
+  </div>`;
+
+  // Distribusi per kuartal
   if (Object.keys(byQ).length > 1) {
-    html += `<div class="gp-kdt-section-title">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      Distribusi per Kuartal
-    </div>`;
-    html += '<div class="gp-kdt-dist">';
-    Object.keys(byQ).sort().forEach(q => {
+    html += `<div style="background:#fff;border:1.5px solid #f1f5f9;border-radius:14px;padding:14px 16px;margin-bottom:16px;">
+      <div style="font-size:11px;font-weight:800;color:#374151;letter-spacing:.4px;text-transform:uppercase;margin-bottom:10px;">Distribusi per Kuartal</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">`;
+    Object.keys(byQ).sort().forEach((q, qi) => {
       const cnt = byQ[q];
-      const pct = Math.round(cnt / list.length * 100);
-      html += `<div class="gp-kdt-dist-row">
-        <div class="gp-kdt-dist-lbl">${escH(q)}</div>
-        <div class="gp-kdt-dist-bar"><div class="gp-kdt-dist-fill mid" style="width:${pct}%"></div></div>
-        <div class="gp-kdt-dist-num">${cnt} SP (${pct}%)</div>
+      const w = Math.round(cnt / list.length * 100);
+      html += `<div style="display:grid;grid-template-columns:90px 1fr 60px;gap:8px;align-items:center;">
+        <span style="font-size:11.5px;font-weight:600;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escH(q)}</span>
+        <div style="height:8px;border-radius:5px;background:#f3f4f6;overflow:hidden;">
+          <div class="splist-bar" style="--w:${w}%;height:100%;background:linear-gradient(90deg,#ea580c99,#ea580c);border-radius:5px;animation-delay:${qi*.07}s"></div>
+        </div>
+        <div style="text-align:right;font-size:11.5px;font-weight:700;color:#6b7280;">${cnt} <span style="color:#9ca3af;font-weight:400;">(${w}%)</span></div>
       </div>`;
     });
-    html += '</div>';
+    html += `</div></div>`;
   }
 
+  // Full list
   html += `<div class="gp-kdt-section-title">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    Daftar SP (${list.length})
-  </div>`;
-  html += '<div class="gp-kdt-list">';
-  list.forEach(s => {
-    const pct = getSpComputedPct(s);
-    const pcls = pctClass(pct);
-    const dikirim = s.dikirim === true || s.dikirim === 'TRUE' || s.dikirim === 'true' || s.dikirim === 1;
-    const sentBadge = dikirim
-      ? '<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:#dcfce7;color:#166534;">Terkirim</span>'
-      : '<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:#fef3c7;color:#92400e;">Pending</span>';
-    const initial = mkInit(s.nama_awardee);
-    html += `<div class="gp-kdt-list-item" onclick="closeKpiDetail();openDetail('${escA(s.no_induk)}','${escA(s.id)}')">
-      <div class="gp-kdt-list-rank" style="background:#fef3c7;color:#92400e;">${initial}</div>
+    Semua SP (${list.length}) — terbaru lebih dulu
+  </div>
+  <div class="gp-kdt-list">`;
+
+  list.forEach((s, i) => {
+    const pct   = getSpComputedPct(s);
+    const pcls  = pctClass(pct);
+    const sent  = isSent(s);
+    const ini   = mkInit(s.nama_awardee);
+    const delay = Math.min(i * 0.035, 0.6);
+    const sentBadge = sent
+      ? `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:#dcfce7;color:#166534;animation:ring-sent 2.5s ${delay+.4}s infinite;">✓ Terkirim</span>`
+      : `<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:99px;background:#fef3c7;color:#92400e;animation:ring-pend 2.5s ${delay+.4}s infinite;">⏳ Pending</span>`;
+    html += `<div class="gp-kdt-list-item splist-item" style="animation-delay:${delay}s"
+      onclick="closeKpiDetail();openDetail('${escA(s.no_induk)}','${escA(s.id)}')">
+      <div class="gp-kdt-list-rank" style="background:${sent?'#dcfce7':'#fef3c7'};color:${sent?'#166534':'#92400e'};">${ini}</div>
       <div class="gp-kdt-list-info">
         <div class="gp-kdt-list-name">${escH(s.nama_awardee||'–')}</div>
         <div class="gp-kdt-list-meta">${escH(s.no_induk||'–')} · ${escH(s.kampus||'–')} · ${escH(s.kuartal||'–')}</div>
-        <div class="gp-kdt-list-sub">${fmtDate(s.created_at)} ${sentBadge}</div>
+        <div class="gp-kdt-list-sub" style="display:flex;align-items:center;gap:8px;margin-top:3px;">
+          <span>${fmtDate(s.created_at)}</span>
+          ${sentBadge}
+        </div>
       </div>
       <div class="gp-kdt-list-val">
-        ${!isNaN(pct) ? `<span class="gp-kdt-list-pct ${pcls}">${pct}%</span>` : '<span style="color:#9ca3af;">–</span>'}
+        ${!isNaN(pct) ? `<span class="gp-kdt-list-pct ${pcls}">${pct}%</span>` : '<span style="color:#9ca3af;font-size:11px;">–</span>'}
       </div>
     </div>`;
   });
-  html += '</div>';
+
+  html += `</div>`;
   return html;
 }
 
@@ -9319,42 +9878,147 @@ function renderKpiAwardeeWithSp(qFilter){
     ? _gpSpAll.filter(s => normalizeKuartalField(s.kuartal, s.created_at) === qFilter)
     : _gpSpAll;
 
-  // Group by no_induk
   const byNim = {};
   inScope.forEach(s => {
     const nim = String(s.no_induk);
     if (!byNim[nim]) byNim[nim] = { nim, sps: [], nama: s.nama_awardee, kampus: s.kampus, kelompok: s.kelompok };
     byNim[nim].sps.push(s);
   });
-  const list = Object.values(byNim).sort((a,b) => b.sps.length - a.sps.length);
+  const list = Object.values(byNim).sort((a,b) => b.sps.length - a.sps.length || a.nama?.localeCompare(b.nama));
 
   if (!list.length) return '<div class="gp-empty"><p>Tidak ada awardee ber-SP di periode ini.</p></div>';
 
-  let html = `<div class="gp-kdt-section-title">
+  const totalSp   = inScope.length;
+  const multiSp   = list.filter(g => g.sps.length > 1).length;
+  const sp1       = list.filter(g => g.sps.length === 1).length;
+  const sp2       = list.filter(g => g.sps.length === 2).length;
+  const sp3plus   = list.filter(g => g.sps.length >= 3).length;
+  const maxSp     = list[0]?.sps.length || 1;
+  const recentSp  = inScope.slice().sort((a,b) => new Date(b.created_at)-new Date(a.created_at))[0];
+
+  // Animated keyframes injected once
+  const styleTag = `<style>
+    @keyframes awsp-fadein { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes awsp-bar    { from{width:0} to{width:var(--bar-w)} }
+    @keyframes awsp-pop    { 0%{transform:scale(.7);opacity:0} 70%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+    @keyframes awsp-pulse  { 0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,.35)} 50%{box-shadow:0 0 0 6px rgba(124,58,237,0)} }
+    .awsp-item { animation: awsp-fadein .32s ease both; }
+    .awsp-bar-fill { animation: awsp-bar .7s cubic-bezier(.4,0,.2,1) both; width: var(--bar-w); }
+    .awsp-stat-num { animation: awsp-pop .45s cubic-bezier(.34,1.56,.64,1) both; }
+  </style>`;
+
+  // Hero stat cards
+  let html = styleTag + `
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;">
+    <div style="background:linear-gradient(135deg,#faf5ff,#ede9fe);border:1.5px solid #ddd6fe;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div class="awsp-stat-num" style="font-size:22px;font-weight:800;color:#7c3aed;line-height:1.1;animation-delay:.05s">${list.length}</div>
+      <div style="font-size:10.5px;color:#6d28d9;font-weight:600;margin-top:3px;">Awardee Unik</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#fff7ed,#fed7aa33);border:1.5px solid #fed7aa;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div class="awsp-stat-num" style="font-size:22px;font-weight:800;color:#c2410c;line-height:1.1;animation-delay:.1s">${totalSp}</div>
+      <div style="font-size:10.5px;color:#9a3412;font-weight:600;margin-top:3px;">Total SP</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#fef3c7,#fde68a33);border:1.5px solid #fde68a;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div class="awsp-stat-num" style="font-size:22px;font-weight:800;color:#b45309;line-height:1.1;animation-delay:.15s">${multiSp}</div>
+      <div style="font-size:10.5px;color:#92400e;font-weight:600;margin-top:3px;">Multi-SP</div>
+      <div style="font-size:9.5px;color:#d97706;margin-top:1px;">≥ 2 surat</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #bbf7d0;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div class="awsp-stat-num" style="font-size:22px;font-weight:800;color:#15803d;line-height:1.1;animation-delay:.2s">${maxSp}</div>
+      <div style="font-size:10.5px;color:#166534;font-weight:600;margin-top:3px;">SP Terbanyak</div>
+      <div style="font-size:9.5px;color:#22c55e;margin-top:1px;">${escH(list[0]?.nama?.split(' ')[0]||'–')}</div>
+    </div>
+  </div>
+
+  <!-- SP count distribution -->
+  <div style="background:#fff;border:1.5px solid #f1f5f9;border-radius:14px;padding:14px 16px;margin-bottom:18px;">
+    <div style="font-size:11px;font-weight:800;color:#374151;letter-spacing:.4px;margin-bottom:10px;text-transform:uppercase;">Sebaran Jumlah SP per Awardee</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">`;
+
+  [['1 SP', sp1, '#7c3aed', '#ede9fe'], ['2 SP', sp2, '#d97706', '#fef3c7'], ['3+ SP', sp3plus, '#dc2626', '#fee2e2']].forEach(([lbl, cnt, clr, bg]) => {
+    const w = list.length ? Math.round(cnt/list.length*100) : 0;
+    html += `<div style="display:grid;grid-template-columns:44px 1fr 52px;gap:8px;align-items:center;">
+      <span style="font-size:11.5px;font-weight:700;color:${clr};">${lbl}</span>
+      <div style="height:9px;border-radius:6px;background:#f3f4f6;overflow:hidden;">
+        <div class="awsp-bar-fill" style="--bar-w:${w}%;height:100%;background:linear-gradient(90deg,${clr}99,${clr});border-radius:6px;"></div>
+      </div>
+      <div style="text-align:right;font-size:11.5px;font-weight:700;color:#6b7280;">${cnt} <span style="font-weight:400;color:#9ca3af;">(${w}%)</span></div>
+    </div>`;
+  });
+
+  html += `</div></div>`;
+
+  // Top-3 podium
+  if (list.length >= 1) {
+    html += `<div style="font-size:11px;font-weight:800;color:#374151;letter-spacing:.4px;margin-bottom:10px;text-transform:uppercase;display:flex;align-items:center;gap:6px;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Sorotan Teratas
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(${Math.min(list.length,3)},1fr);gap:10px;margin-bottom:18px;">`;
+
+    const medals = [
+      {bg:'linear-gradient(135deg,#fef3c7,#fde68a)', border:'#fbbf24', clr:'#92400e', icon:'🥇', ring:'rgba(251,191,36,.5)'},
+      {bg:'linear-gradient(135deg,#f3f4f6,#e5e7eb)',  border:'#d1d5db', clr:'#374151', icon:'🥈', ring:'rgba(156,163,175,.4)'},
+      {bg:'linear-gradient(135deg,#fff7ed,#fed7aa)',   border:'#fb923c', clr:'#9a3412', icon:'🥉', ring:'rgba(251,146,60,.4)'},
+    ];
+    list.slice(0,3).forEach((g, i) => {
+      const m = medals[i];
+      const lastSp = g.sps.slice().sort((a,b) => new Date(b.created_at)-new Date(a.created_at))[0];
+      const pct = getSpComputedPct(lastSp);
+      const ini = mkInit(g.nama);
+      html += `<div class="awsp-item" style="background:${m.bg};border:1.5px solid ${m.border};border-radius:14px;padding:14px 12px;text-align:center;cursor:pointer;transition:transform .18s,box-shadow .18s;animation-delay:${i*.08}s"
+        onclick="closeKpiDetail();openDetail('${escA(g.nim)}')"
+        onmouseenter="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px ${m.ring}'"
+        onmouseleave="this.style.transform='';this.style.boxShadow=''">
+        <div style="font-size:18px;margin-bottom:4px;">${m.icon}</div>
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.7);color:${m.clr};font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;border:2px solid ${m.border};">${ini}</div>
+        <div style="font-size:12px;font-weight:700;color:${m.clr};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escH(g.nama?.split(' ').slice(0,2).join(' ')||'–')}</div>
+        <div style="font-size:9.5px;color:#6b7280;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escH(g.kampus||'–')}</div>
+        <div style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px;">
+          <span style="font-size:12px;font-weight:800;padding:3px 10px;border-radius:99px;background:rgba(124,58,237,.12);color:#7c3aed;">${g.sps.length} SP</span>
+          ${!isNaN(pct)?`<span style="font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:${pct<50?'#fee2e2':pct<75?'#fef3c7':'#dcfce7'};color:${pct<50?'#991b1b':pct<75?'#92400e':'#166534'};">${pct}%</span>`:''}
+        </div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  // Full list
+  html += `<div class="gp-kdt-section-title">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="15" y2="12"/><line x1="3" y1="18" x2="9" y2="18"/></svg>
-    Daftar Awardee (urut: SP terbanyak dulu)
-  </div>`;
-  html += '<div class="gp-kdt-list">';
+    Semua Awardee (${list.length}) — urut SP terbanyak
+  </div>
+  <div class="gp-kdt-list">`;
+
   list.forEach((g, i) => {
-    const lastSp = g.sps.slice().sort((a,b) => new Date(b.created_at) - new Date(a.created_at))[0];
+    const lastSp = g.sps.slice().sort((a,b) => new Date(b.created_at)-new Date(a.created_at))[0];
     const lastPct = getSpComputedPct(lastSp);
     const pcls = pctClass(lastPct);
-    const initials = mkInit(g.nama);
-    const rankCls = i===0 ? 'r1' : i===1 ? 'r2' : i===2 ? 'r3' : '';
-    html += `<div class="gp-kdt-list-item" onclick="closeKpiDetail();openDetail('${escA(g.nim)}')">
-      <div class="gp-kdt-list-rank ${rankCls}">${initials}</div>
+    const ini = mkInit(g.nama);
+    const spClr = g.sps.length >= 3 ? '#dc2626' : g.sps.length === 2 ? '#d97706' : '#7c3aed';
+    const spBg  = g.sps.length >= 3 ? '#fee2e2' : g.sps.length === 2 ? '#fef3c7' : '#faf5ff';
+    const delay = Math.min(i * 0.04, 0.6);
+    const kuartals = [...new Set(g.sps.map(s => s.kuartal||'–'))].join(', ');
+    html += `<div class="gp-kdt-list-item awsp-item" style="animation-delay:${delay}s"
+      onclick="closeKpiDetail();openDetail('${escA(g.nim)}')">
+      <div class="gp-kdt-list-rank" style="background:${spBg};color:${spClr};font-weight:800;">${ini}</div>
       <div class="gp-kdt-list-info">
         <div class="gp-kdt-list-name">${escH(g.nama||'–')}</div>
         <div class="gp-kdt-list-meta">${escH(g.nim)} · ${escH(g.kampus||'–')} · Kelompok ${escH(g.kelompok||'–')}</div>
-        <div class="gp-kdt-list-sub">SP terakhir: ${fmtDate(lastSp.created_at)}</div>
+        <div class="gp-kdt-list-sub" style="display:flex;gap:10px;margin-top:3px;">
+          <span>SP terakhir: ${fmtDate(lastSp.created_at)}</span>
+          <span style="color:#9ca3af;">|</span>
+          <span>Kuartal: ${escH(kuartals)}</span>
+        </div>
       </div>
-      <div class="gp-kdt-list-val">
-        <span style="font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:99px;background:#faf5ff;color:#7c3aed;">${g.sps.length} SP</span>
-        ${!isNaN(lastPct) ? `<div style="margin-top:4px;"><span class="gp-kdt-list-pct ${pcls}" style="font-size:11px;">${lastPct}%</span></div>` : ''}
+      <div class="gp-kdt-list-val" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <span style="font-size:12px;font-weight:800;padding:3px 10px;border-radius:99px;background:${spBg};color:${spClr};animation:awsp-pulse 2s ${delay+.3}s infinite;">${g.sps.length} SP</span>
+        ${!isNaN(lastPct)?`<span class="gp-kdt-list-pct ${pcls}" style="font-size:11px;">${lastPct}%</span>`:''}
       </div>
     </div>`;
   });
-  html += '</div>';
+
+  html += `</div>`;
   return html;
 }
 
@@ -9511,28 +10175,18 @@ function renderKpiPctTotal(qFilter){
     ? _gpSpAll.filter(s => normalizeKuartalField(s.kuartal, s.created_at) === qFilter)
     : _gpSpAll;
   const affectedNims = new Set(inScope.map(s => String(s.no_induk)));
-  const cleanCount = _gpMhsAll.length - affectedNims.size;
-  const affectedCount = affectedNims.size;
+  const total       = _gpMhsAll.length || 1;
+  const affected    = affectedNims.size;
+  const clean       = total - affected;
+  const pctAff      = Math.round(affected / total * 1000) / 10;
+  const pctClean    = Math.round(clean    / total * 1000) / 10;
 
-  let html = `<div class="gp-kdt-section-title">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="10"/></svg>
-    Cakupan SP
-  </div>`;
-  html += '<div class="gp-kdt-dist">';
-  const total = _gpMhsAll.length || 1;
-  html += `<div class="gp-kdt-dist-row">
-    <div class="gp-kdt-dist-lbl">Bersih (tanpa SP)</div>
-    <div class="gp-kdt-dist-bar"><div class="gp-kdt-dist-fill high" style="width:${Math.round(cleanCount/total*100)}%"></div></div>
-    <div class="gp-kdt-dist-num">${cleanCount} (${Math.round(cleanCount/total*1000)/10}%)</div>
-  </div>`;
-  html += `<div class="gp-kdt-dist-row">
-    <div class="gp-kdt-dist-lbl">Pernah Ber-SP</div>
-    <div class="gp-kdt-dist-bar"><div class="gp-kdt-dist-fill mid" style="width:${Math.round(affectedCount/total*100)}%"></div></div>
-    <div class="gp-kdt-dist-num">${affectedCount} (${Math.round(affectedCount/total*1000)/10}%)</div>
-  </div>`;
-  html += '</div>';
+  // Donut chart values
+  const circ  = 2 * Math.PI * 38; // r=38
+  const dashAff   = (affected / total * circ).toFixed(2);
+  const dashClean = (clean    / total * circ).toFixed(2);
 
-  // Per kampus breakdown
+  // Per kampus
   const byKampus = {};
   _gpMhsAll.forEach(m => {
     const k = m.kampus || '(Tanpa Kampus)';
@@ -9540,23 +10194,125 @@ function renderKpiPctTotal(qFilter){
     byKampus[k].total++;
     if (affectedNims.has(String(m.no_induk))) byKampus[k].withSp++;
   });
+  const kampusList = Object.keys(byKampus)
+    .map(k => ({ k, ...byKampus[k], pct: byKampus[k].total ? Math.round(byKampus[k].withSp / byKampus[k].total * 1000) / 10 : 0 }))
+    .sort((a, b) => b.pct - a.pct);
 
-  html += `<div class="gp-kdt-section-title">
+  // Risk tiers
+  const kritis   = kampusList.filter(x => x.pct >= 25);
+  const waspada  = kampusList.filter(x => x.pct >= 10 && x.pct < 25);
+  const aman     = kampusList.filter(x => x.pct < 10);
+
+  // Count SPs per awardee (multi-SP)
+  const spCountByNim = {};
+  inScope.forEach(s => { const n = String(s.no_induk); spCountByNim[n] = (spCountByNim[n]||0)+1; });
+  const multiSp = Object.values(spCountByNim).filter(c => c > 1).length;
+
+  let html = `
+  <!-- Hero stats -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;">
+    <div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div style="font-size:22px;font-weight:800;color:#15803d;line-height:1.1;">${total.toLocaleString('id')}</div>
+      <div style="font-size:10.5px;color:#166534;font-weight:600;margin-top:3px;">Total Awardee</div>
+    </div>
+    <div style="background:#eff6ff;border:1.5px solid #bfdbfe;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div style="font-size:22px;font-weight:800;color:#1d4ed8;line-height:1.1;">${clean.toLocaleString('id')}</div>
+      <div style="font-size:10.5px;color:#1e40af;font-weight:600;margin-top:3px;">Bersih</div>
+      <div style="font-size:9.5px;color:#60a5fa;margin-top:1px;">${pctClean}%</div>
+    </div>
+    <div style="background:#fff7ed;border:1.5px solid #fed7aa;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div style="font-size:22px;font-weight:800;color:#c2410c;line-height:1.1;">${affected.toLocaleString('id')}</div>
+      <div style="font-size:10.5px;color:#9a3412;font-weight:600;margin-top:3px;">Terdampak SP</div>
+      <div style="font-size:9.5px;color:#fb923c;margin-top:1px;">${pctAff}%</div>
+    </div>
+    <div style="background:#fdf4ff;border:1.5px solid #e9d5ff;border-radius:12px;padding:12px 10px;text-align:center;">
+      <div style="font-size:22px;font-weight:800;color:#7c3aed;line-height:1.1;">${multiSp}</div>
+      <div style="font-size:10.5px;color:#6d28d9;font-weight:600;margin-top:3px;">Multi-SP</div>
+      <div style="font-size:9.5px;color:#a78bfa;margin-top:1px;">≥ 2 surat</div>
+    </div>
+  </div>
+
+  <!-- Donut chart + legend -->
+  <div style="display:flex;align-items:center;gap:24px;background:#fff;border:1.5px solid #f1f5f9;border-radius:14px;padding:16px 20px;margin-bottom:18px;">
+    <div style="flex-shrink:0;">
+      <svg width="96" height="96" viewBox="0 0 96 96">
+        <circle cx="48" cy="48" r="38" fill="none" stroke="#f1f5f9" stroke-width="12"/>
+        <circle cx="48" cy="48" r="38" fill="none" stroke="#22c55e" stroke-width="12"
+          stroke-dasharray="${dashClean} ${circ.toFixed(2)}"
+          stroke-dashoffset="${(circ/4).toFixed(2)}"
+          stroke-linecap="round"/>
+        <circle cx="48" cy="48" r="38" fill="none" stroke="#f97316" stroke-width="12"
+          stroke-dasharray="${dashAff} ${circ.toFixed(2)}"
+          stroke-dashoffset="${(circ/4 - parseFloat(dashClean)).toFixed(2)}"
+          stroke-linecap="round"/>
+        <text x="48" y="46" text-anchor="middle" font-size="13" font-weight="800" fill="#1f2937" font-family="Arial,sans-serif">${pctAff}%</text>
+        <text x="48" y="57" text-anchor="middle" font-size="8" fill="#9ca3af" font-family="Arial,sans-serif">terdampak</text>
+      </svg>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+      <div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          <span style="width:10px;height:10px;border-radius:3px;background:#22c55e;flex-shrink:0;display:inline-block;"></span>
+          <span style="font-size:12px;font-weight:700;color:#15803d;">Bersih (tanpa SP)</span>
+        </div>
+        <div style="height:10px;border-radius:6px;background:#f3f4f6;overflow:hidden;">
+          <div style="height:100%;width:${pctClean}%;background:linear-gradient(90deg,#16a34a,#22c55e);border-radius:6px;transition:width .8s;"></div>
+        </div>
+        <div style="font-size:11px;color:#6b7280;margin-top:3px;">${clean.toLocaleString('id')} awardee · <strong style="color:#15803d;">${pctClean}%</strong></div>
+      </div>
+      <div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+          <span style="width:10px;height:10px;border-radius:3px;background:#f97316;flex-shrink:0;display:inline-block;"></span>
+          <span style="font-size:12px;font-weight:700;color:#9a3412;">Pernah Ber-SP</span>
+        </div>
+        <div style="height:10px;border-radius:6px;background:#f3f4f6;overflow:hidden;">
+          <div style="height:100%;width:${pctAff}%;background:linear-gradient(90deg,#ea580c,#f97316);border-radius:6px;transition:width .8s;"></div>
+        </div>
+        <div style="font-size:11px;color:#6b7280;margin-top:3px;">${affected.toLocaleString('id')} awardee · <strong style="color:#c2410c;">${pctAff}%</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Risk tier summary -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;">
+    <div style="border-radius:10px;padding:10px 12px;background:#fee2e2;border:1.5px solid #fca5a5;">
+      <div style="font-size:18px;font-weight:800;color:#dc2626;">${kritis.length}</div>
+      <div style="font-size:10.5px;font-weight:700;color:#7f1d1d;margin-top:2px;">🔴 Kritis (≥25%)</div>
+    </div>
+    <div style="border-radius:10px;padding:10px 12px;background:#fef3c7;border:1.5px solid #fde68a;">
+      <div style="font-size:18px;font-weight:800;color:#d97706;">${waspada.length}</div>
+      <div style="font-size:10.5px;font-weight:700;color:#78350f;margin-top:2px;">🟡 Waspada (10–24%)</div>
+    </div>
+    <div style="border-radius:10px;padding:10px 12px;background:#dcfce7;border:1.5px solid #bbf7d0;">
+      <div style="font-size:18px;font-weight:800;color:#16a34a;">${aman.length}</div>
+      <div style="font-size:10.5px;font-weight:700;color:#14532d;margin-top:2px;">🟢 Aman (&lt;10%)</div>
+    </div>
+  </div>
+
+  <!-- Per kampus detail -->
+  <div class="gp-kdt-section-title">
     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-    Per Kampus
-  </div>`;
-  html += '<div class="gp-kdt-dist">';
-  Object.keys(byKampus).sort().forEach(k => {
-    const b = byKampus[k];
-    const pct = b.total ? Math.round(b.withSp / b.total * 1000) / 10 : 0;
-    const cls = pct < 10 ? 'high' : pct < 25 ? 'mid' : 'low';
-    html += `<div class="gp-kdt-dist-row">
-      <div class="gp-kdt-dist-lbl">${escH(k)}</div>
-      <div class="gp-kdt-dist-bar"><div class="gp-kdt-dist-fill ${cls}" style="width:${b.total ? Math.round(b.withSp/b.total*100) : 0}%"></div></div>
-      <div class="gp-kdt-dist-num">${b.withSp}/${b.total} (${pct}%)</div>
+    Per Kampus — diurutkan dari cakupan tertinggi
+  </div>
+  <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:8px;">`;
+
+  kampusList.forEach(x => {
+    const tierClr = x.pct >= 25 ? '#dc2626' : x.pct >= 10 ? '#d97706' : '#16a34a';
+    const tierBg  = x.pct >= 25 ? '#fee2e2' : x.pct >= 10 ? '#fef3c7' : '#f0fdf4';
+    const barClr  = x.pct >= 25 ? 'low' : x.pct >= 10 ? 'mid' : 'high';
+    html += `<div style="display:grid;grid-template-columns:1fr 120px auto;gap:8px;align-items:center;font-size:12px;padding:6px 8px;border-radius:8px;background:#fafafa;border:1px solid #f1f5f9;">
+      <div style="font-weight:600;color:#1f2937;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escH(x.k)}">${escH(x.k)}</div>
+      <div style="height:7px;border-radius:4px;background:#f3f4f6;overflow:hidden;">
+        <div class="gp-kdt-dist-fill ${barClr}" style="width:${x.total ? Math.round(x.withSp/x.total*100) : 0}%;height:100%;"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;min-width:90px;justify-content:flex-end;">
+        <span style="font-size:11px;color:#6b7280;">${x.withSp}/${x.total}</span>
+        <span style="font-weight:800;font-size:12px;padding:2px 7px;border-radius:20px;background:${tierBg};color:${tierClr};">${x.pct}%</span>
+      </div>
     </div>`;
   });
-  html += '</div>';
+
+  html += `</div>`;
   return html;
 }
 
@@ -9704,11 +10460,488 @@ window.openSpModal = function(editId){
     }
   }
 
-  document.getElementById('gpSpModal').classList.add('show');
+  // Show inline SP form
+  const isEdit = !!editId;
+  document.getElementById('gpSpFormHeading').textContent = isEdit ? 'Edit Surat Peringatan' : 'Tambah Surat Peringatan';
+  const _spviews = ['gpAdmin','gpLecture','gpAwardee','gpInlineDetail','gpInlineKpiDetail'];
+  let _spActive = null;
+  _spviews.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.style.display !== 'none') { _spActive = id; el.style.display = 'none'; }
+  });
+  window._gpSpPrevView = _spActive;
+  document.getElementById('gpInlineSpForm').style.display = '';
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if (c) c.scrollTop = 0; });
 };
 
 window.closeSpModal = function(){
-  document.getElementById('gpSpModal').classList.remove('show');
+  document.getElementById('gpInlineSpForm').style.display = 'none';
+  const prev = window._gpSpPrevView;
+  if (prev) { const el = document.getElementById(prev); if (el) el.style.display = ''; }
+  window._gpSpPrevView = null;
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if (c) c.scrollTop = 0; });
+};
+
+/* =========================================================
+   SP DOCUMENT — generate, preview, download, email
+========================================================= */
+let _gpCurrentSpDocId = null;
+
+// openSpDoc — opens the SP form panel in preview-only mode for an existing SP record
+window.openSpDoc = function(spId){
+  _gpCurrentSpDocId = spId;
+  const sp = _gpSpAll.find(x => String(x.id) === String(spId));
+  if (!sp) { showToast('Data SP tidak ditemukan', 'err'); return; }
+
+  // Show the form panel
+  const _views = ['gpAdmin','gpLecture','gpAwardee','gpInlineDetail','gpInlineKpiDetail'];
+  let _prev = null;
+  _views.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.style.display !== 'none') { _prev = id; el.style.display = 'none'; }
+  });
+  window._gpSpPrevView = _prev;
+
+  // Hide form fields, show preview only
+  const formBody = document.querySelector('#gpInlineSpForm .gp-sp-inline-body');
+  if (formBody) formBody.style.display = 'none';
+
+  // Update heading
+  const heading = document.getElementById('gpSpFormHeading');
+  if (heading) heading.textContent = `Surat Peringatan — ${sp.nama_awardee || sp.no_induk}`;
+  const sub = document.querySelector('#gpInlineSpForm .gp-inline-detail-sub');
+  if (sub) sub.textContent = `${sp.no_induk} · ${sp.kuartal || '–'} · ${fmtDate(sp.created_at)}`;
+  const bc = document.getElementById('gpSpModalTitle');
+  if (bc) bc.textContent = `SP · ${sp.nama_awardee || sp.no_induk}`;
+
+  document.getElementById('gpInlineSpForm').style.display = '';
+  document.getElementById('gpSpFormEmailPanel').style.display = 'none';
+  document.getElementById('gpSmtpSettingsPanel').style.display = 'none';
+
+  // Pre-fill email
+  const mhs = _gpMhsAll.find(m => String(m.no_induk) === String(sp.no_induk));
+  if (mhs && mhs.email) document.getElementById('gpSpFormEmailTo').value = mhs.email;
+
+  // Render document preview
+  _gpCurrentSpDocId = spId;
+  const docEl = document.getElementById('gpSpFormDocA4');
+  if (docEl) docEl.innerHTML = buildSpDocHtml(sp);
+  _enableDocButtons(true);
+  const subtitle = document.getElementById('gpSpFormDocSubtitle');
+  if (subtitle) subtitle.textContent = `${sp.nama_awardee || '–'} · ${sp.no_induk} · ${sp.kuartal || '–'}`;
+
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if (c) c.scrollTop = 0; });
+};
+
+window.closeSpDoc = function(){ closeSpModal(); };
+
+// Called when opening a new/edit form — restore form body visibility
+const _origOpenSpModal = window.openSpModal;
+window.openSpModal = function(editId){
+  const formBody = document.querySelector('#gpInlineSpForm .gp-sp-inline-body');
+  if (formBody) formBody.style.display = '';
+  const heading = document.getElementById('gpSpFormHeading');
+  if (heading) heading.textContent = editId ? 'Edit Surat Peringatan' : 'Tambah Surat Peringatan';
+  _enableDocButtons(false);
+  // Reset preview placeholder
+  const docEl = document.getElementById('gpSpFormDocA4');
+  if (docEl) docEl.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;color:#9ca3af;font-family:Arial,sans-serif;font-size:13px;gap:12px;">
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+    Isi form lalu klik <strong>Lihat Tampilan SP</strong> untuk melihat dokumen</div>`;
+  _origOpenSpModal(editId);
+};
+
+function _enableDocButtons(on){
+  ['gpSpFormDownloadBtn','gpSpFormEmailBtn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.style.opacity = on ? '1' : '.4'; el.style.pointerEvents = on ? '' : 'none'; }
+  });
+}
+
+function getSpOrdinalForAwardee(spId, noInduk){
+  const sorted = _gpSpAll
+    .filter(s => String(s.no_induk) === String(noInduk))
+    .sort((a,b) => new Date(a.created_at) - new Date(b.created_at));
+  const idx = sorted.findIndex(s => String(s.id) === String(spId));
+  return idx >= 0 ? idx + 1 : 1;
+}
+
+function ordinalLabel(n){
+  return ['Pertama','Kedua','Ketiga','Keempat','Kelima','Keenam','Ketujuh','Kedelapan','Kesembilan','Kesepuluh'][n-1] || `Ke-${n}`;
+}
+
+function buildSpDocHtml(sp){
+  const ord = getSpOrdinalForAwardee(sp.id, sp.no_induk);
+  const mhs = _gpMhsAll.find(m => String(m.no_induk) === String(sp.no_induk));
+  const pct = sp.persentase_kehadiran != null ? Math.round(sp.persentase_kehadiran) : null;
+  const qNorm = normalizeKuartalField(sp.kuartal, sp.created_at);
+  const stats = qNorm ? calcAttendanceForAwardee(sp.no_induk, qNorm) : null;
+  const overallStats = calcAttendanceForAwardee(sp.no_induk, null);
+  const totalSpCount = _gpSpAll.filter(s => String(s.no_induk) === String(sp.no_induk)).length;
+
+  // attendance rows
+  const actKeys = [
+    { key:'pembinaan', label:'Pembinaan' },
+    { key:'mentoring',  label:'Mentoring' },
+    { key:'quran',      label:'Al-Qur\'an' }
+  ];
+  let attendRows = '';
+  let totalOk = 0, totalAll = 0;
+  if (stats) {
+    actKeys.forEach(a => {
+      const s = stats[a.key];
+      if (!s || s.total === 0) return;
+      totalOk  += s.ok;
+      totalAll += s.total;
+      const pctA = s.pct != null ? s.pct : (s.total ? Math.round(s.ok/s.total*100) : null);
+      const bar = pctA != null ? `${pctA}%` : '–';
+      attendRows += `<tr>
+        <td>${escH(a.label)}</td>
+        <td style="text-align:center;">${s.ok}</td>
+        <td style="text-align:center;">${s.total}</td>
+        <td style="text-align:center;font-weight:700;color:${(pctA??100)<75?'#dc2626':'#15803d'};">${bar}</td>
+      </tr>`;
+    });
+  }
+  const totalPct = totalAll > 0 ? Math.round(totalOk/totalAll*100) : null;
+
+  // kendala as bullet list
+  const kendalaLines = (sp.temuan_kendala || '').split('\n').map(l => l.trim()).filter(Boolean);
+  const kendalaHtml = kendalaLines.length
+    ? kendalaLines.map(l => `<div style="display:flex;gap:6px;margin-bottom:3px;"><span style="color:#c2410c;font-weight:700;flex-shrink:0;">•</span><span>${escH(l.replace(/^[-•]\s*/,''))}</span></div>`).join('')
+    : '<span style="color:#9ca3af;font-style:italic;">Tidak ada catatan kendala.</span>';
+
+  // doc number
+  const year = new Date(sp.created_at).getFullYear();
+  const month = String(new Date(sp.created_at).getMonth()+1).padStart(2,'0');
+  const docNum = `SP/${sp.no_induk}/${ord.toString().padStart(2,'0')}/${month}/${year}`;
+
+  // logo as absolute URL
+  const logoUrl = new URL('assets/logo.png', window.location.href).href;
+
+  return `
+  <div class="sp-doc-main-content">
+  <div class="sp-doc-header">
+    <img src="${logoUrl}" class="sp-doc-logo" alt="Logo BSI" />
+    <div class="sp-doc-header-text">
+      <div class="sp-doc-org">YAYASAN BSI / UNIVERSITAS BINA SARANA INFORMATIKA</div>
+      <div class="sp-doc-title-main">BSI Scholarship Inspirasi Batch 5</div>
+      <div class="sp-doc-subtitle">Program Beasiswa Inspirasi · Pembinaan Karakter &amp; Akademik</div>
+    </div>
+    <div class="sp-doc-header-right">
+      <div>No. Dokumen</div>
+      <strong>${escH(docNum)}</strong>
+      <div style="margin-top:4px;">${fmtDate(sp.created_at)}</div>
+      <span class="sp-doc-confidential">RAHASIA</span>
+    </div>
+  </div>
+  <div class="sp-doc-divider2"></div>
+
+  <div class="sp-doc-doc-title">Surat Peringatan</div>
+  <div class="sp-doc-doc-num">Berdasarkan rekap kehadiran program pembinaan BSI Scholarship Inspirasi Batch 5</div>
+
+  <div class="sp-doc-badge-row">
+    <span class="sp-doc-badge sp-num">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Peringatan ${ordinalLabel(ord)} (SP-${ord})
+    </span>
+    <span class="sp-doc-badge sp-kuartal">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      ${escH(sp.kuartal || qNorm || '–')}
+    </span>
+    ${pct != null ? `<span class="sp-doc-badge sp-pct">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Kehadiran ${pct}%
+    </span>` : ''}
+    ${totalSpCount > 1 ? `<span class="sp-doc-badge" style="background:#fef2f2;color:#7f1d1d;border:1.5px solid #fca5a5;">
+      Total ${totalSpCount} SP diterima
+    </span>` : ''}
+  </div>
+
+  <div class="sp-doc-section-title">Data Awardee</div>
+  <table class="sp-doc-table">
+    <tr><td>Nama Lengkap</td><td>:</td><td>${escH(sp.nama_awardee || mhs?.nama || '–')}</td></tr>
+    <tr><td>NIM / No. Induk</td><td>:</td><td style="font-family:'Courier New',monospace;">${escH(sp.no_induk || '–')}</td></tr>
+    <tr><td>Program Studi / Kampus</td><td>:</td><td>${escH(sp.kampus || mhs?.kampus || '–')}</td></tr>
+    <tr><td>Kelompok</td><td>:</td><td>${escH(sp.kelompok || mhs?.kelompok ? 'Kelompok '+(sp.kelompok||mhs?.kelompok) : '–')}</td></tr>
+    <tr><td>Lecture / Pembina</td><td>:</td><td>${escH(sp.lecture || '–')}</td></tr>
+    <tr><td>Status Awardee</td><td>:</td><td>${escH(sp.status_awardee || mhs?.status_awardee || 'Aktif')}</td></tr>
+    <tr><td>Tanggal Diterbitkan</td><td>:</td><td>${fmtDate(sp.created_at)}</td></tr>
+  </table>
+
+  ${attendRows ? `
+  <div class="sp-doc-section-title">Rekap Kehadiran — ${escH(sp.kuartal || '–')}</div>
+  <table class="sp-doc-attend-table">
+    <thead><tr><th>Kegiatan</th><th>Hadir</th><th>Total</th><th>Persentase</th></tr></thead>
+    <tbody>
+      ${attendRows}
+      <tr class="sp-doc-attend-total">
+        <td>Total Kehadiran</td>
+        <td style="text-align:center;">${totalOk}</td>
+        <td style="text-align:center;">${totalAll}</td>
+        <td style="text-align:center;color:${(totalPct??100)<75?'#dc2626':'#15803d'};">${totalPct != null ? totalPct+'%' : '–'}</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:7.5pt;color:#6b7280;margin:2px 0 0;font-family:Arial,sans-serif;">
+    * Batas minimum kehadiran: <strong>75%</strong>. Kehadiran Al-Qur'an hanya dihitung pada kuartal Jan–Mar.
+  </p>
+  ` : ''}
+
+  <div class="sp-doc-section-title">Isi Peringatan &amp; Sanksi</div>
+  <div class="sp-doc-warning-box">
+    <div class="sp-doc-warning-title">
+      ⚠ Peringatan ${ordinalLabel(ord)} — Kehadiran Di Bawah Standar Program
+    </div>
+    <div class="sp-doc-sanksi-text">${escH(sp.sanksi || 'Awardee diharapkan segera memperbaiki kehadiran di program pembinaan, mentoring, dan kelas Al-Qur\'an. Kelalaian yang berkelanjutan dapat berdampak pada status beasiswa.').replace(/\n/g,'<br>')}</div>
+  </div>
+
+  ${kendalaLines.length ? `
+  <div class="sp-doc-section-title">Temuan Kendala</div>
+  <div class="sp-doc-kendala-box">${kendalaHtml}</div>
+  ` : ''}
+
+  <div class="sp-doc-section-title">Pernyataan Awardee</div>
+  <p style="font-family:Arial,sans-serif;font-size:9pt;margin:0 0 6px;line-height:1.45;">
+    Dengan diterimanya surat peringatan ini, saya yang bertanda tangan di bawah menyatakan telah memahami isi peringatan dan berkomitmen untuk memperbaiki kehadiran pada kuartal berikutnya.
+  </p>
+
+  <div class="sp-doc-signature-row">
+    <div class="sp-doc-sign-block">
+      <div style="font-weight:600;margin-bottom:2px;">${escH(mhs?.kampus || sp.kampus || '')}</div>
+      <div style="color:#555;font-size:8.5pt;">${fmtDate(sp.created_at)}</div>
+      <div class="sp-doc-sign-line"></div>
+      <div class="sp-doc-sign-name">${escH(sp.lecture || 'Lecture / Pembina')}</div>
+      <div class="sp-doc-sign-role">Lecture / Pembina</div>
+    </div>
+    <div class="sp-doc-sign-block">
+      <div style="font-weight:600;margin-bottom:2px;">Mengetahui,</div>
+      <div style="color:#555;font-size:8.5pt;">&nbsp;</div>
+      <div class="sp-doc-sign-line"></div>
+      <div class="sp-doc-sign-name">Koordinator Scholarship</div>
+      <div class="sp-doc-sign-role">BSI Scholarship Inspirasi Batch 5</div>
+    </div>
+    <div class="sp-doc-sign-block">
+      <div style="font-weight:600;margin-bottom:2px;">Awardee,</div>
+      <div style="color:#555;font-size:8.5pt;">&nbsp;</div>
+      <div class="sp-doc-sign-line"></div>
+      <div class="sp-doc-sign-name">${escH(sp.nama_awardee || mhs?.nama || '–')}</div>
+      <div class="sp-doc-sign-role">NIM: ${escH(sp.no_induk || '–')}</div>
+    </div>
+  </div>
+
+  </div><!-- end sp-doc-main-content -->`;
+}
+
+// Build a temp SP object from current form values for live preview
+function getSpFromForm(){
+  const ni = document.getElementById('gpSpNoInduk')?.value || '';
+  const mhs = _gpMhsAll.find(m => String(m.no_induk) === String(ni));
+  const kuartalVal = document.getElementById('gpSpKuartal')?.value || '';
+  return {
+    id: document.getElementById('gpSpEditId')?.value || '__preview__',
+    no_induk:             ni,
+    nama_awardee:         document.getElementById('gpSpNama')?.value || mhs?.nama || '',
+    kampus:               document.getElementById('gpSpKampus')?.value || mhs?.kampus || '',
+    kelompok:             document.getElementById('gpSpKelompok')?.value || mhs?.kelompok || '',
+    lecture:              document.getElementById('gpSpLecture')?.value || '',
+    kuartal:              kuartalVal,
+    status_awardee:       document.getElementById('gpSpStatusAwardee')?.value || '',
+    persentase_kehadiran: parseFloat(document.getElementById('gpSpPersentase')?.value) || null,
+    sanksi:               document.getElementById('gpSpSanksi')?.value || '',
+    temuan_kendala:       document.getElementById('gpSpKendala')?.value || '',
+    status_sp:            document.getElementById('gpSpStatus')?.value || 'Aktif',
+    dikirim:              document.getElementById('gpSpDikirim')?.checked || false,
+    created_at:           new Date().toISOString(),
+  };
+}
+
+window.renderSpFormPreview = function(){
+  const sp = getSpFromForm();
+  if (!sp.no_induk || !sp.kuartal) {
+    showToast('Pilih awardee dan kuartal terlebih dahulu', 'err'); return;
+  }
+  const docEl = document.getElementById('gpSpFormDocA4');
+  if (docEl) docEl.innerHTML = buildSpDocHtml(sp);
+  _gpCurrentSpDocId = sp.id === '__preview__' ? null : sp.id;
+  _enableDocButtons(true);
+  const subtitle = document.getElementById('gpSpFormDocSubtitle');
+  if (subtitle) subtitle.textContent = `${sp.nama_awardee || '–'} · ${sp.no_induk} · ${sp.kuartal}`;
+  // scroll to preview
+  requestAnimationFrame(() => {
+    const wrap = document.getElementById('gpSpFormDocWrap');
+    if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  showToast('Preview diperbarui', 'ok');
+};
+
+window.downloadSpFormPdf = function(){
+  const sp = getSpFromForm();
+  const savedId = document.getElementById('gpSpEditId')?.value;
+  const spObj = (savedId && _gpCurrentSpDocId) ? (_gpSpAll.find(x=>String(x.id)===String(_gpCurrentSpDocId)) || sp) : sp;
+  const ord = getSpOrdinalForAwardee(spObj.id, spObj.no_induk);
+  const filename = `SP-${ord}_${(spObj.nama_awardee||spObj.no_induk||'awardee').replace(/\s+/g,'-')}_${spObj.no_induk}.pdf`;
+  const el = document.getElementById('gpSpFormDocA4');
+  const opt = { margin:0, filename, image:{type:'jpeg',quality:.97}, html2canvas:{scale:2,useCORS:true,logging:false}, jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}, pagebreak:{mode:'avoid-all'} };
+  showToast('Membuat PDF, mohon tunggu…', 'ok');
+  html2pdf().set(opt).from(el).save()
+    .then(() => showToast('PDF berhasil diunduh', 'ok'))
+    .catch(() => showToast('Gagal membuat PDF. Coba lagi.', 'err'));
+};
+
+window.openSpFormEmailPanel = function(){
+  const panel = document.getElementById('gpSpFormEmailPanel');
+  panel.style.display = panel.style.display === 'none' ? '' : 'none';
+  document.getElementById('gpSmtpSettingsPanel').style.display = 'none';
+};
+
+window.sendSpFormEmail = function(){
+  const sp = getSpFromForm();
+  const savedId = document.getElementById('gpSpEditId')?.value;
+  const spObj = (savedId && _gpCurrentSpDocId) ? (_gpSpAll.find(x=>String(x.id)===String(_gpCurrentSpDocId)) || sp) : sp;
+  const toEmail = document.getElementById('gpSpFormEmailTo').value.trim();
+  if (!toEmail) { showToast('Email awardee wajib diisi', 'err'); return; }
+  const smtp = getSmtpSettings();
+  if (!smtp.publicKey || !smtp.serviceId || !smtp.templateId) {
+    showToast('Konfigurasi EmailJS belum lengkap. Klik "Pengaturan Email" dulu.', 'err'); return;
+  }
+  const ord = getSpOrdinalForAwardee(spObj.id, spObj.no_induk);
+  const pct = spObj.persentase_kehadiran != null ? Math.round(spObj.persentase_kehadiran) + '%' : '–';
+  const btn = document.getElementById('gpSpFormSendBtn');
+  btn.disabled = true; btn.textContent = 'Mengirim…';
+  if (window.emailjs) emailjs.init({ publicKey: smtp.publicKey });
+  const params = {
+    to_email: toEmail, cc_email: document.getElementById('gpSpFormEmailCc').value.trim(),
+    reply_to: smtp.replyTo||'', from_name: smtp.fromName||'BSI Scholarship Inspirasi Batch 5',
+    awardee_name: spObj.nama_awardee||spObj.no_induk, awardee_nim: spObj.no_induk,
+    kampus: spObj.kampus||'–', kelompok: spObj.kelompok?'Kelompok '+spObj.kelompok:'–',
+    lecture: spObj.lecture||'–', kuartal: spObj.kuartal||'–',
+    sp_ke: `SP-${ord} (Peringatan ${ordinalLabel(ord)})`, persentase: pct,
+    sanksi: spObj.sanksi||'–', extra_pesan: document.getElementById('gpSpFormEmailMsg').value.trim(),
+    tanggal: fmtDate(spObj.created_at),
+  };
+  (window.emailjs ? emailjs.send(smtp.serviceId, smtp.templateId, params) : Promise.reject('not loaded'))
+    .then(()=>{ showToast('Email berhasil dikirim ke '+toEmail,'ok'); document.getElementById('gpSpFormEmailPanel').style.display='none'; btn.disabled=false; btn.textContent='Kirim Email'; })
+    .catch(()=>{ showToast('Gagal mengirim. Periksa pengaturan EmailJS.','err'); btn.disabled=false; btn.textContent='Kirim Email'; });
+};
+
+window.downloadSpPdf = function(){
+  const sp = _gpSpAll.find(x => String(x.id) === String(_gpCurrentSpDocId));
+  if (!sp) return;
+  const ord = getSpOrdinalForAwardee(sp.id, sp.no_induk);
+  const filename = `SP-${ord}_${(sp.nama_awardee||sp.no_induk||'awardee').replace(/\s+/g,'-')}_${sp.no_induk}.pdf`;
+
+  const el = document.getElementById('gpSpDocA4');
+  const opt = {
+    margin:       0,
+    filename:     filename,
+    image:        { type: 'jpeg', quality: 0.97 },
+    html2canvas:  { scale: 2, useCORS: true, logging: false },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak:    { mode: 'avoid-all' }
+  };
+  showToast('Membuat PDF, mohon tunggu…', 'info');
+  html2pdf().set(opt).from(el).save()
+    .then(() => showToast('PDF berhasil diunduh', 'ok'))
+    .catch(() => showToast('Gagal membuat PDF. Silakan coba lagi.', 'err'));
+};
+
+/* ── EmailJS send ─────────────────────────────────────── */
+window.openSpEmailPanel = function(){
+  const panel = document.getElementById('gpSpEmailPanel');
+  panel.style.display = panel.style.display === 'none' ? '' : 'none';
+  document.getElementById('gpSmtpSettingsPanel').style.display = 'none';
+};
+
+window.openSmtpSettings = function(){
+  loadSmtpSettingsToForm();
+  const panel = document.getElementById('gpSmtpSettingsPanel');
+  panel.style.display = panel.style.display === 'none' ? '' : 'none';
+  const ep1 = document.getElementById('gpSpEmailPanel');
+  const ep2 = document.getElementById('gpSpFormEmailPanel');
+  if (ep1) ep1.style.display = 'none';
+  if (ep2) ep2.style.display = 'none';
+};
+
+function loadSmtpSettingsToForm(){
+  const s = getSmtpSettings();
+  document.getElementById('gpSmtpPublicKey').value  = s.publicKey  || '';
+  document.getElementById('gpSmtpServiceId').value  = s.serviceId  || '';
+  document.getElementById('gpSmtpTemplateId').value = s.templateId || '';
+  document.getElementById('gpSmtpFromName').value   = s.fromName   || 'BSI Scholarship Inspirasi Batch 5';
+  document.getElementById('gpSmtpReplyTo').value    = s.replyTo    || '';
+}
+
+function getSmtpSettings(){
+  try { return JSON.parse(localStorage.getItem('bsi_emailjs_settings') || '{}'); } catch { return {}; }
+}
+
+window.saveSmtpSettings = function(){
+  const s = {
+    publicKey:  document.getElementById('gpSmtpPublicKey').value.trim(),
+    serviceId:  document.getElementById('gpSmtpServiceId').value.trim(),
+    templateId: document.getElementById('gpSmtpTemplateId').value.trim(),
+    fromName:   document.getElementById('gpSmtpFromName').value.trim(),
+    replyTo:    document.getElementById('gpSmtpReplyTo').value.trim(),
+  };
+  if (!s.publicKey || !s.serviceId || !s.templateId) {
+    showToast('Public Key, Service ID, dan Template ID wajib diisi', 'err'); return;
+  }
+  localStorage.setItem('bsi_emailjs_settings', JSON.stringify(s));
+  document.getElementById('gpSmtpSettingsPanel').style.display = 'none';
+  showToast('Pengaturan email disimpan', 'ok');
+};
+
+window.sendSpEmail = function(){
+  const sp = _gpSpAll.find(x => String(x.id) === String(_gpCurrentSpDocId));
+  if (!sp) return;
+  const toEmail = document.getElementById('gpSpEmailTo').value.trim();
+  if (!toEmail) { showToast('Email awardee wajib diisi', 'err'); return; }
+
+  const smtp = getSmtpSettings();
+  if (!smtp.publicKey || !smtp.serviceId || !smtp.templateId) {
+    showToast('Konfigurasi EmailJS belum lengkap. Klik "Pengaturan Email" dulu.', 'err'); return;
+  }
+
+  const ord = getSpOrdinalForAwardee(sp.id, sp.no_induk);
+  const pct = sp.persentase_kehadiran != null ? Math.round(sp.persentase_kehadiran) + '%' : '–';
+  const ccEmail = document.getElementById('gpSpEmailCc').value.trim();
+  const extraMsg = document.getElementById('gpSpEmailMsg').value.trim();
+
+  const btn = document.getElementById('gpSpSendEmailBtn');
+  btn.disabled = true; btn.textContent = 'Mengirim…';
+
+  if (window.emailjs) emailjs.init({ publicKey: smtp.publicKey });
+
+  const params = {
+    to_email:     toEmail,
+    cc_email:     ccEmail || '',
+    reply_to:     smtp.replyTo || '',
+    from_name:    smtp.fromName || 'BSI Scholarship Inspirasi Batch 5',
+    awardee_name: sp.nama_awardee || sp.no_induk,
+    awardee_nim:  sp.no_induk,
+    kampus:       sp.kampus || '–',
+    kelompok:     sp.kelompok ? 'Kelompok ' + sp.kelompok : '–',
+    lecture:      sp.lecture || '–',
+    kuartal:      sp.kuartal || '–',
+    sp_ke:        `SP-${ord} (Peringatan ${ordinalLabel(ord)})`,
+    persentase:   pct,
+    sanksi:       sp.sanksi || '–',
+    extra_pesan:  extraMsg,
+    tanggal:      fmtDate(sp.created_at),
+  };
+
+  (window.emailjs ? emailjs.send(smtp.serviceId, smtp.templateId, params) : Promise.reject('EmailJS not loaded'))
+    .then(() => {
+      showToast('Email berhasil dikirim ke ' + toEmail, 'ok');
+      document.getElementById('gpSpEmailPanel').style.display = 'none';
+      btn.disabled = false; btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim Email';
+    })
+    .catch(err => {
+      console.error('EmailJS error:', err);
+      showToast('Gagal mengirim email. Periksa pengaturan EmailJS.', 'err');
+      btn.disabled = false; btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim Email';
+    });
 };
 
 function setupSpFormAutocomplete(){
@@ -10094,7 +11327,8 @@ window.saveSp = async function(){
     }
     if (error) throw error;
 
-    showToast(editId ? 'SP berhasil diperbarui' : 'SP berhasil ditambahkan', 'ok');
+    const isNew = !editId;
+    showToast(isNew ? 'SP berhasil ditambahkan' : 'SP berhasil diperbarui', 'ok');
     closeSpModal();
     // Refresh data
     const fresh = await fetchAll('suratperingatan_bsi',
@@ -10120,6 +11354,21 @@ window.saveSp = async function(){
     renderNeedsSpSection();
     renderAdminTable();
     if (_gpAdminTab === 'insight') renderInsightTab();
+
+    // After saving, render the document preview from the saved record
+    const noInduk2 = document.getElementById('gpSpNoInduk')?.value || '';
+    const savedSp2 = _gpSpAll
+      .filter(s => String(s.no_induk) === String(noInduk2))
+      .sort((a,b) => new Date(b.created_at) - new Date(a.created_at))[0];
+    if (savedSp2) {
+      _gpCurrentSpDocId = savedSp2.id;
+      const docEl = document.getElementById('gpSpFormDocA4');
+      if (docEl) docEl.innerHTML = buildSpDocHtml(savedSp2);
+      _enableDocButtons(true);
+      const subtitle = document.getElementById('gpSpFormDocSubtitle');
+      if (subtitle) subtitle.textContent = `${savedSp2.nama_awardee||'–'} · ${savedSp2.no_induk} · ${savedSp2.kuartal||'–'}`;
+      setTimeout(()=>{ const wrap=document.getElementById('gpSpFormDocWrap'); if(wrap) wrap.scrollIntoView({behavior:'smooth',block:'start'}); },200);
+    }
   } catch(e){
     console.error(e);
     showToast('Gagal menyimpan. Silakan coba lagi.', 'err');
