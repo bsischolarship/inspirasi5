@@ -457,6 +457,113 @@
     .tf-empty p { font-size:13.5px; color:#6b7280; margin:0 0 4px; font-weight:600; }
     .tf-empty small { font-size:11.5px; }
 
+    /* =============================================
+       REDESIGNED STAT CARDS
+    ============================================= */
+    .pr-stat {
+      cursor: pointer;
+      transition: transform .18s, box-shadow .18s, border-color .18s;
+      animation: pr-stat-in .4s cubic-bezier(.22,1,.36,1) both;
+      position: relative; overflow: hidden;
+    }
+    .pr-stat::after {
+      content:''; position:absolute; inset:0;
+      background:linear-gradient(135deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.18) 50%,rgba(255,255,255,0) 100%);
+      opacity:0; transition:opacity .2s; pointer-events:none;
+    }
+    .pr-stat:hover::after { opacity:1; }
+    .pr-stat:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.1); }
+    .pr-stat:nth-child(1) { animation-delay:.04s; border-color:#fcd34d; }
+    .pr-stat:nth-child(2) { animation-delay:.08s; border-color:#bfdbfe; }
+    .pr-stat:nth-child(3) { animation-delay:.12s; border-color:#99f6e4; }
+    .pr-stat:nth-child(4) { animation-delay:.16s; border-color:#ddd6fe; }
+    .pr-stat:nth-child(5) { animation-delay:.20s; border-color:#fbcfe8; }
+    .pr-stat:hover:nth-child(1) { border-color:#f59e0b; box-shadow:0 8px 24px rgba(245,158,11,.18); }
+    .pr-stat:hover:nth-child(2) { border-color:#3b82f6; box-shadow:0 8px 24px rgba(59,130,246,.18); }
+    .pr-stat:hover:nth-child(3) { border-color:#14b8a6; box-shadow:0 8px 24px rgba(20,184,166,.18); }
+    .pr-stat:hover:nth-child(4) { border-color:#8b5cf6; box-shadow:0 8px 24px rgba(139,92,246,.18); }
+    .pr-stat:hover:nth-child(5) { border-color:#ec4899; box-shadow:0 8px 24px rgba(236,72,153,.18); }
+    @keyframes pr-stat-in { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+    .pr-stat-hint { font-size:9.5px; color:#9ca3af; margin-top:5px; display:flex; align-items:center; gap:3px; transition:color .15s; }
+    .pr-stat:hover .pr-stat-hint { color:#0055a5; }
+
+    /* =============================================
+       INLINE KPI DETAIL PANEL
+    ============================================= */
+    @keyframes pr-kpi-in  { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes pr-kpi-bar { from{width:0} to{width:var(--w)} }
+    @keyframes pr-kpi-num { 0%{transform:scale(.6);opacity:0} 70%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+    .pr-kpi-panel { padding: 0 0 40px; animation: pr-kpi-in .35s ease both; }
+    .pr-kpi-back-bar { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+    .pr-kpi-back-btn { display:flex; align-items:center; gap:6px; padding:7px 14px; background:#f1f5f9; border:1.5px solid #e2e8f0; border-radius:9px; font-size:12.5px; font-weight:700; cursor:pointer; color:#374151; transition:all .15s; }
+    .pr-kpi-back-btn:hover { background:#e2e8f0; transform:translateX(-2px); }
+    .pr-kpi-breadcrumb { font-size:12.5px; color:#9ca3af; }
+    .pr-kpi-head { margin-bottom:22px; padding-bottom:14px; border-bottom:2px solid #f1f5f9; }
+    .pr-kpi-head h2 { font-size:20px; font-weight:800; color:#111827; margin:0 0 4px; }
+    .pr-kpi-head p  { font-size:13px; color:#6b7280; margin:0; }
+    .pr-kpi-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+    .pr-kpi-card  { border-radius:12px; padding:12px 14px; text-align:center; border:1.5px solid; animation: pr-kpi-num .4s cubic-bezier(.34,1.56,.64,1) both; }
+    .pr-kpi-card-num { font-size:22px; font-weight:800; line-height:1.1; }
+    .pr-kpi-card-lbl { font-size:10.5px; font-weight:600; margin-top:3px; }
+    .pr-kpi-section { font-size:11px; font-weight:800; color:#374151; letter-spacing:.4px; text-transform:uppercase; margin:18px 0 10px; display:flex; align-items:center; gap:7px; }
+    .pr-kpi-bar-row { display:grid; grid-template-columns:1fr 140px auto; gap:8px; align-items:center; font-size:12px; padding:5px 8px; border-radius:8px; background:#fafafa; margin-bottom:5px; }
+    .pr-kpi-bar-track { height:8px; border-radius:5px; background:#f3f4f6; overflow:hidden; }
+    .pr-kpi-bar-fill  { height:100%; border-radius:5px; animation: pr-kpi-bar .65s cubic-bezier(.4,0,.2,1) both; width:var(--w); }
+    .pr-kpi-bar-num   { font-weight:700; font-size:11.5px; color:#6b7280; text-align:right; min-width:50px; }
+    .pr-kpi-list { display:flex; flex-direction:column; gap:6px; }
+    .pr-kpi-list-item { display:grid; grid-template-columns:32px 1fr auto; gap:10px; align-items:center; padding:9px 12px; border-radius:10px; background:#fff; border:1px solid #f1f5f9; transition:background .15s,transform .15s; animation: pr-kpi-in .3s ease both; }
+    .pr-kpi-list-item:hover { background:#f8fafc; transform:translateX(2px); }
+    .pr-kpi-list-avatar { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; }
+    .pr-kpi-split { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+    .pr-kpi-split-box { border-radius:12px; padding:14px 16px; border:1.5px solid; }
+    .pr-kpi-split-num { font-size:28px; font-weight:800; }
+    .pr-kpi-split-lbl { font-size:11px; font-weight:600; margin-top:2px; }
+    .pr-kpi-split-pct { font-size:11px; opacity:.7; margin-top:2px; }
+    @media(max-width:768px){ .pr-kpi-cards{ grid-template-columns:repeat(2,1fr); } .pr-kpi-split{ grid-template-columns:1fr; } }
+
+    /* ============================================
+       AWARDEE TABLE ENHANCEMENTS
+    ============================================ */
+    .pr-table tbody tr { transition: background .12s, transform .1s; }
+    .pr-table tbody tr:hover td { background: #f0f7ff; }
+    .pr-awardee-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 11.5px; font-weight: 800; flex-shrink: 0;
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #1d4ed8;
+    }
+    .pr-total-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 32px; height: 26px; border-radius: 99px; font-weight: 800; font-size: 13px;
+      background: #f8fafc; border: 1.5px solid #e2e8f0; color: #111827;
+    }
+    .pr-total-badge.t-high { background: #fef3c7; border-color: #fde68a; color: #92400e; }
+    .pr-total-badge.t-mid  { background: #dbeafe; border-color: #bfdbfe; color: #1d4ed8; }
+    .pr-total-badge.t-low  { background: #f3f4f6; border-color: #e5e7eb; color: #6b7280; }
+    .pr-cert-bar {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11.5px; font-weight: 700;
+    }
+    .pr-cert-bar-track { width: 44px; height: 5px; border-radius: 3px; background: #f3f4f6; overflow: hidden; }
+    .pr-cert-bar-fill  { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #0d9488, #14b8a6); }
+    .pr-j-gold   { display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:6px;font-weight:800;font-size:12px;background:linear-gradient(135deg,#fbbf24,#d97706);color:#fff; }
+    .pr-j-silver { display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:6px;font-weight:800;font-size:12px;background:linear-gradient(135deg,#d4d4d8,#71717a);color:#fff; }
+    .pr-j-bronze { display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:6px;font-weight:800;font-size:12px;background:linear-gradient(135deg,#fb923c,#c2410c);color:#fff; }
+    .pr-j-sep    { color:#d1d5db;font-weight:400;font-size:11px;margin:0 1px; }
+
+    /* KAMPUS TABLE ENHANCEMENTS */
+    .pr-kampus-icon {
+      width:32px;height:32px;border-radius:9px;
+      display:inline-flex;align-items:center;justify-content:center;
+      background:linear-gradient(135deg,#ede9fe,#ddd6fe);color:#7c3aed;
+      font-size:11px;font-weight:800;flex-shrink:0;
+    }
+
+    /* SEMUA TABLE: keterangan truncate */
+    .pr-table td.td-keterangan {
+      max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+
     /* RESPONSIVE */
     @media(max-width:1100px){
       .pr-stats{ grid-template-columns:repeat(3,1fr); }
@@ -820,7 +927,54 @@
   </header>
 
   <main class="app-content">
-    <div class="pr-page">
+    <!-- Awardee inline detail panel -->
+    <div id="prAwardeeDetailPanel" style="display:none;">
+      <div class="pr-page" style="padding-bottom:60px;">
+        <div class="pr-kpi-back-bar">
+          <button class="pr-kpi-back-btn" onclick="closeAwardeeDetail()">← Kembali</button>
+          <span class="pr-kpi-breadcrumb">Per Awardee → Detail</span>
+        </div>
+        <div id="prAwardeeDetailBody"></div>
+      </div>
+    </div>
+
+    <!-- Kampus inline detail panel -->
+    <div id="prKampusDetailPanel" style="display:none;">
+      <div class="pr-page" style="padding-bottom:60px;">
+        <div class="pr-kpi-back-bar">
+          <button class="pr-kpi-back-btn" onclick="closeKampusDetail()">← Kembali</button>
+          <span class="pr-kpi-breadcrumb">Per Kampus → Detail</span>
+        </div>
+        <div id="prKampusDetailBody"></div>
+      </div>
+    </div>
+
+    <!-- Prestasi inline detail panel -->
+    <div id="prPrestasiDetailPanel" style="display:none;">
+      <div class="pr-page" style="padding-bottom:60px;">
+        <div class="pr-kpi-back-bar">
+          <button class="pr-kpi-back-btn" onclick="closePrestasiDetail()">← Kembali</button>
+          <span class="pr-kpi-breadcrumb" id="prPrestasiDetailBreadcrumb">Detail Prestasi</span>
+        </div>
+        <div id="prPrestasiDetailBody"></div>
+      </div>
+    </div>
+
+    <!-- KPI inline detail panel -->
+    <div id="prKpiPanel" style="display:none;">
+      <div class="pr-page pr-kpi-panel">
+        <div class="pr-kpi-back-bar">
+          <button class="pr-kpi-back-btn" onclick="closeKpiDetail()">← Kembali</button>
+          <span class="pr-kpi-breadcrumb" id="prKpiBreadcrumb">Detail KPI</span>
+        </div>
+        <div class="pr-kpi-head">
+          <h2 id="prKpiTitle">Detail</h2>
+          <p id="prKpiSub">—</p>
+        </div>
+        <div id="prKpiBody"></div>
+      </div>
+    </div>
+    <div class="pr-page" id="prMainPage">
 
       <div class="pr-ph">
         <h1>Kelola Prestasi &amp; Insight</h1>
@@ -1567,6 +1721,17 @@ async function init(){
 /* =============================================
    STATS (top cards)
 ============================================= */
+function animateCount(el, to) {
+  const duration = 900, start = performance.now();
+  function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(ease * to).toLocaleString('id-ID');
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 function renderStats(){
   const total     = _raw.length;
   const awardees  = new Set(_raw.map(r => r.no_induk || r.nama).filter(Boolean)).size;
@@ -1577,27 +1742,56 @@ function renderStats(){
 
   const el = document.getElementById('prStats');
   el.innerHTML = `
-    <div class="pr-stat">
+    <div class="pr-stat" onclick="openKpiDetail('total')" title="Lihat detail Total Prestasi">
       <div class="pr-stat-icon si--gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg></div>
-      <div><div class="pr-stat-val">${total.toLocaleString('id-ID')}</div><div class="pr-stat-lbl">Total Prestasi</div></div>
+      <div style="flex:1">
+        <div class="pr-stat-val" id="sv-total">0</div>
+        <div class="pr-stat-lbl">Total Prestasi</div>
+        <div class="pr-stat-hint"><span>Lihat detail</span><span>→</span></div>
+      </div>
     </div>
-    <div class="pr-stat">
+    <div class="pr-stat" onclick="openKpiDetail('awardee')" title="Lihat detail Awardee Berprestasi">
       <div class="pr-stat-icon si--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-      <div><div class="pr-stat-val">${awardees.toLocaleString('id-ID')}</div><div class="pr-stat-lbl">Awardee Berprestasi</div></div>
+      <div style="flex:1">
+        <div class="pr-stat-val" id="sv-awardee">0</div>
+        <div class="pr-stat-lbl">Awardee Berprestasi</div>
+        <div class="pr-stat-hint"><span>Lihat detail</span><span>→</span></div>
+      </div>
     </div>
-    <div class="pr-stat">
+    <div class="pr-stat" onclick="openKpiDetail('kampus')" title="Lihat detail Kampus Terlibat">
       <div class="pr-stat-icon si--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-      <div><div class="pr-stat-val">${kampus.toLocaleString('id-ID')}</div><div class="pr-stat-lbl">Kampus Terlibat</div></div>
+      <div style="flex:1">
+        <div class="pr-stat-val" id="sv-kampus">0</div>
+        <div class="pr-stat-lbl">Kampus Terlibat</div>
+        <div class="pr-stat-hint"><span>Lihat detail</span><span>→</span></div>
+      </div>
     </div>
-    <div class="pr-stat">
+    <div class="pr-stat" onclick="openKpiDetail('internasional')" title="Lihat detail Tingkat Internasional">
       <div class="pr-stat-icon si--purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12a10 10 0 1 0 20 0 10 10 0 0 0-20 0z"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></div>
-      <div><div class="pr-stat-val">${intnl.toLocaleString('id-ID')}</div><div class="pr-stat-lbl">Tingkat Internasional</div></div>
+      <div style="flex:1">
+        <div class="pr-stat-val" id="sv-intl">0</div>
+        <div class="pr-stat-lbl">Tingkat Internasional</div>
+        <div class="pr-stat-hint"><span>Lihat detail</span><span>→</span></div>
+      </div>
     </div>
-    <div class="pr-stat">
+    <div class="pr-stat" onclick="openKpiDetail('sertifikat')" title="Lihat detail Dengan Sertifikat">
       <div class="pr-stat-icon si--pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg></div>
-      <div><div class="pr-stat-val">${pctCert}%</div><div class="pr-stat-lbl">Dengan Sertifikat</div><div class="pr-stat-sub">${withCert.toLocaleString('id-ID')} dari ${total.toLocaleString('id-ID')}</div></div>
+      <div style="flex:1">
+        <div class="pr-stat-val" id="sv-cert">0</div>
+        <div class="pr-stat-lbl">Dengan Sertifikat</div>
+        <div class="pr-stat-sub">${withCert.toLocaleString('id-ID')} dari ${total.toLocaleString('id-ID')}</div>
+        <div class="pr-stat-hint"><span>Lihat detail</span><span>→</span></div>
+      </div>
     </div>
   `;
+  // Animate counts after DOM is ready
+  requestAnimationFrame(() => {
+    animateCount(document.getElementById('sv-total'), total);
+    animateCount(document.getElementById('sv-awardee'), awardees);
+    animateCount(document.getElementById('sv-kampus'), kampus);
+    animateCount(document.getElementById('sv-intl'), intnl);
+    animateCount(document.getElementById('sv-cert'), pctCert);
+  });
 }
 
 /* =============================================
@@ -1903,19 +2097,25 @@ function renderTable(tab){
     </tr></thead><tbody>${slice.map(r => {
       const ct = classifyTingkatan(r.tingkatan);
       const cj = classifyJuara(r.juara);
+      const initA = mkInit(r.nama);
       return `<tr>
-        <td class="td-name">${escapeHtml(r.nama||'—')}</td>
+        <td style="min-width:160px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="pr-awardee-avatar">${escapeHtml(initA)}</div>
+            <span style="font-weight:600;color:#111827;">${escapeHtml(r.nama||'—')}</span>
+          </div>
+        </td>
         <td class="td-mono">${escapeHtml(r.no_induk||'—')}</td>
         <td>${escapeHtml(r.kampus||'—')}</td>
         <td><span class="tg-badge ${ct.css}">${escapeHtml(ct.label)}</span></td>
         <td><span class="jr-badge ${cj.css}">${escapeHtml(cj.label)}</span></td>
-        <td class="td-wrap">${escapeHtml(r.keterangan||'—')}</td>
+        <td class="td-keterangan" title="${escapeAttr(r.keterangan||'—')}">${escapeHtml(r.keterangan||'—')}</td>
         <td>${hasCert(r.sertifikat)
           ? `<a class="sert-link" href="${escapeAttr(r.sertifikat)}" target="_blank" rel="noopener"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Buka</a>`
           : '<span class="sert-none">—</span>'}</td>
         <td>
           <div class="row-actions">
-            <button class="btn-icon view" title="Detail" onclick="openDetail(${r.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            <button class="btn-icon view" title="Detail" onclick="openPrestasiDetail(${r.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
             <button class="btn-icon edit" title="Edit" onclick="openEditModal(${r.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
             <button class="btn-icon del" title="Hapus" onclick="delRow(${r.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/></svg></button>
           </div>
@@ -1924,37 +2124,85 @@ function renderTable(tab){
     }).join('')}</tbody></table>`;
   } else if(tab === 'awardee'){
     tbl = `<table class="pr-table"><thead><tr>
-      <th>Awardee</th><th>NIM</th><th>Kampus</th><th>Kelompok</th>
+      <th>Awardee</th><th>Kampus</th><th>Kelompok</th>
       <th>Total</th><th>Internasional</th><th>Nasional</th>
       <th>J1 / J2 / J3</th><th>Sertifikat</th><th>Aksi</th>
-    </tr></thead><tbody>${slice.map(a => `<tr>
-      <td class="td-name">${escapeHtml(a.nama)}</td>
-      <td class="td-mono">${escapeHtml(a.no_induk)}</td>
-      <td>${escapeHtml(a.kampus)}</td>
-      <td>${escapeHtml(a.kelompok)}</td>
-      <td><span class="rank-count">${a.total}</span></td>
-      <td>${a.intnl||'—'}</td>
-      <td>${a.nas||'—'}</td>
-      <td style="font-family:ui-monospace,Menlo,monospace;">${a.j1||0} / ${a.j2||0} / ${a.j3||0}</td>
-      <td>${a.cert} / ${a.total}</td>
-      <td>
-        <button class="btn-icon view" title="Lihat daftar prestasi" onclick="openAwardeeDetail('${escapeAttr(a.key)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-      </td>
-    </tr>`).join('')}</tbody></table>`;
+    </tr></thead><tbody>${slice.map(a => {
+      const words = (a.nama||'').trim().split(/\s+/).filter(Boolean);
+      const initials = words.length >= 2
+        ? (words[0][0] + words[words.length-1][0]).toUpperCase()
+        : (a.nama||'?').slice(0,2).toUpperCase();
+      const totalBadgeCls = a.total >= 10 ? 't-high' : a.total >= 4 ? 't-mid' : 't-low';
+      const certPct = a.total ? Math.round(a.cert * 100 / a.total) : 0;
+      return `<tr>
+        <td style="min-width:180px;">
+          <div style="display:flex;align-items:center;gap:9px;">
+            <div class="pr-awardee-avatar">${escapeHtml(initials)}</div>
+            <div>
+              <div style="font-weight:700;color:#111827;">${escapeHtml(a.nama)}</div>
+              <div style="font-size:10.5px;color:#9ca3af;">${escapeHtml(a.no_induk)}</div>
+            </div>
+          </div>
+        </td>
+        <td>${escapeHtml(a.kampus)}</td>
+        <td>${escapeHtml(a.kelompok)}</td>
+        <td><span class="pr-total-badge ${totalBadgeCls}" style="padding:0 10px;">${a.total}</span></td>
+        <td>${a.intnl ? `<span style="font-weight:700;color:#b45309;">${a.intnl}</span>` : '<span style="color:#d1d5db;">—</span>'}</td>
+        <td>${a.nas  ? `<span style="font-weight:700;color:#1d4ed8;">${a.nas}</span>`  : '<span style="color:#d1d5db;">—</span>'}</td>
+        <td>
+          <div style="display:inline-flex;align-items:center;gap:3px;">
+            <span class="pr-j-gold">${a.j1||0}</span>
+            <span class="pr-j-sep">/</span>
+            <span class="pr-j-silver">${a.j2||0}</span>
+            <span class="pr-j-sep">/</span>
+            <span class="pr-j-bronze">${a.j3||0}</span>
+          </div>
+        </td>
+        <td>
+          <div class="pr-cert-bar">
+            <div class="pr-cert-bar-track"><div class="pr-cert-bar-fill" style="width:${certPct}%;"></div></div>
+            <span>${a.cert}/${a.total}</span>
+          </div>
+        </td>
+        <td>
+          <button class="btn-icon view" title="Lihat daftar prestasi" onclick="openAwardeeDetail('${escapeAttr(a.key)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
   } else if(tab === 'kampus'){
     tbl = `<table class="pr-table"><thead><tr>
       <th>Kampus</th><th>Awardee Berprestasi</th>
       <th>Total Prestasi</th><th>Internasional</th><th>Nasional</th><th>Regional/Prov</th>
-      <th>J1 / J2 / J3</th>
-    </tr></thead><tbody>${slice.map(a => `<tr>
-      <td class="td-name">${escapeHtml(a.kampus)}</td>
-      <td>${a.awardee}</td>
-      <td><span class="rank-count">${a.total}</span></td>
-      <td>${a.intnl||'—'}</td>
-      <td>${a.nas||'—'}</td>
-      <td>${a.reg||'—'}</td>
-      <td style="font-family:ui-monospace,Menlo,monospace;">${a.j1||0} / ${a.j2||0} / ${a.j3||0}</td>
-    </tr>`).join('')}</tbody></table>`;
+      <th>J1 / J2 / J3</th><th>Aksi</th>
+    </tr></thead><tbody>${slice.map(a => {
+      const initKampus = a.kampus.trim().split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
+      const totalBadgeCls = a.total >= 10 ? 't-high' : a.total >= 4 ? 't-mid' : 't-low';
+      return `<tr>
+        <td style="min-width:180px;">
+          <div style="display:flex;align-items:center;gap:9px;">
+            <div class="pr-kampus-icon">${escapeHtml(initKampus)}</div>
+            <div style="font-weight:600;color:#111827;">${escapeHtml(a.kampus)}</div>
+          </div>
+        </td>
+        <td><span style="font-weight:700;color:#374151;">${a.awardee}</span> <span style="font-size:10.5px;color:#9ca3af;">orang</span></td>
+        <td><span class="pr-total-badge ${totalBadgeCls}" style="padding:0 10px;">${a.total}</span></td>
+        <td>${a.intnl ? `<span style="font-weight:700;color:#b45309;">${a.intnl}</span>` : '<span style="color:#d1d5db;">—</span>'}</td>
+        <td>${a.nas  ? `<span style="font-weight:700;color:#1d4ed8;">${a.nas}</span>`  : '<span style="color:#d1d5db;">—</span>'}</td>
+        <td>${a.reg  ? `<span style="font-weight:700;color:#0d9488;">${a.reg}</span>`  : '<span style="color:#d1d5db;">—</span>'}</td>
+        <td>
+          <div style="display:inline-flex;align-items:center;gap:3px;">
+            <span class="pr-j-gold">${a.j1||0}</span>
+            <span class="pr-j-sep">/</span>
+            <span class="pr-j-silver">${a.j2||0}</span>
+            <span class="pr-j-sep">/</span>
+            <span class="pr-j-bronze">${a.j3||0}</span>
+          </div>
+        </td>
+        <td>
+          <button class="btn-icon view" title="Lihat detail kampus" onclick="openKampusDetail('${escapeAttr(a.kampus)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
   }
 
   tblEl.innerHTML = tbl;
@@ -2028,43 +2276,338 @@ window.openDetail = (id) => {
 window.closeDetailModal = () => document.getElementById('detailModalBg').classList.remove('show');
 
 /* =============================================
-   AWARDEE DETAIL (list all prestasi for a person)
+   AWARDEE DETAIL — inline panel
 ============================================= */
-window.openAwardeeDetail = (key) => {
-  const a = _views.awardee.find(x => x.key === key);
-  if(!a) return;
-  document.getElementById('awDetailTitle').textContent = `Prestasi — ${a.nama}`;
-  document.getElementById('awDetailSub').textContent   = `${a.no_induk} · ${a.kampus} · ${a.total} prestasi`;
-  const body = document.getElementById('awDetailBody');
+function buildAwardeeDetailHtml(records) {
+  const r0 = records[0];
+  const nama    = r0.nama    || '—';
+  const nim     = r0.no_induk || '—';
+  const kampus  = r0.kampus  || '—';
+  const kelompok = r0.kelompok || '—';
 
-  // Render Profil Bakat section + tabel prestasi
-  const talentSection = renderTalentProfileHTML(a.items);
-  const tableSection = `
-    <h4 style="font-size:13px;font-weight:800;color:#111827;margin:4px 0 10px;display:flex;align-items:center;gap:6px;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
-      Daftar Prestasi (${a.items.length})
-    </h4>
-    <div class="tbl-scroll"><table class="pr-table">
-    <thead><tr><th>#</th><th>Tingkatan</th><th>Juara</th><th>Keterangan</th><th>Sertifikat</th></tr></thead>
-    <tbody>${a.items.map((r,i) => {
+  const words = nama.trim().split(/\s+/).filter(Boolean);
+  const initials = words.length >= 2
+    ? (words[0][0] + words[words.length-1][0]).toUpperCase()
+    : nama.slice(0,2).toUpperCase();
+
+  let total = records.length, intnl = 0, nas = 0, j1 = 0, j2 = 0, j3 = 0, cert = 0;
+  const bidangMap = new Map();
+  records.forEach(r => {
+    const t = classifyTingkatan(r.tingkatan).key;
+    const j = classifyJuara(r.juara).key;
+    if(t === 'Internasional') intnl++;
+    if(t === 'Nasional') nas++;
+    if(j === 'Juara 1') j1++;
+    if(j === 'Juara 2') j2++;
+    if(j === 'Juara 3') j3++;
+    if(hasCert(r.sertifikat)) cert++;
+    const bidang = norm(r.cluster) || norm(r.status) || 'Lainnya';
+    bidangMap.set(bidang, (bidangMap.get(bidang)||0) + 1);
+  });
+
+  // Hero card
+  const hero = `<div style="background:linear-gradient(135deg,#dbeafe 0%,#eff6ff 100%);border:1.5px solid #bfdbfe;border-radius:16px;padding:22px 24px;display:flex;align-items:center;gap:18px;margin-bottom:18px;animation:pr-kpi-in .3s ease both;">
+    <div style="width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;flex-shrink:0;box-shadow:0 4px 16px rgba(29,78,216,.25);">${escapeHtml(initials)}</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:18px;font-weight:800;color:#1e3a8a;line-height:1.2;">${escapeHtml(nama)}</div>
+      <div style="font-size:12px;color:#3b82f6;margin-top:3px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <span style="display:inline-flex;align-items:center;gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>${escapeHtml(nim)}</span>
+        <span style="display:inline-flex;align-items:center;gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>${escapeHtml(kampus)}</span>
+        ${kelompok && kelompok !== '—' ? `<span style="display:inline-flex;align-items:center;gap:4px;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>${escapeHtml(kelompok)}</span>` : ''}
+      </div>
+    </div>
+  </div>`;
+
+  // 4 mini KPI cards
+  const kpiCards = `<div class="pr-kpi-cards" style="margin-bottom:18px;">
+    <div class="pr-kpi-card" style="background:#fef3c7;border-color:#fde68a;animation-delay:.04s">
+      <div class="pr-kpi-card-num" style="color:#92400e;">${total}</div>
+      <div class="pr-kpi-card-lbl" style="color:#b45309;">Total</div>
+    </div>
+    <div class="pr-kpi-card" style="background:#fef3c7;border-color:#fcd34d;animation-delay:.08s">
+      <div class="pr-kpi-card-num" style="color:#92400e;">${intnl}</div>
+      <div class="pr-kpi-card-lbl" style="color:#b45309;">Internasional</div>
+    </div>
+    <div class="pr-kpi-card" style="background:#dbeafe;border-color:#bfdbfe;animation-delay:.12s">
+      <div class="pr-kpi-card-num" style="color:#1d4ed8;">${nas}</div>
+      <div class="pr-kpi-card-lbl" style="color:#3b82f6;">Nasional</div>
+    </div>
+    <div class="pr-kpi-card" style="background:#ccfbf1;border-color:#99f6e4;animation-delay:.16s">
+      <div class="pr-kpi-card-num" style="color:#0d9488;">${cert}</div>
+      <div class="pr-kpi-card-lbl" style="color:#14b8a6;">Sertifikat</div>
+    </div>
+  </div>`;
+
+  // J1/J2/J3 podium
+  const podium = `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;">
+    <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);border:1.5px solid #fbbf24;border-radius:12px;padding:14px;text-align:center;animation:pr-kpi-in .3s ease .2s both;">
+      <div style="font-size:26px;font-weight:800;color:#92400e;">${j1}</div>
+      <div style="font-size:11px;font-weight:700;color:#b45309;margin-top:2px;display:flex;align-items:center;justify-content:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#fbbf24,#d97706);display:inline-block;"></span>Juara 1 / Emas</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#f8fafc,#f1f5f9);border:1.5px solid #d4d4d8;border-radius:12px;padding:14px;text-align:center;animation:pr-kpi-in .3s ease .24s both;">
+      <div style="font-size:26px;font-weight:800;color:#3f3f46;">${j2}</div>
+      <div style="font-size:11px;font-weight:700;color:#71717a;margin-top:2px;display:flex;align-items:center;justify-content:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#d4d4d8,#71717a);display:inline-block;"></span>Juara 2 / Perak</div>
+    </div>
+    <div style="background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1.5px solid #fb923c;border-radius:12px;padding:14px;text-align:center;animation:pr-kpi-in .3s ease .28s both;">
+      <div style="font-size:26px;font-weight:800;color:#9a3412;">${j3}</div>
+      <div style="font-size:11px;font-weight:700;color:#c2410c;margin-top:2px;display:flex;align-items:center;justify-content:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#fb923c,#c2410c);display:inline-block;"></span>Juara 3 / Perunggu</div>
+    </div>
+  </div>`;
+
+  // Bidang breakdown
+  let bidangHtml = '';
+  if(bidangMap.size > 0){
+    const bidangEntries = Array.from(bidangMap.entries()).sort((a,b) => b[1]-a[1]);
+    const maxB = bidangEntries[0][1];
+    const bidangColors = ['bf-blue','bf-teal','bf-purple','bf-pink','bf-gold','bf-gray'];
+    bidangHtml = `<div class="pr-kpi-section"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 21H4.6c-.34 0-.6-.26-.6-.6V3"/><path d="m8 11 4-7 4 3 4-6"/></svg> Bidang / Cluster</div>
+    <div style="margin-bottom:16px;">${bidangEntries.map(([b,c],i) => {
+      const pct = maxB ? Math.round(c*100/maxB) : 0;
+      const cls = bidangColors[i % bidangColors.length];
+      return `<div class="pr-kpi-bar-row" style="animation:pr-kpi-in .28s ease ${.32+i*.05}s both;">
+        <div style="font-weight:600;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(b)}</div>
+        <div class="pr-kpi-bar-track"><div class="pr-kpi-bar-fill ${cls}" style="--w:${pct}%;"></div></div>
+        <div class="pr-kpi-bar-num">${c} prestasi</div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  // Full prestasi list
+  const listHtml = `<div class="pr-kpi-section"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="15" y2="18"/></svg> Daftar Prestasi (${records.length})</div>
+  <div class="tbl-scroll" style="border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;"><table class="pr-table" style="min-width:100%;">
+    <thead><tr><th>#</th><th>Keterangan</th><th>Tingkatan</th><th>Juara</th><th>Penyelenggara</th><th>Sertifikat</th></tr></thead>
+    <tbody>${records.map((r,i) => {
       const ct = classifyTingkatan(r.tingkatan);
       const cj = classifyJuara(r.juara);
-      return `<tr>
-        <td>${i+1}</td>
+      return `<tr style="animation:pr-kpi-in .28s ease ${i*.04}s both;">
+        <td style="color:#9ca3af;font-size:11.5px;">${i+1}</td>
+        <td class="td-wrap" style="max-width:260px;">${escapeHtml(r.keterangan||'—')}</td>
         <td><span class="tg-badge ${ct.css}">${escapeHtml(ct.label)}</span></td>
         <td><span class="jr-badge ${cj.css}">${escapeHtml(cj.label)}</span></td>
-        <td class="td-wrap">${escapeHtml(r.keterangan||'—')}</td>
+        <td style="font-size:11.5px;color:#6b7280;">${escapeHtml(r.fakultas||r.prodi||'—')}</td>
         <td>${hasCert(r.sertifikat)
-          ? `<a class="sert-link" href="${escapeAttr(r.sertifikat)}" target="_blank" rel="noopener"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Buka</a>`
+          ? `<a class="sert-link" href="${escapeAttr(r.sertifikat)}" target="_blank" rel="noopener"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Buka</a>`
           : '<span class="sert-none">—</span>'}</td>
       </tr>`;
     }).join('')}</tbody>
   </table></div>`;
 
-  body.innerHTML = talentSection + tableSection;
-  document.getElementById('awDetailBg').classList.add('show');
+  // Talent profile
+  const talentSection = renderTalentProfileHTML(records);
+
+  return hero + kpiCards + podium + bidangHtml + listHtml + '<div style="margin-top:22px;">' + talentSection + '</div>';
+}
+
+window.openAwardeeDetail = (key) => {
+  const records = _raw.filter(r => String(r.no_induk) === String(key) || String(r.no_induk || r.nama) === String(key));
+  // fallback: try matching by aggregated key (no_induk || nama)
+  const altRecords = records.length ? records : _raw.filter(r => String(r.no_induk || r.nama) === String(key));
+  const finalRecords = altRecords.length ? altRecords : records;
+  if(!finalRecords.length) return;
+  document.getElementById('prAwardeeDetailBody').innerHTML = buildAwardeeDetailHtml(finalRecords);
+  document.getElementById('prAwardeeDetailPanel').style.display = '';
+  document.getElementById('prMainPage').style.display = 'none';
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
 };
-window.closeAwDetail = () => document.getElementById('awDetailBg').classList.remove('show');
+
+window.closeAwardeeDetail = () => {
+  document.getElementById('prAwardeeDetailPanel').style.display = 'none';
+  document.getElementById('prMainPage').style.display = '';
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+};
+
+window.closeAwDetail = () => {
+  const bg = document.getElementById('awDetailBg');
+  if(bg) bg.classList.remove('show');
+};
+
+/* =============================================
+   KAMPUS DETAIL — inline panel
+============================================= */
+window.openKampusDetail = (kampusName) => {
+  const records = _raw.filter(r => norm(r.kampus) === norm(kampusName));
+  if(!records.length) return;
+  document.getElementById('prKampusDetailBody').innerHTML = buildKampusDetailHtml(records, kampusName);
+  document.getElementById('prKampusDetailPanel').style.display = '';
+  document.getElementById('prMainPage').style.display = 'none';
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+};
+
+window.closeKampusDetail = () => {
+  document.getElementById('prKampusDetailPanel').style.display = 'none';
+  document.getElementById('prMainPage').style.display = '';
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+};
+
+function buildKampusDetailHtml(records, kampusName) {
+  const initKampus = kampusName.trim().split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
+  const awardeeSet = new Set();
+  let total = records.length, intnl = 0, nas = 0, j1 = 0, j2 = 0, j3 = 0;
+  const awardeeCountMap = new Map();
+  const tingkatanMap = new Map();
+
+  records.forEach(r => {
+    const key = norm(r.no_induk) || norm(r.nama);
+    if(key) {
+      awardeeSet.add(key);
+      const ent = awardeeCountMap.get(key) || { nama: norm(r.nama)||'—', count: 0 };
+      ent.count++;
+      awardeeCountMap.set(key, ent);
+    }
+    const t = classifyTingkatan(r.tingkatan).key;
+    const j = classifyJuara(r.juara).key;
+    if(t === 'Internasional') intnl++;
+    if(t === 'Nasional') nas++;
+    if(j === 'Juara 1') j1++;
+    if(j === 'Juara 2') j2++;
+    if(j === 'Juara 3') j3++;
+    tingkatanMap.set(t, (tingkatanMap.get(t)||0) + 1);
+  });
+  const awardeeCount = awardeeSet.size;
+
+  // Hero card
+  const hero = `<div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #ddd6fe;border-radius:16px;padding:22px 24px;display:flex;align-items:center;gap:18px;margin-bottom:18px;animation:pr-kpi-in .3s ease both;">
+    <div style="width:62px;height:62px;border-radius:16px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;flex-shrink:0;box-shadow:0 4px 16px rgba(124,58,237,.3);">${escapeHtml(initKampus)}</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:18px;font-weight:800;color:#4c1d95;line-height:1.2;">${escapeHtml(kampusName)}</div>
+      <div style="font-size:12px;color:#7c3aed;margin-top:5px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <span><b style="color:#4c1d95;">${awardeeCount}</b> awardee berprestasi</span>
+        <span><b style="color:#4c1d95;">${total}</b> total prestasi</span>
+      </div>
+    </div>
+  </div>`;
+
+  // 4 mini KPI cards
+  const kpiCards = `<div class="pr-kpi-cards" style="margin-bottom:18px;">
+    <div class="pr-kpi-card" style="background:#f5f3ff;border-color:#ddd6fe;animation-delay:.04s">
+      <div class="pr-kpi-card-num" style="color:#4c1d95;">${total}</div>
+      <div class="pr-kpi-card-lbl" style="color:#7c3aed;">Total Prestasi</div>
+    </div>
+    <div class="pr-kpi-card" style="background:#ede9fe;border-color:#c4b5fd;animation-delay:.08s">
+      <div class="pr-kpi-card-num" style="color:#4c1d95;">${awardeeCount}</div>
+      <div class="pr-kpi-card-lbl" style="color:#7c3aed;">Awardee</div>
+    </div>
+    <div class="pr-kpi-card" style="background:#fef3c7;border-color:#fde68a;animation-delay:.12s">
+      <div class="pr-kpi-card-num" style="color:#92400e;">${intnl}</div>
+      <div class="pr-kpi-card-lbl" style="color:#b45309;">Internasional</div>
+    </div>
+    <div class="pr-kpi-card" style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-color:#fbbf24;animation-delay:.16s">
+      <div class="pr-kpi-card-num" style="color:#92400e;">${j1}</div>
+      <div class="pr-kpi-card-lbl" style="color:#b45309;">Juara 1</div>
+    </div>
+  </div>`;
+
+  // Top awardees bar chart
+  const topAwardees = Array.from(awardeeCountMap.values()).sort((a,b) => b.count - a.count).slice(0, 10);
+  const maxA = topAwardees.length ? topAwardees[0].count : 1;
+  const awardeeChart = topAwardees.length ? `
+    <div class="pr-kpi-section"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg> Top Awardee dari Kampus Ini</div>
+    <div style="margin-bottom:16px;">${topAwardees.map((a,i) => {
+      const pct = Math.round(a.count * 100 / maxA);
+      const colors = ['bf-purple','bf-blue','bf-teal','bf-pink','bf-gold','bf-gray'];
+      return `<div class="pr-kpi-bar-row" style="animation:pr-kpi-in .28s ease ${.2+i*.04}s both;">
+        <div style="font-weight:600;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(a.nama)}</div>
+        <div class="pr-kpi-bar-track"><div class="pr-kpi-bar-fill ${colors[i % colors.length]}" style="--w:${pct}%;"></div></div>
+        <div class="pr-kpi-bar-num">${a.count} prestasi</div>
+      </div>`;
+    }).join('')}</div>` : '';
+
+  // Tingkatan breakdown
+  const tingkEntries = Array.from(tingkatanMap.entries()).sort((a,b) => b[1]-a[1]);
+  const maxT = tingkEntries.length ? tingkEntries[0][1] : 1;
+  const tingkatanColors = { 'Internasional':'bf-gold','Nasional':'bf-blue','Regional':'bf-teal','Provinsi':'bf-teal','Universitas':'bf-purple','Fakultas':'bf-pink' };
+  const tingkChart = tingkEntries.length ? `
+    <div class="pr-kpi-section"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 21H4.6c-.34 0-.6-.26-.6-.6V3"/><path d="m8 11 4-7 4 3 4-6"/></svg> Distribusi Tingkatan</div>
+    <div style="margin-bottom:16px;">${tingkEntries.map(([t,c],i) => {
+      const pct = Math.round(c * 100 / maxT);
+      const cls = tingkatanColors[t] || 'bf-gray';
+      return `<div class="pr-kpi-bar-row" style="animation:pr-kpi-in .28s ease ${.28+i*.04}s both;">
+        <div style="font-weight:600;color:#374151;">${escapeHtml(t)}</div>
+        <div class="pr-kpi-bar-track"><div class="pr-kpi-bar-fill ${cls}" style="--w:${pct}%;"></div></div>
+        <div class="pr-kpi-bar-num">${c}</div>
+      </div>`;
+    }).join('')}</div>` : '';
+
+  // Full prestasi list
+  const listHtml = `<div class="pr-kpi-section"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Daftar Prestasi (${records.length})</div>
+  <div class="tbl-scroll" style="border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;"><table class="pr-table" style="min-width:100%;">
+    <thead><tr><th>#</th><th>Awardee</th><th>Keterangan</th><th>Tingkatan</th><th>Juara</th><th>Sertifikat</th></tr></thead>
+    <tbody>${records.map((r,i) => {
+      const ct = classifyTingkatan(r.tingkatan);
+      const cj = classifyJuara(r.juara);
+      return `<tr style="animation:pr-kpi-in .28s ease ${i*.04}s both;">
+        <td style="color:#9ca3af;font-size:11.5px;">${i+1}</td>
+        <td style="font-weight:600;color:#111827;min-width:120px;">${escapeHtml(r.nama||'—')}</td>
+        <td class="td-wrap" style="max-width:240px;">${escapeHtml(r.keterangan||'—')}</td>
+        <td><span class="tg-badge ${ct.css}">${escapeHtml(ct.label)}</span></td>
+        <td><span class="jr-badge ${cj.css}">${escapeHtml(cj.label)}</span></td>
+        <td>${hasCert(r.sertifikat)
+          ? `<a class="sert-link" href="${escapeAttr(r.sertifikat)}" target="_blank" rel="noopener"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-1px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Buka</a>`
+          : '<span class="sert-none">—</span>'}</td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table></div>`;
+
+  return hero + kpiCards + awardeeChart + tingkChart + listHtml;
+}
+
+/* =============================================
+   PRESTASI DETAIL — inline panel
+============================================= */
+window.openPrestasiDetail = (id) => {
+  const r = _raw.find(x => String(x.id) === String(id));
+  if(!r) return;
+  document.getElementById('prPrestasiDetailBody').innerHTML = buildPrestasiDetailHtml(r);
+  document.getElementById('prPrestasiDetailBreadcrumb').textContent = r.keterangan ? (r.keterangan.length > 50 ? r.keterangan.slice(0,50)+'…' : r.keterangan) : (r.nama || '—');
+  document.getElementById('prPrestasiDetailPanel').style.display = '';
+  document.getElementById('prMainPage').style.display = 'none';
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+};
+
+window.closePrestasiDetail = () => {
+  document.getElementById('prPrestasiDetailPanel').style.display = 'none';
+  document.getElementById('prMainPage').style.display = '';
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+};
+
+function buildPrestasiDetailHtml(r) {
+  const ct = classifyTingkatan(r.tingkatan);
+  const cj = classifyJuara(r.juara);
+  const initA = mkInit(r.nama);
+
+  const hero = `<div style="background:linear-gradient(135deg,#f0fdfa,#ccfbf1);border:1.5px solid #99f6e4;border-radius:16px;padding:22px 24px;display:flex;align-items:center;gap:18px;margin-bottom:18px;animation:pr-kpi-in .3s ease both;">
+    <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#0d9488,#14b8a6);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0;box-shadow:0 4px 14px rgba(13,148,136,.3);">${escapeHtml(initA)}</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:17px;font-weight:800;color:#134e4a;line-height:1.25;">${escapeHtml(r.nama||'—')}</div>
+      <div style="margin-top:5px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span class="tg-badge ${ct.css}">${escapeHtml(ct.label)}</span>
+        <span class="jr-badge ${cj.css}">${escapeHtml(cj.label)}</span>
+      </div>
+    </div>
+  </div>`;
+
+  const fields = [
+    { lbl: 'NIM / No Induk', val: r.no_induk||'—' },
+    { lbl: 'Kampus',         val: r.kampus||'—' },
+    { lbl: 'Fakultas',       val: r.fakultas||'—' },
+    { lbl: 'Prodi',          val: r.prodi||'—' },
+    { lbl: 'Kelompok',       val: r.kelompok||'—' },
+    { lbl: 'Cluster',        val: r.cluster||'—' },
+    { lbl: 'Tingkatan',      valHtml: `<span class="tg-badge ${ct.css}">${escapeHtml(r.tingkatan||'—')}</span>` },
+    { lbl: 'Juara',          valHtml: `<span class="jr-badge ${cj.css}">${escapeHtml(r.juara||'—')}</span>` },
+    { lbl: 'Nama / Keterangan Lomba', val: r.keterangan||'—', wrap: true },
+    { lbl: 'Sertifikat',     valHtml: hasCert(r.sertifikat)
+        ? `<a class="sert-link" href="${escapeAttr(r.sertifikat)}" target="_blank" rel="noopener"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:-1px;margin-right:3px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Buka Sertifikat</a>`
+        : '<span class="sert-none">Belum ada sertifikat</span>' },
+  ];
+
+  const detailRows = fields.map(f => `<div class="detail-row">
+    <div class="detail-lbl">${escapeHtml(f.lbl)}</div>
+    <div class="detail-val${f.wrap?' td-wrap':''}">${f.valHtml !== undefined ? f.valHtml : escapeHtml(f.val)}</div>
+  </div>`).join('');
+
+  return hero + `<div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:16px 20px;animation:pr-kpi-in .32s ease .05s both;">${detailRows}</div>`;
+}
 
 /* =============================================
    ADD / EDIT
@@ -2556,6 +3099,278 @@ function toast(msg, type='ok'){
 
 function escapeHtml(s){
   return String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* =============================================
+   KPI INLINE DETAIL PANEL
+============================================= */
+function mkInitials(name){
+  return String(name||'').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
+}
+
+function kpiBarRows(entries, color, delayBase){
+  if(!entries.length) return '<p style="color:#9ca3af;font-size:12px;padding:8px">Belum ada data.</p>';
+  const max = Math.max(...entries.map(e=>e.count), 1);
+  return entries.map((e, i) => {
+    const w = Math.round(e.count * 100 / max);
+    return `<div class="pr-kpi-bar-row">
+      <div style="font-size:11.5px;color:#374151;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${escapeHtml(e.label)}">${escapeHtml(e.label)}</div>
+      <div class="pr-kpi-bar-track"><div class="pr-kpi-bar-fill" style="--w:${w}%;background:${color};animation-delay:${(delayBase||0)+i*0.05}s"></div></div>
+      <div class="pr-kpi-bar-num">${e.count.toLocaleString('id-ID')}</div>
+    </div>`;
+  }).join('');
+}
+
+function kpiMiniCards(cards){
+  return `<div class="pr-kpi-cards">${cards.map((c,i)=>`
+    <div class="pr-kpi-card" style="background:${c.bg};border-color:${c.border};animation-delay:${i*0.07}s">
+      <div class="pr-kpi-card-num" style="color:${c.color}">${escapeHtml(String(c.val))}</div>
+      <div class="pr-kpi-card-lbl" style="color:${c.color}">${escapeHtml(c.lbl)}</div>
+    </div>`).join('')}</div>`;
+}
+
+function kpiSection(title, icon){
+  return `<div class="pr-kpi-section">${icon||''}${escapeHtml(title)}</div>`;
+}
+
+function renderKpiDetail(type){
+  let html = '';
+
+  if(type === 'total'){
+    const total   = _raw.length;
+    const j1      = _raw.filter(r => classifyJuara(r.juara).key === 'Juara 1').length;
+    const j2      = _raw.filter(r => classifyJuara(r.juara).key === 'Juara 2').length;
+    const j3      = _raw.filter(r => classifyJuara(r.juara).key === 'Juara 3').length;
+
+    html += kpiMiniCards([
+      { val: total.toLocaleString('id-ID'), lbl:'Total Prestasi',  bg:'#fef9c3', border:'#fcd34d', color:'#b45309' },
+      { val: j1.toLocaleString('id-ID'),    lbl:'Juara 1',         bg:'#fef3c7', border:'#fbbf24', color:'#b45309' },
+      { val: j2.toLocaleString('id-ID'),    lbl:'Juara 2',         bg:'#f1f5f9', border:'#cbd5e1', color:'#475569' },
+      { val: j3.toLocaleString('id-ID'),    lbl:'Juara 3',         bg:'#fdf4e7', border:'#f6c89a', color:'#92400e' },
+    ]);
+
+    // Tingkatan
+    const tMap = new Map();
+    _raw.forEach(r => { const k = classifyTingkatan(r.tingkatan).key; tMap.set(k,(tMap.get(k)||0)+1); });
+    const tEntries = Array.from(tMap.entries()).map(([k,v])=>({key:k,label:k,count:v})).sort((a,b)=>b.count-a.count);
+    html += kpiSection('Distribusi Tingkatan','');
+    html += kpiBarRows(tEntries,'#7c3aed',0);
+
+    // Bidang
+    const bMap = new Map();
+    _raw.forEach(r => { const k = norm(r.bidang)||'—'; bMap.set(k,(bMap.get(k)||0)+1); });
+    const bEntries = Array.from(bMap.entries()).map(([k,v])=>({key:k,label:k,count:v})).sort((a,b)=>b.count-a.count).slice(0,10);
+    html += kpiSection('Top 10 Bidang','');
+    html += kpiBarRows(bEntries,'#0d9488',0.2);
+
+    // Tahun
+    const yMap = new Map();
+    _raw.forEach(r => { const k = norm(r.tahun)||norm(r.created_at||'').slice(0,4)||'—'; yMap.set(k,(yMap.get(k)||0)+1); });
+    const yEntries = Array.from(yMap.entries()).map(([k,v])=>({key:k,label:k,count:v})).sort((a,b)=>a.key.localeCompare(b.key));
+    html += kpiSection('Distribusi per Tahun','');
+    html += kpiBarRows(yEntries,'#3b82f6',0.4);
+  }
+
+  else if(type === 'awardee'){
+    const idOf = r => norm(r.no_induk)||norm(r.nama);
+    const aMap = new Map();
+    _raw.forEach(r => { const id=idOf(r); if(!id) return; if(!aMap.has(id)) aMap.set(id,{nama:norm(r.nama),kampus:norm(r.kampus),count:0}); aMap.get(id).count++; });
+    const aArr = Array.from(aMap.values()).sort((a,b)=>b.count-a.count);
+    const totalAwardees = aArr.length;
+    const avgPer  = totalAwardees ? +((_raw.length/totalAwardees).toFixed(1)) : 0;
+    const maxPer  = aArr.length ? aArr[0].count : 0;
+    const kampusN = new Set(_raw.map(r=>norm(r.kampus)).filter(Boolean)).size;
+
+    html += kpiMiniCards([
+      { val: totalAwardees.toLocaleString('id-ID'), lbl:'Unique Awardee',    bg:'#dbeafe', border:'#bfdbfe', color:'#1d4ed8' },
+      { val: avgPer,                                lbl:'Rata-rata/Awardee', bg:'#ede9fe', border:'#ddd6fe', color:'#7c3aed' },
+      { val: maxPer.toLocaleString('id-ID'),        lbl:'Terbanyak (1 org)', bg:'#fef3c7', border:'#fcd34d', color:'#b45309' },
+      { val: kampusN.toLocaleString('id-ID'),       lbl:'Kampus Terlibat',  bg:'#ccfbf1', border:'#99f6e4', color:'#0d9488' },
+    ]);
+
+    html += kpiSection('Top 15 Awardee Berprestasi','');
+    html += `<div class="pr-kpi-list">${aArr.slice(0,15).map((a,i)=>{
+      const colors=['#fef3c7,#b45309','#f1f5f9,#475569','#fdf4e7,#92400e','#dbeafe,#1d4ed8','#ccfbf1,#0d9488','#ede9fe,#7c3aed','#fce7f3,#be185d'];
+      const [bg,fg]=colors[i%colors.length].split(',');
+      return `<div class="pr-kpi-list-item" style="animation-delay:${i*0.03}s">
+        <div class="pr-kpi-list-avatar" style="background:${bg};color:${fg}">${escapeHtml(mkInitials(a.nama))}</div>
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:#111827">${escapeHtml(a.nama||'—')}</div>
+          <div style="font-size:11px;color:#6b7280">${escapeHtml(a.kampus||'—')}</div>
+        </div>
+        <div style="font-size:13px;font-weight:800;color:#0055a5">${a.count}</div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  else if(type === 'kampus'){
+    const kMap = new Map();
+    _raw.forEach(r => { const k=norm(r.kampus)||'—'; if(!kMap.has(k)) kMap.set(k,0); kMap.set(k,kMap.get(k)+1); });
+    const kArr = Array.from(kMap.entries()).map(([k,v])=>({key:k,label:k,count:v})).sort((a,b)=>b.count-a.count);
+    const totalKampus = kArr.length;
+    const avg = totalKampus ? +(_raw.length/totalKampus).toFixed(1) : 0;
+    const most = kArr.length ? kArr[0].label : '—';
+    const single = kArr.filter(k=>k.count===1).length;
+
+    html += kpiMiniCards([
+      { val: totalKampus.toLocaleString('id-ID'), lbl:'Total Kampus',      bg:'#ccfbf1', border:'#99f6e4', color:'#0d9488' },
+      { val: avg,                                 lbl:'Rata-rata Prestasi', bg:'#dbeafe', border:'#bfdbfe', color:'#1d4ed8' },
+      { val: escapeHtml(most.length>18?most.slice(0,18)+'…':most), lbl:'Kampus Teraktif',  bg:'#fef3c7', border:'#fcd34d', color:'#b45309' },
+      { val: single.toLocaleString('id-ID'),      lbl:'1 Prestasi Saja',   bg:'#f1f5f9', border:'#e2e8f0', color:'#6b7280' },
+    ]);
+
+    html += kpiSection(`Top ${Math.min(20,kArr.length)} Kampus`,'');
+    html += kpiBarRows(kArr.slice(0,20),'#0d9488',0);
+  }
+
+  else if(type === 'internasional'){
+    const intlRaw = _raw.filter(r => classifyTingkatan(r.tingkatan).key === 'Internasional');
+    const total   = intlRaw.length;
+    const pct     = _raw.length ? Math.round(total*100/_raw.length) : 0;
+    const intlAwardees = new Set(intlRaw.map(r=>norm(r.no_induk)||norm(r.nama)).filter(Boolean)).size;
+    const intlKampus   = new Set(intlRaw.map(r=>norm(r.kampus)).filter(Boolean)).size;
+
+    html += kpiMiniCards([
+      { val: total.toLocaleString('id-ID'),         lbl:'Total Internasional', bg:'#ede9fe', border:'#ddd6fe', color:'#7c3aed' },
+      { val: pct+'%',                               lbl:'% dari Semua',        bg:'#fef9c3', border:'#fde68a', color:'#b45309' },
+      { val: intlAwardees.toLocaleString('id-ID'),  lbl:'Awardee Terlibat',   bg:'#dbeafe', border:'#bfdbfe', color:'#1d4ed8' },
+      { val: intlKampus.toLocaleString('id-ID'),    lbl:'Kampus Terlibat',    bg:'#ccfbf1', border:'#99f6e4', color:'#0d9488' },
+    ]);
+
+    // Bidang intl
+    const bMap = new Map();
+    intlRaw.forEach(r => { const k=norm(r.bidang)||'—'; bMap.set(k,(bMap.get(k)||0)+1); });
+    const bEntries = Array.from(bMap.entries()).map(([k,v])=>({key:k,label:k,count:v})).sort((a,b)=>b.count-a.count).slice(0,10);
+    html += kpiSection('Bidang Internasional','');
+    html += kpiBarRows(bEntries,'#7c3aed',0);
+
+    // Top awardees
+    const aMap = new Map();
+    intlRaw.forEach(r => { const id=norm(r.no_induk)||norm(r.nama); if(!id) return; if(!aMap.has(id)) aMap.set(id,{nama:norm(r.nama),kampus:norm(r.kampus),count:0}); aMap.get(id).count++; });
+    const aArr = Array.from(aMap.values()).sort((a,b)=>b.count-a.count).slice(0,10);
+    html += kpiSection('Top Awardee Internasional','');
+    html += `<div class="pr-kpi-list">${aArr.map((a,i)=>`
+      <div class="pr-kpi-list-item" style="animation-delay:${i*0.03}s">
+        <div class="pr-kpi-list-avatar" style="background:#ede9fe;color:#7c3aed">${escapeHtml(mkInitials(a.nama))}</div>
+        <div>
+          <div style="font-size:12.5px;font-weight:700;color:#111827">${escapeHtml(a.nama||'—')}</div>
+          <div style="font-size:11px;color:#6b7280">${escapeHtml(a.kampus||'—')}</div>
+        </div>
+        <div style="font-size:13px;font-weight:800;color:#7c3aed">${a.count}</div>
+      </div>`).join('')}</div>`;
+  }
+
+  else if(type === 'sertifikat'){
+    const total    = _raw.length;
+    const withCert = _raw.filter(r=>hasCert(r.sertifikat)).length;
+    const noCert   = total - withCert;
+    const pct      = total ? Math.round(withCert*100/total) : 0;
+
+    // kampus with 100% cert
+    const kMap = new Map();
+    _raw.forEach(r => { const k=norm(r.kampus)||'—'; if(!kMap.has(k)) kMap.set(k,{total:0,cert:0}); kMap.get(k).total++; if(hasCert(r.sertifikat)) kMap.get(k).cert++; });
+    const k100 = Array.from(kMap.values()).filter(v=>v.total>=2 && v.cert===v.total).length;
+
+    html += kpiMiniCards([
+      { val: withCert.toLocaleString('id-ID'), lbl:'Dengan Sertifikat',   bg:'#dcfce7', border:'#bbf7d0', color:'#15803d' },
+      { val: noCert.toLocaleString('id-ID'),   lbl:'Tanpa Sertifikat',    bg:'#fee2e2', border:'#fecaca', color:'#b91c1c' },
+      { val: pct+'%',                          lbl:'% Tersertifikasi',    bg:'#fef3c7', border:'#fcd34d', color:'#b45309' },
+      { val: k100.toLocaleString('id-ID'),     lbl:'Kampus 100% Cert',   bg:'#ede9fe', border:'#ddd6fe', color:'#7c3aed' },
+    ]);
+
+    // Split visual
+    const wPct = total ? Math.round(withCert*100/total) : 0;
+    const nPct = 100 - wPct;
+    html += kpiSection('Distribusi Sertifikat','');
+    html += `<div class="pr-kpi-split">
+      <div class="pr-kpi-split-box" style="background:#dcfce7;border-color:#86efac">
+        <div class="pr-kpi-split-num" style="color:#15803d">${withCert.toLocaleString('id-ID')}</div>
+        <div class="pr-kpi-split-lbl" style="color:#15803d">Dengan Sertifikat</div>
+        <div class="pr-kpi-split-pct" style="color:#16a34a">${wPct}% dari total</div>
+      </div>
+      <div class="pr-kpi-split-box" style="background:#fee2e2;border-color:#fca5a5">
+        <div class="pr-kpi-split-num" style="color:#b91c1c">${noCert.toLocaleString('id-ID')}</div>
+        <div class="pr-kpi-split-lbl" style="color:#b91c1c">Tanpa Sertifikat</div>
+        <div class="pr-kpi-split-pct" style="color:#dc2626">${nPct}% dari total</div>
+      </div>
+    </div>`;
+
+    // Breakdown by tingkatan
+    const tGroups = new Map();
+    _raw.forEach(r => {
+      const k = classifyTingkatan(r.tingkatan).key;
+      if(!tGroups.has(k)) tGroups.set(k,{cert:0,no:0});
+      if(hasCert(r.sertifikat)) tGroups.get(k).cert++; else tGroups.get(k).no++;
+    });
+    const tArr = Array.from(tGroups.entries())
+      .map(([k,v])=>({key:k,label:k,count:v.cert,no:v.no,total:v.cert+v.no}))
+      .sort((a,b)=>b.total-a.total);
+    html += kpiSection('Sertifikat per Tingkatan','');
+    const maxT = Math.max(...tArr.map(t=>t.total),1);
+    html += tArr.map((t,i)=>{
+      const ww = Math.round(t.cert*100/maxT);
+      const nw = Math.round(t.no*100/maxT);
+      const cpct = t.total ? Math.round(t.cert*100/t.total) : 0;
+      return `<div class="pr-kpi-bar-row" style="grid-template-columns:110px 1fr auto;animation-delay:${i*0.05}s">
+        <div style="font-size:11.5px;color:#374151">${escapeHtml(t.label)}</div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <div class="pr-kpi-bar-track" title="Dengan sertifikat: ${t.cert}"><div class="pr-kpi-bar-fill" style="--w:${ww}%;background:#22c55e;animation-delay:${i*0.05}s"></div></div>
+          <div class="pr-kpi-bar-track" title="Tanpa sertifikat: ${t.no}"><div class="pr-kpi-bar-fill" style="--w:${nw}%;background:#ef4444;animation-delay:${i*0.05+0.1}s"></div></div>
+        </div>
+        <div class="pr-kpi-bar-num">${cpct}%</div>
+      </div>`;
+    }).join('');
+
+    // Top awardees by cert count
+    const aMap = new Map();
+    _raw.filter(r=>hasCert(r.sertifikat)).forEach(r => {
+      const id=norm(r.no_induk)||norm(r.nama); if(!id) return;
+      if(!aMap.has(id)) aMap.set(id,{nama:norm(r.nama),kampus:norm(r.kampus),count:0});
+      aMap.get(id).count++;
+    });
+    const aArr = Array.from(aMap.values()).sort((a,b)=>b.count-a.count).slice(0,10);
+    if(aArr.length){
+      html += kpiSection('Top Awardee Bersertifikat','');
+      html += `<div class="pr-kpi-list">${aArr.map((a,i)=>`
+        <div class="pr-kpi-list-item" style="animation-delay:${i*0.03}s">
+          <div class="pr-kpi-list-avatar" style="background:#dcfce7;color:#15803d">${escapeHtml(mkInitials(a.nama))}</div>
+          <div>
+            <div style="font-size:12.5px;font-weight:700;color:#111827">${escapeHtml(a.nama||'—')}</div>
+            <div style="font-size:11px;color:#6b7280">${escapeHtml(a.kampus||'—')}</div>
+          </div>
+          <div style="font-size:13px;font-weight:800;color:#15803d">${a.count}</div>
+        </div>`).join('')}</div>`;
+    }
+  }
+
+  return html;
+}
+
+function openKpiDetail(type){
+  const titles = {
+    total:'Total Prestasi', awardee:'Awardee Berprestasi',
+    kampus:'Kampus Terlibat', internasional:'Tingkat Internasional', sertifikat:'Dengan Sertifikat'
+  };
+  const subs = {
+    total:'Breakdown lengkap distribusi prestasi',
+    awardee:'Siapa saja awardee paling berprestasi',
+    kampus:'Kontribusi masing-masing kampus',
+    internasional:'Prestasi bertaraf internasional',
+    sertifikat:'Kelengkapan dokumen sertifikat'
+  };
+  document.getElementById('prKpiTitle').textContent     = titles[type] || type;
+  document.getElementById('prKpiBreadcrumb').textContent = titles[type] || type;
+  document.getElementById('prKpiSub').textContent        = subs[type]  || '';
+  document.getElementById('prKpiBody').innerHTML         = renderKpiDetail(type);
+  document.getElementById('prKpiPanel').style.display   = '';
+  document.getElementById('prMainPage').style.display   = 'none';
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+}
+
+function closeKpiDetail(){
+  document.getElementById('prKpiPanel').style.display  = 'none';
+  document.getElementById('prMainPage').style.display  = '';
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
 }
 function escapeAttr(s){ return escapeHtml(s).replace(/`/g,'&#96;'); }
 

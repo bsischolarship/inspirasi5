@@ -488,6 +488,20 @@
 </header>
   <main class="app-content">
 
+<!-- ========== INLINE KPI DETAIL PANEL ========== -->
+<div id="homeKpiPanel" style="display:none;padding:0 0 40px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
+    <button onclick="closeHomeKpiDetail()" style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:#f1f5f9;border:1.5px solid #e2e8f0;border-radius:9px;font-size:12.5px;font-weight:700;cursor:pointer;color:#374151;transition:all .15s;" onmouseover="this.style.background='#e2e8f0';this.style.transform='translateX(-2px)'" onmouseout="this.style.background='#f1f5f9';this.style.transform=''">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg> Kembali
+    </button>
+    <span id="homeKpiBreadcrumb" style="font-size:12px;color:#9ca3af;font-weight:500;">Dashboard › Detail</span>
+  </div>
+  <div id="homeKpiPanelHead" style="margin-bottom:24px;animation:hkpi-in .35s ease both;"></div>
+  <div id="homeKpiPanelBody" style="animation:hkpi-in .4s ease both;"></div>
+</div>
+<!-- ========== END KPI PANEL ========== -->
+
+<div id="homeMainContent">
 <section class="hero hero--compact hero--dashboard">
 
     <div class="hero-badge">Assalamu'alaikum, Sharia Young Leader!</div>
@@ -1173,30 +1187,30 @@
 </section>
 <!-- ============ END HOME FILTER BAR ============ -->
 
-<section class="kpi-grid">
-  <div class="card card--kpi kpi-blue">
+<section class="kpi-grid" id="homeKpiGrid">
+  <div class="card card--kpi kpi-blue hkpi-card" style="animation-delay:.05s" onclick="openHomeKpiDetail('awardee')">
     <div class="kpi-icon-wrap kpi-icon-blue"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-    <div><div class="kpi-label">Total Awardee</div><strong id="kpiPeserta">—</strong></div>
+    <div style="flex:1"><div class="kpi-label">Total Awardee</div><strong id="kpiPeserta">—</strong><div class="hkpi-hint">Lihat detail →</div></div>
   </div>
-  <div class="card card--kpi kpi-yellow">
+  <div class="card card--kpi kpi-yellow hkpi-card" style="animation-delay:.1s" onclick="openHomeKpiDetail('aktivitas')">
     <div class="kpi-icon-wrap kpi-icon-yellow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-    <div><div class="kpi-label">Total Aktivitas</div><strong id="kpiAktivitas">—</strong></div>
+    <div style="flex:1"><div class="kpi-label">Total Aktivitas</div><strong id="kpiAktivitas">—</strong><div class="hkpi-hint">Lihat detail →</div></div>
   </div>
-  <div class="card card--kpi kpi-green">
+  <div class="card card--kpi kpi-green hkpi-card" style="animation-delay:.15s" onclick="openHomeKpiDetail('partisipasi')">
     <div class="kpi-icon-wrap kpi-icon-green"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-    <div><div class="kpi-label">Rata-rata Partisipasi</div><strong id="kpiRate">—%</strong></div>
+    <div style="flex:1"><div class="kpi-label">Rata-rata Partisipasi</div><strong id="kpiRate">—%</strong><div class="hkpi-hint">Lihat detail →</div></div>
   </div>
-  <div class="card card--kpi kpi-teal">
+  <div class="card card--kpi kpi-teal hkpi-card" style="animation-delay:.2s" onclick="openHomeKpiDetail('kampus')">
     <div class="kpi-icon-wrap kpi-icon-teal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
-    <div><div class="kpi-label">Total Kampus</div><strong id="kpiCampus">—</strong></div>
+    <div style="flex:1"><div class="kpi-label">Total Kampus</div><strong id="kpiCampus">—</strong><div class="hkpi-hint">Lihat detail →</div></div>
   </div>
-  <div class="card card--kpi kpi-orange">
+  <div class="card card--kpi kpi-orange hkpi-card" style="animation-delay:.25s" onclick="openHomeKpiDetail('absen')">
     <div class="kpi-icon-wrap kpi-icon-orange"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-    <div><div class="kpi-label">Absen Bulan Ini</div><strong id="kpiBelumAbsen">—</strong></div>
+    <div style="flex:1"><div class="kpi-label">Absen Bulan Ini</div><strong id="kpiBelumAbsen">—</strong><div class="hkpi-hint">Lihat detail →</div></div>
   </div>
-  <div class="card card--kpi kpi-purple">
+  <div class="card card--kpi kpi-purple hkpi-card" style="animation-delay:.3s" onclick="openHomeKpiDetail('kelompok')">
     <div class="kpi-icon-wrap kpi-icon-purple"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg></div>
-    <div><div class="kpi-label">Total Kelompok</div><strong id="kpiKelompok">—</strong></div>
+    <div style="flex:1"><div class="kpi-label">Total Kelompok</div><strong id="kpiKelompok">—</strong><div class="hkpi-hint">Lihat detail →</div></div>
   </div>
 </section>
 
@@ -1213,17 +1227,28 @@
       <span style="font-size:11px;color:#9ca3af;" id="trenPeriod">memuat...</span>
     </div>
     <div style="position:relative;height:160px;">
-      <canvas id="trenChart" style="width:100%;height:100%;display:block;"></canvas>
+      <canvas id="trenChart" style="width:100%;height:100%;display:block;cursor:pointer;" onclick="toggleTrenDetail()"></canvas>
     </div>
     <div style="display:flex;align-items:center;gap:16px;margin-top:10px;flex-wrap:wrap;" id="trenLegend"></div>
+    <!-- Tren detail panel -->
+    <div id="trenDetail" style="display:none;margin-top:14px;border-top:1.5px solid #f1f5f9;padding-top:14px;animation:hkpi-in .3s ease both;"></div>
   </div>
 
   <!-- Progress per Jenis Kegiatan -->
-  <div class="data-card" style="padding:20px;">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0055a5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      <span style="font-size:14px;font-weight:700;color:#111827;">Progress per Kegiatan</span>
+  <div class="data-card" style="padding:20px;" id="activityRingsCard">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;" id="activityRingsHeader">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0055a5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span style="font-size:14px;font-weight:700;color:#111827;">Progress per Kegiatan</span>
+      </div>
+      <span style="font-size:10.5px;color:#9ca3af;display:flex;align-items:center;gap:4px;">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Klik ring untuk detail
+      </span>
     </div>
+    <!-- Ring detail sub-panel (hidden by default) -->
+    <div id="actRingDetail" style="display:none;"></div>
+    <!-- Ring grid -->
     <div id="activityRings" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;"></div>
   </div>
 
@@ -1800,6 +1825,8 @@
 </section>
 <!-- =================== END LEADERBOARD =================== -->
 
+</div><!-- end #homeMainContent -->
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1990,6 +2017,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const peserta = {};
   const kampus = {};
   const kelompok = {};
+  // expose globally for KPI detail panels
+  window._homeRows = rows;
 
   // totalAct = total aktivitas yang DINILAI (ada value)
   // totalHad = total aktivitas yang OK/TP
@@ -2184,48 +2213,400 @@ const arrKelompok= Object.values(kelompok)
         <span style="width:12px;height:3px;background:#00A59F;border-radius:2px;display:inline-block;"></span> Partisipasi bulanan
       </span>
       <span style="font-size:11px;color:#059669;">Tertinggi: ${labels[best]} (${pcts[best]}%)</span>
-      <span style="font-size:11px;color:#dc2626;">Terendah: ${labels[worst]} (${pcts[worst]}%)</span>`;
+      <span style="font-size:11px;color:#dc2626;">Terendah: ${labels[worst]} (${pcts[worst]}%)</span>
+      <button onclick="toggleTrenDetail()" id="trenDetailBtn" style="margin-left:auto;font-size:11px;color:#00A59F;background:none;border:none;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:4px;padding:3px 7px;border-radius:6px;transition:background .15s;" onmouseover="this.style.background='#f0fdfa'" onmouseout="this.style.background='none'">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg> Lihat detail
+      </button>`;
+
+    // Store for detail panel
+    window._trenData = { sortedKeys, labels, pcts, monthMap };
+
+    // Per-bulan per-kegiatan breakdown
+    const ACTS_TREN = [
+      { key:'pre_test',       label:'Pre Test',   color:'#0055a5' },
+      { key:'post_test',      label:'Post Test',  color:'#7c3aed' },
+      { key:'assessment',     label:'Assessment', color:'#0891b2' },
+      { key:'mentoring',      label:'Mentoring',  color:'#00A59F' },
+      { key:'pembinaan',      label:'Pembinaan',  color:'#f97316' },
+      { key:'kelas_al_quran', label:'Al-Quran',   color:'#16a34a' },
+    ];
+    const actMonthMap = {};
+    rows.forEach(r => {
+      const d = new Date(r.tanggal||''); if (isNaN(d)) return;
+      const mk = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+      if (!actMonthMap[mk]) actMonthMap[mk] = {};
+      ACTS_TREN.forEach(a => {
+        const v = r[a.key]; if (!isFilled(v)) return;
+        if (!actMonthMap[mk][a.key]) actMonthMap[mk][a.key] = {hadir:0,total:0};
+        actMonthMap[mk][a.key].total++;
+        if (isH(v)) actMonthMap[mk][a.key].hadir++;
+      });
+    });
+    window._trenActMonth = { actMonthMap, ACTS_TREN };
+
+    window.toggleTrenDetail = function() {
+      const det = document.getElementById('trenDetail');
+      const btn = document.getElementById('trenDetailBtn');
+      const open = det.style.display !== 'none';
+      if (open) {
+        det.style.display = 'none';
+        if (btn) btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg> Lihat detail`;
+        return;
+      }
+      det.style.display = 'block';
+      det.style.animation = 'hkpi-in .3s ease both';
+      if (btn) btn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg> Sembunyikan`;
+
+      const td = window._trenData || {}; const sk = td.sortedKeys||[], lbs = td.labels||[], ps = td.pcts||[], mm = td.monthMap||{};
+      const { actMonthMap: amm, ACTS_TREN: AT } = window._trenActMonth || { actMonthMap:{}, ACTS_TREN:[] };
+
+      const avgPct = ps.length ? Math.round(ps.reduce((s,v)=>s+v,0)/ps.length) : 0;
+      const maxP = Math.max(...ps,1), minP = Math.min(...ps);
+      const bestI = ps.indexOf(Math.max(...ps)), worstI = ps.indexOf(Math.min(...ps));
+      // delta: latest vs previous month
+      const delta = ps.length>=2 ? ps[ps.length-1] - ps[ps.length-2] : 0;
+      const deltaCol = delta>0?'#16a34a':delta<0?'#dc2626':'#6b7280';
+      const deltaIcon = delta>0
+        ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>`
+        : delta<0
+        ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>`
+        : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+
+      // Insight: consecutive decline
+      let declineStreak = 0;
+      for (let i=ps.length-1;i>0;i--) { if(ps[i]<ps[i-1]) declineStreak++; else break; }
+      const insightHtml = declineStreak>=2
+        ? `<div style="background:#fef2f2;border:1.5px solid #fecaca;border-radius:10px;padding:10px 13px;display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;animation:hkpi-in .35s ease both;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <div style="font-size:11.5px;color:#7f1d1d;line-height:1.5;"><b>Tren menurun ${declineStreak} bulan berturut-turut.</b> Partisipasi terus turun dari ${ps[ps.length-1-declineStreak]}% ke ${ps[ps.length-1]}%. Perlu perhatian segera.</div>
+          </div>`
+        : avgPct >= 85
+        ? `<div style="background:#f0fdf4;border:1.5px solid #bbf7d0;border-radius:10px;padding:10px 13px;display:flex;align-items:flex-start;gap:8px;margin-bottom:12px;animation:hkpi-in .35s ease both;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg>
+            <div style="font-size:11.5px;color:#14532d;line-height:1.5;"><b>Performa sangat baik.</b> Rata-rata partisipasi ${avgPct}% — konsisten di atas 85% sepanjang periode.</div>
+          </div>`
+        : ``;
+
+      // Summary hero cards
+      const heroCards = [
+        { v: avgPct+'%',             l:'Rata-rata',          c:'#00A59F', icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' },
+        { v: ps[ps.length-1]+'%',   l:'Bulan Ini',          c: ps[ps.length-1]>=80?'#16a34a':ps[ps.length-1]>=60?'#f97316':'#dc2626', icon:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>' },
+        { v: ps[bestI]+'%',          l:`Tertinggi (${lbs[bestI]})`, c:'#16a34a', icon:'<polyline points="18 15 12 9 6 15"/>' },
+        { v: ps[worstI]+'%',         l:`Terendah (${lbs[worstI]})`, c:'#dc2626', icon:'<polyline points="6 9 12 15 18 9"/>' },
+      ];
+
+      // Per-activity per-month table
+      const tableRows = sk.map((mk, mi) => {
+        const am = amm[mk] || {};
+        return `<tr style="animation:hkpi-in .25s ${mi*0.04}s ease both;">
+          <td style="padding:6px 10px;font-size:11px;font-weight:600;color:#374151;white-space:nowrap;">${lbs[mi]}</td>
+          ${AT.map(a => {
+            const av = am[a.key]; const ap = av&&av.total ? Math.round(av.hadir/av.total*100) : null;
+            const bc = ap===null?'#f9fafb':ap>=80?'#f0fdf4':ap>=60?'#fff7ed':'#fef2f2';
+            const tc = ap===null?'#d1d5db':ap>=80?'#16a34a':ap>=60?'#f97316':'#dc2626';
+            return `<td style="padding:6px 8px;text-align:center;font-size:11px;font-weight:700;color:${tc};background:${bc};border-radius:6px;">${ap!==null?ap+'%':'—'}</td>`;
+          }).join('')}
+          <td style="padding:6px 10px;text-align:right;font-size:11px;font-weight:700;color:${ps[mi]>=80?'#16a34a':ps[mi]>=60?'#f97316':'#dc2626'};">${ps[mi]}%</td>
+        </tr>`;
+      }).join('');
+
+      det.innerHTML = insightHtml +
+        // Hero cards
+        `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">` +
+        heroCards.map((x,i)=>`<div style="background:#fff;border:1.5px solid #e5e7eb;border-radius:11px;padding:11px 13px;animation:hkpi-in .3s ${i*0.07}s ease both;">
+          <div style="display:flex;align-items:center;gap:5px;margin-bottom:4px;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="${x.c}" stroke-width="2.5">${x.icon}</svg>
+            <span style="font-size:9.5px;color:#9ca3af;font-weight:600;">${x.l}</span>
+          </div>
+          <div style="font-size:18px;font-weight:800;color:${x.c};">${x.v}</div>
+          ${x.l==='Bulan Ini'&&delta!==0?`<div style="font-size:9.5px;color:${deltaCol};display:flex;align-items:center;gap:2px;margin-top:2px;">${deltaIcon}${Math.abs(delta)}% vs bulan lalu</div>`:''}
+        </div>`).join('') + `</div>` +
+
+        // Per-activity table
+        `<div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Partisipasi per Kegiatan per Bulan
+        </div>
+        <div style="overflow-x:auto;border-radius:10px;border:1px solid #f1f5f9;">
+          <table style="width:100%;border-collapse:separate;border-spacing:2px;background:#f9fafb;">
+            <thead>
+              <tr>
+                <th style="padding:7px 10px;font-size:10px;font-weight:700;color:#9ca3af;text-align:left;background:#f9fafb;">Bulan</th>
+                ${AT.map(a=>`<th style="padding:7px 8px;font-size:10px;font-weight:700;color:${a.color};text-align:center;background:#f9fafb;white-space:nowrap;">${a.label}</th>`).join('')}
+                <th style="padding:7px 10px;font-size:10px;font-weight:700;color:#00A59F;text-align:right;background:#f9fafb;">Total</th>
+              </tr>
+            </thead>
+            <tbody style="background:#fff;">${tableRows}</tbody>
+          </table>
+        </div>`;
+
+      det.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    };
   })();
 
   // ===== PROGRESS RINGS =====
+  window._homeKampus   = kampus;
+  window._homePeserta  = peserta;
+  window._homeKelompok = kelompok;
+  window._homeTotals   = { totalAct, totalHad, totalHadirMurni, totalTP, totalTidakHadir };
   (function renderRings() {
     const ACTS = [
-      { key:'pre_test',   label:'Pre Test',   color:'#0055a5' },
-      { key:'post_test',  label:'Post Test',  color:'#7c3aed' },
-      { key:'assessment', label:'Assessment', color:'#0891b2' },
-      { key:'mentoring',  label:'Mentoring',  color:'#00A59F' },
-      { key:'pembinaan',  label:'Pembinaan',  color:'#f97316' },
-      { key:'kelas_al_quran', label:'Al-Quran', color:'#16a34a' },
+      { key:'pre_test',        label:'Pre Test',   color:'#0055a5', bg:'#eff6ff' },
+      { key:'post_test',       label:'Post Test',  color:'#7c3aed', bg:'#f5f3ff' },
+      { key:'assessment',      label:'Assessment', color:'#0891b2', bg:'#ecfeff' },
+      { key:'mentoring',       label:'Mentoring',  color:'#00A59F', bg:'#f0fdfa' },
+      { key:'pembinaan',       label:'Pembinaan',  color:'#f97316', bg:'#fff7ed' },
+      { key:'kelas_al_quran',  label:'Al-Quran',   color:'#16a34a', bg:'#f0fdf4' },
     ];
     const stats = {};
-    ACTS.forEach(a => stats[a.key] = { hadir:0, total:0 });
+    ACTS.forEach(a => stats[a.key] = { hadir:0, tp:0, tidak:0, total:0 });
     rows.forEach(r => {
       ACTS.forEach(a => {
         const v = r[a.key];
-        if (isFilled(v)) { stats[a.key].total++; if (isH(v)) stats[a.key].hadir++; }
+        if (!isFilled(v)) return;
+        stats[a.key].total++;
+        if (v === '✅') stats[a.key].hadir++;
+        else if (v === 'TP') stats[a.key].tp++;
+        else stats[a.key].tidak++;
       });
     });
-    document.getElementById('activityRings').innerHTML = ACTS.map(a => {
+    window._homeActStats = { ACTS, stats };
+
+    // build per-awardee index for detail
+    const nimIndex = {};
+    rows.forEach(r => {
+      if (!nimIndex[r.no_induk]) nimIndex[r.no_induk] = { nim:r.no_induk, nama:r.nama||'', kampus:r.kampus||'', kelompok:r.kelompok||'', acts:{} };
+      ACTS.forEach(a => {
+        const v = r[a.key]; if (!isFilled(v)) return;
+        if (!nimIndex[r.no_induk].acts[a.key]) nimIndex[r.no_induk].acts[a.key] = { hadir:0, tp:0, tidak:0, total:0 };
+        nimIndex[r.no_induk].acts[a.key].total++;
+        if (v==='✅') nimIndex[r.no_induk].acts[a.key].hadir++;
+        else if (v==='TP') nimIndex[r.no_induk].acts[a.key].tp++;
+        else nimIndex[r.no_induk].acts[a.key].tidak++;
+      });
+    });
+    window._homeNimIndex = nimIndex;
+
+    const rGrid = document.getElementById('activityRings');
+    rGrid.innerHTML = ACTS.map((a, i) => {
       const s = stats[a.key];
-      const pct = s.total > 0 ? Math.round(s.hadir/s.total*100) : 0;
-      const r = 26, circ = 2*Math.PI*r;
+      const hadirAll = s.hadir + s.tp;
+      const pct = s.total > 0 ? Math.round(hadirAll / s.total * 100) : 0;
+      const notPct = 100 - pct;
+      const rv = 26, circ = 2*Math.PI*rv;
       const dash = (pct/100)*circ, gap = circ - dash;
-      return `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      const ndash = (notPct/100)*circ, ngap = circ - ndash;
+      const rotOff = -90 + pct/100*360;
+      const col = pct>=85?a.color : pct>=70?a.color : pct>=50?'#f97316':'#dc2626';
+      return `<div data-act="${a.key}" onclick="openActRingDetail('${a.key}')"
+        style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 6px 8px;border-radius:14px;border:1.5px solid transparent;cursor:pointer;transition:all .18s;animation:hkpi-fadein .4s ${i*0.07}s ease both;"
+        onmouseover="this.style.background='${a.bg}';this.style.borderColor='${a.color}44';this.style.transform='translateY(-3px)'"
+        onmouseout="this.style.background='';this.style.borderColor='transparent';this.style.transform=''">
         <div style="position:relative;width:70px;height:70px;">
-          <svg width="70" height="70" viewBox="0 0 70 70">
-            <circle cx="35" cy="35" r="${r}" fill="none" stroke="#f3f4f6" stroke-width="7"/>
-            <circle cx="35" cy="35" r="${r}" fill="none" stroke="${a.color}" stroke-width="7"
-              stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}"
-              stroke-linecap="round"
-              transform="rotate(-90 35 35)"
-              style="transition:stroke-dasharray .6s ease"/>
+          <svg width="70" height="70" viewBox="0 0 70 70" style="overflow:visible;">
+            <circle cx="35" cy="35" r="${rv}" fill="none" stroke="#f3f4f6" stroke-width="7"/>
+            <circle cx="35" cy="35" r="${rv}" fill="none" stroke="${a.color}" stroke-width="7"
+              stroke-dasharray="${dash.toFixed(1)} ${(circ-dash).toFixed(1)}"
+              stroke-linecap="round" transform="rotate(-90 35 35)"
+              style="transition:stroke-dasharray .7s ease;"/>
+            ${s.tidak>0?`<circle cx="35" cy="35" r="${rv}" fill="none" stroke="#fca5a5" stroke-width="7"
+              stroke-dasharray="${ndash.toFixed(1)} ${(circ-ndash).toFixed(1)}"
+              stroke-linecap="round" transform="rotate(${rotOff.toFixed(1)} 35 35)" opacity="0.7"/>`:``}
           </svg>
           <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#111827;">${pct}%</div>
         </div>
-        <div style="font-size:11px;font-weight:600;color:#374151;text-align:center;line-height:1.2;">${a.label}</div>
-        <div style="font-size:10px;color:#9ca3af;">${s.hadir}/${s.total}</div>
+        <div style="font-size:11px;font-weight:700;color:#374151;text-align:center;line-height:1.2;">${a.label}</div>
+        <div style="display:flex;gap:6px;font-size:9.5px;">
+          <span style="color:#16a34a;display:flex;align-items:center;gap:2px;font-weight:600;">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${hadirAll}
+          </span>
+          <span style="color:#dc2626;display:flex;align-items:center;gap:2px;font-weight:600;">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>${s.tidak}
+          </span>
+        </div>
       </div>`;
     }).join('');
+
+    // ── Ring Detail Handler ──
+    window.openActRingDetail = function(actKey) {
+      const act     = ACTS.find(a=>a.key===actKey);
+      const s       = stats[actKey];
+      const nimIdx  = window._homeNimIndex || {};
+      const hadirAll= s.hadir + s.tp;
+      const pct     = s.total ? Math.round(hadirAll/s.total*100) : 0;
+      const notPct  = 100 - pct;
+
+      // per-kampus breakdown
+      const kampusMap = {};
+      Object.values(nimIdx).forEach(n => {
+        const ak = n.acts[actKey]; if (!ak) return;
+        if (!kampusMap[n.kampus]) kampusMap[n.kampus] = {hadir:0,tp:0,tidak:0,total:0};
+        kampusMap[n.kampus].hadir += ak.hadir; kampusMap[n.kampus].tp += ak.tp;
+        kampusMap[n.kampus].tidak += ak.tidak; kampusMap[n.kampus].total += ak.total;
+      });
+      const kampusList = Object.entries(kampusMap).map(([k,v])=>({nama:k,...v,pct:v.total?Math.round((v.hadir+v.tp)/v.total*100):0})).sort((a,b)=>b.tidak-a.tidak);
+      const maxKT = Math.max(...kampusList.map(k=>k.total),1);
+
+      // tidak hadir list
+      const tidakList = Object.values(nimIdx).filter(n=>n.acts[actKey]?.tidak>0).map(n=>({...n, ak:n.acts[actKey]})).sort((a,b)=>b.ak.tidak-a.ak.tidak);
+
+      // trend per month
+      const monthMap = {};
+      rows.forEach(r => {
+        const v = r[actKey]; if (!isFilled(v)) return;
+        const d = new Date(r.tanggal||''); if (isNaN(d)) return;
+        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+        if (!monthMap[key]) monthMap[key] = {hadir:0,total:0};
+        monthMap[key].total++;
+        if (isH(v)) monthMap[key].hadir++;
+      });
+      const mKeys = Object.keys(monthMap).sort().slice(-6);
+      const ML = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+
+      const rv2=40, circ2=2*Math.PI*rv2;
+      const dashH=(hadirAll/Math.max(s.total,1))*circ2;
+      const dashT=(s.tidak/Math.max(s.total,1))*circ2;
+      const rotOff2 = -90 + hadirAll/Math.max(s.total,1)*360;
+
+      // mark active ring
+      document.querySelectorAll('#activityRings [data-act]').forEach(el=>{
+        el.style.opacity = el.dataset.act===actKey ? '1' : '0.4';
+        el.style.transform = el.dataset.act===actKey ? 'translateY(-3px) scale(1.05)' : '';
+      });
+
+      const detail = document.getElementById('actRingDetail');
+      detail.style.display = 'block';
+      detail.style.animation = 'hkpi-in .3s ease both';
+      detail.innerHTML = `
+        <div style="border-top:2px solid ${act.color}22;margin-bottom:16px;padding-top:16px;">
+          <!-- Header bar -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:${act.color};"></div>
+              <span style="font-size:13px;font-weight:800;color:#111827;">Detail — ${act.label}</span>
+            </div>
+            <button onclick="closeActRingDetail()" style="display:flex;align-items:center;gap:4px;padding:5px 10px;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;color:#374151;transition:all .15s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tutup
+            </button>
+          </div>
+
+          <!-- Hero row: big donut + stat cards -->
+          <div style="display:grid;grid-template-columns:100px 1fr;gap:16px;align-items:center;margin-bottom:16px;">
+            <div style="position:relative;width:100px;height:100px;flex-shrink:0;">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="${rv2}" fill="none" stroke="#f3f4f6" stroke-width="11"/>
+                <circle cx="50" cy="50" r="${rv2}" fill="none" stroke="${act.color}" stroke-width="11"
+                  stroke-dasharray="${dashH.toFixed(1)} ${(circ2-dashH).toFixed(1)}"
+                  stroke-linecap="round" transform="rotate(-90 50 50)"
+                  style="animation:hkpi-ring-draw .8s cubic-bezier(.4,0,.2,1) both;"/>
+                ${s.tidak>0?`<circle cx="50" cy="50" r="${rv2}" fill="none" stroke="#ef4444" stroke-width="11"
+                  stroke-dasharray="${dashT.toFixed(1)} ${(circ2-dashT).toFixed(1)}"
+                  stroke-linecap="round" transform="rotate(${rotOff2.toFixed(1)} 50 50)" opacity="0.8"
+                  style="animation:hkpi-ring-draw .9s .15s cubic-bezier(.4,0,.2,1) both;"/>`:``}
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                <span style="font-size:17px;font-weight:900;color:#111827;line-height:1;">${pct}%</span>
+                <span style="font-size:8.5px;color:#9ca3af;font-weight:600;margin-top:1px;">hadir</span>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              ${[
+                {v:hadirAll, l:'Hadir (incl. TP)', c:act.color, icon:'<polyline points="20 6 9 17 4 12"/>'},
+                {v:s.tp,     l:'Tugas Pengganti',  c:'#0d9488', icon:'<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'},
+                {v:s.tidak,  l:'Tidak Hadir',      c:'#dc2626', icon:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>'},
+                {v:s.total,  l:'Total Sesi',        c:'#6b7280', icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'},
+              ].map((x,i)=>`<div style="background:${i===2?'#fef2f2':i===0?act.bg:'#f9fafb'};border:1.5px solid ${i===2?'#fecaca':i===0?act.color+'33':'#e5e7eb'};border-radius:10px;padding:10px 12px;animation:hkpi-num .5s ${i*0.08}s ease both;">
+                <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="${x.c}" stroke-width="2.5">${x.icon}</svg>
+                  <span style="font-size:9.5px;color:#9ca3af;font-weight:600;">${x.l}</span>
+                </div>
+                <div style="font-size:18px;font-weight:800;color:${x.c};" class="hkpi-hero-num" data-to="${x.v}">0</div>
+              </div>`).join('')}
+            </div>
+          </div>
+
+          <!-- Monthly trend bars -->
+          ${mKeys.length>=2?`<div style="margin-bottom:14px;">
+            <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Tren 6 Bulan Terakhir
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(${mKeys.length},1fr);gap:4px;align-items:end;height:52px;">
+              ${mKeys.map((mk,i)=>{
+                const mv=monthMap[mk]; const mp=mv.total?Math.round(mv.hadir/mv.total*100):0;
+                const [my,mm]=mk.split('-'); const mlbl=ML[+mm-1];
+                const barH=Math.max(mp*0.48,3);
+                const bc=mp>=80?act.color:mp>=60?'#f97316':'#ef4444';
+                return `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;justify-content:flex-end;height:100%;">
+                  <span style="font-size:8.5px;font-weight:700;color:${bc};">${mp}%</span>
+                  <div style="width:100%;height:${barH}px;background:${bc};border-radius:3px 3px 0 0;opacity:.85;--w:${barH}px;animation:hkpi-bar-v .6s ${i*0.07}s ease both;"></div>
+                  <span style="font-size:8px;color:#9ca3af;">${mlbl}</span>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>`:''}
+
+          <!-- Per-kampus breakdown -->
+          ${kampusList.length?`<div style="margin-bottom:12px;">
+            <div style="font-size:11px;font-weight:700;color:#374151;margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Per Kampus
+            </div>
+            <div style="display:flex;flex-direction:column;gap:5px;max-height:160px;overflow-y:auto;">
+              ${kampusList.slice(0,8).map((k,i)=>{
+                const kpct=k.total?Math.round((k.hadir+k.tp)/k.total*100):0;
+                const kc=kpct>=80?act.color:kpct>=60?'#f97316':'#ef4444';
+                const bw=Math.round((k.hadir+k.tp)/Math.max(kampusList[0].hadir+kampusList[0].tp,1)*100);
+                return `<div style="display:grid;grid-template-columns:1fr 1fr 44px;align-items:center;gap:8px;animation:hkpi-in .28s ${i*0.04}s ease both;">
+                  <span style="font-size:11px;font-weight:600;color:#374151;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${k.nama||'—'}</span>
+                  <div style="height:7px;background:#f1f5f9;border-radius:4px;overflow:hidden;"><div style="height:100%;background:${kc};border-radius:4px;width:${kpct}%;--w:${kpct}%;animation:hkpi-bar .6s ${i*0.04}s ease both;"></div></div>
+                  <span style="font-size:10.5px;font-weight:700;color:${kc};text-align:right;">${kpct}%</span>
+                </div>`;
+              }).join('')}
+            </div>
+          </div>`:''}
+
+          <!-- Tidak hadir list -->
+          <div>
+            <div style="font-size:11px;font-weight:700;color:#dc2626;margin-bottom:8px;display:flex;align-items:center;gap:5px;">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Awardee Tidak Hadir (${tidakList.length})
+            </div>
+            ${tidakList.length===0?`<div style="text-align:center;padding:16px;background:#f0fdf4;border-radius:10px;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="1.8" style="display:block;margin:0 auto 6px;"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg>
+              <div style="font-size:12px;font-weight:700;color:#16a34a;">Semua awardee hadir</div>
+            </div>`:
+            `<div style="display:flex;flex-direction:column;gap:4px;max-height:180px;overflow-y:auto;">
+              ${tidakList.slice(0,20).map((n,i)=>{
+                const ak=n.ak; const npct=ak.total?Math.round((ak.hadir+ak.tp)/ak.total*100):0;
+                const ini=(n.nama).split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+                const sev=ak.tidak>=3?'#7f1d1d':ak.tidak>=2?'#dc2626':'#ef4444';
+                return `<div style="display:grid;grid-template-columns:22px 26px 1fr auto 48px;align-items:center;gap:7px;padding:7px 10px;background:${ak.tidak>=3?'#fef2f2':'#fff'};border:1px solid ${ak.tidak>=2?'#fecaca':'#f3f4f6'};border-radius:8px;animation:hkpi-in .25s ${i*0.025}s ease both;">
+                  <span style="font-size:10px;color:#9ca3af;font-weight:700;text-align:center;">${i+1}</span>
+                  <div style="width:26px;height:26px;border-radius:50%;background:#fef2f2;color:${sev};font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;">${ini}</div>
+                  <div style="min-width:0;"><div style="font-size:11.5px;font-weight:600;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${n.nama}</div><div style="font-size:9.5px;color:#9ca3af;">${n.kampus}</div></div>
+                  <span style="background:#fef2f2;color:${sev};font-size:10px;font-weight:800;padding:2px 7px;border-radius:5px;white-space:nowrap;">${ak.tidak}×</span>
+                  <div style="text-align:right;"><div style="font-size:10.5px;font-weight:700;color:${npct>=80?'#16a34a':npct>=60?'#f97316':'#dc2626'}">${npct}%</div></div>
+                </div>`;
+              }).join('')}
+            </div>`}
+          </div>
+        </div>`;
+
+      // count-up
+      detail.querySelectorAll('.hkpi-hero-num[data-to]').forEach(el => {
+        const to = parseInt(el.dataset.to)||0;
+        const dur=700, t0=performance.now();
+        (function step(now){ const p=Math.min((now-t0)/dur,1), e=1-Math.pow(1-p,3); el.textContent=Math.round(e*to).toLocaleString('id-ID'); if(p<1)requestAnimationFrame(step); })(t0);
+      });
+
+      detail.scrollIntoView({behavior:'smooth', block:'nearest'});
+    };
+
+    window.closeActRingDetail = function() {
+      document.getElementById('actRingDetail').style.display = 'none';
+      document.querySelectorAll('#activityRings [data-act]').forEach(el=>{ el.style.opacity=''; el.style.transform=''; });
+    };
   })();
 
   // ===== BELUM ABSEN LIST =====
@@ -3128,7 +3509,394 @@ const arrKelompok= Object.values(kelompok)
     }
   }
 
+  // ========================================================
+  // HOME KPI DETAIL PANELS
+  // ========================================================
+  function _hkpiNum(el, to, fmt) {
+    if (!el) return;
+    const dur = 800, t0 = performance.now();
+    (function step(now){
+      const p = Math.min((now-t0)/dur,1), e = 1-Math.pow(1-p,3);
+      el.textContent = fmt ? fmt(Math.round(e*to)) : Math.round(e*to).toLocaleString('id-ID');
+      if (p<1) requestAnimationFrame(step);
+    })(t0);
+  }
+  function _hkpiBar(pct, color){ return `<div style="flex:1;height:8px;background:#f1f5f9;border-radius:4px;overflow:hidden;"><div style="height:100%;border-radius:4px;background:${color};width:${pct}%;--w:${pct}%;animation:hkpi-bar .65s cubic-bezier(.4,0,.2,1) both;"></div></div>`; }
+  function _hkpiHeroCard(val, lbl, color, delay='0s'){
+    return `<div style="background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;padding:16px 18px;animation:hkpi-in .35s ${delay} ease both;">
+      <div style="font-size:22px;font-weight:800;color:${color};animation:hkpi-num .5s ${delay} ease both;" class="hkpi-hero-num" data-to="${val}">${val.toLocaleString('id-ID')}</div>
+      <div style="font-size:11px;color:#6b7280;margin-top:3px;font-weight:600;">${lbl}</div>
+    </div>`;
+  }
+  function _hkpiHeroCards(items){ return `<div style="display:grid;grid-template-columns:repeat(${items.length},1fr);gap:12px;margin-bottom:24px;">${items.map((x,i)=>_hkpiHeroCard(x.v,x.l,x.c,`${i*0.07}s`)).join('')}</div>`; }
+
+  window.openHomeKpiDetail = function(type) {
+    document.getElementById('homeMainContent').style.display = 'none';
+    const panel = document.getElementById('homeKpiPanel');
+    panel.style.display = 'block';
+    panel.style.animation = 'hkpi-in .35s ease both';
+    const titles = { awardee:'Total Awardee', aktivitas:'Total Aktivitas', partisipasi:'Rata-rata Partisipasi', kampus:'Total Kampus', absen:'Absen Bulan Ini', kelompok:'Total Kelompok', kegiatan:'Progress per Kegiatan' };
+    document.getElementById('homeKpiBreadcrumb').textContent = 'Dashboard › ' + (titles[type]||type);
+    requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+    _renderHomeKpiDetail(type);
+  };
+
+  window.closeHomeKpiDetail = function() {
+    document.getElementById('homeKpiPanel').style.display = 'none';
+    document.getElementById('homeMainContent').style.display = '';
+    requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+  };
+
+  function _renderHomeKpiDetail(type) {
+    const rows     = window._homeRows     || [];
+    const kampusD  = window._homeKampus   || {};
+    const pesertaD = window._homePeserta  || {};
+    const kelompokD= window._homeKelompok || {};
+    const tots     = window._homeTotals   || {};
+    const isFilled = v => v !== null && v !== undefined && String(v).trim() !== '';
+    const isH      = v => v === '✅' || v === 'TP';
+    const ACTS     = [
+      { key:'pre_test',        label:'Pre Test',   color:'#0055a5' },
+      { key:'post_test',       label:'Post Test',  color:'#7c3aed' },
+      { key:'assessment',      label:'Assessment', color:'#0891b2' },
+      { key:'mentoring',       label:'Mentoring',  color:'#00A59F' },
+      { key:'pembinaan',       label:'Pembinaan',  color:'#f97316' },
+      { key:'kelas_al_quran',  label:'Al-Quran',   color:'#16a34a' },
+    ];
+
+    const headEl = document.getElementById('homeKpiPanelHead');
+    const bodyEl = document.getElementById('homeKpiPanelBody');
+
+    if (type === 'awardee') {
+      const list = Object.values(pesertaD).sort((a,b)=>(b.hadir/Math.max(b.total,1))-(a.hadir/Math.max(a.total,1)));
+      const total = list.length;
+      const avgRate = total ? Math.round(list.reduce((s,x)=>s+(x.hadir/Math.max(x.total,1)),0)/total*100) : 0;
+      const top = list[0];
+      headEl.innerHTML = `<h2 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 4px;">Detail Awardee</h2><p style="color:#6b7280;font-size:13px;margin:0;">Data partisipasi per awardee</p>`;
+      const kampusSet = [...new Set(rows.map(r=>r.kampus).filter(Boolean))];
+      bodyEl.innerHTML = _hkpiHeroCards([
+        {v:total, l:'Total Awardee', c:'#1d4ed8'},
+        {v:avgRate, l:'Rata-rata Partisipasi (%)', c:'#16a34a'},
+        {v:kampusSet.length, l:'Kampus', c:'#0d9488'},
+      ]) + `<div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;">Top Awardee by Partisipasi</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">` +
+      list.slice(0,15).map((a,i)=>{
+        const pct = a.total ? Math.round(a.hadir/a.total*100) : 0;
+        const col = pct>=80?'#16a34a':pct>=60?'#f97316':'#dc2626';
+        const ini = (a.nama||'?').split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+        return `<div style="display:grid;grid-template-columns:32px 32px 1fr 80px 60px;align-items:center;gap:10px;padding:9px 12px;background:#fff;border:1px solid #f1f5f9;border-radius:10px;animation:hkpi-in .3s ${i*0.04}s ease both;">
+          <span style="font-size:11px;font-weight:700;color:#9ca3af;text-align:center;">${i+1}</span>
+          <div style="width:32px;height:32px;border-radius:50%;background:${col}22;color:${col};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;">${ini}</div>
+          <div style="font-size:12.5px;font-weight:600;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.nama||'—'}</div>
+          ${_hkpiBar(pct, col)}
+          <span style="font-size:12px;font-weight:700;color:${col};text-align:right;">${pct}%</span>
+        </div>`;
+      }).join('') + `</div>`;
+    }
+
+    else if (type === 'aktivitas') {
+      const totalAct = tots.totalAct||0, totalHad = tots.totalHad||0, totalHadirMurni = tots.totalHadirMurni||0, totalTP = tots.totalTP||0, totalTidakHadir = tots.totalTidakHadir||0;
+      headEl.innerHTML = `<h2 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 4px;">Detail Aktivitas</h2><p style="color:#6b7280;font-size:13px;margin:0;">Breakdown per jenis kegiatan</p>`;
+      const actStats = {};
+      ACTS.forEach(a => actStats[a.key] = {hadir:0, tp:0, tidak:0, total:0});
+      rows.forEach(r => { ACTS.forEach(a => { const v=r[a.key]; if(!isFilled(v)) return; actStats[a.key].total++; if(v==='✅') actStats[a.key].hadir++; else if(v==='TP') actStats[a.key].tp++; else actStats[a.key].tidak++; }); });
+      const maxTotal = Math.max(...ACTS.map(a=>actStats[a.key].total), 1);
+      bodyEl.innerHTML = _hkpiHeroCards([
+        {v:totalAct, l:'Total Aktivitas Tercatat', c:'#b45309'},
+        {v:totalHadirMurni, l:'Hadir', c:'#16a34a'},
+        {v:totalTP, l:'Tugas Pengganti', c:'#0d9488'},
+        {v:totalTidakHadir, l:'Tidak Hadir', c:'#dc2626'},
+      ]) + `<div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:12px;">Per Jenis Kegiatan</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">` +
+      ACTS.map((a,i)=>{
+        const s=actStats[a.key]; const pct=s.total?Math.round((s.hadir+s.tp)/s.total*100):0; const barW=Math.round(s.total/maxTotal*100);
+        return `<div style="background:#fff;border:1.5px solid #f1f5f9;border-radius:12px;padding:14px 16px;animation:hkpi-in .3s ${i*0.06}s ease both;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:${a.color};"></div>
+              <span style="font-size:13px;font-weight:700;color:#374151;">${a.label}</span>
+            </div>
+            <span style="font-size:13px;font-weight:800;color:${a.color};">${pct}%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">${_hkpiBar(barW,a.color)}<span style="font-size:11.5px;color:#6b7280;white-space:nowrap;">${s.total.toLocaleString('id-ID')} sesi</span></div>
+          <div style="display:flex;gap:12px;font-size:11px;color:#9ca3af;">
+            <span style="display:flex;align-items:center;gap:3px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> <b style="color:#16a34a">${s.hadir}</b></span>
+            <span>TP: <b style="color:#0d9488">${s.tp}</b></span>
+            <span style="display:flex;align-items:center;gap:3px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> <b style="color:#dc2626">${s.tidak}</b></span>
+          </div>
+        </div>`;
+      }).join('') + `</div>`;
+    }
+
+    else if (type === 'partisipasi') {
+      const totalAct = tots.totalAct||0, totalHad = tots.totalHad||0;
+      const avgPct = totalAct ? Math.round(totalHad/totalAct*100) : 0;
+      headEl.innerHTML = `<h2 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 4px;">Rata-rata Partisipasi</h2><p style="color:#6b7280;font-size:13px;margin:0;">Distribusi partisipasi per kampus</p>`;
+      const kampusList = Object.values(kampusD).sort((a,b)=>(b.hadir/Math.max(b.total,1))-(a.hadir/Math.max(a.total,1)));
+      const tier80 = kampusList.filter(k=>k.total&&k.hadir/k.total>=0.8).length;
+      const tier60 = kampusList.filter(k=>k.total&&k.hadir/k.total>=0.6&&k.hadir/k.total<0.8).length;
+      const tierBad = kampusList.filter(k=>k.total&&k.hadir/k.total<0.6).length;
+      bodyEl.innerHTML = _hkpiHeroCards([
+        {v:avgPct, l:'Rata-rata Partisipasi (%)', c:'#16a34a'},
+        {v:tier80, l:'Kampus ≥80% (Baik)', c:'#16a34a'},
+        {v:tier60, l:'Kampus 60–79% (Cukup)', c:'#f97316'},
+        {v:tierBad, l:'Kampus <60% (Perlu Perhatian)', c:'#dc2626'},
+      ]) + `<div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;">Partisipasi per Kampus</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">` +
+      kampusList.map((k,i)=>{
+        const pct = k.total?Math.round(k.hadir/k.total*100):0; const col = pct>=80?'#16a34a':pct>=60?'#f97316':'#dc2626';
+        return `<div style="display:grid;grid-template-columns:24px 1fr 1fr 56px;align-items:center;gap:10px;padding:8px 12px;background:#fff;border:1px solid #f1f5f9;border-radius:9px;animation:hkpi-in .3s ${i*0.03}s ease both;">
+          <span style="font-size:11px;color:#9ca3af;font-weight:700;">${i+1}</span>
+          <span style="font-size:12.5px;font-weight:600;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${k.nama||'—'}</span>
+          ${_hkpiBar(pct,col)}
+          <span style="font-size:12px;font-weight:700;color:${col};text-align:right;">${pct}%</span>
+        </div>`;
+      }).join('') + `</div>`;
+    }
+
+    else if (type === 'kampus') {
+      const kampusList = Object.values(kampusD).sort((a,b)=>b.total-a.total);
+      const maxT = Math.max(...kampusList.map(k=>k.total),1);
+      headEl.innerHTML = `<h2 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 4px;">Detail Kampus</h2><p style="color:#6b7280;font-size:13px;margin:0;">Aktivitas per kampus</p>`;
+      const avgAct = kampusList.length ? Math.round(kampusList.reduce((s,k)=>s+k.total,0)/kampusList.length) : 0;
+      bodyEl.innerHTML = _hkpiHeroCards([
+        {v:kampusList.length, l:'Total Kampus', c:'#0d9488'},
+        {v:avgAct, l:'Rata-rata Aktivitas/Kampus', c:'#1d4ed8'},
+        {v:kampusList[0]?.total||0, l:'Aktivitas Tertinggi', c:'#b45309'},
+      ]) + `<div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;">Aktivitas per Kampus</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">` +
+      kampusList.map((k,i)=>{
+        const pct = k.total?Math.round(k.hadir/k.total*100):0; const barW=Math.round(k.total/maxT*100); const col=pct>=80?'#16a34a':pct>=60?'#f97316':'#dc2626';
+        return `<div style="display:grid;grid-template-columns:24px 1fr 1fr 80px 56px;align-items:center;gap:10px;padding:8px 12px;background:#fff;border:1px solid #f1f5f9;border-radius:9px;animation:hkpi-in .3s ${i*0.03}s ease both;">
+          <span style="font-size:11px;color:#9ca3af;font-weight:700;">${i+1}</span>
+          <span style="font-size:12.5px;font-weight:600;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${k.nama||'—'}</span>
+          ${_hkpiBar(barW,'#0d9488')}
+          <span style="font-size:11px;color:#6b7280;text-align:right;">${k.total.toLocaleString('id-ID')} sesi</span>
+          <span style="font-size:12px;font-weight:700;color:${col};text-align:right;">${pct}%</span>
+        </div>`;
+      }).join('') + `</div>`;
+    }
+
+    else if (type === 'absen') {
+      const now = new Date(), curMonth = now.getMonth(), curYear = now.getFullYear();
+      const absenSet = new Set(rows.filter(r=>{ const d=new Date(r.tanggal||''); return d.getFullYear()===curYear&&d.getMonth()===curMonth&&isH(r.mentoring||r.pembinaan||r.pre_test||r.post_test||r.assessment); }).map(r=>r.no_induk));
+      const allNim = [...new Set(rows.map(r=>r.no_induk))];
+      const belum = allNim.filter(n=>!absenSet.has(n));
+      const sudah = allNim.filter(n=>absenSet.has(n));
+      const MONTH_FULL = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+      headEl.innerHTML = `<h2 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 4px;">Absen ${MONTH_FULL[curMonth]} ${curYear}</h2><p style="color:#6b7280;font-size:13px;margin:0;">Awardee yang belum ada rekam kehadiran bulan ini</p>`;
+      const pctHadir = allNim.length ? Math.round(sudah.length/allNim.length*100) : 0;
+      bodyEl.innerHTML = _hkpiHeroCards([
+        {v:belum.length, l:'Belum Ada Rekam', c:'#c2410c'},
+        {v:sudah.length, l:'Sudah Ada Rekam', c:'#16a34a'},
+        {v:allNim.length, l:'Total Awardee', c:'#1d4ed8'},
+      ]) + `<div style="background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:14px 16px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px;font-weight:600;color:#374151;">
+          <span>Tingkat Kehadiran Bulan Ini</span><span style="color:${pctHadir>=80?'#16a34a':pctHadir>=60?'#f97316':'#dc2626'}">${pctHadir}%</span>
+        </div>
+        ${_hkpiBar(pctHadir, pctHadir>=80?'#16a34a':pctHadir>=60?'#f97316':'#dc2626')}
+      </div>` + (belum.length ? `<div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;">Daftar Belum Ada Rekam (${belum.length})</div>
+      <div style="display:flex;flex-direction:column;gap:5px;">` +
+      belum.map((nim,i)=>{
+        const r = rows.find(x=>x.no_induk===nim); const nama=r?.nama||nim; const kampus=r?.kampus||'—';
+        const ini=(nama).split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+        return `<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fff;border:1px solid #f1f5f9;border-radius:9px;animation:hkpi-in .3s ${i*0.025}s ease both;">
+          <div style="width:30px;height:30px;border-radius:50%;background:#ffedd5;color:#c2410c;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;">${ini}</div>
+          <div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:600;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${nama}</div><div style="font-size:10.5px;color:#9ca3af;">${kampus}</div></div>
+          <span style="font-size:10.5px;color:#9ca3af;">${nim}</span>
+        </div>`;
+      }).join('') + `</div>` : `<div style="text-align:center;padding:32px;color:#16a34a;">
+  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:8px;display:block;margin-left:auto;margin-right:auto;"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg>
+  <div style="font-weight:700;font-size:14px;">Semua awardee sudah ada rekam kehadiran!</div>
+  <div style="font-size:12px;color:#9ca3af;margin-top:4px;">Tidak ada yang absen bulan ini</div>
+</div>`);
+    }
+
+    else if (type === 'kelompok') {
+      const kelList = Object.values(kelompokD).sort((a,b)=>b.total-a.total);
+      const maxT = Math.max(...kelList.map(k=>k.total),1);
+      headEl.innerHTML = `<h2 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 4px;">Detail Kelompok</h2><p style="color:#6b7280;font-size:13px;margin:0;">Aktivitas per kelompok</p>`;
+      const avgPct = kelList.length ? Math.round(kelList.reduce((s,k)=>s+(k.total?k.hadir/k.total:0),0)/kelList.length*100) : 0;
+      bodyEl.innerHTML = _hkpiHeroCards([
+        {v:kelList.length, l:'Total Kelompok', c:'#7c3aed'},
+        {v:avgPct, l:'Rata-rata Partisipasi (%)', c:'#16a34a'},
+        {v:kelList[0]?.total||0, l:'Aktivitas Tertinggi', c:'#b45309'},
+      ]) + `<div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;">Partisipasi per Kelompok</div>
+      <div style="display:flex;flex-direction:column;gap:6px;">` +
+      kelList.map((k,i)=>{
+        const pct=k.total?Math.round(k.hadir/k.total*100):0; const barW=Math.round(k.total/maxT*100); const col=pct>=80?'#16a34a':pct>=60?'#f97316':'#dc2626';
+        return `<div style="display:grid;grid-template-columns:24px 1fr 1fr 70px 50px;align-items:center;gap:10px;padding:8px 12px;background:#fff;border:1px solid #f1f5f9;border-radius:9px;animation:hkpi-in .3s ${i*0.03}s ease both;">
+          <span style="font-size:11px;color:#9ca3af;font-weight:700;">${i+1}</span>
+          <span style="font-size:12.5px;font-weight:600;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${k.nama||'—'}</span>
+          ${_hkpiBar(barW,'#7c3aed')}
+          <span style="font-size:11px;color:#6b7280;text-align:right;">${k.total.toLocaleString('id-ID')} sesi</span>
+          <span style="font-size:12px;font-weight:700;color:${col};text-align:right;">${pct}%</span>
+        </div>`;
+      }).join('') + `</div>`;
+    }
+
+    else if (type === 'kegiatan') {
+      const actD = window._homeActStats;
+      if (!actD) { bodyEl.innerHTML = '<p>Data belum siap.</p>'; return; }
+      const { ACTS: A, stats } = actD;
+      headEl.innerHTML = `<h2 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 4px;">Progress per Kegiatan</h2><p style="color:#6b7280;font-size:13px;margin:0;">Klik ring untuk melihat detail ketidakhadiran</p>`;
+
+      // Sub-detail panel for non-attenders
+      const subPanelHtml = `<div id="hkpiSubPanel" style="display:none;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <button onclick="document.getElementById('hkpiSubPanel').style.display='none';document.getElementById('hkpiRingsGrid').style.display='grid';" style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:#fef2f2;border:1.5px solid #fecaca;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;color:#dc2626;transition:all .15s;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg> Kembali ke Semua Kegiatan
+          </button>
+          <span id="hkpiSubTitle" style="font-size:13px;font-weight:700;color:#dc2626;"></span>
+        </div>
+        <div id="hkpiSubBody"></div>
+      </div>`;
+
+      bodyEl.innerHTML = subPanelHtml +
+        `<div id="hkpiRingsGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;">` +
+        A.map((a,i)=>{
+          const s=stats[a.key]; const pct=s.total?Math.round(s.hadir/s.total*100):0;
+          const notHadir = s.total - s.hadir;
+          const rr=34, circ=2*Math.PI*rr, dash=(pct/100)*circ, gap=circ-dash;
+          const rdash=(notHadir/Math.max(s.total,1))*circ, rgap=circ-rdash;
+          return `<div onclick="openRingDetail('${a.key}')" style="background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s;animation:hkpi-in .35s ${i*0.07}s ease both;"
+            onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 24px rgba(220,38,38,.12)';this.style.borderColor='#fca5a5'"
+            onmouseout="this.style.transform='';this.style.boxShadow='';this.style.borderColor='#e5e7eb'">
+            <div style="position:relative;width:84px;height:84px;">
+              <svg width="84" height="84" viewBox="0 0 84 84">
+                <circle cx="42" cy="42" r="${rr}" fill="none" stroke="#f3f4f6" stroke-width="9"/>
+                <circle cx="42" cy="42" r="${rr}" fill="none" stroke="${a.color}" stroke-width="9"
+                  stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}" stroke-linecap="round"
+                  transform="rotate(-90 42 42)"/>
+                <circle cx="42" cy="42" r="${rr}" fill="none" stroke="#fca5a5" stroke-width="9"
+                  stroke-dasharray="${rdash.toFixed(1)} ${rgap.toFixed(1)}" stroke-linecap="round"
+                  transform="rotate(${(-90+(pct/100*360)).toFixed(1)} 42 42)" opacity="0.6"/>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;">
+                <span style="font-size:14px;font-weight:800;color:#111827;line-height:1;">${pct}%</span>
+              </div>
+            </div>
+            <div style="font-size:13px;font-weight:700;color:#374151;">${a.label}</div>
+            <div style="display:flex;gap:10px;font-size:11px;">
+              <span style="color:#16a34a;font-weight:600;display:flex;align-items:center;gap:3px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>${s.hadir}</span>
+              <span style="color:#dc2626;font-weight:600;display:flex;align-items:center;gap:3px;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>${notHadir}</span>
+            </div>
+            <div style="font-size:9.5px;color:#9ca3af;display:flex;align-items:center;gap:3px;">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Klik untuk detail
+            </div>
+          </div>`;
+        }).join('') + `</div>` +
+        `<div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;">Perbandingan Partisipasi</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">` +
+        [...A].sort((a,b)=>{const sa=stats[a.key],sb=stats[b.key]; return (sb.hadir/Math.max(sb.total,1))-(sa.hadir/Math.max(sa.total,1));}).map((a,i)=>{
+          const s=stats[a.key]; const pct=s.total?Math.round(s.hadir/s.total*100):0;
+          return `<div style="display:grid;grid-template-columns:110px 1fr 50px;align-items:center;gap:10px;animation:hkpi-in .3s ${i*0.05}s ease both;">
+            <span style="font-size:12.5px;font-weight:600;color:#374151;">${a.label}</span>
+            ${_hkpiBar(pct,a.color)}
+            <span style="font-size:12px;font-weight:700;color:${a.color};text-align:right;">${pct}%</span>
+          </div>`;
+        }).join('') + `</div>`;
+
+      // Ring click handler
+      window.openRingDetail = function(actKey) {
+        const actD2 = window._homeActStats; if (!actD2) return;
+        const act = actD2.ACTS.find(a=>a.key===actKey); if (!act) return;
+        const rows2 = window._homeRows || [];
+        const isFilled2 = v => v!==null&&v!==undefined&&String(v).trim()!=='';
+        const isH2 = v => v==='✅'||v==='TP';
+
+        // Collect non-attenders per nim (rows where this activity was filled but NOT hadir)
+        const nimMap = {};
+        rows2.forEach(r => {
+          const v = r[actKey];
+          if (!isFilled2(v)) return;
+          const nim = r.no_induk;
+          if (!nimMap[nim]) nimMap[nim] = { nim, nama:r.nama||'', kampus:r.kampus||'', tidak:0, hadir:0, total:0 };
+          nimMap[nim].total++;
+          if (isH2(v)) nimMap[nim].hadir++;
+          else nimMap[nim].tidak++;
+        });
+        const notList = Object.values(nimMap).filter(x=>x.tidak>0).sort((a,b)=>b.tidak-a.tidak);
+        const totalSesi = Object.values(nimMap).reduce((s,x)=>s+x.total,0);
+        const totalTidak = Object.values(nimMap).reduce((s,x)=>s+x.tidak,0);
+        const totalHdir = Object.values(nimMap).reduce((s,x)=>s+x.hadir,0);
+        const pctTidak = totalSesi ? Math.round(totalTidak/totalSesi*100) : 0;
+
+        document.getElementById('hkpiRingsGrid').style.display = 'none';
+        const sub = document.getElementById('hkpiSubPanel');
+        sub.style.display = 'block';
+        sub.style.animation = 'hkpi-in .3s ease both';
+        document.getElementById('hkpiSubTitle').innerHTML = `
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:middle;margin-right:4px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          ${act.label} — ${totalTidak} ketidakhadiran (${pctTidak}%)`;
+
+        const rr2=34, circ2=2*Math.PI*rr2, dashH=(totalHdir/Math.max(totalSesi,1))*circ2, dashT=(totalTidak/Math.max(totalSesi,1))*circ2;
+        document.getElementById('hkpiSubBody').innerHTML =
+          `<div style="display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;background:#fff5f5;border:1.5px solid #fecaca;border-radius:16px;padding:20px;margin-bottom:20px;">
+            <div style="position:relative;width:100px;height:100px;">
+              <svg width="100" height="100" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="${rr2}" fill="none" stroke="#f3f4f6" stroke-width="10"/>
+                <circle cx="50" cy="50" r="${rr2}" fill="none" stroke="#16a34a" stroke-width="10"
+                  stroke-dasharray="${dashH.toFixed(1)} ${(circ2-dashH).toFixed(1)}" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+                <circle cx="50" cy="50" r="${rr2}" fill="none" stroke="#dc2626" stroke-width="10"
+                  stroke-dasharray="${dashT.toFixed(1)} ${(circ2-dashT).toFixed(1)}" stroke-linecap="round"
+                  transform="rotate(${(-90+totalHdir/Math.max(totalSesi,1)*360).toFixed(1)} 50 50)" opacity="0.85"/>
+              </svg>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+                <span style="font-size:16px;font-weight:800;color:#dc2626;">${pctTidak}%</span>
+                <span style="font-size:9px;color:#9ca3af;font-weight:600;">tidak hadir</span>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;gap:8px;align-items:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <span style="font-size:13px;color:#374151;">Tidak hadir: <b style="color:#dc2626;font-size:16px;">${totalTidak.toLocaleString('id-ID')}</b> sesi</span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <span style="font-size:13px;color:#374151;">Hadir: <b style="color:#16a34a;font-size:16px;">${totalHdir.toLocaleString('id-ID')}</b> sesi</span>
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span style="font-size:13px;color:#374151;">Awardee terdampak: <b>${notList.length}</b> orang</span>
+              </div>
+            </div>
+          </div>` +
+          `<div style="font-size:13px;font-weight:700;color:#dc2626;margin-bottom:10px;display:flex;align-items:center;gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            Daftar Awardee Tidak Hadir (${notList.length})
+          </div>` +
+          `<div style="display:flex;flex-direction:column;gap:5px;">` +
+          (notList.length ? notList.map((x,i)=>{
+            const ini=(x.nama).split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase();
+            const pct2=x.total?Math.round(x.hadir/x.total*100):0; const severity=x.tidak>=3?'#7f1d1d':x.tidak>=2?'#dc2626':'#ef4444';
+            return `<div style="display:grid;grid-template-columns:32px 32px 1fr auto 60px;align-items:center;gap:10px;padding:9px 12px;background:#fff;border:1.5px solid ${x.tidak>=2?'#fecaca':'#f1f5f9'};border-radius:10px;animation:hkpi-in .28s ${i*0.025}s ease both;">
+              <span style="font-size:11px;font-weight:700;color:#9ca3af;text-align:center;">${i+1}</span>
+              <div style="width:32px;height:32px;border-radius:50%;background:#fef2f2;color:${severity};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;">${ini}</div>
+              <div style="min-width:0;"><div style="font-size:12.5px;font-weight:600;color:#111827;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${x.nama}</div><div style="font-size:10.5px;color:#9ca3af;">${x.kampus}</div></div>
+              <span style="background:#fef2f2;color:${severity};font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;display:flex;align-items:center;gap:4px;">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                ${x.tidak}×
+              </span>
+              <div style="text-align:right;"><div style="font-size:11.5px;font-weight:700;color:${pct2>=80?'#16a34a':pct2>=60?'#f97316':'#dc2626'}">${pct2}%</div><div style="font-size:9.5px;color:#9ca3af;">${x.hadir}/${x.total}</div></div>
+            </div>`;
+          }).join('') : `<div style="text-align:center;padding:32px;color:#16a34a;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:8px;display:block;margin-left:auto;margin-right:auto;"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg>
+            <div style="font-weight:700;font-size:14px;">Semua awardee hadir</div>
+            <div style="font-size:12px;color:#9ca3af;margin-top:4px;">Tidak ada ketidakhadiran tercatat</div>
+          </div>`) + `</div>`;
+      };
+    }
+
+    // animate hero nums
+    bodyEl.querySelectorAll('.hkpi-hero-num[data-to]').forEach(el => {
+      _hkpiNum(el, parseInt(el.dataset.to)||0);
+    });
+  }
+
 });
+
 </script>
 
 

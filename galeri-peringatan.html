@@ -3422,7 +3422,7 @@
   <button class="app-header-toggle" onclick="toggleSidebar()" aria-label="Menu">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
-  <div class="app-header-title">Galeri Peringatan</div>
+  <div class="app-header-title" id="gpHeaderTitle">Galeri Peringatan</div>
   <div class="app-header-right">
     <div class="header-user-info" id="headerUserInfo">
       <div class="header-greeting"><span id="headerGreeting">Selamat datang,</span> <strong id="headerName">...</strong> <span class="header-role-badge" id="headerRoleBadge">Awardee</span></div>
@@ -4712,15 +4712,49 @@ function getSpComputedPct(s){
    INIT
 ========================================================= */
 async function gpInit(){
-  // Wait for auth
+  // Wait for auth.js to finish DB verification
   let role = '';
   try {
     const info = window._authReady ? await window._authReady : null;
     role = info?.role || window._authRole || '';
   } catch(e){ role = ''; }
-  if (!role) role = 'user';
 
+  // If auth.js returned 'user' (possible fallback), re-verify directly from profiles table
+  if ((!role || role === 'user') && window._authClient && window._authUser) {
+    try {
+      const { data: prof } = await window._authClient
+        .from('profiles').select('role').eq('id', window._authUser.id).single();
+      if (prof?.role && prof.role !== 'user') {
+        role = prof.role;
+        window._authRole = role;
+        // Update cache so other pages benefit too
+        try {
+          const c = JSON.parse(sessionStorage.getItem('_bsi_auth') || '{}');
+          c.role = role;
+          sessionStorage.setItem('_bsi_auth', JSON.stringify(c));
+        } catch(e){}
+      }
+    } catch(e){ console.warn('gpInit role re-verify failed', e); }
+  }
+
+  if (!role) role = 'user';
   _gpRole = role;
+
+  // Re-apply sidebar + role badge with verified role
+  if (typeof _toggleRoleGroups === 'function') _toggleRoleGroups(role);
+  const sRoleEl = document.getElementById('sidebarRole');
+  if (sRoleEl && typeof _roleLabel === 'function') sRoleEl.textContent = _roleLabel(role);
+
+  // Update header title + active sidebar link based on resolved role
+  const isAdmin = role === 'admin' || role === 'operator';
+  const titleEl = document.getElementById('gpHeaderTitle');
+  if (titleEl) titleEl.textContent = isAdmin ? 'Kelola Peringatan' : 'Galeri Peringatan';
+  document.querySelectorAll('a[href="galeri-peringatan.html"]').forEach(a => a.classList.remove('active'));
+  const activeLink = isAdmin
+    ? document.getElementById('navAdminPeringatan')
+    : document.querySelector('a[href="galeri-peringatan.html"]:not(#navAdminPeringatan)');
+  if (activeLink) activeLink.classList.add('active');
+
   document.getElementById('gpLoading').style.display = 'flex';
 
   try {

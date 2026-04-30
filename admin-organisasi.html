@@ -14,8 +14,17 @@
 
     /* STATS */
     .pr-stats { display: grid; grid-template-columns: repeat(5,1fr); gap: 14px; margin-bottom: 28px; }
-    .pr-stat  { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:14px; }
-    .pr-stat-icon { width:44px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .pr-stat  { background:#fff; border:1.5px solid #e5e7eb; border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:14px; cursor:pointer; transition:transform .18s,box-shadow .18s,border-color .18s; animation:pr-stat-in .4s ease both; }
+    .pr-stat:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,.09); }
+    .pr-stat:hover:nth-child(1) { border-color:#b45309; box-shadow:0 8px 24px rgba(180,83,9,.15); }
+    .pr-stat:hover:nth-child(2) { border-color:#1d4ed8; box-shadow:0 8px 24px rgba(29,78,216,.15); }
+    .pr-stat:hover:nth-child(3) { border-color:#0d9488; box-shadow:0 8px 24px rgba(13,148,136,.15); }
+    .pr-stat:hover:nth-child(4) { border-color:#7c3aed; box-shadow:0 8px 24px rgba(124,58,237,.15); }
+    .pr-stat:hover:nth-child(5) { border-color:#be185d; box-shadow:0 8px 24px rgba(190,24,93,.15); }
+    .pr-stat:nth-child(1){animation-delay:.05s} .pr-stat:nth-child(2){animation-delay:.1s} .pr-stat:nth-child(3){animation-delay:.15s} .pr-stat:nth-child(4){animation-delay:.2s} .pr-stat:nth-child(5){animation-delay:.25s}
+    @keyframes pr-stat-in { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+    .pr-stat-icon { width:44px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform .18s; }
+    .pr-stat:hover .pr-stat-icon { transform:scale(1.1) rotate(-4deg); }
     .pr-stat-icon svg { width:21px; height:21px; }
     .si--gold   { background:#fef3c7; color:#b45309; }
     .si--blue   { background:#dbeafe; color:#1d4ed8; }
@@ -25,6 +34,8 @@
     .pr-stat-val { font-size:24px; font-weight:800; color:#111827; line-height:1; }
     .pr-stat-lbl { font-size:11px; color:#6b7280; margin-top:3px; }
     .pr-stat-sub { font-size:10px; color:#9ca3af; margin-top:3px; }
+    .pr-stat-hint { font-size:9.5px; color:#9ca3af; margin-top:5px; display:flex; align-items:center; gap:3px; transition:color .15s; }
+    .pr-stat:hover .pr-stat-hint { color:#0055a5; }
 
     /* SKELETON */
     .skeleton { background:linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 50%,#f3f4f6 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:8px; }
@@ -688,6 +699,122 @@
       .tf-cards{ grid-template-columns: 1fr; }
       .tf-hero{ padding:18px 16px; }
     }
+
+    /* ============================================
+       ORG KPI DETAIL PANEL
+    ============================================ */
+    @keyframes org-kpi-in { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes org-bar-grow { from{width:0} to{width:var(--w,0%)} }
+    @keyframes org-item-in { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+
+    .org-kpi-panel { animation: org-kpi-in .35s ease both; }
+
+    /* Back bar */
+    .pr-kpi-back-bar {
+      display:flex; align-items:center; gap:12px;
+      margin-bottom:20px;
+    }
+    .pr-kpi-back-btn {
+      padding:7px 16px; font-size:12.5px; font-weight:700;
+      background:#fff; border:1.5px solid #e5e7eb; border-radius:9px;
+      color:#374151; cursor:pointer; transition:all .15s;
+      display:inline-flex; align-items:center; gap:5px;
+    }
+    .pr-kpi-back-btn:hover { background:#f3f4f6; border-color:#d1d5db; }
+    .pr-kpi-breadcrumb { font-size:12px; color:#9ca3af; }
+
+    /* Head */
+    .pr-kpi-head { margin-bottom:24px; }
+    .pr-kpi-head h2 { font-size:20px; font-weight:800; color:#111827; margin:0 0 4px; }
+    .pr-kpi-head p  { font-size:13px; color:#6b7280; margin:0; }
+
+    /* Hero grid */
+    .org-kpi-hero {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+      gap:14px; margin-bottom:28px;
+    }
+    .org-kpi-hero-card {
+      background:#fff; border:1.5px solid #e5e7eb; border-radius:16px;
+      padding:18px 20px;
+      animation: org-kpi-in .4s ease both;
+    }
+    .org-kpi-hero-card:nth-child(1){animation-delay:.04s}
+    .org-kpi-hero-card:nth-child(2){animation-delay:.09s}
+    .org-kpi-hero-card:nth-child(3){animation-delay:.14s}
+    .org-kpi-hero-card:nth-child(4){animation-delay:.19s}
+    .org-kpi-hero-num { font-size:28px; font-weight:800; color:#111827; line-height:1; }
+    .org-kpi-hero-lbl { font-size:11.5px; color:#6b7280; margin-top:5px; }
+
+    /* Section */
+    .org-kpi-section {
+      background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+      padding:18px 20px; margin-bottom:18px;
+      animation: org-kpi-in .4s ease both;
+    }
+    .org-kpi-section-title {
+      font-size:13px; font-weight:800; color:#111827;
+      margin:0 0 16px; display:flex; align-items:center; gap:7px;
+    }
+
+    /* Bar rows with animation */
+    .org-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:9px; font-size:12px; }
+    .org-bar-row:last-child { margin-bottom:0; }
+    .org-bar-label { flex:0 0 150px; color:#374151; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .org-bar-track { flex:1; height:22px; background:#f3f4f6; border-radius:6px; overflow:hidden; position:relative; }
+    .org-bar-fill {
+      height:100%; border-radius:6px;
+      display:flex; align-items:center; justify-content:flex-end;
+      padding-right:8px; color:#fff; font-size:11px; font-weight:700;
+      width:0;
+      animation: org-bar-grow .7s cubic-bezier(.4,0,.2,1) both;
+    }
+    .org-bar-count { flex:0 0 auto; font-weight:700; color:#111827; font-size:12px; min-width:32px; text-align:right; }
+
+    /* Ranked list with avatar */
+    .org-rank-list { display:flex; flex-direction:column; gap:8px; }
+    .org-rank-item {
+      display:flex; align-items:center; gap:10px;
+      padding:9px 12px; border-radius:10px; background:#f9fafb;
+      font-size:12px;
+      animation: org-item-in .4s ease both;
+    }
+    .org-rank-item:hover { background:#f3f4f6; }
+    .org-rank-pos {
+      width:24px; height:24px; border-radius:50%; background:#e5e7eb; color:#6b7280;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800; font-size:11px; flex-shrink:0;
+    }
+    .org-rank-pos.gold   { background:linear-gradient(135deg,#fbbf24,#d97706); color:#fff; }
+    .org-rank-pos.silver { background:linear-gradient(135deg,#d4d4d8,#71717a); color:#fff; }
+    .org-rank-pos.bronze { background:linear-gradient(135deg,#fb923c,#c2410c); color:#fff; }
+    .org-avatar {
+      width:34px; height:34px; border-radius:10px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:800; font-size:12px; color:#fff;
+    }
+    .org-rank-name { flex:1; color:#111827; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .org-rank-meta { color:#6b7280; font-size:11px; white-space:nowrap; }
+    .org-rank-badge {
+      font-weight:800; color:#111827; font-size:12px;
+      background:#fff; padding:2px 10px; border-radius:99px; border:1px solid #e5e7eb;
+      white-space:nowrap;
+    }
+
+    /* Distribution pills */
+    .org-dist-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+      gap:10px; margin-top:4px;
+    }
+    .org-dist-card {
+      background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px;
+      padding:12px 14px; text-align:center;
+    }
+    .org-dist-num { font-size:22px; font-weight:800; color:#111827; }
+    .org-dist-lbl { font-size:11px; color:#6b7280; margin-top:3px; }
+
+    .org-kpi-2col { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    @media(max-width:720px){ .org-kpi-2col{ grid-template-columns:1fr; } }
+    @media(max-width:480px){ .org-kpi-hero{ grid-template-columns:1fr 1fr; } }
   </style>
 </head>
 
@@ -820,7 +947,23 @@
   </header>
 
   <main class="app-content">
-    <div class="pr-page">
+
+    <!-- KPI DETAIL PANEL (inline, shown on KPI click) -->
+    <div id="orgKpiPanel" style="display:none;">
+      <div class="pr-page org-kpi-panel">
+        <div class="pr-kpi-back-bar">
+          <button class="pr-kpi-back-btn" onclick="closeOrgKpiDetail()">← Kembali</button>
+          <span class="pr-kpi-breadcrumb" id="orgKpiBreadcrumb">Detail KPI</span>
+        </div>
+        <div class="pr-kpi-head">
+          <h2 id="orgKpiTitle">Detail</h2>
+          <p id="orgKpiSub">—</p>
+        </div>
+        <div id="orgKpiBody"></div>
+      </div>
+    </div>
+
+    <div class="pr-page" id="orgMainContent">
 
       <div class="pr-ph">
         <h1>Kelola Organisasi &amp; Insight</h1>
@@ -1553,27 +1696,44 @@ function renderStats(){
 
   const el = document.getElementById('prStats');
   el.innerHTML = `
-    <div class="pr-stat">
+    <div class="pr-stat" onclick="openOrgKpiDetail('total')" style="cursor:pointer;">
       <div class="pr-stat-icon si--gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M20 8v6M23 11h-6"/></svg></div>
-      <div><div class="pr-stat-val">${total.toLocaleString('id-ID')}</div><div class="pr-stat-lbl">Total Keterlibatan</div></div>
+      <div style="flex:1"><div class="pr-stat-val" id="sv-total">0</div><div class="pr-stat-lbl">Total Keterlibatan</div><div class="pr-stat-hint"><span>Lihat detail</span><span>→</span></div></div>
     </div>
-    <div class="pr-stat">
+    <div class="pr-stat" onclick="openOrgKpiDetail('awardee')" style="cursor:pointer;">
       <div class="pr-stat-icon si--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-      <div><div class="pr-stat-val">${awardees.toLocaleString('id-ID')}</div><div class="pr-stat-lbl">Awardee Aktif Berorganisasi</div></div>
+      <div style="flex:1"><div class="pr-stat-val" id="sv-awardee">0</div><div class="pr-stat-lbl">Awardee Aktif Berorganisasi</div><div class="pr-stat-hint"><span>Lihat detail</span><span>→</span></div></div>
     </div>
-    <div class="pr-stat">
+    <div class="pr-stat" onclick="openOrgKpiDetail('kampus')" style="cursor:pointer;">
       <div class="pr-stat-icon si--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-      <div><div class="pr-stat-val">${kampus.toLocaleString('id-ID')}</div><div class="pr-stat-lbl">Kampus Terlibat</div></div>
+      <div style="flex:1"><div class="pr-stat-val" id="sv-kampus">0</div><div class="pr-stat-lbl">Kampus Terlibat</div><div class="pr-stat-hint"><span>Lihat detail</span><span>→</span></div></div>
     </div>
-    <div class="pr-stat">
+    <div class="pr-stat" onclick="openOrgKpiDetail('intnl')" style="cursor:pointer;">
       <div class="pr-stat-icon si--purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12a10 10 0 1 0 20 0 10 10 0 0 0-20 0z"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></div>
-      <div><div class="pr-stat-val">${intnl.toLocaleString('id-ID')}</div><div class="pr-stat-lbl">Tingkat Internasional</div></div>
+      <div style="flex:1"><div class="pr-stat-val" id="sv-intnl">0</div><div class="pr-stat-lbl">Tingkat Internasional</div><div class="pr-stat-hint"><span>Lihat detail</span><span>→</span></div></div>
     </div>
-    <div class="pr-stat">
+    <div class="pr-stat" onclick="openOrgKpiDetail('strat')" style="cursor:pointer;">
       <div class="pr-stat-icon si--pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7z"/><line x1="5" y1="20" x2="19" y2="20"/></svg></div>
-      <div><div class="pr-stat-val">${pctStrat}%</div><div class="pr-stat-lbl">Peran Strategis</div><div class="pr-stat-sub">${strategic.toLocaleString('id-ID')} dari ${total.toLocaleString('id-ID')}</div></div>
+      <div style="flex:1"><div class="pr-stat-val" id="sv-strat">0%</div><div class="pr-stat-lbl">Peran Strategis</div><div class="pr-stat-sub" id="sv-strat-sub">${strategic.toLocaleString('id-ID')} dari ${total.toLocaleString('id-ID')}</div><div class="pr-stat-hint"><span>Lihat detail</span><span>→</span></div></div>
     </div>
   `;
+  // count-up animations
+  orgAnimateCount(document.getElementById('sv-total'),   total,    v => v.toLocaleString('id-ID'));
+  orgAnimateCount(document.getElementById('sv-awardee'), awardees, v => v.toLocaleString('id-ID'));
+  orgAnimateCount(document.getElementById('sv-kampus'),  kampus,   v => v.toLocaleString('id-ID'));
+  orgAnimateCount(document.getElementById('sv-intnl'),   intnl,    v => v.toLocaleString('id-ID'));
+  orgAnimateCount(document.getElementById('sv-strat'),   pctStrat, v => v + '%');
+}
+
+function orgAnimateCount(el, to, fmt) {
+  if (!el) return;
+  const duration = 900, start = performance.now();
+  (function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmt(Math.round(ease * to));
+    if (p < 1) requestAnimationFrame(step);
+  })(start);
 }
 
 /* =============================================
@@ -2531,6 +2691,351 @@ function escapeHtml(s){
 function escapeAttr(s){ return escapeHtml(s).replace(/`/g,'&#96;'); }
 
 init();
+
+/* =============================================
+   ORG KPI DETAIL PANEL
+============================================= */
+function openOrgKpiDetail(type){
+  document.getElementById('orgMainContent').style.display = 'none';
+  document.getElementById('orgKpiPanel').style.display = 'block';
+  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+  renderOrgKpiDetail(type);
+}
+
+function closeOrgKpiDetail(){
+  document.getElementById('orgKpiPanel').style.display = 'none';
+  document.getElementById('orgMainContent').style.display = '';
+}
+
+/* Avatar color palette */
+const _orgAvatarColors = ['#b45309','#1d4ed8','#0d9488','#7c3aed','#be185d','#0369a1','#047857','#9a3412'];
+function _orgAvatarColor(i){ return _orgAvatarColors[i % _orgAvatarColors.length]; }
+function _orgInitials(name){ return (name||'?').split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?'; }
+
+function _orgBarSection(title, entries, colorClass, maxOverride){
+  if(!entries.length) return `<div class="org-kpi-section"><div class="org-kpi-section-title">${title}</div><div class="tbl-empty"><p>Belum ada data</p></div></div>`;
+  const max = maxOverride || Math.max(...entries.map(e=>e.count));
+  const rows = entries.map((e,i) => {
+    const pct = max ? Math.round(e.count * 100 / max) : 0;
+    const delay = (i * 0.05).toFixed(2);
+    return `<div class="org-bar-row">
+      <div class="org-bar-label" title="${escapeHtml(e.label)}">${escapeHtml(e.label)}</div>
+      <div class="org-bar-track">
+        <div class="org-bar-fill ${colorClass}" style="--w:${pct}%;animation-delay:${delay}s;">${pct>18?e.count:''}</div>
+      </div>
+      <div class="org-bar-count">${e.count.toLocaleString('id-ID')}</div>
+    </div>`;
+  }).join('');
+  return `<div class="org-kpi-section"><div class="org-kpi-section-title">${title}</div>${rows}</div>`;
+}
+
+function _orgHeroCard(num, lbl, color, delay){
+  return `<div class="org-kpi-hero-card" style="border-color:${color}20;animation-delay:${delay}s;">
+    <div class="org-kpi-hero-num" style="color:${color};">${typeof num==='number'?num.toLocaleString('id-ID'):num}</div>
+    <div class="org-kpi-hero-lbl">${lbl}</div>
+  </div>`;
+}
+
+function renderOrgKpiDetail(type){
+  const titleEl = document.getElementById('orgKpiTitle');
+  const subEl   = document.getElementById('orgKpiSub');
+  const breadEl = document.getElementById('orgKpiBreadcrumb');
+  const body    = document.getElementById('orgKpiBody');
+
+  if(type === 'total'){
+    const total  = _raw.length;
+    const intnl  = _raw.filter(r => classifyTingkatan(r.tingkatan).key === 'Internasional').length;
+    const nas    = _raw.filter(r => classifyTingkatan(r.tingkatan).key === 'Nasional').length;
+    const reg    = total - intnl - nas;
+
+    titleEl.textContent = 'Total Keterlibatan';
+    subEl.textContent   = 'Breakdown lengkap semua keterlibatan organisasi awardee.';
+    breadEl.textContent = 'Total Keterlibatan';
+
+    // Top 10 organisasi by detail keyword frequency
+    const orgMap = new Map();
+    _raw.forEach(r => {
+      const key = (r.detail||'').trim() || '(Tidak ada detail)';
+      orgMap.set(key, (orgMap.get(key)||0) + 1);
+    });
+    const top10org = Array.from(orgMap.entries())
+      .map(([k,v]) => ({ label:k, count:v }))
+      .sort((a,b)=>b.count-a.count).slice(0,10);
+
+    // Level breakdown
+    const levMap = new Map();
+    _raw.forEach(r => {
+      const k = classifyTingkatan(r.tingkatan).key;
+      levMap.set(k, (levMap.get(k)||0)+1);
+    });
+    const levOrder = ['Internasional','Nasional','Universitas/Regional','Fakultas','Jurusan'];
+    const levEntries = Array.from(levMap.entries())
+      .map(([k,v]) => ({ label:k, count:v }))
+      .sort((a,b) => { const ia=levOrder.indexOf(a.label), ib=levOrder.indexOf(b.label); return (ia<0?99:ia)-(ib<0?99:ib); });
+
+    const levColors = {'Internasional':'bf-gold','Nasional':'bf-blue','Universitas/Regional':'bf-purple','Fakultas':'bf-pink','Jurusan':'bf-teal'};
+
+    body.innerHTML = `
+      <div class="org-kpi-hero">
+        ${_orgHeroCard(total, 'Total Keterlibatan', '#b45309', 0.04)}
+        ${_orgHeroCard(intnl, 'Internasional', '#7c3aed', 0.09)}
+        ${_orgHeroCard(nas,   'Nasional', '#1d4ed8', 0.14)}
+        ${_orgHeroCard(reg,   'Regional/Univ/Lainnya', '#0d9488', 0.19)}
+      </div>
+      <div class="org-kpi-2col">
+        ${_orgBarSection('Top 10 Detail Keterlibatan Terbanyak', top10org, 'bf-gold')}
+        <div class="org-kpi-section" style="animation-delay:.1s;">
+          <div class="org-kpi-section-title">Breakdown per Level</div>
+          ${levEntries.map((e,i) => {
+            const max = Math.max(...levEntries.map(x=>x.count));
+            const pct = max ? Math.round(e.count*100/max) : 0;
+            const cls = levColors[e.label] || 'bf-gray';
+            return `<div class="org-bar-row">
+              <div class="org-bar-label">${escapeHtml(e.label)}</div>
+              <div class="org-bar-track"><div class="org-bar-fill ${cls}" style="--w:${pct}%;animation-delay:${(i*0.07).toFixed(2)}s;">${pct>18?e.count:''}</div></div>
+              <div class="org-bar-count">${e.count.toLocaleString('id-ID')}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+
+  } else if(type === 'awardee'){
+    const aMap = new Map();
+    _raw.forEach(r => {
+      const key = (r.no_induk || r.nama || '').toString();
+      if(!key) return;
+      const ent = aMap.get(key) || { nama:r.nama||'—', no_induk:r.no_induk||'—', kampus:r.kampus||'—', count:0 };
+      ent.count++;
+      aMap.set(key, ent);
+    });
+    const all = Array.from(aMap.values()).sort((a,b)=>b.count-a.count);
+    const top10 = all.slice(0,10);
+    const maxOrg = all[0]?.count || 0;
+    const avgOrg = all.length ? (all.reduce((s,a)=>s+a.count,0)/all.length).toFixed(1) : 0;
+    const dist1  = all.filter(a=>a.count===1).length;
+    const dist2  = all.filter(a=>a.count===2).length;
+    const dist3p = all.filter(a=>a.count>=3).length;
+
+    titleEl.textContent = 'Awardee Aktif Berorganisasi';
+    subEl.textContent   = 'Siapa saja awardee yang paling aktif berorganisasi.';
+    breadEl.textContent = 'Awardee Aktif';
+
+    body.innerHTML = `
+      <div class="org-kpi-hero">
+        ${_orgHeroCard(all.length, 'Awardee Berorganisasi', '#1d4ed8', 0.04)}
+        ${_orgHeroCard(avgOrg, 'Rata-rata Org/Awardee', '#0d9488', 0.09)}
+        ${_orgHeroCard(maxOrg, 'Terbanyak (1 Awardee)', '#b45309', 0.14)}
+      </div>
+      <div class="org-kpi-2col">
+        <div class="org-kpi-section">
+          <div class="org-kpi-section-title">Top 10 Awardee Paling Aktif</div>
+          <div class="org-rank-list">
+            ${top10.map((a,i) => `<div class="org-rank-item" style="animation-delay:${(i*0.05).toFixed(2)}s;">
+              <span class="org-rank-pos ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
+              <div class="org-avatar" style="background:${_orgAvatarColor(i)};">${_orgInitials(a.nama)}</div>
+              <div style="flex:1;min-width:0;">
+                <div class="org-rank-name">${escapeHtml(a.nama)}</div>
+                <div class="org-rank-meta">${escapeHtml(a.no_induk)} · ${escapeHtml(a.kampus)}</div>
+              </div>
+              <span class="org-rank-badge">${a.count} org</span>
+            </div>`).join('')}
+          </div>
+        </div>
+        <div class="org-kpi-section" style="animation-delay:.1s;">
+          <div class="org-kpi-section-title">Distribusi Keterlibatan</div>
+          <div class="org-dist-grid">
+            <div class="org-dist-card"><div class="org-dist-num" style="color:#1d4ed8;">${dist1}</div><div class="org-dist-lbl">1 Organisasi</div></div>
+            <div class="org-dist-card"><div class="org-dist-num" style="color:#0d9488;">${dist2}</div><div class="org-dist-lbl">2 Organisasi</div></div>
+            <div class="org-dist-card"><div class="org-dist-num" style="color:#b45309;">${dist3p}</div><div class="org-dist-lbl">3+ Organisasi</div></div>
+          </div>
+          <div style="margin-top:16px;">
+            ${[
+              {label:'1 Org', count:dist1, cls:'bf-blue'},
+              {label:'2 Org', count:dist2, cls:'bf-teal'},
+              {label:'3+ Org', count:dist3p, cls:'bf-gold'},
+            ].map((e,i) => {
+              const maxD = Math.max(dist1,dist2,dist3p)||1;
+              const pct  = Math.round(e.count*100/maxD);
+              return `<div class="org-bar-row">
+                <div class="org-bar-label">${e.label}</div>
+                <div class="org-bar-track"><div class="org-bar-fill ${e.cls}" style="--w:${pct}%;animation-delay:${(i*0.08).toFixed(2)}s;">${pct>18?e.count:''}</div></div>
+                <div class="org-bar-count">${e.count.toLocaleString('id-ID')}</div>
+              </div>`;
+            }).join('')}
+          </div>
+        </div>
+      </div>`;
+
+  } else if(type === 'kampus'){
+    const kMap = new Map();
+    _raw.forEach(r => {
+      const k = norm(r.kampus) || '—';
+      if(k==='—') return;
+      const ent = kMap.get(k) || { kampus:k, awardee:new Set(), count:0 };
+      ent.count++;
+      ent.awardee.add(r.no_induk || r.nama);
+      kMap.set(k, ent);
+    });
+    const allK = Array.from(kMap.values())
+      .map(e=>({ kampus:e.kampus, count:e.count, awardee:e.awardee.size }))
+      .sort((a,b)=>b.count-a.count);
+    const totalK = allK.length;
+    const avgK   = totalK ? (allK.reduce((s,k)=>s+k.count,0)/totalK).toFixed(1) : 0;
+    const top15  = allK.slice(0,15);
+    const max    = top15[0]?.count || 1;
+
+    titleEl.textContent = 'Kampus Terlibat';
+    subEl.textContent   = 'Kampus dengan keterlibatan organisasi tertinggi.';
+    breadEl.textContent = 'Kampus Terlibat';
+
+    body.innerHTML = `
+      <div class="org-kpi-hero">
+        ${_orgHeroCard(totalK, 'Total Kampus', '#0d9488', 0.04)}
+        ${_orgHeroCard(avgK, 'Rata-rata Keterlibatan/Kampus', '#1d4ed8', 0.09)}
+      </div>
+      <div class="org-kpi-section">
+        <div class="org-kpi-section-title">Semua Kampus (diurutkan berdasarkan total keterlibatan)</div>
+        <div class="org-rank-list">
+          ${allK.map((k,i) => {
+            const pct = max ? Math.round(k.count*100/max) : 0;
+            return `<div class="org-rank-item" style="animation-delay:${(i*0.03).toFixed(2)}s;">
+              <span class="org-rank-pos ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
+              <div style="flex:1;min-width:0;">
+                <div class="org-rank-name">${escapeHtml(k.kampus)}</div>
+                <div class="org-rank-meta">${k.awardee} awardee aktif</div>
+                <div style="margin-top:5px;height:6px;background:#f3f4f6;border-radius:99px;overflow:hidden;">
+                  <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#14b8a6,#0d9488);border-radius:99px;animation:org-bar-grow .6s ${(i*0.03).toFixed(2)}s ease both;"></div>
+                </div>
+              </div>
+              <span class="org-rank-badge">${k.count}</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+
+  } else if(type === 'intnl'){
+    const intnlRows = _raw.filter(r => classifyTingkatan(r.tingkatan).key === 'Internasional');
+    const uniqAw    = new Set(intnlRows.map(r => r.no_induk || r.nama)).size;
+    const uniqK     = new Set(intnlRows.map(r => norm(r.kampus)).filter(Boolean)).size;
+
+    // Orgs by detail
+    const orgMap = new Map();
+    intnlRows.forEach(r => {
+      const key = (r.detail||'').trim() || '(tanpa detail)';
+      orgMap.set(key, (orgMap.get(key)||0)+1);
+    });
+    const topOrgs = Array.from(orgMap.entries())
+      .map(([k,v])=>({label:k,count:v}))
+      .sort((a,b)=>b.count-a.count).slice(0,12);
+
+    // Top awardee with intl
+    const awMap = new Map();
+    intnlRows.forEach(r => {
+      const key = (r.no_induk||r.nama||'').toString();
+      if(!key) return;
+      const ent = awMap.get(key) || { nama:r.nama||'—', no_induk:r.no_induk||'—', kampus:r.kampus||'—', count:0 };
+      ent.count++;
+      awMap.set(key, ent);
+    });
+    const topAw = Array.from(awMap.values()).sort((a,b)=>b.count-a.count).slice(0,10);
+
+    titleEl.textContent = 'Tingkat Internasional';
+    subEl.textContent   = 'Keterlibatan organisasi bertaraf internasional.';
+    breadEl.textContent = 'Tingkat Internasional';
+
+    body.innerHTML = `
+      <div class="org-kpi-hero">
+        ${_orgHeroCard(intnlRows.length, 'Total Internasional', '#7c3aed', 0.04)}
+        ${_orgHeroCard(uniqAw, 'Awardee Unik', '#1d4ed8', 0.09)}
+        ${_orgHeroCard(uniqK, 'Kampus Unik', '#0d9488', 0.14)}
+      </div>
+      <div class="org-kpi-2col">
+        ${_orgBarSection('Detail Keterlibatan Internasional', topOrgs, 'bf-purple')}
+        <div class="org-kpi-section" style="animation-delay:.1s;">
+          <div class="org-kpi-section-title">Top Awardee Pengalaman Internasional</div>
+          <div class="org-rank-list">
+            ${topAw.map((a,i)=>`<div class="org-rank-item" style="animation-delay:${(i*0.05).toFixed(2)}s;">
+              <span class="org-rank-pos ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
+              <div class="org-avatar" style="background:${_orgAvatarColor(i)};">${_orgInitials(a.nama)}</div>
+              <div style="flex:1;min-width:0;">
+                <div class="org-rank-name">${escapeHtml(a.nama)}</div>
+                <div class="org-rank-meta">${escapeHtml(a.no_induk)} · ${escapeHtml(a.kampus)}</div>
+              </div>
+              <span class="org-rank-badge">${a.count}×</span>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+
+  } else if(type === 'strat'){
+    const total    = _raw.length;
+    const strategic = _raw.filter(r => {
+      const k = classifyJuara(r.keterlibatan).key;
+      return k === 'Ketua' || k === 'Sekjen/Wakil' || k === 'Ketua Divisi/BPH';
+    });
+    const pctStrat  = total ? Math.round(strategic.length*100/total) : 0;
+
+    const ketua  = strategic.filter(r => classifyJuara(r.keterlibatan).key === 'Ketua').length;
+    const sekjen = strategic.filter(r => classifyJuara(r.keterlibatan).key === 'Sekjen/Wakil').length;
+    const bph    = strategic.filter(r => classifyJuara(r.keterlibatan).key === 'Ketua Divisi/BPH').length;
+
+    const uniqAw = new Set(strategic.map(r => r.no_induk || r.nama)).size;
+
+    // Top awardee with strategic roles
+    const awMap = new Map();
+    strategic.forEach(r => {
+      const key = (r.no_induk||r.nama||'').toString();
+      if(!key) return;
+      const ent = awMap.get(key) || { nama:r.nama||'—', no_induk:r.no_induk||'—', kampus:r.kampus||'—', count:0 };
+      ent.count++;
+      awMap.set(key, ent);
+    });
+    const topAw = Array.from(awMap.values()).sort((a,b)=>b.count-a.count).slice(0,10);
+
+    titleEl.textContent = 'Peran Strategis';
+    subEl.textContent   = 'Awardee yang memegang peran ketua, sekjen/wakil, atau BPH.';
+    breadEl.textContent = 'Peran Strategis';
+
+    body.innerHTML = `
+      <div class="org-kpi-hero">
+        ${_orgHeroCard(strategic.length, 'Total Peran Strategis', '#be185d', 0.04)}
+        ${_orgHeroCard(pctStrat+'%', 'Dari Total Keterlibatan', '#b45309', 0.09)}
+        ${_orgHeroCard(uniqAw, 'Awardee Unik', '#1d4ed8', 0.14)}
+      </div>
+      <div class="org-kpi-2col">
+        <div class="org-kpi-section">
+          <div class="org-kpi-section-title">Breakdown Peran Strategis</div>
+          ${[
+            {label:'Ketua / Ketua Umum', count:ketua, cls:'bf-gold'},
+            {label:'Sekjen / Wakil Ketua', count:sekjen, cls:'bf-silver'},
+            {label:'Ketua Divisi / BPH', count:bph, cls:'bf-bronze'},
+          ].map((e,i) => {
+            const max = Math.max(ketua,sekjen,bph)||1;
+            const pct = Math.round(e.count*100/max);
+            return `<div class="org-bar-row">
+              <div class="org-bar-label">${e.label}</div>
+              <div class="org-bar-track"><div class="org-bar-fill ${e.cls}" style="--w:${pct}%;animation-delay:${(i*0.08).toFixed(2)}s;">${pct>18?e.count:''}</div></div>
+              <div class="org-bar-count">${e.count.toLocaleString('id-ID')}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="org-kpi-section" style="animation-delay:.1s;">
+          <div class="org-kpi-section-title">Top Awardee Peran Strategis</div>
+          <div class="org-rank-list">
+            ${topAw.map((a,i)=>`<div class="org-rank-item" style="animation-delay:${(i*0.05).toFixed(2)}s;">
+              <span class="org-rank-pos ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
+              <div class="org-avatar" style="background:${_orgAvatarColor(i)};">${_orgInitials(a.nama)}</div>
+              <div style="flex:1;min-width:0;">
+                <div class="org-rank-name">${escapeHtml(a.nama)}</div>
+                <div class="org-rank-meta">${escapeHtml(a.no_induk)} · ${escapeHtml(a.kampus)}</div>
+              </div>
+              <span class="org-rank-badge">${a.count} peran</span>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  }
+}
 </script>
 
 <nav class="mob-nav" id="mobNav">
