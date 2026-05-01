@@ -470,6 +470,168 @@
     }
     .gap-tag.amber { background:#fef3c7; color:#b45309; }
 
+    /* === GAP PANEL V2 — Risk-tier insight redesign === */
+    .gap-summary {
+      display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px;
+    }
+    .gap-sum-card {
+      background:var(--bg, #f8fafc);
+      border:1px solid transparent;
+      border-radius:16px;
+      padding:14px 16px;
+      cursor:pointer;
+      transition:transform .12s, box-shadow .15s, border-color .15s;
+      display:flex; align-items:center; gap:13px;
+      min-width:0;
+    }
+    .gap-sum-card:hover { transform:translateY(-1px); box-shadow:0 6px 16px rgba(0,0,0,.06); }
+    .gap-sum-card.active {
+      border-color:var(--ac);
+      box-shadow:0 0 0 2px var(--ac) inset, 0 4px 14px rgba(0,0,0,.06);
+    }
+    .gap-sum-card.crit  { --ac:#dc2626; --bg:#fef2f2; }
+    .gap-sum-card.high  { --ac:#ea580c; --bg:#fff7ed; }
+    .gap-sum-card.med   { --ac:#d97706; --bg:#fffbeb; }
+    .gap-sum-card.total { --ac:#0055a5; --bg:#eff6ff; }
+
+    .gap-sum-icon {
+      width:44px; height:44px; border-radius:12px;
+      background:#fff;
+      color:var(--ac);
+      flex-shrink:0;
+      display:inline-flex; align-items:center; justify-content:center;
+      box-shadow:0 1px 2px rgba(0,0,0,.04);
+    }
+    .gap-sum-icon svg { width:22px; height:22px; }
+    .gap-sum-text { display:flex; flex-direction:column; min-width:0; gap:1px; }
+    .gap-sum-lbl {
+      font-size:12px; font-weight:700; color:var(--ac);
+      line-height:1.3; letter-spacing:.005em;
+    }
+    .gap-sum-val {
+      font-size:26px; font-weight:800; color:var(--ac);
+      font-variant-numeric:tabular-nums; line-height:1.1;
+    }
+    .gap-sum-sub {
+      font-size:11.5px; color:#6b7280; line-height:1.4; margin-top:1px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+
+    .gap-filter-status {
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+      font-size:12px; color:#475569; margin-bottom:10px; padding:0 2px;
+    }
+    .gap-filter-status .fs-label { color:#94a3b8; }
+    .gap-filter-status .fs-value { font-weight:700; color:#111827; }
+    .gap-filter-reset {
+      font-size:11.5px; font-weight:600; color:#dc2626;
+      background:transparent; border:1px solid #fecaca; border-radius:99px;
+      padding:3px 10px; cursor:pointer; transition:all .12s;
+      display:inline-flex; align-items:center; gap:4px;
+    }
+    .gap-filter-reset:hover { background:#fef2f2; }
+
+    /* Table header */
+    .gap-head {
+      display:grid;
+      grid-template-columns: 56px minmax(200px,1.6fr) 95px 110px minmax(170px,1.4fr) 105px;
+      gap:12px; padding:11px 14px; background:#f8fafc;
+      border-top-left-radius:12px; border-top-right-radius:12px;
+      border:1px solid #e5e7eb; border-bottom:2px solid #e5e7eb;
+      font-size:10.5px; font-weight:700; color:#64748b;
+      text-transform:uppercase; letter-spacing:.05em;
+    }
+    .gap-body {
+      border:1px solid #e5e7eb; border-top:none;
+      border-bottom-left-radius:12px; border-bottom-right-radius:12px;
+      background:#fff; overflow:hidden;
+    }
+    /* New gap row */
+    .gap-row-v2 {
+      display:grid;
+      grid-template-columns: 56px minmax(200px,1.6fr) 95px 110px minmax(170px,1.4fr) 105px;
+      gap:12px; align-items:center;
+      padding:12px 14px; border-bottom:1px solid #f1f5f9;
+      cursor:pointer; transition:background .12s; position:relative;
+    }
+    .gap-row-v2:hover { background:#fafafa; }
+    .gap-row-v2:last-child { border-bottom:none; }
+    .gap-row-v2.crit { background:linear-gradient(90deg,#fef2f2 0%,#fff 35%); }
+    .gap-row-v2.crit:hover { background:linear-gradient(90deg,#fee2e2 0%,#fafafa 35%); }
+    .gap-row-v2.crit::after {
+      content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+      background:#dc2626;
+    }
+    .gap-name { font-weight:700; color:#111827; font-size:13px; line-height:1.3;
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .gap-meta { color:#6b7280; font-size:11.5px; margin-top:2px;
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+    /* SP cell — its own column */
+    .sp-cell {
+      display:inline-flex; align-items:center; gap:5px;
+      padding:5px 10px; border-radius:8px;
+      font-size:11.5px; font-weight:800; white-space:nowrap;
+      border:1px solid transparent; line-height:1;
+    }
+    .sp-cell svg { width:12px; height:12px; flex-shrink:0; }
+    .sp-cell.none { color:#cbd5e1; background:transparent; border:1px dashed #e5e7eb; font-weight:600; }
+    .sp-cell.sp1 { color:#b45309; background:#fef3c7; border-color:#fde68a; }
+    .sp-cell.sp2 { color:#c2410c; background:#ffedd5; border-color:#fed7aa; }
+    .sp-cell.sp3 { color:#b91c1c; background:#fee2e2; border-color:#fca5a5;
+      animation:sp3pulse 2s ease-in-out infinite; }
+    @keyframes sp3pulse {
+      0%,100% { box-shadow:0 0 0 0 rgba(220,38,38,.4); }
+      50%     { box-shadow:0 0 0 4px rgba(220,38,38,0); }
+    }
+
+    /* Score with mini bar */
+    .gap-score-cell { font-variant-numeric:tabular-nums; }
+    .gap-score-num { font-size:16px; font-weight:800; color:#dc2626; line-height:1; }
+    .gap-score-bar { width:90px; height:5px; background:#fee2e2; border-radius:99px; overflow:hidden; margin-top:5px; }
+    .gap-score-fill { height:100%; background:linear-gradient(90deg,#dc2626,#fca5a5); border-radius:99px; transition:width .5s; }
+
+    /* Risk pill */
+    .risk-pill {
+      font-size:10px; font-weight:800;
+      padding:4px 9px; border-radius:99px;
+      text-transform:uppercase; letter-spacing:.04em;
+      display:inline-flex; align-items:center; gap:4px; white-space:nowrap;
+      line-height:1;
+    }
+    .risk-pill.crit { background:#dc2626; color:#fff; }
+    .risk-pill.high { background:#fef3c7; color:#9a3412; border:1px solid #fed7aa; }
+    .risk-pill.med  { background:#fffbeb; color:#92400e; border:1px solid #fde68a; }
+
+    /* Empty state */
+    .gap-empty-v2 {
+      padding:48px 20px; text-align:center; color:#10b981;
+      background:#fff; border:1px solid #d1fae5; border-radius:14px;
+    }
+    .gap-empty-v2 svg { width:40px; height:40px; margin-bottom:8px; }
+    .gap-empty-v2 p { font-size:14px; font-weight:700; margin:0 0 4px; }
+    .gap-empty-v2 small { font-size:12px; color:#6b7280; }
+
+    /* Responsive */
+    @media (max-width:1100px){
+      .gap-summary { grid-template-columns:repeat(2,1fr); }
+      .gap-head, .gap-row-v2 {
+        grid-template-columns: 48px 1fr 90px 100px 100px;
+      }
+      .gap-head .col-weak, .gap-row-v2 .gap-weakest { display:none; }
+    }
+    @media (max-width:700px){
+      .gap-summary { grid-template-columns:1fr 1fr; gap:8px; }
+      .gap-sum-card { padding:12px 12px 11px; }
+      .gap-sum-val { font-size:20px; }
+      .gap-head, .gap-row-v2 {
+        grid-template-columns: 40px 1fr 80px 90px;
+      }
+      .gap-head .col-risk, .gap-row-v2 .risk-pill { display:none; }
+      .gap-row-v2 .gap-score-bar { display:none; }
+    }
+    /* === END GAP PANEL V2 === */
+
     /* Formula */
     .lb-formula {
       background:#fff; border:1px solid #e5e7eb; border-radius:14px;
@@ -1071,15 +1233,21 @@
       <div class="lb-tab-panel" id="panel-gap">
         <div class="tbl-toolbar">
           <span class="tbl-toolbar-title" style="color:#dc2626;">Awardee yang Butuh Perhatian</span>
-          <span style="font-size:12px;color:#6b7280;flex:1;">Skor < 40% atau minimal 2 aspek di bawah rata-rata.</span>
+          <span style="font-size:12px;color:#6b7280;flex:1;">Klik kartu di bawah untuk fokus ke segmen risiko tertentu.</span>
           <button class="btn-action btn-primary" onclick="downloadGap()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Unduh
           </button>
         </div>
-        <div class="tbl-wrap">
-          <div id="tbl-gap"><div class="tbl-empty"><p>Memuat...</p></div></div>
-        </div>
+
+        <!-- Risk Summary cards (clickable as filter) -->
+        <div class="gap-summary" id="gapSummary"></div>
+
+        <!-- Filter status row -->
+        <div class="gap-filter-status" id="gapFilterStatus"></div>
+
+        <!-- Table -->
+        <div id="tbl-gap"><div class="tbl-empty"><p>Memuat...</p></div></div>
       </div>
 
       <!-- FORMULA -->
@@ -1244,6 +1412,7 @@ function inRange(dateVal, q){
 
 // Raw data cache (loaded once)
 let _raw = { mhs:[], rekap:[], prestasi:[], org:[] };
+let _spCountMap = new Map(); // no_induk → SP count
 let _currentView = 'all';
 
 /* =========================================================
@@ -1256,12 +1425,19 @@ async function init(){
       if (info.role !== 'admin' && info.role !== 'operator') { location.replace('index.html'); return; }
     }
 
-    const [mhs, rekap, prestasi, org] = await Promise.all([
+    const [mhs, rekap, prestasi, org, spRows] = await Promise.all([
       fetchAll('mahasiswa_bsi', 'no_induk,nama,kampus,kelompok,ipk,status,fakultas,prodi'),
       fetchAll('rekap_bsi', 'no_induk,nama,kampus,kelompok,tanggal,pre_test,post_test,assessment,mentoring,pembinaan,kelas_al_quran'),
       fetchAll('prestasi_bsi', 'no_induk,tingkatan,juara').catch(()=>[]),
       fetchAll('organisasi_bsi', 'no_induk,tingkatan,keterlibatan').catch(()=>[]),
+      fetchAll('suratperingatan_bsi', 'no_induk').catch(()=>[]),
     ]);
+
+    _spCountMap = new Map();
+    spRows.forEach(r => {
+      const k = String(r.no_induk);
+      _spCountMap.set(k, (_spCountMap.get(k) || 0) + 1);
+    });
 
     _raw = { mhs, rekap, prestasi, org };
     _ranked = computeRanked(mhs, rekap, prestasi, org, _currentView);
@@ -1856,59 +2032,239 @@ function renderKampusTable(){
 }
 
 /* =========================================================
-   GAP PANEL — awardee yang butuh perhatian
+   GAP PANEL — awardee yang butuh perhatian (v2: risk-tier insight)
 ========================================================= */
+let _gapFilter = 'all'; // 'all' | 'crit' | 'high' | 'med'
+let _gapData = [];      // cached classified list
+
+function classifyRisk(a, hasSP, gapFlagged){
+  // Critical: sudah ada SP & masih flagged → bakal kena SP berikutnya
+  if (hasSP && gapFlagged) return 'crit';
+  // High: belum SP tapi skor sangat rendah (<20%) → calon SP-1
+  if (!hasSP && a.total < 20) return 'high';
+  // Medium: flagged lainnya (perlu pembinaan)
+  if (gapFlagged) return 'med';
+  return null; // not flagged
+}
+
 function renderGap(){
   const total = _ranked.length;
-  if(!total){ document.getElementById('tbl-gap').innerHTML = '<div class="tbl-empty"><p>Tidak ada data</p></div>'; return; }
+  if(!total){
+    document.getElementById('gapSummary').innerHTML = '';
+    document.getElementById('gapFilterStatus').innerHTML = '';
+    document.getElementById('tbl-gap').innerHTML = '<div class="tbl-empty"><p>Tidak ada data</p></div>';
+    return;
+  }
 
-  // Compute averages for each aspect
+  // Compute aspect averages
   const avgs = {
     mindful: _ranked.reduce((s,a)=>s+a.mindful,0)/total,
     account: _ranked.reduce((s,a)=>s+a.account,0)/total,
     selfDev: _ranked.reduce((s,a)=>s+a.selfDev,0)/total,
   };
 
-  // Flag: total<40 OR at least 2 aspects below their avg
-  const flagged = _ranked.filter(a => {
-    if(a.total < 40) return true;
+  // Build classified list
+  const classified = _ranked.map(a => {
     let below = 0;
     if(a.mindful < avgs.mindful) below++;
     if(a.account < avgs.account) below++;
     if(a.selfDev < avgs.selfDev) below++;
-    return below >= 3;   // all three below → stricter to avoid too many
-  }).sort((a,b) => a.total - b.total);
+    const gapFlagged = (a.total < 40) || (below >= 3);
+    const spCount = _spCountMap.get(String(a.no_induk)) || 0;
+    const hasSP = spCount > 0;
+    const risk = classifyRisk(a, hasSP, gapFlagged);
+    return { ...a, _spCount: spCount, _hasSP: hasSP, _risk: risk };
+  }).filter(a => a._risk); // keep only those with a risk classification
 
-  _views.gap = flagged;
-  document.getElementById('badge-gap').textContent = flagged.length.toLocaleString('id-ID');
+  // Sort: crit first, then high, then med. Within each: by SP count desc, then total asc.
+  const riskOrder = { crit: 0, high: 1, med: 2 };
+  classified.sort((a,b) => {
+    if(riskOrder[a._risk] !== riskOrder[b._risk]) return riskOrder[a._risk] - riskOrder[b._risk];
+    if(b._spCount !== a._spCount) return b._spCount - a._spCount;
+    return a.total - b.total;
+  });
 
+  _gapData = classified;
+  _views.gap = classified; // for downloadGap
+
+  // Counts per tier
+  const cnt = {
+    crit: classified.filter(a => a._risk === 'crit').length,
+    high: classified.filter(a => a._risk === 'high').length,
+    med:  classified.filter(a => a._risk === 'med').length,
+    all:  classified.length,
+  };
+
+  // Tab badge = total flagged
+  document.getElementById('badge-gap').textContent = cnt.all.toLocaleString('id-ID');
+
+  // Render summary cards
+  renderGapSummary(cnt);
+  renderGapFilterStatus(cnt);
+  renderGapTable();
+}
+
+function renderGapSummary(cnt){
+  const el = document.getElementById('gapSummary');
+  if(!el) return;
+  const totalAwardee = _ranked.length || 0;
+  const totalSP      = _spCountMap.size || 0; // unique no_induk yang punya SP
+  const pct = (n, d) => d > 0 ? `${(n/d*100).toFixed(1)}%` : '0%';
+  const cards = [
+    {
+      key:'crit', cls:'crit',
+      val:cnt.crit, lbl:'Risiko SP Lanjutan',
+      sub: totalSP > 0 ? `${cnt.crit} dari ${totalSP} pemegang SP` : 'Sudah ber-SP & masih lemah',
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>'
+    },
+    {
+      key:'high', cls:'high',
+      val:cnt.high, lbl:'Calon SP Baru',
+      sub: 'Belum ber-SP · skor < 20%',
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'
+    },
+    {
+      key:'med', cls:'med',
+      val:cnt.med, lbl:'Perlu Pembinaan',
+      sub: 'Skor di bawah ambang batas',
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+    },
+    {
+      key:'all', cls:'total',
+      val:cnt.all, lbl:'Total Butuh Perhatian',
+      sub: totalAwardee > 0 ? `${pct(cnt.all, totalAwardee)} dari ${totalAwardee.toLocaleString('id-ID')} awardee` : 'Lihat semua tanpa filter',
+      icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v4H3zM3 11h18v4H3zM3 19h18"/></svg>'
+    },
+  ];
+  el.innerHTML = cards.map(c => `
+    <div class="gap-sum-card ${c.cls} ${_gapFilter===c.key?'active':''}" onclick="setGapFilter('${c.key}')">
+      <div class="gap-sum-icon">${c.icon}</div>
+      <div class="gap-sum-text">
+        <div class="gap-sum-lbl">${c.lbl}</div>
+        <div class="gap-sum-val">${c.val.toLocaleString('id-ID')}</div>
+        <div class="gap-sum-sub">${c.sub}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderGapFilterStatus(cnt){
+  const el = document.getElementById('gapFilterStatus');
+  if(!el) return;
+  const labels = { all:'Semua', crit:'Risiko SP Lanjutan', high:'Calon SP Baru', med:'Perlu Pembinaan' };
+  const shown = _gapFilter === 'all' ? cnt.all : cnt[_gapFilter];
+  if(_gapFilter === 'all'){
+    el.innerHTML = `<span class="fs-label">Menampilkan</span><span class="fs-value">${cnt.all.toLocaleString('id-ID')}</span><span class="fs-label">awardee — diurutkan dari risiko tertinggi</span>`;
+  } else {
+    el.innerHTML = `
+      <span class="fs-label">Filter aktif:</span>
+      <span class="fs-value">${labels[_gapFilter]}</span>
+      <span class="fs-label">·</span>
+      <span class="fs-value">${shown.toLocaleString('id-ID')}</span>
+      <span class="fs-label">dari ${cnt.all.toLocaleString('id-ID')} awardee</span>
+      <button class="gap-filter-reset" onclick="setGapFilter('all')">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Reset
+      </button>`;
+  }
+}
+
+window.setGapFilter = (key) => {
+  _gapFilter = key;
+  // Update card active states
+  document.querySelectorAll('.gap-sum-card').forEach(c => c.classList.remove('active'));
+  const active = document.querySelector(`.gap-sum-card[onclick*="'${key}'"]`);
+  if(active) active.classList.add('active');
+  // Re-render filter status & table
+  const cnt = {
+    crit: _gapData.filter(a => a._risk === 'crit').length,
+    high: _gapData.filter(a => a._risk === 'high').length,
+    med:  _gapData.filter(a => a._risk === 'med').length,
+    all:  _gapData.length,
+  };
+  renderGapFilterStatus(cnt);
+  renderGapTable();
+};
+
+function spCellHTML(spCount){
+  if(spCount === 0) return '<span class="sp-cell none">— Belum SP</span>';
+  const cls = spCount >= 3 ? 'sp3' : spCount === 2 ? 'sp2' : 'sp1';
+  const warnIco = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+  return `<span class="sp-cell ${cls}">${warnIco}SP-${spCount}</span>`;
+}
+
+function riskPillHTML(risk){
+  const cfg = {
+    crit: { lbl:'Critical',   cls:'crit' },
+    high: { lbl:'Tinggi',     cls:'high' },
+    med:  { lbl:'Sedang',     cls:'med'  },
+  }[risk];
+  if(!cfg) return '';
+  return `<span class="risk-pill ${cfg.cls}">${cfg.lbl}</span>`;
+}
+
+function renderGapTable(){
   const el = document.getElementById('tbl-gap');
-  if(!flagged.length){ el.innerHTML = '<div class="tbl-empty" style="padding:40px 20px;"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg><p style="color:#10b981;">🎉 Tidak ada awardee yang butuh perhatian!</p><small>Semua di atas ambang minimum.</small></div>'; return; }
+  if(!el) return;
 
-  el.innerHTML = flagged.map(a => {
+  let data = _gapData;
+  if(_gapFilter !== 'all') data = data.filter(a => a._risk === _gapFilter);
+
+  if(!data.length){
+    el.innerHTML = `
+      <div class="gap-empty-v2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg>
+        <p>🎉 Tidak ada awardee di kategori ini</p>
+        <small>Coba pilih filter lain atau klik "Total" untuk lihat semua.</small>
+      </div>`;
+    return;
+  }
+
+  const headHTML = `
+    <div class="gap-head">
+      <div>Rank</div>
+      <div>Awardee</div>
+      <div>Status SP</div>
+      <div>Skor Total</div>
+      <div class="col-weak">Aspek Bermasalah</div>
+      <div class="col-risk">Tingkat Risiko</div>
+    </div>`;
+
+  const rowsHTML = data.map(a => {
     const weakSpots = [];
     if(a.mentPct < 0.6) weakSpots.push({tag:'Mentoring', pct:a.mentPct});
-    if(a.pemPct < 0.6)  weakSpots.push({tag:'Pembinaan', pct:a.pemPct});
-    if(a.prePct < 0.6)  weakSpots.push({tag:'Pre Test', pct:a.prePct});
+    if(a.pemPct  < 0.6) weakSpots.push({tag:'Pembinaan', pct:a.pemPct});
+    if(a.prePct  < 0.6) weakSpots.push({tag:'Pre Test',  pct:a.prePct});
     if(a.postPct < 0.6) weakSpots.push({tag:'Post Test', pct:a.postPct});
-    if(a.assPct < 0.6)  weakSpots.push({tag:'Assessment', pct:a.assPct});
+    if(a.assPct  < 0.6) weakSpots.push({tag:'Assessment',pct:a.assPct});
     if(a.prestasiCount === 0) weakSpots.push({tag:'0 Prestasi'});
     if(a.orgCount === 0)      weakSpots.push({tag:'0 Organisasi'});
     if(a.ipk < 3.0 && a.ipk > 0) weakSpots.push({tag:`IPK ${a.ipk.toFixed(2)}`, amber:true});
-    const tags = weakSpots.slice(0,4).map(w => `<span class="gap-tag${w.amber?' amber':''}">${escH(w.tag)}${w.pct!==undefined?' '+(w.pct*100).toFixed(0)+'%':''}</span>`).join('');
-    return `<div class="gap-row" onclick="showDetail('${escAttr(a.no_induk)}')">
+    const tags = weakSpots.slice(0,3).map(w =>
+      `<span class="gap-tag${w.amber?' amber':''}">${escH(w.tag)}${w.pct!==undefined?' '+(w.pct*100).toFixed(0)+'%':''}</span>`
+    ).join('');
+    const more = weakSpots.length > 3 ? `<span class="gap-tag" style="background:#f1f5f9;color:#475569;">+${weakSpots.length-3}</span>` : '';
+
+    const scoreFill = Math.max(2, Math.min(100, a.total));
+    const isCrit = a._risk === 'crit';
+
+    return `<div class="gap-row-v2 ${isCrit?'crit':''}" onclick="showDetail('${escAttr(a.no_induk)}')">
       <span class="rank-chip" style="background:#fee2e2;color:#b91c1c;">#${a.rank}</span>
-      <div>
-        <div style="font-weight:700;color:#111827;font-size:13px;">${escH(a.nama)}</div>
-        <div style="color:#6b7280;font-size:11.5px;">${escH(a.no_induk)} · ${escH(a.kampus)} · Kel ${escH(a.kelompok)}</div>
+      <div style="min-width:0;">
+        <div class="gap-name">${escH(a.nama)}</div>
+        <div class="gap-meta">${escH(a.no_induk)} · ${escH(a.kampus)} · Kel ${escH(a.kelompok)}</div>
       </div>
-      <div class="gap-score" style="text-align:right;">
-        <div style="font-size:17px;font-weight:800;color:#dc2626;">${a.total.toFixed(1)}%</div>
-        <div style="font-size:10px;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;">Skor Total</div>
+      <div>${spCellHTML(a._spCount)}</div>
+      <div class="gap-score-cell">
+        <div class="gap-score-num">${a.total.toFixed(1)}%</div>
+        <div class="gap-score-bar"><div class="gap-score-fill" style="width:${scoreFill}%"></div></div>
       </div>
-      <div class="gap-weakest">${tags}</div>
+      <div class="gap-weakest">${tags}${more}</div>
+      <div>${riskPillHTML(a._risk)}</div>
     </div>`;
   }).join('');
+
+  el.innerHTML = headHTML + '<div class="gap-body">' + rowsHTML + '</div>';
 }
 
 /* =========================================================
@@ -2423,10 +2779,16 @@ window.downloadKampus = () => {
 window.downloadGap = () => {
   const data = _views.gap;
   if(!data.length){ toast('Tidak ada data','info'); return; }
-  const H = ['Rank','No Induk','Nama','Kampus','Kelompok','Total %','Mentoring %','Pembinaan %','Pre %','Post %','Assessment %','Prestasi','Organisasi','IPK'];
-  const R = data.map(a => [a.rank,a.no_induk,a.nama,a.kampus,a.kelompok,a.total.toFixed(2),
+  const riskLabel = { crit:'Critical (Risiko SP Lanjutan)', high:'Tinggi (Calon SP Baru)', med:'Sedang (Perlu Pembinaan)' };
+  const H = ['Rank','No Induk','Nama','Kampus','Kelompok','Tingkat Risiko','Status SP','Total %','Mentoring %','Pembinaan %','Pre %','Post %','Assessment %','Prestasi','Organisasi','IPK'];
+  const R = data.map(a => [
+    a.rank, a.no_induk, a.nama, a.kampus, a.kelompok,
+    riskLabel[a._risk] || '—',
+    a._spCount > 0 ? `SP-${a._spCount}` : 'Belum SP',
+    a.total.toFixed(2),
     (a.mentPct*100).toFixed(1),(a.pemPct*100).toFixed(1),(a.prePct*100).toFixed(1),(a.postPct*100).toFixed(1),(a.assPct*100).toFixed(1),
-    a.prestasiCount,a.orgCount,a.ipk.toFixed(2)]);
+    a.prestasiCount, a.orgCount, a.ipk.toFixed(2)
+  ]);
   const wb = toXLSX('Butuh Perhatian', H, R);
   XLSX.writeFile(wb, `leaderboard-gap-${viewSlug()}-${ts()}.xlsx`);
   toast(`${data.length.toLocaleString('id-ID')} baris diunduh`, 'ok');
