@@ -795,6 +795,717 @@
       .tf-cards{ grid-template-columns: 1fr; }
       .tf-hero{ padding:18px 16px; }
     }
+    /* ============================================================
+       SHARED ADMIN UPGRADE — loading inline, layout lebar, animasi
+       ============================================================ */
+    /* Sembunyikan page-header karena duplikat dengan judul di app-header */
+    .page-header, .st-ph, .rp-ph { display: none !important; }
+
+    /* Loading inline (cuma di area konten, sidebar+header tetap kelihatan) */
+    #adminLoading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px 40px;
+      gap: 26px;
+      animation: admViewIn .35s cubic-bezier(.2,.8,.2,1);
+    }
+    #adminLoading.hide { display: none; }
+    @keyframes admViewIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .adm-loader-skeletons {
+      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+      max-width: 720px; width: 100%;
+    }
+    .adm-skel-card {
+      flex: 1 1 200px; max-width: 220px; border-radius: 14px;
+      overflow: hidden; background: #f3f4f6;
+    }
+    .adm-skel-img {
+      height: 84px;
+      background: linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%);
+      background-size: 400% 100%;
+      animation: admShimmer 1.4s ease infinite;
+    }
+    .adm-skel-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .adm-skel-line {
+      height: 9px; border-radius: 6px;
+      background: linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%);
+      background-size: 400% 100%;
+      animation: admShimmer 1.4s ease infinite;
+    }
+    .adm-skel-line.short { width: 60%; }
+    .adm-skel-card:nth-child(2) .adm-skel-img,
+    .adm-skel-card:nth-child(2) .adm-skel-line { animation-delay: .15s; }
+    .adm-skel-card:nth-child(3) .adm-skel-img,
+    .adm-skel-card:nth-child(3) .adm-skel-line { animation-delay: .3s; }
+    @keyframes admShimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Spinning ring + logo */
+    .adm-loader-ring { position: relative; width: 72px; height: 72px; }
+    .adm-loader-ring svg.ring-svg {
+      position: absolute; inset: 0;
+      animation: admRingSpin 1.1s cubic-bezier(.6,.1,.4,.9) infinite;
+    }
+    .adm-loader-ring .ring-logo {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .adm-loader-ring .ring-logo img {
+      width: 36px; height: 36px; object-fit: contain;
+      animation: admLogoPulse 1.1s ease-in-out infinite;
+    }
+    @keyframes admRingSpin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes admLogoPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: .75; transform: scale(.88); }
+    }
+
+    /* Status text + bouncing dots */
+    .adm-loader-text {
+      font-size: 14px; font-weight: 600; color: #374151;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .adm-loader-dots span {
+      display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+      background: #0055a5;
+      animation: admDotBounce 1.1s ease-in-out infinite;
+    }
+    .adm-loader-dots span:nth-child(2) { animation-delay: .18s; background: #00a59f; }
+    .adm-loader-dots span:nth-child(3) { animation-delay: .36s; background: #feb23e; }
+    @keyframes admDotBounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: .4; }
+      40%           { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* Animasi entrance untuk item list/card */
+    @keyframes admItemIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    /* ============================================================
+       UPGRADE: pill-style tabs + KPI hover lift + smooth transitions
+       ============================================================ */
+    /* Wider layout — override existing max-width */
+    .pr-page { max-width: none !important; padding: 4px 16px 80px !important; }
+    @media (max-width: 1100px) { .pr-page { padding: 4px 12px 80px !important; } }
+    @media (max-width: 700px)  { .pr-page { padding: 4px 8px 80px !important; } }
+
+    /* TABS — pill-style modern */
+    .pr-tabs {
+      display:flex !important;
+      gap:4px !important;
+      padding:6px !important;
+      background:#fff !important;
+      border:1px solid #e5e7eb !important;
+      border-radius:14px !important;
+      margin-bottom:18px !important;
+      overflow-x:auto;
+      scrollbar-width:none;
+      box-shadow: 0 1px 3px rgba(15,23,42,.04);
+    }
+    .pr-tab {
+      position:relative;
+      padding:10px 16px !important;
+      font-size:12.5px;
+      font-weight:600;
+      color:#64748b !important;
+      background:transparent !important;
+      border:none !important;
+      border-radius:10px !important;
+      margin-bottom:0 !important;
+      cursor:pointer;
+      white-space:nowrap;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      transition: color .2s ease, background .2s ease, transform .15s ease, box-shadow .2s ease !important;
+      flex-shrink:0;
+    }
+    .pr-tab:hover:not(.active) {
+      color:#0f172a !important;
+      background:#f1f5f9 !important;
+    }
+    .pr-tab svg {
+      width:14px; height:14px;
+      transition: color .2s ease, transform .25s cubic-bezier(.34,1.56,.64,1);
+      flex-shrink:0;
+    }
+    .pr-tab.active {
+      color:#fff !important;
+      background: linear-gradient(135deg, var(--tc, #0055a5) 0%,
+        color-mix(in srgb, var(--tc, #0055a5) 78%, #000) 100%) !important;
+      border-bottom:none !important;
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--tc, #0055a5) 28%, transparent),
+                  0 1px 2px color-mix(in srgb, var(--tc, #0055a5) 18%, transparent);
+    }
+    .pr-tab.active svg { color:#fff !important; transform:scale(1.05); }
+    .pr-tab.active:hover { transform:translateY(-1px); }
+    .pr-tab-badge {
+      font-size:10.5px !important;
+      font-weight:800 !important;
+      padding:2px 8px !important;
+      background:#f1f5f9 !important;
+      color:#64748b !important;
+      transition: background .2s ease, color .2s ease;
+      font-variant-numeric: tabular-nums;
+    }
+    .pr-tab:hover:not(.active) .pr-tab-badge { background:#e2e8f0 !important; }
+    .pr-tab.active .pr-tab-badge {
+      background: rgba(255,255,255,.22) !important;
+      color:#fff !important;
+      backdrop-filter: blur(6px);
+    }
+    .pr-tab-panel.active { animation: tabPanelInUp .35s cubic-bezier(.2,.8,.2,1); }
+    @keyframes tabPanelInUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+    /* KPI cards: lift hover + smooth entrance + arrow indicator */
+    .pr-stat {
+      transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s ease, border-color .25s ease !important;
+      animation: admItemIn .4s cubic-bezier(.2,.8,.2,1) backwards;
+      position: relative;
+      overflow: hidden;
+    }
+    .pr-stats > .pr-stat:nth-child(1) { animation-delay: 0ms; }
+    .pr-stats > .pr-stat:nth-child(2) { animation-delay: 60ms; }
+    .pr-stats > .pr-stat:nth-child(3) { animation-delay: 120ms; }
+    .pr-stats > .pr-stat:nth-child(4) { animation-delay: 180ms; }
+    .pr-stats > .pr-stat:nth-child(5) { animation-delay: 240ms; }
+    .pr-stat[onclick]:hover {
+      transform: translateY(-3px);
+      border-color: #c5d6e8 !important;
+      box-shadow: 0 12px 28px rgba(13,67,118,.10) !important;
+    }
+    .pr-stat[onclick]:active { transform: translateY(-1px); }
+
+    /* Insight cards entrance */
+    .insight-card, .insight-grid > * {
+      animation: admItemIn .4s cubic-bezier(.2,.8,.2,1) .1s backwards;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .insight-card:hover { box-shadow: 0 8px 22px rgba(0,0,0,.06); }
+
+    /* Polish skeleton loaders into KPIs */
+    .pr-stat .skeleton { animation-duration: 1.2s; }
+
+    /* Tables polish */
+    .pr-table thead th, .breakdown-table thead th {
+      background: linear-gradient(180deg, #fafbfc 0%, #f1f5f9 100%) !important;
+      font-weight: 800 !important;
+    }
+    .pr-table tbody tr, .breakdown-table tbody tr {
+      transition: background .18s, transform .18s;
+    }
+    .pr-table tbody tr:hover td, .breakdown-table tbody tr:hover td {
+      background: linear-gradient(90deg, #f0f9ff 0%, #f8fafc 70%, transparent 100%) !important;
+    }
+    .pr-table tbody tr[onclick], .breakdown-table tbody tr[onclick] { cursor: pointer; }
+    .pr-table tbody tr[onclick]:hover, .breakdown-table tbody tr[onclick]:hover { transform: translateX(2px); }
+    .pr-table tbody tr[onclick]:hover td:first-child { box-shadow: inset 3px 0 0 var(--tc, #0055a5); }
+
+    /* Buttons polish */
+    .pr-kpi-back-btn, button[onclick*="close"][onclick*="Detail"] {
+      transition: all .2s cubic-bezier(.2,.8,.2,1) !important;
+    }
+    .pr-kpi-back-btn:hover { transform: translateX(-3px); }
+
+    /* ============================================================
+       USER REQUEST: more polish on KPI cards + clickable rows
+       Mirrors the patterns from admin-awardee.html:
+       - Hover arrow indicator in top-right corner
+       - Sticky teal-accent thead
+       - Row entrance stagger + avatar scale on row hover
+       ============================================================ */
+    .pr-stat .s-arrow {
+      position: absolute; top: 12px; right: 12px;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: #f3f4f6; color: #9ca3af;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateX(-4px);
+      transition: opacity .25s, transform .25s, background .25s, color .25s;
+      pointer-events: none; z-index: 2;
+    }
+    .pr-stat .s-arrow svg { width: 11px; height: 11px; }
+    .pr-stat[onclick]:hover .s-arrow {
+      opacity: 1; transform: translateX(0);
+      background: #00A59F; color: #fff;
+    }
+    .pr-stat[onclick]:hover .pr-stat-hint { opacity: 0; transition: opacity .2s; }
+    .pr-stat-val { font-variant-numeric: tabular-nums; letter-spacing: -.5px; }
+
+    /* Sticky teal-accent thead (awardee-style) */
+    .pr-table thead th {
+      position: sticky; top: 0; z-index: 1;
+      box-shadow: inset 0 2px 0 0 #00A59F;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    /* Row entrance stagger + avatar scale on hover */
+    .pr-table tbody tr {
+      animation: admItemIn .35s cubic-bezier(.2,.8,.2,1) backwards;
+    }
+    .pr-table tbody tr:nth-child(1)  { animation-delay: 0ms; }
+    .pr-table tbody tr:nth-child(2)  { animation-delay: 25ms; }
+    .pr-table tbody tr:nth-child(3)  { animation-delay: 50ms; }
+    .pr-table tbody tr:nth-child(4)  { animation-delay: 75ms; }
+    .pr-table tbody tr:nth-child(5)  { animation-delay: 100ms; }
+    .pr-table tbody tr:nth-child(6)  { animation-delay: 125ms; }
+    .pr-table tbody tr:nth-child(7)  { animation-delay: 150ms; }
+    .pr-table tbody tr:nth-child(8)  { animation-delay: 175ms; }
+    .pr-table tbody tr:nth-child(9)  { animation-delay: 200ms; }
+    .pr-table tbody tr:nth-child(10) { animation-delay: 225ms; }
+    .pr-awardee-avatar, .pr-kampus-icon {
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    .pr-table tbody tr[onclick]:hover .pr-awardee-avatar,
+    .pr-table tbody tr[onclick]:hover .pr-kampus-icon {
+      transform: scale(1.08);
+      box-shadow: 0 3px 8px rgba(0,0,0,.12);
+    }
+    /* Strong row hover when clickable */
+    .pr-table tbody tr[onclick]:hover td {
+      background: linear-gradient(90deg, #f0fdfa 0%, #f0f9ff 50%, transparent 100%) !important;
+    }
+    .pr-table tbody tr[onclick]:hover td:first-child {
+      box-shadow: inset 3px 0 0 #00A59F !important;
+    }
+
+    /* Clickable insight items (chart bars, top-rank lists, donut) */
+    .bar-row[onclick], .rank-item[onclick], .donut-wrap[onclick] {
+      cursor: pointer;
+      transition: background .15s, transform .15s;
+    }
+    .bar-row[onclick] { border-radius: 6px; padding: 4px 6px; margin: 0 -6px; }
+    .bar-row[onclick]:hover { background: #f0fdfa; transform: translateX(2px); }
+    .rank-item[onclick] { border-radius: 8px; }
+    .rank-item[onclick]:hover { background: linear-gradient(90deg, #f0fdfa 0%, #f8fafc 70%, transparent 100%); transform: translateX(2px); }
+    .donut-wrap[onclick]:hover { transform: scale(1.02); }
+
+    /* ============================================
+       INLINE DETAIL PANEL (replaces page-takeover)
+    ============================================ */
+    .inline-detail {
+      background: #fff;
+      border: 1.5px solid #99f6e4;
+      border-radius: 14px;
+      margin: 16px 0 4px;
+      box-shadow: 0 6px 20px rgba(13,148,136,.10), 0 1px 3px rgba(0,0,0,.04);
+      overflow: hidden;
+      animation: inlineDetailIn .35s cubic-bezier(.2,.8,.2,1) both;
+      scroll-margin-top: 80px;
+    }
+    @keyframes inlineDetailIn {
+      from { opacity: 0; transform: translateY(-10px); max-height: 0; }
+      to   { opacity: 1; transform: translateY(0);     max-height: 4000px; }
+    }
+    .inline-detail.closing {
+      animation: inlineDetailOut .22s ease both;
+    }
+    @keyframes inlineDetailOut {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(-8px); }
+    }
+    /* When inline-detail is a sibling of insight-card inside the grid, span full width */
+    .insight-grid > .inline-detail { grid-column: 1 / -1; }
+
+    .inline-detail-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+      border-bottom: 1px solid #99f6e4;
+    }
+    .inline-detail-title {
+      font-size: 13px; font-weight: 800; color: #134e4a;
+      display: flex; align-items: center; gap: 8px;
+      flex: 1; min-width: 0;
+    }
+    .inline-detail-title svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .inline-detail-title .it-crumb {
+      color: #0d9488; font-weight: 600; font-size: 11px;
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+    .inline-detail-title .it-name {
+      color: #134e4a; font-weight: 800;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .inline-detail-close {
+      flex-shrink: 0;
+      width: 30px; height: 30px; padding: 0;
+      background: #fff; border: 1.5px solid #99f6e4; border-radius: 50%;
+      color: #0d9488; font-size: 18px; line-height: 1; font-weight: 600;
+      cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .inline-detail-close:hover {
+      background: #ccfbf1; transform: rotate(90deg);
+      box-shadow: 0 2px 8px rgba(13,148,136,.25);
+    }
+    .inline-detail-body {
+      padding: 18px 20px 20px;
+      max-height: 70vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .inline-detail-body::-webkit-scrollbar { width: 8px; }
+    .inline-detail-body::-webkit-scrollbar-track { background: transparent; }
+    .inline-detail-body::-webkit-scrollbar-thumb { background: #ccfbf1; border-radius: 4px; }
+    .inline-detail-body::-webkit-scrollbar-thumb:hover { background: #99f6e4; }
+
+    /* Color variants per detail type */
+    .inline-detail.id--kpi      { border-color: #fcd34d; }
+    .inline-detail.id--kpi      .inline-detail-head { background: linear-gradient(135deg, #fef9c3 0%, #fef3c7 100%); border-bottom-color: #fcd34d; }
+    .inline-detail.id--kpi      .inline-detail-title, .inline-detail.id--kpi .it-name { color: #78350f; }
+    .inline-detail.id--kpi      .it-crumb { color: #b45309; }
+    .inline-detail.id--kpi      .inline-detail-close { border-color: #fcd34d; color: #b45309; }
+    .inline-detail.id--kpi      .inline-detail-close:hover { background: #fef3c7; }
+
+    .inline-detail.id--awardee  { border-color: #bfdbfe; }
+    .inline-detail.id--awardee  .inline-detail-head { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-bottom-color: #bfdbfe; }
+    .inline-detail.id--awardee  .inline-detail-title, .inline-detail.id--awardee .it-name { color: #1e3a8a; }
+    .inline-detail.id--awardee  .it-crumb { color: #1d4ed8; }
+    .inline-detail.id--awardee  .inline-detail-close { border-color: #bfdbfe; color: #1d4ed8; }
+    .inline-detail.id--awardee  .inline-detail-close:hover { background: #dbeafe; }
+
+    .inline-detail.id--kampus   { border-color: #ddd6fe; }
+    .inline-detail.id--kampus   .inline-detail-head { background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%); border-bottom-color: #ddd6fe; }
+    .inline-detail.id--kampus   .inline-detail-title, .inline-detail.id--kampus .it-name { color: #4c1d95; }
+    .inline-detail.id--kampus   .it-crumb { color: #7c3aed; }
+    .inline-detail.id--kampus   .inline-detail-close { border-color: #ddd6fe; color: #7c3aed; }
+    .inline-detail.id--kampus   .inline-detail-close:hover { background: #ede9fe; }
+
+    .inline-detail.id--prestasi { border-color: #99f6e4; } /* default teal */
+
+    @media (max-width: 700px) {
+      .inline-detail-body { padding: 14px 14px 16px; max-height: 80vh; }
+      .inline-detail-head { padding: 10px 14px; }
+      .inline-detail-title { font-size: 12.5px; }
+    }
+
+    /* =========================================================
+       BROWSE DETAIL — inline expansion for "Semua/Awardee/Kampus"
+       Triggered from tab bar, expands inside Insight panel
+    ========================================================= */
+    .pr-tab.expanded {
+      position: relative;
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--tc, #0d9488) 35%, transparent),
+                  0 8px 22px color-mix(in srgb, var(--tc, #0d9488) 18%, transparent);
+      background: #fff !important;
+      color: var(--tc, #0d9488) !important;
+      border-bottom-color: var(--tc, #0d9488) !important;
+      transform: translateY(-2px);
+    }
+    .pr-tab.expanded .pr-tab-badge {
+      background: color-mix(in srgb, var(--tc, #0d9488) 95%, #fff) !important;
+      color: #fff !important;
+      transform: scale(1.05);
+    }
+    .pr-tab.expanded svg { color: var(--tc, #0d9488) !important; transform: scale(1.1); }
+
+    .browse-detail-host {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height .55s cubic-bezier(.4,0,.2,1),
+                  opacity .35s ease,
+                  margin .35s ease;
+      margin-bottom: 0;
+    }
+    .browse-detail-host.show {
+      max-height: 5000px;
+      opacity: 1;
+      margin-bottom: 22px;
+    }
+    .browse-detail {
+      background: #fff;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 18px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.06);
+      overflow: hidden;
+      animation: browseDetailIn .45s cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes browseDetailIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .browse-detail.bd--semua   { border-top: 4px solid #0d9488; }
+    .browse-detail.bd--awardee { border-top: 4px solid #1d4ed8; }
+    .browse-detail.bd--kampus  { border-top: 4px solid #7c3aed; }
+
+    .browse-head {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 22px;
+      border-bottom: 1px solid #f1f5f9;
+      background: linear-gradient(180deg, #fafafa 0%, #fff 100%);
+    }
+    .browse-detail.bd--semua   .browse-head { background: linear-gradient(135deg, #f0fdfa 0%, #fff 60%); }
+    .browse-detail.bd--awardee .browse-head { background: linear-gradient(135deg, #eff6ff 0%, #fff 60%); }
+    .browse-detail.bd--kampus  .browse-head { background: linear-gradient(135deg, #f5f3ff 0%, #fff 60%); }
+
+    .browse-head-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .browse-detail.bd--semua   .browse-head-icon { background: #ccfbf1; color: #0d9488; }
+    .browse-detail.bd--awardee .browse-head-icon { background: #dbeafe; color: #1d4ed8; }
+    .browse-detail.bd--kampus  .browse-head-icon { background: #ede9fe; color: #7c3aed; }
+    .browse-head-icon svg { width: 20px; height: 20px; }
+
+    .browse-head-text { flex: 1; min-width: 0; }
+    .browse-head-title {
+      font-size: 14.5px; font-weight: 800; color: #0f172a;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .browse-head-title .browse-count {
+      font-size: 11.5px; font-weight: 700;
+      padding: 2px 9px; border-radius: 99px;
+      font-variant-numeric: tabular-nums;
+    }
+    .browse-detail.bd--semua   .browse-count { background: #ccfbf1; color: #0d9488; }
+    .browse-detail.bd--awardee .browse-count { background: #dbeafe; color: #1d4ed8; }
+    .browse-detail.bd--kampus  .browse-count { background: #ede9fe; color: #7c3aed; }
+    .browse-head-sub {
+      font-size: 11.5px; color: #64748b; margin-top: 3px;
+    }
+    .browse-close {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid #e5e7eb; background: #fff;
+      color: #64748b; font-size: 18px; line-height: 1; font-weight: 600;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .browse-close:hover {
+      background: #fee2e2; color: #dc2626; border-color: #fca5a5;
+      transform: rotate(90deg);
+    }
+
+    .browse-body { padding: 18px 22px 22px; }
+
+    /* STAT CARDS — quick metrics */
+    .browse-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .bs-card {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      transition: all .2s;
+      cursor: pointer;
+      animation: bsCardIn .4s ease both;
+    }
+    .bs-card:nth-child(1){animation-delay:.05s} .bs-card:nth-child(2){animation-delay:.1s} .bs-card:nth-child(3){animation-delay:.15s} .bs-card:nth-child(4){animation-delay:.2s} .bs-card:nth-child(5){animation-delay:.25s} .bs-card:nth-child(6){animation-delay:.3s}
+    @keyframes bsCardIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .bs-card:hover {
+      background: #fff;
+      border-color: var(--bs-c, #0d9488);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px color-mix(in srgb, var(--bs-c, #0d9488) 18%, transparent);
+    }
+    .bs-card-lbl {
+      font-size: 10.5px; font-weight: 700; color: #64748b;
+      text-transform: uppercase; letter-spacing: .06em;
+      display: flex; align-items: center; gap: 5px;
+      margin-bottom: 6px;
+    }
+    .bs-card-lbl svg { width: 12px; height: 12px; }
+    .bs-card-val {
+      font-size: 22px; font-weight: 800; color: #0f172a;
+      line-height: 1; font-variant-numeric: tabular-nums;
+      letter-spacing: -.5px;
+    }
+    .bs-card-val .bs-suffix {
+      font-size: 12px; font-weight: 600; color: #94a3b8; margin-left: 3px;
+    }
+    .bs-card-sub { font-size: 10.5px; color: #94a3b8; margin-top: 4px; }
+
+    /* SECTION TITLE inside browse detail */
+    .bs-section-title {
+      font-size: 12px; font-weight: 800; color: #0f172a;
+      text-transform: uppercase; letter-spacing: .06em;
+      display: flex; align-items: center; gap: 6px;
+      margin: 22px 0 10px;
+    }
+    .bs-section-title:first-child { margin-top: 0; }
+    .bs-section-title svg { width: 14px; height: 14px; color: var(--bs-c, #0d9488); }
+    .bs-section-title .bs-section-sub {
+      margin-left: 6px; font-size: 11px; font-weight: 500;
+      color: #94a3b8; text-transform: none; letter-spacing: 0;
+    }
+
+    /* TOP 10 LIST */
+    .bs-top {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 6px;
+    }
+    .bs-top-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: 10px;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: all .18s;
+      animation: bsRowIn .35s ease both;
+    }
+    .bs-top-row:nth-child(1){animation-delay:.05s} .bs-top-row:nth-child(2){animation-delay:.08s} .bs-top-row:nth-child(3){animation-delay:.11s} .bs-top-row:nth-child(4){animation-delay:.14s} .bs-top-row:nth-child(5){animation-delay:.17s} .bs-top-row:nth-child(6){animation-delay:.2s} .bs-top-row:nth-child(7){animation-delay:.23s} .bs-top-row:nth-child(8){animation-delay:.26s} .bs-top-row:nth-child(9){animation-delay:.29s} .bs-top-row:nth-child(10){animation-delay:.32s}
+    @keyframes bsRowIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+    .bs-top-row:hover {
+      background: #fff;
+      border: 1px solid var(--bs-c, #0d9488);
+      padding: 8px 11px;
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--bs-c, #0d9488) 15%, transparent);
+      transform: translateX(3px);
+    }
+    .bs-top-rank {
+      width: 24px; height: 24px; border-radius: 7px;
+      background: #fff; border: 1.5px solid #e5e7eb;
+      font-size: 11px; font-weight: 800; color: #64748b;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    .bs-top-row:nth-child(1) .bs-top-rank { background: linear-gradient(135deg,#fde68a,#fcd34d); color:#92400e; border-color:#fbbf24; }
+    .bs-top-row:nth-child(2) .bs-top-rank { background: linear-gradient(135deg,#e5e7eb,#d1d5db); color:#374151; border-color:#9ca3af; }
+    .bs-top-row:nth-child(3) .bs-top-rank { background: linear-gradient(135deg,#fed7aa,#fdba74); color:#7c2d12; border-color:#fb923c; }
+    .bs-top-info { flex: 1; min-width: 0; }
+    .bs-top-name {
+      font-size: 12.5px; font-weight: 700; color: #0f172a;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .bs-top-meta {
+      font-size: 10.5px; color: #94a3b8;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 1px;
+    }
+    .bs-top-val {
+      font-size: 12.5px; font-weight: 800; color: var(--bs-c, #0d9488);
+      font-variant-numeric: tabular-nums;
+      flex-shrink: 0;
+      padding: 3px 9px; border-radius: 99px;
+      background: color-mix(in srgb, var(--bs-c, #0d9488) 12%, #fff);
+    }
+
+    /* SEARCH/FILTER TOOLBAR */
+    .bs-toolbar {
+      display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+    }
+    .bs-search {
+      flex: 1; min-width: 220px;
+      position: relative;
+    }
+    .bs-search input {
+      width: 100%;
+      padding: 7px 10px 7px 32px;
+      border: 1.5px solid #e5e7eb; border-radius: 9px;
+      font-size: 12.5px; background: #fff;
+      color: #0f172a;
+      transition: border-color .15s;
+    }
+    .bs-search input:focus { outline: none; border-color: var(--bs-c, #0d9488); }
+    .bs-search svg {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      width: 14px; height: 14px; color: #94a3b8; pointer-events: none;
+    }
+    .bs-filter {
+      padding: 7px 10px; border: 1.5px solid #e5e7eb; border-radius: 9px;
+      font-size: 12px; background: #fff; color: #374151;
+      cursor: pointer; min-width: 140px;
+      transition: border-color .15s;
+    }
+    .bs-filter:focus, .bs-filter:hover { outline: none; border-color: var(--bs-c, #0d9488); }
+    .bs-meta {
+      font-size: 11.5px; color: #64748b; font-weight: 600;
+      margin-left: auto; padding: 0 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .bs-meta b { color: var(--bs-c, #0d9488); font-variant-numeric: tabular-nums; }
+
+    /* TABLE inside browse detail */
+    .bs-table-wrap {
+      border: 1px solid #e5e7eb; border-radius: 12px;
+      overflow: hidden;
+    }
+    .bs-table-scroll {
+      max-height: 540px;
+      overflow: auto;
+      scrollbar-width: thin;
+    }
+    .bs-table-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+    .bs-table-scroll::-webkit-scrollbar-track { background: #f8fafc; }
+    .bs-table-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .bs-table-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    .bs-table {
+      width: max-content; min-width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    .bs-table thead th {
+      position: sticky; top: 0; z-index: 2;
+      background: #f8fafc;
+      padding: 10px 14px;
+      text-align: left;
+      font-size: 11px; font-weight: 800;
+      color: #475569;
+      text-transform: uppercase; letter-spacing: .04em;
+      border-bottom: 2px solid #e5e7eb;
+      white-space: nowrap;
+    }
+    .bs-table tbody td {
+      padding: 10px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #374151;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    .bs-table tbody tr {
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .bs-table tbody tr:hover td { background: #f0fdfa; }
+    .browse-detail.bd--awardee .bs-table tbody tr:hover td { background: #eff6ff; }
+    .browse-detail.bd--kampus  .bs-table tbody tr:hover td { background: #f5f3ff; }
+    .bs-table tbody tr:last-child td { border-bottom: none; }
+    .bs-table .td-name { font-weight: 600; color: #0f172a; white-space: normal; min-width: 140px; max-width: 220px; }
+    .bs-table .td-mono { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; color: #475569; }
+    .bs-table .td-wrap { white-space: normal; max-width: 280px; line-height: 1.4; }
+    .bs-table .td-num  { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; color: #0f172a; }
+
+    .bs-empty {
+      padding: 32px 20px; text-align: center;
+      color: #94a3b8; font-size: 12.5px;
+    }
+    .bs-empty svg { width: 32px; height: 32px; opacity: .4; margin-bottom: 6px; }
+
+    @media (max-width: 700px) {
+      .browse-head { padding: 12px 16px; }
+      .browse-body { padding: 14px 16px 18px; }
+      .browse-head-title { font-size: 13.5px; }
+      .browse-stats { grid-template-columns: repeat(2, 1fr); }
+      .bs-top { grid-template-columns: 1fr; }
+      .bs-table-scroll { max-height: 420px; }
+    }
   </style>
 </head>
 
@@ -927,54 +1638,40 @@
   </header>
 
   <main class="app-content">
-    <!-- Awardee inline detail panel -->
-    <div id="prAwardeeDetailPanel" style="display:none;">
-      <div class="pr-page" style="padding-bottom:60px;">
-        <div class="pr-kpi-back-bar">
-          <button class="pr-kpi-back-btn" onclick="closeAwardeeDetail()">← Kembali</button>
-          <span class="pr-kpi-breadcrumb">Per Awardee → Detail</span>
-        </div>
-        <div id="prAwardeeDetailBody"></div>
+
+    <!-- ============================================================
+         LOADING — INLINE (skeleton + ring dengan logo BSI + dots)
+         ============================================================ -->
+    <div id="adminLoading" role="status" aria-live="polite" aria-label="Memuat data">
+      <div class="adm-loader-skeletons">
+        <div class="adm-skel-card"><div class="adm-skel-img"></div><div class="adm-skel-body"><div class="adm-skel-line"></div><div class="adm-skel-line short"></div></div></div>
+        <div class="adm-skel-card"><div class="adm-skel-img"></div><div class="adm-skel-body"><div class="adm-skel-line"></div><div class="adm-skel-line short"></div></div></div>
+        <div class="adm-skel-card"><div class="adm-skel-img"></div><div class="adm-skel-body"><div class="adm-skel-line"></div><div class="adm-skel-line short"></div></div></div>
+      </div>
+      <div class="adm-loader-ring">
+        <svg class="ring-svg" width="72" height="72" viewBox="0 0 72 72" fill="none">
+          <circle cx="36" cy="36" r="30" stroke="#e5e7eb" stroke-width="4"/>
+          <path d="M36 6 a30 30 0 0 1 26 15" stroke="url(#admGrad)" stroke-width="4" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="admGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#0055a5"/>
+              <stop offset="50%"  stop-color="#00a59f"/>
+              <stop offset="100%" stop-color="#feb23e"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="ring-logo"><img src="assets/logo.png" alt="BSI"></div>
+      </div>
+      <div class="adm-loader-text">
+        <span id="admLoadingSub">Memuat data</span>
+        <span class="adm-loader-dots"><span></span><span></span><span></span></span>
       </div>
     </div>
 
-    <!-- Kampus inline detail panel -->
-    <div id="prKampusDetailPanel" style="display:none;">
-      <div class="pr-page" style="padding-bottom:60px;">
-        <div class="pr-kpi-back-bar">
-          <button class="pr-kpi-back-btn" onclick="closeKampusDetail()">← Kembali</button>
-          <span class="pr-kpi-breadcrumb">Per Kampus → Detail</span>
-        </div>
-        <div id="prKampusDetailBody"></div>
-      </div>
-    </div>
-
-    <!-- Prestasi inline detail panel -->
-    <div id="prPrestasiDetailPanel" style="display:none;">
-      <div class="pr-page" style="padding-bottom:60px;">
-        <div class="pr-kpi-back-bar">
-          <button class="pr-kpi-back-btn" onclick="closePrestasiDetail()">← Kembali</button>
-          <span class="pr-kpi-breadcrumb" id="prPrestasiDetailBreadcrumb">Detail Prestasi</span>
-        </div>
-        <div id="prPrestasiDetailBody"></div>
-      </div>
-    </div>
-
-    <!-- KPI inline detail panel -->
-    <div id="prKpiPanel" style="display:none;">
-      <div class="pr-page pr-kpi-panel">
-        <div class="pr-kpi-back-bar">
-          <button class="pr-kpi-back-btn" onclick="closeKpiDetail()">← Kembali</button>
-          <span class="pr-kpi-breadcrumb" id="prKpiBreadcrumb">Detail KPI</span>
-        </div>
-        <div class="pr-kpi-head">
-          <h2 id="prKpiTitle">Detail</h2>
-          <p id="prKpiSub">—</p>
-        </div>
-        <div id="prKpiBody"></div>
-      </div>
-    </div>
-    <div class="pr-page" id="prMainPage">
+    <!-- Legacy page-takeover panels removed in favor of inline detail.
+         All open*Detail() functions now use showInlineDetail() which
+         renders directly below the chart/element that was clicked. -->
+    <div class="pr-page" id="prMainPage" style="display:none;">
 
       <div class="pr-ph">
         <h1>Kelola Prestasi &amp; Insight</h1>
@@ -1020,6 +1717,9 @@
 
       <!-- PANEL: INSIGHT -->
       <div class="pr-tab-panel active" id="panel-insight">
+        <!-- BROWSE DETAIL — expanded inline when clicking Semua/Awardee/Kampus tabs -->
+        <div class="browse-detail-host" id="browseDetailHost"></div>
+
         <div class="insight-grid">
           <div class="insight-card">
             <div class="insight-head">
@@ -1705,6 +2405,9 @@ async function init(){
       if (info.role !== 'admin' && info.role !== 'operator') { location.replace('index.html'); return; }
     }
 
+    const sub = document.getElementById('admLoadingSub');
+    if (sub) sub.textContent = 'Memuat data prestasi';
+
     _raw = await fetchAll();
     buildFilterOptions();
     buildTalentUI();
@@ -1712,9 +2415,17 @@ async function init(){
     renderInsights();
     rebuildViews();
     renderAllTables();
+
+    // Hide loading splash, show main page
+    const ld = document.getElementById('adminLoading');
+    if (ld) ld.classList.add('hide');
+    const mp = document.getElementById('prMainPage');
+    if (mp) mp.style.display = '';
   } catch(e){
     console.error(e);
     toast('Gagal memuat data. Silakan coba lagi.', 'err');
+    const ld = document.getElementById('adminLoading');
+    if (ld) ld.classList.add('hide');
   }
 }
 
@@ -1743,6 +2454,7 @@ function renderStats(){
   const el = document.getElementById('prStats');
   el.innerHTML = `
     <div class="pr-stat" onclick="openKpiDetail('total')" title="Lihat detail Total Prestasi">
+      <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       <div class="pr-stat-icon si--gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg></div>
       <div style="flex:1">
         <div class="pr-stat-val" id="sv-total">0</div>
@@ -1751,6 +2463,7 @@ function renderStats(){
       </div>
     </div>
     <div class="pr-stat" onclick="openKpiDetail('awardee')" title="Lihat detail Awardee Berprestasi">
+      <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       <div class="pr-stat-icon si--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
       <div style="flex:1">
         <div class="pr-stat-val" id="sv-awardee">0</div>
@@ -1759,6 +2472,7 @@ function renderStats(){
       </div>
     </div>
     <div class="pr-stat" onclick="openKpiDetail('kampus')" title="Lihat detail Kampus Terlibat">
+      <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       <div class="pr-stat-icon si--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
       <div style="flex:1">
         <div class="pr-stat-val" id="sv-kampus">0</div>
@@ -1767,6 +2481,7 @@ function renderStats(){
       </div>
     </div>
     <div class="pr-stat" onclick="openKpiDetail('internasional')" title="Lihat detail Tingkat Internasional">
+      <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       <div class="pr-stat-icon si--purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 12a10 10 0 1 0 20 0 10 10 0 0 0-20 0z"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg></div>
       <div style="flex:1">
         <div class="pr-stat-val" id="sv-intl">0</div>
@@ -1775,6 +2490,7 @@ function renderStats(){
       </div>
     </div>
     <div class="pr-stat" onclick="openKpiDetail('sertifikat')" title="Lihat detail Dengan Sertifikat">
+      <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
       <div class="pr-stat-icon si--pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg></div>
       <div style="flex:1">
         <div class="pr-stat-val" id="sv-cert">0</div>
@@ -1797,7 +2513,7 @@ function renderStats(){
 /* =============================================
    INSIGHTS (charts)
 ============================================= */
-function barChart(entries, colorMap){
+function barChart(entries, colorMap, onClickJs){
   if(!entries.length) return '<div class="tbl-empty"><p>Belum ada data</p></div>';
   const max = Math.max(...entries.map(e=>e.count));
   const total = entries.reduce((s,e)=>s+e.count,0);
@@ -1805,7 +2521,8 @@ function barChart(entries, colorMap){
     const pct = max ? (e.count * 100 / max) : 0;
     const cls = colorMap[e.key] || colorMap._default || 'bf-gray';
     const share = total ? Math.round(e.count * 100 / total) : 0;
-    return `<div class="bar-row">
+    const click = onClickJs ? `onclick="${onClickJs(e)}"` : '';
+    return `<div class="bar-row" ${click} title="${escapeHtml(e.label)} — klik untuk detail">
       <div class="bar-label" title="${escapeHtml(e.label)}">${escapeHtml(e.label)}</div>
       <div class="bar-track">
         <div class="bar-fill ${cls}" style="width:${pct}%">${pct>15?share+'%':''}</div>
@@ -1814,6 +2531,20 @@ function barChart(entries, colorMap){
     </div>`;
   }).join('');
 }
+
+/* Helper: switch to "Semua" tab and pre-fill a filter */
+window.jumpToSemuaWithFilter = function(filterType, value) {
+  const tabBtn = document.querySelector('.pr-tab[data-tab="semua"]');
+  if (tabBtn) tabBtn.click();
+  const map = { tingkatan: 'ft-semua', juara: 'fj-semua', kampus: 'fk-semua' };
+  const id = map[filterType];
+  if (!id) return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (typeof el.setValues === 'function') el.setValues([value]);
+  else el.value = value;
+  if (typeof filterPanel === 'function') filterPanel('semua');
+};
 
 function renderInsights(){
   // Tingkatan
@@ -1836,7 +2567,7 @@ function renderInsights(){
     'Internasional':'bf-gold','Nasional':'bf-blue','Regional':'bf-teal',
     'Provinsi':'bf-teal','Universitas':'bf-purple','Fakultas':'bf-pink',
     _default:'bf-gray'
-  });
+  }, e => `jumpToSemuaWithFilter('tingkatan','${escapeAttr(e.key)}')`);
   document.getElementById('insight-tingkatan-sub').textContent = `${tEntries.length} kategori`;
 
   // Juara
@@ -1853,7 +2584,7 @@ function renderInsights(){
   document.getElementById('chart-juara').innerHTML = barChart(jEntries, {
     'Juara 1':'bf-gold','Juara 2':'bf-silver','Juara 3':'bf-bronze',
     'Juara Harapan':'bf-blue', _default:'bf-gray'
-  });
+  }, e => `jumpToSemuaWithFilter('juara','${escapeAttr(e.key)}')`);
   document.getElementById('insight-juara-sub').textContent = `${jEntries.length} kategori`;
 
   // Top Awardee
@@ -1867,7 +2598,7 @@ function renderInsights(){
   });
   const topA = Array.from(aMap.values()).sort((a,b)=>b.count - a.count).slice(0,10);
   document.getElementById('top-awardee').innerHTML = topA.length ? `<div class="rank-list">
-    ${topA.map((a,i) => `<div class="rank-item">
+    ${topA.map((a,i) => `<div class="rank-item" onclick="openAwardeeDetail('${escapeAttr(a.no_induk||a.nama)}')" title="Klik untuk lihat detail prestasi">
       <span class="rank-pos ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
       <div style="flex:1;min-width:0;">
         <div class="rank-name">${escapeHtml(a.nama)}</div>
@@ -1891,7 +2622,7 @@ function renderInsights(){
     .map(e => ({ kampus:e.kampus, count:e.count, awardee:e.awardee.size }))
     .sort((a,b)=>b.count - a.count).slice(0,10);
   document.getElementById('top-kampus').innerHTML = topK.length ? `<div class="rank-list">
-    ${topK.map((a,i) => `<div class="rank-item">
+    ${topK.map((a,i) => `<div class="rank-item" onclick="openKampusDetail('${escapeAttr(a.kampus)}')" title="Klik untuk lihat detail kampus">
       <span class="rank-pos ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
       <div style="flex:1;min-width:0;">
         <div class="rank-name">${escapeHtml(a.kampus)}</div>
@@ -1906,7 +2637,7 @@ function renderInsights(){
   const withCert = _raw.filter(r => hasCert(r.sertifikat)).length;
   const pct = total ? Math.round(withCert * 100 / total) : 0;
   document.getElementById('donut-sert').innerHTML = total ? `
-    <div class="donut-wrap">
+    <div class="donut-wrap" onclick="openKpiDetail('sertifikat')" title="Klik untuk lihat detail sertifikat">
       <div class="donut" style="--pct:${pct}%;--dc:#0d9488;">
         <div class="donut-center">
           <div class="donut-pct">${pct}%</div>
@@ -2098,7 +2829,7 @@ function renderTable(tab){
       const ct = classifyTingkatan(r.tingkatan);
       const cj = classifyJuara(r.juara);
       const initA = mkInit(r.nama);
-      return `<tr>
+      return `<tr onclick="openPrestasiDetail(${r.id})" style="cursor:pointer">
         <td style="min-width:160px;">
           <div style="display:flex;align-items:center;gap:8px;">
             <div class="pr-awardee-avatar">${escapeHtml(initA)}</div>
@@ -2110,10 +2841,10 @@ function renderTable(tab){
         <td><span class="tg-badge ${ct.css}">${escapeHtml(ct.label)}</span></td>
         <td><span class="jr-badge ${cj.css}">${escapeHtml(cj.label)}</span></td>
         <td class="td-keterangan" title="${escapeAttr(r.keterangan||'—')}">${escapeHtml(r.keterangan||'—')}</td>
-        <td>${hasCert(r.sertifikat)
+        <td onclick="event.stopPropagation()">${hasCert(r.sertifikat)
           ? `<a class="sert-link" href="${escapeAttr(r.sertifikat)}" target="_blank" rel="noopener"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Buka</a>`
           : '<span class="sert-none">—</span>'}</td>
-        <td>
+        <td onclick="event.stopPropagation()">
           <div class="row-actions">
             <button class="btn-icon view" title="Detail" onclick="openPrestasiDetail(${r.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
             <button class="btn-icon edit" title="Edit" onclick="openEditModal(${r.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
@@ -2134,7 +2865,7 @@ function renderTable(tab){
         : (a.nama||'?').slice(0,2).toUpperCase();
       const totalBadgeCls = a.total >= 10 ? 't-high' : a.total >= 4 ? 't-mid' : 't-low';
       const certPct = a.total ? Math.round(a.cert * 100 / a.total) : 0;
-      return `<tr>
+      return `<tr onclick="openAwardeeDetail('${escapeAttr(a.key)}')" style="cursor:pointer">
         <td style="min-width:180px;">
           <div style="display:flex;align-items:center;gap:9px;">
             <div class="pr-awardee-avatar">${escapeHtml(initials)}</div>
@@ -2164,7 +2895,7 @@ function renderTable(tab){
             <span>${a.cert}/${a.total}</span>
           </div>
         </td>
-        <td>
+        <td onclick="event.stopPropagation()">
           <button class="btn-icon view" title="Lihat daftar prestasi" onclick="openAwardeeDetail('${escapeAttr(a.key)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </td>
       </tr>`;
@@ -2177,7 +2908,7 @@ function renderTable(tab){
     </tr></thead><tbody>${slice.map(a => {
       const initKampus = a.kampus.trim().split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
       const totalBadgeCls = a.total >= 10 ? 't-high' : a.total >= 4 ? 't-mid' : 't-low';
-      return `<tr>
+      return `<tr onclick="openKampusDetail('${escapeAttr(a.kampus)}')" style="cursor:pointer">
         <td style="min-width:180px;">
           <div style="display:flex;align-items:center;gap:9px;">
             <div class="pr-kampus-icon">${escapeHtml(initKampus)}</div>
@@ -2198,7 +2929,7 @@ function renderTable(tab){
             <span class="pr-j-bronze">${a.j3||0}</span>
           </div>
         </td>
-        <td>
+        <td onclick="event.stopPropagation()">
           <button class="btn-icon view" title="Lihat detail kampus" onclick="openKampusDetail('${escapeAttr(a.kampus)}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </td>
       </tr>`;
@@ -2241,12 +2972,567 @@ window.gotoPage = (tab, p) => { _pages[tab] = p; renderTable(tab); };
 /* =============================================
    TABS
 ============================================= */
+const _BROWSE_TABS = new Set(['semua','awardee','kampus']);
+let _browseExpanded = null;       // 'semua' | 'awardee' | 'kampus' | null
+let _browseSource = null;         // KPI source label
+const _browseFilter = {
+  semua:   { q:'', fk:'', ft:'', fj:'', fcert:'' },
+  awardee: { q:'', fk:'' },
+  kampus:  { q:'' }
+};
+
 window.switchTab = (tab, btn) => {
-  document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('active'));
+  // Special: Semua/Awardee/Kampus → inline expand inside Dashboard panel
+  if (_BROWSE_TABS.has(tab)) {
+    return toggleBrowseDetail(tab, btn);
+  }
+  // Normal tab switch (Insight, Talent)
+  closeBrowseDetail(true);
+  document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('active','expanded'));
   document.querySelectorAll('.pr-tab-panel').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('panel-'+tab).classList.add('active');
 };
+
+/* =============================================
+   BROWSE DETAIL — expand inline (no panel switch)
+============================================= */
+window.toggleBrowseDetail = (type, btn) => {
+  // Click already-expanded tab
+  if (_browseExpanded === type) {
+    const f = _browseFilter[type];
+    const hasFilter = Object.values(f).some(v => v);
+    // If filter is active, clear it instead of closing
+    if (hasFilter || _browseSource) {
+      _browseSource = null;
+      Object.keys(f).forEach(k => f[k] = '');
+      renderBrowseDetail(type);
+      return;
+    }
+    closeBrowseDetail();
+    return;
+  }
+  // Direct tab click → clear KPI source label
+  _browseSource = null;
+  // Make sure Insight panel is the visible one (browse detail lives there)
+  document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('active','expanded'));
+  document.querySelectorAll('.pr-tab-panel').forEach(p => p.classList.remove('active'));
+  const insightPanel = document.getElementById('panel-insight');
+  if (insightPanel) insightPanel.classList.add('active');
+  // Mark clicked tab as active
+  if (btn) btn.classList.add('active');
+  _browseExpanded = type;
+  // Direct tab click also resets filters
+  Object.keys(_browseFilter[type]).forEach(k => _browseFilter[type][k] = '');
+  renderBrowseDetail(type);
+};
+
+window.closeBrowseDetail = (immediate) => {
+  _browseExpanded = null;
+  _browseSource = null;
+  document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('expanded'));
+  const host = document.getElementById('browseDetailHost');
+  if (!host) return;
+  host.classList.remove('show');
+  if (immediate) { host.innerHTML = ''; return; }
+  setTimeout(() => { if (_browseExpanded === null) host.innerHTML = ''; }, 450);
+};
+
+/* ----- Filtered data per browse tab ----- */
+function _bsFilteredSemua(){
+  const f = _browseFilter.semua;
+  const q = (f.q||'').toLowerCase();
+  return _raw.filter(r => {
+    if(f.fk && norm(r.kampus) !== f.fk) return false;
+    if(f.ft && classifyTingkatan(r.tingkatan).key !== f.ft) return false;
+    if(f.fj && classifyJuara(r.juara).key !== f.fj) return false;
+    if(f.fcert === 'yes' && !hasCert(r.sertifikat)) return false;
+    if(f.fcert === 'no'  &&  hasCert(r.sertifikat)) return false;
+    if(q){
+      const s = `${r.nama||''} ${r.no_induk||''} ${r.keterangan||''} ${r.kampus||''}`.toLowerCase();
+      if(!s.includes(q)) return false;
+    }
+    return true;
+  });
+}
+function _bsFilteredAwardee(){
+  const f = _browseFilter.awardee;
+  const q = (f.q||'').toLowerCase();
+  // Re-aggregate from raw
+  const aMap = new Map();
+  _raw.forEach(r => {
+    const key = (r.no_induk || r.nama || '').toString();
+    if(!key) return;
+    const ent = aMap.get(key) || {
+      key, no_induk:r.no_induk||'—', nama:r.nama||'—',
+      kampus:r.kampus||'—', fakultas:r.fakultas||'—', kelompok:r.kelompok||'—',
+      total:0, intnl:0, nas:0, j1:0, j2:0, j3:0, cert:0, items:[]
+    };
+    const t = classifyTingkatan(r.tingkatan).key;
+    const j = classifyJuara(r.juara).key;
+    ent.total++;
+    if(t==='Internasional') ent.intnl++;
+    if(t==='Nasional') ent.nas++;
+    if(j==='Juara 1') ent.j1++;
+    if(j==='Juara 2') ent.j2++;
+    if(j==='Juara 3') ent.j3++;
+    if(hasCert(r.sertifikat)) ent.cert++;
+    ent.items.push(r);
+    aMap.set(key, ent);
+  });
+  return Array.from(aMap.values())
+    .filter(a => {
+      if(f.fk && norm(a.kampus) !== f.fk) return false;
+      if(q){
+        const s = `${a.nama} ${a.no_induk} ${a.kampus}`.toLowerCase();
+        if(!s.includes(q)) return false;
+      }
+      return true;
+    })
+    .sort((a,b) => b.total - a.total);
+}
+function _bsFilteredKampus(){
+  const f = _browseFilter.kampus;
+  const q = (f.q||'').toLowerCase();
+  const kMap = new Map();
+  _raw.forEach(r => {
+    const key = norm(r.kampus) || '—';
+    const ent = kMap.get(key) || { kampus:key, total:0, intnl:0, nas:0, reg:0, j1:0, j2:0, j3:0, awardee:new Set() };
+    const t = classifyTingkatan(r.tingkatan).key;
+    const j = classifyJuara(r.juara).key;
+    ent.total++;
+    if(t==='Internasional') ent.intnl++;
+    if(t==='Nasional') ent.nas++;
+    if(t==='Regional' || t==='Provinsi') ent.reg++;
+    if(j==='Juara 1') ent.j1++;
+    if(j==='Juara 2') ent.j2++;
+    if(j==='Juara 3') ent.j3++;
+    ent.awardee.add(r.no_induk || r.nama);
+    kMap.set(key, ent);
+  });
+  return Array.from(kMap.values())
+    .map(e => ({ ...e, awardee: e.awardee.size }))
+    .filter(e => !q || e.kampus.toLowerCase().includes(q))
+    .sort((a,b) => b.total - a.total);
+}
+
+/* ----- Filter input handler ----- */
+window.bsFilterChange = (type, key, val) => {
+  if (!_browseFilter[type]) return;
+  _browseFilter[type][key] = val;
+  _bsRefreshBody(type);
+};
+
+window.bsResetFilter = (type) => {
+  if (!_browseFilter[type]) return;
+  Object.keys(_browseFilter[type]).forEach(k => _browseFilter[type][k] = '');
+  _browseSource = null;
+  renderBrowseDetail(type);
+};
+
+/* ----- Renderers ----- */
+function _bsHeader(type, count, totalCount){
+  const meta = {
+    semua:   { title:'Semua Prestasi', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="15" y2="18"/></svg>', sub:'Detail setiap baris prestasi awardee.' },
+    awardee: { title:'Rekap Per Awardee', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>', sub:'Total prestasi setiap awardee berprestasi.' },
+    kampus:  { title:'Rekap Per Kampus', icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>', sub:'Distribusi prestasi per kampus.' }
+  }[type];
+  const filtered = (count !== totalCount) ? `<span class="bh-filter-info" style="font-size:11px;color:#94a3b8;font-weight:600;">(filter aktif dari ${totalCount.toLocaleString('id-ID')})</span>` : '';
+  // Source label (when arriving from KPI card)
+  const sourcePill = _browseSource ? `<div class="bh-source-pill" style="display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:3px 10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:99px;font-size:10.5px;font-weight:700;color:#92400e;">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    Filter: ${escapeHtml(_browseSource)}
+    <button onclick="event.stopPropagation();bsResetFilter('${type}');" style="background:none;border:none;color:#92400e;cursor:pointer;padding:0 0 0 4px;font-size:13px;font-weight:700;line-height:1;" title="Hapus filter ini">×</button>
+  </div>` : '';
+  return `<div class="browse-head">
+    <div class="browse-head-icon">${meta.icon}</div>
+    <div class="browse-head-text">
+      <div class="browse-head-title">${meta.title} <span class="browse-count">${count.toLocaleString('id-ID')}</span> ${filtered}</div>
+      <div class="browse-head-sub">${meta.sub}</div>
+      ${sourcePill}
+    </div>
+    <button class="browse-close" onclick="closeBrowseDetail()" aria-label="Tutup" title="Tutup">×</button>
+  </div>`;
+}
+
+function _bsStats(type, data){
+  if (type === 'semua') {
+    const intnl = data.filter(r => classifyTingkatan(r.tingkatan).key === 'Internasional').length;
+    const nas   = data.filter(r => classifyTingkatan(r.tingkatan).key === 'Nasional').length;
+    const j1    = data.filter(r => classifyJuara(r.juara).key === 'Juara 1').length;
+    const cert  = data.filter(r => hasCert(r.sertifikat)).length;
+    const uniqueAwardee = new Set(data.map(r => r.no_induk || r.nama)).size;
+    const uniqueKampus  = new Set(data.map(r => norm(r.kampus))).size;
+    return `<div class="browse-stats">
+      <div class="bs-card" style="--bs-c:#0d9488;" onclick="bsResetFilter('semua')" title="Reset filter">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Total Prestasi</div>
+        <div class="bs-card-val">${data.length.toLocaleString('id-ID')}</div>
+        <div class="bs-card-sub">tampil saat ini</div>
+      </div>
+      <div class="bs-card" style="--bs-c:#1d4ed8;" onclick="switchTab('awardee', document.querySelector('.pr-tab[data-tab=&quot;awardee&quot;]'))" title="Buka rekap awardee">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Awardee Unik</div>
+        <div class="bs-card-val">${uniqueAwardee.toLocaleString('id-ID')}</div>
+        <div class="bs-card-sub">awardee berprestasi</div>
+      </div>
+      <div class="bs-card" style="--bs-c:#7c3aed;" onclick="switchTab('kampus', document.querySelector('.pr-tab[data-tab=&quot;kampus&quot;]'))" title="Buka rekap kampus">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Kampus Unik</div>
+        <div class="bs-card-val">${uniqueKampus.toLocaleString('id-ID')}</div>
+        <div class="bs-card-sub">kampus aktif</div>
+      </div>
+      <div class="bs-card" style="--bs-c:#b45309;" onclick="bsFilterChange('semua','ft','Internasional')" title="Filter tingkat Internasional">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>Internasional</div>
+        <div class="bs-card-val">${intnl.toLocaleString('id-ID')}<span class="bs-suffix">${data.length?'· '+Math.round(intnl*100/data.length)+'%':''}</span></div>
+        <div class="bs-card-sub">klik untuk filter</div>
+      </div>
+      <div class="bs-card" style="--bs-c:#0055a5;" onclick="bsFilterChange('semua','ft','Nasional')" title="Filter tingkat Nasional">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Nasional</div>
+        <div class="bs-card-val">${nas.toLocaleString('id-ID')}<span class="bs-suffix">${data.length?'· '+Math.round(nas*100/data.length)+'%':''}</span></div>
+        <div class="bs-card-sub">klik untuk filter</div>
+      </div>
+      <div class="bs-card" style="--bs-c:#dc2626;" onclick="bsFilterChange('semua','fj','Juara 1')" title="Filter Juara 1">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>Juara 1</div>
+        <div class="bs-card-val">${j1.toLocaleString('id-ID')}<span class="bs-suffix">${data.length?'· '+Math.round(j1*100/data.length)+'%':''}</span></div>
+        <div class="bs-card-sub">klik untuk filter</div>
+      </div>
+      <div class="bs-card" style="--bs-c:#0d9488;" onclick="bsFilterChange('semua','fcert','yes')" title="Filter ada sertifikat">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>Dengan Sertifikat</div>
+        <div class="bs-card-val">${cert.toLocaleString('id-ID')}<span class="bs-suffix">${data.length?'· '+Math.round(cert*100/data.length)+'%':''}</span></div>
+        <div class="bs-card-sub">prestasi terverifikasi</div>
+      </div>
+    </div>`;
+  }
+  if (type === 'awardee') {
+    const total = data.length;
+    const totalPrest = data.reduce((s,a)=>s+a.total, 0);
+    const avg = total ? (totalPrest/total).toFixed(1) : '0';
+    const top = data[0]?.total || 0;
+    const intnlAwardee = data.filter(a => a.intnl > 0).length;
+    const j1Awardee = data.filter(a => a.j1 > 0).length;
+    const high = data.filter(a => a.total >= 3).length;
+    return `<div class="browse-stats">
+      <div class="bs-card" style="--bs-c:#1d4ed8;" onclick="bsResetFilter('awardee')" title="Reset filter">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Total Awardee</div>
+        <div class="bs-card-val">${total.toLocaleString('id-ID')}</div>
+        <div class="bs-card-sub">awardee berprestasi</div>
+      </div>
+      <div class="bs-card" style="--bs-c:#0d9488;">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>Rata-rata Prestasi</div>
+        <div class="bs-card-val">${avg}<span class="bs-suffix">/awardee</span></div>
+        <div class="bs-card-sub">${totalPrest.toLocaleString('id-ID')} prestasi total</div>
+      </div>
+      <div class="bs-card" style="--bs-c:#b45309;">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Top Awardee</div>
+        <div class="bs-card-val">${top.toLocaleString('id-ID')}<span class="bs-suffix">prestasi</span></div>
+        <div class="bs-card-sub">${data[0]?.nama ? escapeHtml(data[0].nama.split(' ').slice(0,2).join(' ')) : '—'}</div>
+      </div>
+      <div class="bs-card" style="--bs-c:#7c3aed;">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>Pernah Internasional</div>
+        <div class="bs-card-val">${intnlAwardee.toLocaleString('id-ID')}<span class="bs-suffix">${total?'· '+Math.round(intnlAwardee*100/total)+'%':''}</span></div>
+        <div class="bs-card-sub">awardee dengan ≥1 intl</div>
+      </div>
+      <div class="bs-card" style="--bs-c:#dc2626;">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>Pernah Juara 1</div>
+        <div class="bs-card-val">${j1Awardee.toLocaleString('id-ID')}<span class="bs-suffix">${total?'· '+Math.round(j1Awardee*100/total)+'%':''}</span></div>
+        <div class="bs-card-sub">awardee dengan ≥1 juara 1</div>
+      </div>
+      <div class="bs-card" style="--bs-c:#0055a5;">
+        <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>3+ Prestasi</div>
+        <div class="bs-card-val">${high.toLocaleString('id-ID')}<span class="bs-suffix">${total?'· '+Math.round(high*100/total)+'%':''}</span></div>
+        <div class="bs-card-sub">awardee paling produktif</div>
+      </div>
+    </div>`;
+  }
+  // kampus
+  const total = data.length;
+  const totalPrest = data.reduce((s,k)=>s+k.total, 0);
+  const totalAwardee = data.reduce((s,k)=>s+k.awardee, 0);
+  const avg = total ? (totalPrest/total).toFixed(1) : '0';
+  const top = data[0]?.total || 0;
+  const totalIntnl = data.reduce((s,k)=>s+k.intnl, 0);
+  const totalJ1 = data.reduce((s,k)=>s+k.j1, 0);
+  return `<div class="browse-stats">
+    <div class="bs-card" style="--bs-c:#7c3aed;" onclick="bsResetFilter('kampus')" title="Reset filter">
+      <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Total Kampus</div>
+      <div class="bs-card-val">${total.toLocaleString('id-ID')}</div>
+      <div class="bs-card-sub">kampus aktif</div>
+    </div>
+    <div class="bs-card" style="--bs-c:#1d4ed8;">
+      <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Total Awardee Aktif</div>
+      <div class="bs-card-val">${totalAwardee.toLocaleString('id-ID')}</div>
+      <div class="bs-card-sub">${total?Math.round(totalAwardee/total)+' rata-rata/kampus':''}</div>
+    </div>
+    <div class="bs-card" style="--bs-c:#0d9488;">
+      <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg>Rata-rata Prestasi</div>
+      <div class="bs-card-val">${avg}<span class="bs-suffix">/kampus</span></div>
+      <div class="bs-card-sub">${totalPrest.toLocaleString('id-ID')} total prestasi</div>
+    </div>
+    <div class="bs-card" style="--bs-c:#b45309;">
+      <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Top Kampus</div>
+      <div class="bs-card-val">${top.toLocaleString('id-ID')}<span class="bs-suffix">prestasi</span></div>
+      <div class="bs-card-sub">${data[0]?.kampus ? escapeHtml(data[0].kampus) : '—'}</div>
+    </div>
+    <div class="bs-card" style="--bs-c:#7c3aed;">
+      <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>Total Internasional</div>
+      <div class="bs-card-val">${totalIntnl.toLocaleString('id-ID')}<span class="bs-suffix">${totalPrest?'· '+Math.round(totalIntnl*100/totalPrest)+'%':''}</span></div>
+      <div class="bs-card-sub">dari semua prestasi</div>
+    </div>
+    <div class="bs-card" style="--bs-c:#dc2626;">
+      <div class="bs-card-lbl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>Total Juara 1</div>
+      <div class="bs-card-val">${totalJ1.toLocaleString('id-ID')}<span class="bs-suffix">${totalPrest?'· '+Math.round(totalJ1*100/totalPrest)+'%':''}</span></div>
+      <div class="bs-card-sub">medali emas</div>
+    </div>
+  </div>`;
+}
+
+function _bsTopList(type, data){
+  if (type === 'semua') {
+    // Top 10 keterangan/prestasi by frequency (or top awardees if too many unique)
+    const m = new Map();
+    data.forEach(r => {
+      const k = (r.keterangan||'(Tanpa keterangan)').trim().slice(0, 80);
+      if (!k) return;
+      m.set(k, (m.get(k)||0) + 1);
+    });
+    const top = Array.from(m.entries()).sort((a,b)=>b[1]-a[1]).slice(0,10);
+    if (!top.length) return '<div class="bs-empty">Tidak ada data</div>';
+    return `<div class="bs-top">${top.map((e,i) => `
+      <div class="bs-top-row" onclick="bsFilterChange('semua','q','${escapeAttr(e[0])}')" title="Filter berdasarkan keterangan ini">
+        <span class="bs-top-rank">${i+1}</span>
+        <div class="bs-top-info">
+          <div class="bs-top-name">${escapeHtml(e[0])}</div>
+          <div class="bs-top-meta">prestasi/event</div>
+        </div>
+        <span class="bs-top-val">${e[1]}×</span>
+      </div>
+    `).join('')}</div>`;
+  }
+  if (type === 'awardee') {
+    const top = data.slice(0, 10);
+    if (!top.length) return '<div class="bs-empty">Tidak ada data</div>';
+    return `<div class="bs-top">${top.map((a,i) => `
+      <div class="bs-top-row" onclick="openAwardeeDetail('${escapeAttr(a.key)}')" title="Lihat detail prestasi">
+        <span class="bs-top-rank">${i+1}</span>
+        <div class="bs-top-info">
+          <div class="bs-top-name">${escapeHtml(a.nama)}</div>
+          <div class="bs-top-meta">${escapeHtml(a.kampus)} · ${a.j1||0}🥇 ${a.j2||0}🥈 ${a.j3||0}🥉</div>
+        </div>
+        <span class="bs-top-val">${a.total}</span>
+      </div>
+    `).join('')}</div>`;
+  }
+  // kampus
+  const top = data.slice(0, 10);
+  if (!top.length) return '<div class="bs-empty">Tidak ada data</div>';
+  return `<div class="bs-top">${top.map((k,i) => `
+    <div class="bs-top-row" onclick="openKampusDetail('${escapeAttr(k.kampus)}')" title="Lihat detail kampus">
+      <span class="bs-top-rank">${i+1}</span>
+      <div class="bs-top-info">
+        <div class="bs-top-name">${escapeHtml(k.kampus)}</div>
+        <div class="bs-top-meta">${k.awardee} awardee · ${k.intnl||0} intl · ${k.j1||0}🥇</div>
+      </div>
+      <span class="bs-top-val">${k.total}</span>
+    </div>
+  `).join('')}</div>`;
+}
+
+function _bsToolbar(type, count){
+  const f = _browseFilter[type];
+  const kampusOpts = (() => {
+    const set = new Set();
+    _raw.forEach(r => { if(r.kampus) set.add(norm(r.kampus)); });
+    return Array.from(set).sort().map(k => `<option value="${escapeAttr(k)}" ${f.fk===k?'selected':''}>${escapeHtml(k)}</option>`).join('');
+  })();
+  const tingkatanOpts = ['Internasional','Nasional','Regional','Provinsi','Universitas','Fakultas'].map(t => `<option value="${t}" ${f.ft===t?'selected':''}>${t}</option>`).join('');
+  const juaraOpts = ['Juara 1','Juara 2','Juara 3','Juara Harapan'].map(j => `<option value="${j}" ${f.fj===j?'selected':''}>${j}</option>`).join('');
+  const placeholder = type==='kampus' ? 'Cari kampus…' : (type==='awardee' ? 'Cari nama / NIM / kampus…' : 'Cari nama / NIM / keterangan / kampus…');
+  let extras = '';
+  if (type === 'semua') {
+    extras = `
+      <select class="bs-filter" onchange="bsFilterChange('semua','fk',this.value)"><option value="">Semua Kampus</option>${kampusOpts}</select>
+      <select class="bs-filter" onchange="bsFilterChange('semua','ft',this.value)"><option value="">Semua Tingkatan</option>${tingkatanOpts}</select>
+      <select class="bs-filter" onchange="bsFilterChange('semua','fj',this.value)"><option value="">Semua Juara</option>${juaraOpts}</select>
+      <select class="bs-filter" onchange="bsFilterChange('semua','fcert',this.value)" style="min-width:130px;">
+        <option value="">Semua Sertifikat</option>
+        <option value="yes" ${f.fcert==='yes'?'selected':''}>Ada Sertifikat</option>
+        <option value="no"  ${f.fcert==='no'?'selected':''}>Tanpa Sertifikat</option>
+      </select>
+    `;
+  } else if (type === 'awardee') {
+    extras = `<select class="bs-filter" onchange="bsFilterChange('awardee','fk',this.value)"><option value="">Semua Kampus</option>${kampusOpts}</select>`;
+  }
+  const hasFilter = Object.values(f).some(v => v);
+  return `<div class="bs-toolbar">
+    <div class="bs-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="${placeholder}" value="${escapeAttr(f.q||'')}" oninput="bsFilterChange('${type}','q',this.value)" />
+    </div>
+    ${extras}
+    ${hasFilter ? `<button class="bs-filter bs-toolbar-reset" style="background:#fef2f2;color:#dc2626;border-color:#fecaca;font-weight:700;" onclick="bsResetFilter('${type}')" title="Reset semua filter">Reset</button>` : ''}
+    <span class="bs-meta"><b>${count.toLocaleString('id-ID')}</b> baris</span>
+  </div>`;
+}
+
+function _bsTable(type, data){
+  if (!data.length) {
+    return `<div class="bs-empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <p>Tidak ada data sesuai filter</p>
+    </div>`;
+  }
+  if (type === 'semua') {
+    return `<div class="bs-table-wrap"><div class="bs-table-scroll"><table class="bs-table">
+      <thead><tr>
+        <th>#</th><th>Awardee</th><th>NIM</th><th>Kampus</th>
+        <th>Tingkatan</th><th>Juara</th><th>Keterangan</th><th>Sertifikat</th>
+      </tr></thead>
+      <tbody>${data.map((r,i) => {
+        const ct = classifyTingkatan(r.tingkatan);
+        const cj = classifyJuara(r.juara);
+        const cert = hasCert(r.sertifikat);
+        return `<tr onclick="openPrestasiDetail(${r.id})">
+          <td class="td-mono" style="color:#94a3b8">${i+1}</td>
+          <td class="td-name">${escapeHtml(r.nama||'—')}</td>
+          <td class="td-mono">${escapeHtml(r.no_induk||'—')}</td>
+          <td>${escapeHtml(r.kampus||'—')}</td>
+          <td><span class="tg-badge ${ct.css}">${escapeHtml(ct.label)}</span></td>
+          <td><span class="jr-badge ${cj.css}">${escapeHtml(cj.label)}</span></td>
+          <td class="td-wrap" title="${escapeAttr(r.keterangan||'—')}">${escapeHtml(r.keterangan||'—')}</td>
+          <td>${cert ? '<span style="color:#059669;font-weight:700;">✓ Ada</span>' : '<span style="color:#cbd5e1;">—</span>'}</td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div></div>`;
+  }
+  if (type === 'awardee') {
+    return `<div class="bs-table-wrap"><div class="bs-table-scroll"><table class="bs-table">
+      <thead><tr>
+        <th>#</th><th>Awardee</th><th>NIM</th><th>Kampus</th><th>Kelompok</th>
+        <th class="td-num">Total</th><th class="td-num">Intl</th><th class="td-num">Nas</th>
+        <th>J1/J2/J3</th><th class="td-num">Sertifikat</th>
+      </tr></thead>
+      <tbody>${data.map((a,i) => {
+        const certPct = a.total ? Math.round(a.cert * 100 / a.total) : 0;
+        return `<tr onclick="openAwardeeDetail('${escapeAttr(a.key)}')">
+          <td class="td-mono" style="color:#94a3b8">${i+1}</td>
+          <td class="td-name">${escapeHtml(a.nama)}</td>
+          <td class="td-mono">${escapeHtml(a.no_induk)}</td>
+          <td>${escapeHtml(a.kampus)}</td>
+          <td>${escapeHtml(a.kelompok)}</td>
+          <td class="td-num"><span class="rank-count">${a.total}</span></td>
+          <td class="td-num">${a.intnl||'—'}</td>
+          <td class="td-num">${a.nas||'—'}</td>
+          <td class="td-mono">${a.j1||0}/${a.j2||0}/${a.j3||0}</td>
+          <td class="td-num">${a.cert||0} <span style="color:#94a3b8;font-weight:500;font-size:11px;">(${certPct}%)</span></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table></div></div>`;
+  }
+  // kampus
+  return `<div class="bs-table-wrap"><div class="bs-table-scroll"><table class="bs-table">
+    <thead><tr>
+      <th>#</th><th>Kampus</th><th class="td-num">Awardee</th>
+      <th class="td-num">Total</th><th class="td-num">Intl</th><th class="td-num">Nas</th><th class="td-num">Reg/Prov</th>
+      <th>J1/J2/J3</th>
+    </tr></thead>
+    <tbody>${data.map((k,i) => `<tr onclick="openKampusDetail('${escapeAttr(k.kampus)}')">
+      <td class="td-mono" style="color:#94a3b8">${i+1}</td>
+      <td class="td-name">${escapeHtml(k.kampus)}</td>
+      <td class="td-num">${k.awardee}</td>
+      <td class="td-num"><span class="rank-count">${k.total}</span></td>
+      <td class="td-num">${k.intnl||'—'}</td>
+      <td class="td-num">${k.nas||'—'}</td>
+      <td class="td-num">${k.reg||'—'}</td>
+      <td class="td-mono">${k.j1||0}/${k.j2||0}/${k.j3||0}</td>
+    </tr>`).join('')}</tbody>
+  </table></div></div>`;
+}
+
+function _bsTotalCount(type){
+  if (type === 'semua')   return _raw.length;
+  if (type === 'awardee') return new Set(_raw.map(r => r.no_induk||r.nama)).size;
+  if (type === 'kampus')  return new Set(_raw.map(r => norm(r.kampus))).size;
+  return 0;
+}
+
+function _bsRefreshBody(type){
+  const host = document.getElementById('browseDetailHost');
+  if (!host || _browseExpanded !== type) return;
+  const data = type==='semua' ? _bsFilteredSemua() : (type==='awardee' ? _bsFilteredAwardee() : _bsFilteredKampus());
+  const total = _bsTotalCount(type);
+
+  // Update count badges
+  const countEl = host.querySelector('.browse-count');
+  if (countEl) countEl.textContent = data.length.toLocaleString('id-ID');
+  // Update "filter aktif" indicator
+  const headTitle = host.querySelector('.browse-head-title');
+  if (headTitle) {
+    const existing = headTitle.querySelector('.bh-filter-info');
+    if (data.length !== total) {
+      const info = `<span class="bh-filter-info" style="font-size:11px;color:#94a3b8;font-weight:600;">(filter aktif dari ${total.toLocaleString('id-ID')})</span>`;
+      if (existing) existing.outerHTML = info; else headTitle.insertAdjacentHTML('beforeend', ' ' + info);
+    } else if (existing) {
+      existing.remove();
+    }
+  }
+
+  // Update stats, top list, table
+  const statsHost = host.querySelector('#bs-stats-host');
+  if (statsHost) statsHost.innerHTML = _bsStats(type, data);
+  const topHost = host.querySelector('#bs-top-host');
+  if (topHost) topHost.innerHTML = _bsTopList(type, data);
+  const tableHost = host.querySelector('#bs-table-host');
+  if (tableHost) tableHost.innerHTML = _bsTable(type, data);
+
+  // Update toolbar count
+  const metaEl = host.querySelector('.bs-meta b');
+  if (metaEl) metaEl.textContent = data.length.toLocaleString('id-ID');
+
+  // Show/hide reset button
+  const f = _browseFilter[type];
+  const hasFilter = Object.values(f).some(v => v);
+  const toolbar = host.querySelector('.bs-toolbar');
+  if (toolbar) {
+    const resetBtn = toolbar.querySelector('.bs-toolbar-reset');
+    if (hasFilter && !resetBtn) {
+      const meta = toolbar.querySelector('.bs-meta');
+      if (meta) meta.insertAdjacentHTML('beforebegin',
+        `<button class="bs-filter bs-toolbar-reset" style="background:#fef2f2;color:#dc2626;border-color:#fecaca;font-weight:700;" onclick="bsResetFilter('${type}')" title="Reset semua filter">Reset</button>`);
+    } else if (!hasFilter && resetBtn) {
+      resetBtn.remove();
+    }
+  }
+}
+
+function renderBrowseDetail(type){
+  const host = document.getElementById('browseDetailHost');
+  if (!host) return;
+  const data = type==='semua' ? _bsFilteredSemua() : (type==='awardee' ? _bsFilteredAwardee() : _bsFilteredKampus());
+  const total = _bsTotalCount(type);
+  const accent = type==='semua'?'#0d9488':type==='awardee'?'#1d4ed8':'#7c3aed';
+  host.innerHTML = `
+    <div class="browse-detail bd--${type}">
+      ${_bsHeader(type, data.length, total)}
+      <div class="browse-body">
+        <div id="bs-stats-host">${_bsStats(type, data)}</div>
+        <div class="bs-section-title" style="--bs-c:${accent}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Top 10 ${type==='semua'?'Prestasi/Event (berdasarkan frekuensi)':type==='awardee'?'Awardee Paling Berprestasi':'Kampus Paling Aktif'}
+          <span class="bs-section-sub">klik untuk detail</span>
+        </div>
+        <div id="bs-top-host">${_bsTopList(type, data)}</div>
+        <div class="bs-section-title" style="--bs-c:${accent}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="18" x2="15" y2="18"/></svg>
+          Tabel Lengkap
+          <span class="bs-section-sub">scroll untuk lihat semua · klik baris untuk detail</span>
+        </div>
+        ${_bsToolbar(type, data.length)}
+        <div id="bs-table-host">${_bsTable(type, data)}</div>
+      </div>
+    </div>
+  `;
+  requestAnimationFrame(() => {
+    host.classList.add('show');
+  });
+}
 
 /* =============================================
    DETAIL MODAL (view single)
@@ -2404,17 +3690,17 @@ window.openAwardeeDetail = (key) => {
   const altRecords = records.length ? records : _raw.filter(r => String(r.no_induk || r.nama) === String(key));
   const finalRecords = altRecords.length ? altRecords : records;
   if(!finalRecords.length) return;
-  document.getElementById('prAwardeeDetailBody').innerHTML = buildAwardeeDetailHtml(finalRecords);
-  document.getElementById('prAwardeeDetailPanel').style.display = '';
-  document.getElementById('prMainPage').style.display = 'none';
-  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+  const sample = finalRecords[0] || {};
+  showInlineDetail(_getInlineTrigger(), buildAwardeeDetailHtml(finalRecords), {
+    variant: 'awardee',
+    crumb: 'Detail Awardee',
+    name: sample.nama || key,
+    sub: `${sample.no_induk||'—'} · ${sample.kampus||'—'} · ${finalRecords.length} prestasi`,
+    source: 'awardee:' + key
+  });
 };
 
-window.closeAwardeeDetail = () => {
-  document.getElementById('prAwardeeDetailPanel').style.display = 'none';
-  document.getElementById('prMainPage').style.display = '';
-  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
-};
+window.closeAwardeeDetail = () => closeInlineDetail();
 
 window.closeAwDetail = () => {
   const bg = document.getElementById('awDetailBg');
@@ -2427,17 +3713,17 @@ window.closeAwDetail = () => {
 window.openKampusDetail = (kampusName) => {
   const records = _raw.filter(r => norm(r.kampus) === norm(kampusName));
   if(!records.length) return;
-  document.getElementById('prKampusDetailBody').innerHTML = buildKampusDetailHtml(records, kampusName);
-  document.getElementById('prKampusDetailPanel').style.display = '';
-  document.getElementById('prMainPage').style.display = 'none';
-  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+  const awardeeSet = new Set(records.map(r => r.no_induk || r.nama).filter(Boolean));
+  showInlineDetail(_getInlineTrigger(), buildKampusDetailHtml(records, kampusName), {
+    variant: 'kampus',
+    crumb: 'Detail Kampus',
+    name: kampusName,
+    sub: `${records.length} prestasi · ${awardeeSet.size} awardee`,
+    source: 'kampus:' + kampusName
+  });
 };
 
-window.closeKampusDetail = () => {
-  document.getElementById('prKampusDetailPanel').style.display = 'none';
-  document.getElementById('prMainPage').style.display = '';
-  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
-};
+window.closeKampusDetail = () => closeInlineDetail();
 
 function buildKampusDetailHtml(records, kampusName) {
   const initKampus = kampusName.trim().split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]||'').join('').toUpperCase() || '?';
@@ -2557,18 +3843,17 @@ function buildKampusDetailHtml(records, kampusName) {
 window.openPrestasiDetail = (id) => {
   const r = _raw.find(x => String(x.id) === String(id));
   if(!r) return;
-  document.getElementById('prPrestasiDetailBody').innerHTML = buildPrestasiDetailHtml(r);
-  document.getElementById('prPrestasiDetailBreadcrumb').textContent = r.keterangan ? (r.keterangan.length > 50 ? r.keterangan.slice(0,50)+'…' : r.keterangan) : (r.nama || '—');
-  document.getElementById('prPrestasiDetailPanel').style.display = '';
-  document.getElementById('prMainPage').style.display = 'none';
-  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+  const ket = r.keterangan ? (r.keterangan.length > 60 ? r.keterangan.slice(0,60)+'…' : r.keterangan) : (r.nama || 'Detail Prestasi');
+  showInlineDetail(_getInlineTrigger(), buildPrestasiDetailHtml(r), {
+    variant: 'prestasi',
+    crumb: 'Detail Prestasi',
+    name: r.nama || '—',
+    sub: ket,
+    source: 'prestasi:' + id
+  });
 };
 
-window.closePrestasiDetail = () => {
-  document.getElementById('prPrestasiDetailPanel').style.display = 'none';
-  document.getElementById('prMainPage').style.display = '';
-  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
-};
+window.closePrestasiDetail = () => closeInlineDetail();
 
 function buildPrestasiDetailHtml(r) {
   const ct = classifyTingkatan(r.tingkatan);
@@ -2681,7 +3966,7 @@ window.submitEdit = async () => {
     toast(id ? 'Prestasi berhasil diupdate' : 'Prestasi baru ditambahkan', 'ok');
     closeEditModal();
     _raw = await fetchAll();
-    renderStats(); renderInsights(); rebuildViews(); renderAllTables();
+    renderStats(); renderInsights(); rebuildViews(); renderAllTables(); if(_browseExpanded) _bsRefreshBody(_browseExpanded);
   } catch(e){
     msg.className = 'pr-msg err';
     msg.textContent = 'Gagal. Silakan coba lagi.' ;
@@ -2699,7 +3984,7 @@ window.delRow = async (id) => {
     if(error) throw error;
     toast('Prestasi berhasil dihapus', 'ok');
     _raw = await fetchAll();
-    renderStats(); renderInsights(); rebuildViews(); renderAllTables();
+    renderStats(); renderInsights(); rebuildViews(); renderAllTables(); if(_browseExpanded) _bsRefreshBody(_browseExpanded);
   } catch(e){
     toast('Gagal menghapus. Silakan coba lagi.', 'err');
   }
@@ -3346,32 +4631,125 @@ function renderKpiDetail(type){
   return html;
 }
 
-function openKpiDetail(type){
-  const titles = {
-    total:'Total Prestasi', awardee:'Awardee Berprestasi',
-    kampus:'Kampus Terlibat', internasional:'Tingkat Internasional', sertifikat:'Dengan Sertifikat'
-  };
-  const subs = {
-    total:'Breakdown lengkap distribusi prestasi',
-    awardee:'Siapa saja awardee paling berprestasi',
-    kampus:'Kontribusi masing-masing kampus',
-    internasional:'Prestasi bertaraf internasional',
-    sertifikat:'Kelengkapan dokumen sertifikat'
-  };
-  document.getElementById('prKpiTitle').textContent     = titles[type] || type;
-  document.getElementById('prKpiBreadcrumb').textContent = titles[type] || type;
-  document.getElementById('prKpiSub').textContent        = subs[type]  || '';
-  document.getElementById('prKpiBody').innerHTML         = renderKpiDetail(type);
-  document.getElementById('prKpiPanel').style.display   = '';
-  document.getElementById('prMainPage').style.display   = 'none';
-  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
+/* =============================================
+   INLINE DETAIL HELPER — render detail panel right
+   below the chart / element the user clicked.
+============================================= */
+window.showInlineDetail = function(triggerEl, htmlContent, opts){
+  opts = opts || {};
+  // Close any existing inline detail first
+  closeInlineDetail(true);
+
+  // Determine where to insert: prefer the closest insight-card (chart),
+  // then KPI stats row, then table wrap, then talent finder area.
+  let host = null;
+  if (triggerEl) {
+    host = triggerEl.closest && (
+      triggerEl.closest('.browse-detail-host')          // NEW: nested click inside browse detail
+      || triggerEl.closest('.insight-card')
+      || (triggerEl.closest('.pr-stat') && triggerEl.closest('.pr-stat').parentElement) // .pr-stats row
+      || triggerEl.closest('.tbl-wrap')
+      || triggerEl.closest('.tf-grid')
+      || triggerEl.closest('.tf-hero')
+    );
+  }
+  if (!host) {
+    // Fallback: end of currently-active tab panel, or main page
+    host = document.querySelector('.pr-tab-panel.active') || document.getElementById('prMainPage');
+    // Append-style fallback uses last child of host
+    if (host && host.lastElementChild) host = host.lastElementChild;
+  }
+  if (!host) return null;
+
+  const variant = opts.variant || 'prestasi';
+  const crumb = escapeHtml(opts.crumb || 'Detail');
+  const name  = escapeHtml(opts.name  || '');
+  const sub   = opts.sub ? `<div style="font-size:11.5px;color:#6b7280;margin-top:2px;font-weight:500;">${escapeHtml(opts.sub)}</div>` : '';
+
+  const panel = document.createElement('div');
+  panel.className = 'inline-detail id--' + variant;
+  panel.id = 'inlineDetailActive';
+  panel.setAttribute('data-trigger-source', opts.source || '');
+  panel.innerHTML = `
+    <div class="inline-detail-head">
+      <div class="inline-detail-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        <div style="flex:1;min-width:0;">
+          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+            <span class="it-crumb">${crumb}</span>
+            ${name ? `<span class="it-name">${name}</span>` : ''}
+          </div>
+          ${sub}
+        </div>
+      </div>
+      <button class="inline-detail-close" onclick="closeInlineDetail()" aria-label="Tutup detail" title="Tutup detail">×</button>
+    </div>
+    <div class="inline-detail-body">${htmlContent}</div>
+  `;
+  host.insertAdjacentElement('afterend', panel);
+
+  return panel;
+};
+
+window.closeInlineDetail = function(immediate){
+  const el = document.getElementById('inlineDetailActive');
+  if (!el) return;
+  if (immediate) { el.remove(); return; }
+  el.classList.add('closing');
+  setTimeout(() => { if (el && el.parentNode) el.remove(); }, 200);
+};
+
+/* Resolve the element that triggered the current inline onclick.
+   Works for inline onclick handlers via window.event in modern browsers. */
+function _getInlineTrigger(){
+  const ev = window.event;
+  if (!ev) return null;
+  return ev.currentTarget || ev.target || null;
 }
 
-function closeKpiDetail(){
-  document.getElementById('prKpiPanel').style.display  = 'none';
-  document.getElementById('prMainPage').style.display  = '';
-  requestAnimationFrame(() => { const c = document.querySelector('.app-content'); if(c) c.scrollTop = 0; });
-}
+/* =============================================
+   KPI DETAIL — redirect to browse detail with pre-filter
+============================================= */
+window.openBrowseFromKpi = function(kpiType){
+  const map = {
+    total:         { tab: 'semua',   filter: {}, label: 'Total Prestasi' },
+    awardee:       { tab: 'awardee', filter: {}, label: 'Awardee Berprestasi' },
+    kampus:        { tab: 'kampus',  filter: {}, label: 'Kampus Terlibat' },
+    internasional: { tab: 'semua',   filter: { ft: 'Internasional' }, label: 'Tingkat Internasional' },
+    sertifikat:    { tab: 'semua',   filter: { fcert: 'yes' }, label: 'Dengan Sertifikat' }
+  };
+  const cfg = map[kpiType];
+  if (!cfg || !_browseFilter[cfg.tab]) return;
+  // Reset existing filter for that tab
+  Object.keys(_browseFilter[cfg.tab]).forEach(k => _browseFilter[cfg.tab][k] = '');
+  // Apply new filter
+  Object.assign(_browseFilter[cfg.tab], cfg.filter);
+  _browseSource = cfg.label;
+  // Find the tab button
+  const btn = document.querySelector(`.pr-tab[data-tab="${cfg.tab}"]`);
+  // If already on this tab, just refresh; else expand fresh
+  if (_browseExpanded === cfg.tab) {
+    renderBrowseDetail(cfg.tab);
+  } else {
+    _browseExpanded = null;
+    if (btn) {
+      document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('active','expanded'));
+      document.querySelectorAll('.pr-tab-panel').forEach(p => p.classList.remove('active'));
+      const insightTab = document.querySelector('.pr-tab[data-tab="insight"]');
+      if (insightTab) insightTab.classList.add('active');
+      const insightPanel = document.getElementById('panel-insight');
+      if (insightPanel) insightPanel.classList.add('active');
+      btn.classList.add('expanded');
+      _browseExpanded = cfg.tab;
+      renderBrowseDetail(cfg.tab);
+    }
+  }
+};
+
+// Backwards compat: redirect KPI cards to the new browse-with-filter flow
+window.openKpiDetail = (type) => openBrowseFromKpi(type);
+function closeKpiDetail(){ closeBrowseDetail(); }
+
 function escapeAttr(s){ return escapeHtml(s).replace(/`/g,'&#96;'); }
 
 init();

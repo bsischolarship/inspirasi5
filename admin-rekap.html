@@ -8,7 +8,10 @@
   <link rel="stylesheet" href="assets/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
-    .rp-page { max-width: 1200px; margin: 0 auto; padding: 28px 20px 80px; }
+    .rp-page { max-width: none; margin: 0; padding: 4px 4px 80px; }
+    @media (max-width: 1100px) { .rp-page { padding: 4px 0 80px; } }
+    @media (max-width: 700px)  { .rp-page { padding: 4px 0 80px; } }
+    .rp-ph { display: none; } /* heading duplikat dengan app-header — disembunyikan */
     .rp-ph h1 { font-size: 22px; font-weight: 800; color: #111827; margin: 0 0 4px; }
     .rp-ph p  { font-size: 13px; color: #6b7280; margin: 0 0 24px; }
 
@@ -30,32 +33,86 @@
     .skeleton { background:linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 50%,#f3f4f6 75%); background-size:200% 100%; animation:shimmer 1.4s infinite; border-radius:8px; }
     @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-    /* TABS */
-    .rp-tabs { display:flex; gap:0; border-bottom:2px solid #e5e7eb; margin-bottom:20px; overflow-x:auto; scrollbar-width:none; }
+    /* TABS — pill-style modern dalam card container */
+    .rp-tabs {
+      display:flex;
+      gap:4px;
+      padding:6px;
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      margin-bottom:18px;
+      overflow-x:auto;
+      scrollbar-width:none;
+      box-shadow:0 1px 3px rgba(15,23,42,.04);
+    }
     .rp-tabs::-webkit-scrollbar { display:none; }
     .rp-tab {
-      padding:10px 16px; font-size:12.5px; font-weight:600; color:#9ca3af;
-      background:none; border:none; border-bottom:3px solid transparent; margin-bottom:-2px;
-      cursor:pointer; white-space:nowrap; display:flex; align-items:center; gap:6px;
-      transition:color .15s, border-color .15s, background .15s;
-      border-radius:6px 6px 0 0;
+      position:relative;
+      padding:10px 16px;
+      font-size:12.5px;
+      font-weight:600;
+      color:#64748b;
+      background:transparent;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      white-space:nowrap;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      transition: color .2s ease, background .2s ease, transform .15s ease, box-shadow .2s ease;
+      flex-shrink:0;
     }
-    .rp-tab:hover { color:#374151; background:#f9fafb; }
-    .rp-tab[data-tab="semua"]        { --tc:#0f766e; }
-    .rp-tab[data-tab="rekap"]        { --tc:#0d9488; }
-    .rp-tab[data-tab="awardee"]     { --tc:#1d4ed8; }
-    .rp-tab[data-tab="skor"]        { --tc:#d97706; }
-    .rp-tab[data-tab="kampus"]      { --tc:#7c3aed; }
-    .rp-tab[data-tab="kelompok"]    { --tc:#dc2626; }
-    .rp-tab.active { color:var(--tc,#0055a5); border-bottom-color:var(--tc,#0055a5); background:#fff; }
-    .rp-tab.active svg { color:var(--tc,#0055a5); }
+    .rp-tab:hover:not(.active) {
+      color:#0f172a;
+      background:#f1f5f9;
+    }
+    .rp-tab[data-tab="semua"]    { --tc:#0d9488; --tc-light:#ccfbf1; --tc-deep:#0f766e; }
+    .rp-tab[data-tab="rekap"]    { --tc:#0d9488; --tc-light:#ccfbf1; --tc-deep:#0f766e; }
+    .rp-tab[data-tab="awardee"]  { --tc:#1d4ed8; --tc-light:#dbeafe; --tc-deep:#1e40af; }
+    .rp-tab[data-tab="skor"]     { --tc:#d97706; --tc-light:#fef3c7; --tc-deep:#b45309; }
+    .rp-tab[data-tab="kampus"]   { --tc:#7c3aed; --tc-light:#ede9fe; --tc-deep:#6d28d9; }
+    .rp-tab[data-tab="kelompok"] { --tc:#dc2626; --tc-light:#fee2e2; --tc-deep:#b91c1c; }
+
+    .rp-tab svg {
+      width:14px; height:14px;
+      transition: color .2s ease, transform .25s cubic-bezier(.34,1.56,.64,1);
+      flex-shrink:0;
+    }
+
+    .rp-tab.active {
+      color:#fff;
+      background: linear-gradient(135deg, var(--tc) 0%, var(--tc-deep) 100%);
+      box-shadow: 0 4px 12px color-mix(in srgb, var(--tc) 28%, transparent),
+                  0 1px 2px color-mix(in srgb, var(--tc) 18%, transparent);
+    }
+    .rp-tab.active svg { color:#fff; transform:scale(1.05); }
+    .rp-tab.active:hover { transform:translateY(-1px); }
+
     .rp-tab-badge {
-      font-size:10px; font-weight:700; padding:1px 6px; border-radius:99px;
-      background:#f3f4f6; color:#6b7280;
+      font-size:10.5px;
+      font-weight:800;
+      padding:2px 8px;
+      border-radius:99px;
+      background:#f1f5f9;
+      color:#64748b;
+      letter-spacing:.2px;
+      transition: background .2s ease, color .2s ease;
+      font-variant-numeric: tabular-nums;
     }
-    .rp-tab.active .rp-tab-badge { background:color-mix(in srgb,var(--tc,#0055a5) 12%,#fff); color:var(--tc,#0055a5); }
+    .rp-tab:hover:not(.active) .rp-tab-badge { background:#e2e8f0; }
+    .rp-tab.active .rp-tab-badge {
+      background: rgba(255,255,255,.22);
+      color:#fff;
+      backdrop-filter: blur(6px);
+    }
     .rp-tab-panel { display:none; }
-    .rp-tab-panel.active { display:block; }
+    .rp-tab-panel.active { display:block; animation: tabPanelIn .35s cubic-bezier(.2,.8,.2,1); }
+    @keyframes tabPanelIn {
+      from { opacity:0; transform:translateY(6px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
 
     /* TOOLBAR */
     .tbl-toolbar {
@@ -63,12 +120,6 @@
       background:#fff; border:1px solid #e5e7eb; border-radius:14px 14px 0 0;
       padding:12px 16px; border-bottom:1px solid #f1f5f9;
     }
-    #panel-semua    .tbl-toolbar { border-top:3px solid #0f766e; }
-    #panel-rekap    .tbl-toolbar { border-top:3px solid #0d9488; }
-    #panel-awardee  .tbl-toolbar { border-top:3px solid #1d4ed8; }
-    #panel-skor     .tbl-toolbar { border-top:3px solid #d97706; }
-    #panel-kampus   .tbl-toolbar { border-top:3px solid #7c3aed; }
-    #panel-kelompok .tbl-toolbar { border-top:3px solid #dc2626; }
     #panel-semua    .tbl-toolbar-title { color:#0f766e; }
     #panel-rekap    .tbl-toolbar-title { color:#0d9488; }
     #panel-awardee  .tbl-toolbar-title { color:#1d4ed8; }
@@ -100,24 +151,62 @@
     @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 
     /* TABLE */
-    .tbl-wrap { background:#fff; border:1px solid #e5e7eb; border-radius:0 0 14px 14px; border-top:none; overflow:hidden; }
-    .tbl-scroll { overflow-x:auto; overflow-y:visible; scrollbar-width:thin; scrollbar-color:#d1d5db #f9fafb; }
-    .tbl-scroll::-webkit-scrollbar { height:6px; }
-    .tbl-scroll::-webkit-scrollbar-track { background:#f9fafb; }
-    .tbl-scroll::-webkit-scrollbar-thumb { background:#d1d5db; border-radius:3px; }
-    .rp-table { width:max-content; min-width:100%; border-collapse:collapse; font-size:12.5px; }
-    .rp-table th {
-      background:#f8fafc; padding:9px 14px; text-align:left;
-      font-size:10.5px; font-weight:700; color:#64748b; text-transform:uppercase;
-      letter-spacing:.05em; border-bottom:2px solid #e5e7eb; white-space:nowrap;
-      position:sticky; top:0; z-index:1;
+    .tbl-wrap { background:#fff; border:1px solid #e5e7eb; border-radius:0 0 16px 16px; border-top:none; overflow:hidden; }
+    .tbl-scroll { overflow-x:auto; overflow-y:visible; scrollbar-width:thin; scrollbar-color:#cbd5e1 #f8fafc; }
+    .tbl-scroll::-webkit-scrollbar { height:8px; }
+    .tbl-scroll::-webkit-scrollbar-track { background:#f8fafc; }
+    .tbl-scroll::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:4px; border:2px solid #f8fafc; }
+    .tbl-scroll::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+
+    .rp-table { width:max-content; min-width:100%; border-collapse:separate; border-spacing:0; font-size:12.5px; }
+
+    /* HEADER — gradient halus + accent line atas + dot kecil sebelum text */
+    .rp-table thead th {
+      background: linear-gradient(180deg, #fafbfc 0%, #f1f5f9 100%);
+      padding:13px 16px;
+      text-align:left;
+      font-size:10.5px;
+      font-weight:800;
+      color:#475569;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      border-bottom:1px solid #e2e8f0;
+      white-space:nowrap;
+      position:sticky;
+      top:0;
+      z-index:1;
+      transition: background .2s;
     }
-    .rp-table th:first-child { border-radius:0; }
-    .rp-table td { padding:9px 14px; border-bottom:1px solid #f1f5f9; color:#374151; vertical-align:middle; white-space:nowrap; }
+    .rp-table thead th::after {
+      content:"";
+      position:absolute;
+      left:0; right:0; bottom:-1px;
+      height:2px;
+      background: linear-gradient(90deg, transparent 0%, #cbd5e1 50%, transparent 100%);
+      opacity:.6;
+    }
+    /* accent line tipis di atas thead — warna tab-aware */
+    #panel-semua    .rp-table thead th { box-shadow: inset 0 2px 0 0 #0d9488; }
+    #panel-rekap    .rp-table thead th { box-shadow: inset 0 2px 0 0 #0d9488; }
+    #panel-awardee  .rp-table thead th { box-shadow: inset 0 2px 0 0 #1d4ed8; }
+    #panel-skor     .rp-table thead th { box-shadow: inset 0 2px 0 0 #d97706; }
+    #panel-kampus   .rp-table thead th { box-shadow: inset 0 2px 0 0 #7c3aed; }
+    #panel-kelompok .rp-table thead th { box-shadow: inset 0 2px 0 0 #dc2626; }
+
+    /* divider vertikal halus antar kolom */
+    .rp-table thead th:not(:last-child) {
+      background-image:
+        linear-gradient(180deg, #fafbfc 0%, #f1f5f9 100%),
+        linear-gradient(180deg, transparent 25%, #e2e8f0 25%, #e2e8f0 75%, transparent 75%);
+      background-size: 100% 100%, 1px 100%;
+      background-position: left center, right center;
+      background-repeat: no-repeat;
+    }
+
+    .rp-table td { padding:11px 16px; border-bottom:1px solid #f1f5f9; color:#374151; vertical-align:middle; white-space:nowrap; }
     .rp-table tbody tr:last-child td { border-bottom:none; }
-    .rp-table tbody tr:hover td { background:#f8fafc; }
-    .rp-table td.td-name { font-weight:600; color:#111827; white-space:normal; min-width:120px; max-width:200px; }
-    .rp-table td.td-mono { font-family:monospace; font-size:11.5px; color:#374151; }
+    .rp-table td.td-name { font-weight:600; color:#111827; white-space:normal; min-width:120px; max-width:240px; }
+    .rp-table td.td-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:11.5px; color:#475569; }
 
     .badge-h   { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:700; background:#dcfce7; color:#15803d; }
     .badge-a   { display:inline-block; padding:2px 8px; border-radius:99px; font-size:11px; font-weight:700; background:#f3f4f6; color:#9ca3af; }
@@ -168,6 +257,665 @@
       .tbl-toolbar{ flex-direction:column; align-items:stretch; }
       .tbl-search{ min-width:unset; }
     }
+
+    /* ============================================================
+       UPGRADE — clickable KPI cards, table rows, view transitions
+       ============================================================ */
+
+    /* Page-level fade & slide ketika berpindah antara main ↔ detail view */
+    .rp-main-view, .rp-detail-view {
+      animation: viewIn .42s cubic-bezier(.2,.8,.2,1);
+    }
+    .rp-detail-view { display: none; }
+    .rp-page.detail-mode .rp-main-view { display: none; }
+    .rp-page.detail-mode .rp-detail-view { display: block; }
+    @keyframes viewIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* KPI card jadi clickable — hover lift + arrow kanan-atas */
+    .rp-stat {
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform .25s cubic-bezier(.2,.8,.2,1),
+                  box-shadow .25s ease,
+                  border-color .25s ease;
+    }
+    .rp-stat::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,85,165,0) 0%, rgba(0,85,165,.05) 100%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s;
+    }
+    .rp-stat:hover {
+      transform: translateY(-3px);
+      border-color: #c5d6e8;
+      box-shadow: 0 12px 28px rgba(13,67,118,.10);
+    }
+    .rp-stat:hover::before { opacity: 1; }
+    .rp-stat:active { transform: translateY(-1px); }
+    .rp-stat-arrow {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: translateX(-4px);
+      transition: opacity .25s, transform .25s, background .25s, color .25s;
+      pointer-events: none;
+    }
+    .rp-stat-arrow svg { width: 11px; height: 11px; }
+    .rp-stat:hover .rp-stat-arrow {
+      opacity: 1;
+      transform: translateX(0);
+      background: #0055a5;
+      color: #fff;
+    }
+
+    /* Animated count-up pakai font-variant-numeric supaya digit ngga goyang */
+    .rp-stat-val {
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.5px;
+    }
+
+    /* ============================================================
+       TABLE polish — row stagger + clickable + smoother hover
+       ============================================================ */
+    .rp-table tbody tr {
+      cursor: pointer;
+      transition: background .18s ease, transform .18s ease;
+      animation: rowIn .35s cubic-bezier(.2,.8,.2,1) backwards;
+    }
+    @keyframes rowIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    /* Stagger pakai nth-child supaya tiap row delay-nya beda dikit */
+    .rp-table tbody tr:nth-child(1)  { animation-delay: 0ms; }
+    .rp-table tbody tr:nth-child(2)  { animation-delay: 25ms; }
+    .rp-table tbody tr:nth-child(3)  { animation-delay: 50ms; }
+    .rp-table tbody tr:nth-child(4)  { animation-delay: 75ms; }
+    .rp-table tbody tr:nth-child(5)  { animation-delay: 100ms; }
+    .rp-table tbody tr:nth-child(6)  { animation-delay: 125ms; }
+    .rp-table tbody tr:nth-child(7)  { animation-delay: 150ms; }
+    .rp-table tbody tr:nth-child(8)  { animation-delay: 175ms; }
+    .rp-table tbody tr:nth-child(9)  { animation-delay: 200ms; }
+    .rp-table tbody tr:nth-child(10) { animation-delay: 225ms; }
+    .rp-table tbody tr:nth-child(11) { animation-delay: 250ms; }
+    .rp-table tbody tr:nth-child(12) { animation-delay: 275ms; }
+    .rp-table tbody tr:nth-child(13) { animation-delay: 300ms; }
+    .rp-table tbody tr:nth-child(14) { animation-delay: 325ms; }
+    .rp-table tbody tr:nth-child(n+15) { animation-delay: 350ms; }
+
+    .rp-table tbody tr:hover td {
+      background: linear-gradient(90deg, #f0f9ff 0%, #f8fafc 70%, transparent 100%);
+    }
+    .rp-table tbody tr:hover td:first-child {
+      box-shadow: inset 3px 0 0 #0055a5;
+    }
+    .rp-table tbody tr:active td {
+      background: #e0e7ff;
+    }
+
+    /* Row avatar untuk awardee/skor tab */
+    .row-avatar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      margin-right: 9px;
+      vertical-align: middle;
+      flex-shrink: 0;
+      letter-spacing: -.3px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+    .row-name-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+    }
+    .row-name-wrap > span:not(.row-avatar) {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    /* Skor inline progress bar */
+    .skor-cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 100px;
+    }
+    .skor-bar {
+      flex: 1;
+      height: 5px;
+      background: #f1f5f9;
+      border-radius: 3px;
+      overflow: hidden;
+      min-width: 50px;
+    }
+    .skor-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width .9s cubic-bezier(.2,.8,.2,1);
+    }
+    .skor-bar-fill.high { background: linear-gradient(90deg, #16a34a, #4ade80); }
+    .skor-bar-fill.mid  { background: linear-gradient(90deg, #d97706, #fbbf24); }
+    .skor-bar-fill.low  { background: linear-gradient(90deg, #dc2626, #f87171); }
+    .skor-pct {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      font-size: 11.5px;
+      min-width: 38px;
+      text-align: right;
+    }
+    .skor-pct.high { color: #15803d; }
+    .skor-pct.mid  { color: #92400e; }
+    .skor-pct.low  { color: #b91c1c; }
+
+    /* ============================================================
+       DETAIL VIEW — back button + hero card + sections
+       ============================================================ */
+    .detail-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px 9px 12px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 11px;
+      color: #374151;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s cubic-bezier(.2,.8,.2,1);
+      margin-bottom: 18px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    .detail-back:hover {
+      background: #f9fafb;
+      transform: translateX(-3px);
+      border-color: #c5d6e8;
+      box-shadow: 0 4px 10px rgba(0,0,0,.06);
+    }
+    .detail-back:active { transform: translateX(-1px); }
+    .detail-back svg { width: 16px; height: 16px; }
+
+    /* Hero card — header detail view */
+    .detail-hero {
+      position: relative;
+      color: #fff;
+      border-radius: 18px;
+      padding: 26px 28px;
+      margin-bottom: 22px;
+      box-shadow: 0 12px 32px rgba(0,0,0,.10);
+      overflow: hidden;
+      animation: heroIn .55s cubic-bezier(.2,.8,.2,1);
+    }
+    @keyframes heroIn {
+      from { opacity: 0; transform: scale(.97) translateY(6px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .detail-hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 90% 0%, rgba(255,255,255,.18) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 60% at 0% 100%, rgba(255,255,255,.10) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .detail-hero.h-blue   { background: linear-gradient(135deg, #1d4ed8 0%, #0055a5 100%); }
+    .detail-hero.h-teal   { background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); }
+    .detail-hero.h-orange { background: linear-gradient(135deg, #ea580c 0%, #d97706 100%); }
+    .detail-hero.h-purple { background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%); }
+    .detail-hero.h-red    { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); }
+    .detail-hero.h-green  { background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); }
+
+    .detail-hero-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .detail-hero-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.22);
+      border: 2px solid rgba(255,255,255,.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      backdrop-filter: blur(10px);
+      flex-shrink: 0;
+    }
+    .detail-hero-avatar svg { width: 30px; height: 30px; }
+    .detail-hero-text { flex: 1; min-width: 220px; }
+    .detail-hero-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
+      opacity: .75;
+      margin-bottom: 4px;
+    }
+    .detail-hero-name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.3px;
+      margin-bottom: 6px;
+      line-height: 1.15;
+    }
+    .detail-hero-meta {
+      font-size: 12.5px;
+      opacity: .92;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .detail-hero-meta > span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .detail-hero-meta svg { width: 12px; height: 12px; opacity: .8; }
+    .detail-hero-cta {
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.3);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 11px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .detail-hero-cta:hover {
+      background: rgba(255,255,255,.28);
+      transform: translateY(-1px);
+    }
+    .detail-hero-cta svg { width: 13px; height: 13px; }
+
+    /* Detail KPI grid */
+    .detail-kpis {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .detail-kpi {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px 16px;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .detail-kpi:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,.06);
+    }
+    .detail-kpi-lbl {
+      font-size: 11px;
+      color: #6b7280;
+      font-weight: 600;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .detail-kpi-val {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111827;
+      letter-spacing: -.5px;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+    }
+    .detail-kpi-sub {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 4px;
+    }
+    .detail-kpi.accent-green .detail-kpi-val { color: #15803d; }
+    .detail-kpi.accent-red   .detail-kpi-val { color: #b91c1c; }
+    .detail-kpi.accent-blue  .detail-kpi-val { color: #1d4ed8; }
+
+    /* Detail section card */
+    .detail-section {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+    .detail-section-h {
+      padding: 14px 18px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #111827;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .detail-section-h .h-tag {
+      background: #f3f4f6;
+      color: #6b7280;
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 99px;
+    }
+    .detail-section-body { padding: 4px 0; }
+    .detail-section-body.padded { padding: 16px 18px; }
+
+    /* List of breakdowns (for KPI detail) */
+    .breakdown-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .breakdown-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 18px;
+      border-bottom: 1px solid #f3f4f6;
+      transition: background .15s;
+    }
+    .breakdown-item:hover { background: #f9fafb; }
+    .breakdown-item:last-child { border-bottom: none; }
+    .breakdown-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+    }
+    .breakdown-bar-wrap {
+      grid-column: 1 / -1;
+      height: 5px;
+      background: #f1f5f9;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .breakdown-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #0055a5, #1d4ed8);
+      border-radius: 3px;
+      width: 0;
+      transition: width .9s cubic-bezier(.2,.8,.2,1);
+    }
+    .breakdown-bar.b-teal   { background: linear-gradient(90deg, #0d9488, #14b8a6); }
+    .breakdown-bar.b-green  { background: linear-gradient(90deg, #16a34a, #4ade80); }
+    .breakdown-bar.b-orange { background: linear-gradient(90deg, #ea580c, #fb923c); }
+    .breakdown-bar.b-purple { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+    .breakdown-bar.b-red    { background: linear-gradient(90deg, #dc2626, #f87171); }
+    .breakdown-val {
+      font-weight: 700;
+      color: #111827;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+    }
+    .breakdown-pct {
+      color: #6b7280;
+      font-size: 11.5px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    /* Mini-stats list (Hadir/Tidak Hadir/Sesi) */
+    .stat-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-top: 1px solid #f1f5f9;
+    }
+    .stat-grid-3 > div {
+      padding: 14px 16px;
+      text-align: center;
+      border-right: 1px solid #f1f5f9;
+    }
+    .stat-grid-3 > div:last-child { border-right: none; }
+    .stat-grid-3 .v {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111827;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+    .stat-grid-3 .l {
+      font-size: 10.5px;
+      color: #6b7280;
+      margin-top: 5px;
+      font-weight: 600;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
+    .stat-grid-3 .v.green { color: #15803d; }
+    .stat-grid-3 .v.red   { color: #b91c1c; }
+
+    /* Skor ring untuk profile detail */
+    .skor-ring-wrap {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 18px;
+    }
+    .skor-ring {
+      width: 90px;
+      height: 90px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .skor-ring svg { transform: rotate(-90deg); }
+    .skor-ring-bg { fill: none; stroke: #f1f5f9; stroke-width: 8; }
+    .skor-ring-fill {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1);
+    }
+    .skor-ring-fill.high { stroke: url(#skorGradGreen); }
+    .skor-ring-fill.mid  { stroke: url(#skorGradOrange); }
+    .skor-ring-fill.low  { stroke: url(#skorGradRed); }
+    .skor-ring-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .skor-ring-text .pct {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111827;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.5px;
+      line-height: 1;
+    }
+    .skor-ring-text .lbl {
+      font-size: 10px;
+      color: #6b7280;
+      font-weight: 600;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Activity badges in detail timeline */
+    .act-pill {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 99px;
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+    .act-pill.pembinaan      { background:#dbeafe; color:#1d4ed8; }
+    .act-pill.mentoring      { background:#dcfce7; color:#15803d; }
+    .act-pill.pre_test       { background:#fef3c7; color:#92400e; }
+    .act-pill.post_test      { background:#fed7aa; color:#9a3412; }
+    .act-pill.assessment     { background:#ede9fe; color:#6d28d9; }
+    .act-pill.kelas_al_quran { background:#ccfbf1; color:#0f766e; }
+
+    /* Empty state inside detail */
+    .detail-empty {
+      padding: 32px 20px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rp-stat:hover, .rp-table tbody tr:hover, .detail-back:hover { transform: none; }
+      .rp-table tbody tr { animation: none; }
+    }
+
+    /* ============================================================
+       LOADING — INLINE (cuma di area konten, sidebar tetap kelihatan)
+       Pola: skeleton cards + ring + logo + text dengan bouncing dots.
+       Style mengikuti pola galeri-peringatan supaya konsisten.
+       ============================================================ */
+    #rpLoading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px 40px;
+      gap: 26px;
+      animation: viewIn .35s cubic-bezier(.2,.8,.2,1);
+    }
+    #rpLoading.hide { display: none; }
+
+    /* Skeleton cards di atas */
+    .rp-loader-skeletons {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 720px;
+      width: 100%;
+    }
+    .rp-skel-card {
+      flex: 1 1 200px;
+      max-width: 220px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #f3f4f6;
+    }
+    .rp-skel-img {
+      height: 84px;
+      background: linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%);
+      background-size: 400% 100%;
+      animation: rpShimmer 1.4s ease infinite;
+    }
+    .rp-skel-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .rp-skel-line {
+      height: 9px;
+      border-radius: 6px;
+      background: linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%);
+      background-size: 400% 100%;
+      animation: rpShimmer 1.4s ease infinite;
+    }
+    .rp-skel-line.short { width: 60%; }
+    .rp-skel-card:nth-child(2) .rp-skel-img,
+    .rp-skel-card:nth-child(2) .rp-skel-line { animation-delay: .15s; }
+    .rp-skel-card:nth-child(3) .rp-skel-img,
+    .rp-skel-card:nth-child(3) .rp-skel-line { animation-delay: .3s; }
+    @keyframes rpShimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Ring + logo */
+    .rp-loader-ring {
+      position: relative;
+      width: 72px;
+      height: 72px;
+    }
+    .rp-loader-ring svg.ring-svg {
+      position: absolute;
+      inset: 0;
+      animation: rpRingSpin 1.1s cubic-bezier(.6,.1,.4,.9) infinite;
+    }
+    .rp-loader-ring .ring-logo {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .rp-loader-ring .ring-logo img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      animation: rpLogoPulse 1.1s ease-in-out infinite;
+    }
+    @keyframes rpRingSpin {
+      0%   { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @keyframes rpLogoPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: .75; transform: scale(.88); }
+    }
+
+    /* Text + bouncing dots */
+    .rp-loader-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #374151;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .rp-loader-dots span {
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #0055a5;
+      animation: rpDotBounce 1.1s ease-in-out infinite;
+    }
+    .rp-loader-dots span:nth-child(2) { animation-delay: .18s; background: #00a59f; }
+    .rp-loader-dots span:nth-child(3) { animation-delay: .36s; background: #feb23e; }
+    @keyframes rpDotBounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: .4; }
+      40%           { transform: translateY(-6px); opacity: 1; }
+    }
+
+    /* Saat loading tampil, sembunyikan main + detail view */
+    #rpLoading:not(.hide) ~ .rp-main-view,
+    #rpLoading:not(.hide) ~ .rp-detail-view { display: none !important; }
   </style>
 </head>
 
@@ -300,7 +1048,45 @@
   </header>
 
   <main class="app-content">
-    <div class="rp-page">
+    <div class="rp-page" id="rpPage">
+
+     <!-- ============================================================
+          LOADING — INLINE (skeleton + ring + dots, style mirip galeri-peringatan)
+          Cuma di area konten — sidebar & header tetap kelihatan.
+          Auto-hide setelah init() selesai.
+          ============================================================ -->
+     <div id="rpLoading" role="status" aria-live="polite" aria-label="Memuat data">
+       <!-- Skeleton cards -->
+       <div class="rp-loader-skeletons">
+         <div class="rp-skel-card"><div class="rp-skel-img"></div><div class="rp-skel-body"><div class="rp-skel-line"></div><div class="rp-skel-line short"></div></div></div>
+         <div class="rp-skel-card"><div class="rp-skel-img"></div><div class="rp-skel-body"><div class="rp-skel-line"></div><div class="rp-skel-line short"></div></div></div>
+         <div class="rp-skel-card"><div class="rp-skel-img"></div><div class="rp-skel-body"><div class="rp-skel-line"></div><div class="rp-skel-line short"></div></div></div>
+       </div>
+
+       <!-- Spinning ring with logo -->
+       <div class="rp-loader-ring">
+         <svg class="ring-svg" width="72" height="72" viewBox="0 0 72 72" fill="none">
+           <circle cx="36" cy="36" r="30" stroke="#e5e7eb" stroke-width="4"/>
+           <path d="M36 6 a30 30 0 0 1 26 15" stroke="url(#rpLoaderGrad)" stroke-width="4" stroke-linecap="round"/>
+           <defs>
+             <linearGradient id="rpLoaderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+               <stop offset="0%"   stop-color="#0055a5"/>
+               <stop offset="50%"  stop-color="#00a59f"/>
+               <stop offset="100%" stop-color="#feb23e"/>
+             </linearGradient>
+           </defs>
+         </svg>
+         <div class="ring-logo"><img src="assets/logo.png" alt="BSI"></div>
+       </div>
+
+       <!-- Status text + bouncing dots -->
+       <div class="rp-loader-text">
+         <span id="rpLoadingSub">Memuat data laporan</span>
+         <span class="rp-loader-dots"><span></span><span></span><span></span></span>
+       </div>
+     </div>
+
+     <div class="rp-main-view" id="rpMainView">
 
       <div class="rp-ph">
         <h1>Laporan &amp; Ekspor Data</h1>
@@ -479,6 +1265,31 @@
         </div>
       </div>
 
+     </div><!-- /rp-main-view -->
+
+     <!-- ============================================================
+          DETAIL VIEW — inline (bukan modal). Dipopulate dinamis
+          dari showDetail(). Tombol kembali di pojok kiri atas.
+          ============================================================ -->
+     <div class="rp-detail-view" id="rpDetailView">
+       <!-- konten dirender oleh showDetail(type, payload) -->
+     </div>
+
+     <!-- SVG defs untuk ring gradient (reuse di semua detail) -->
+     <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+       <defs>
+         <linearGradient id="skorGradGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+           <stop offset="0%" stop-color="#16a34a"/><stop offset="100%" stop-color="#4ade80"/>
+         </linearGradient>
+         <linearGradient id="skorGradOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+           <stop offset="0%" stop-color="#d97706"/><stop offset="100%" stop-color="#fbbf24"/>
+         </linearGradient>
+         <linearGradient id="skorGradRed" x1="0%" y1="0%" x2="100%" y2="0%">
+           <stop offset="0%" stop-color="#dc2626"/><stop offset="100%" stop-color="#f87171"/>
+         </linearGradient>
+       </defs>
+     </svg>
+
     </div><!-- /rp-page -->
   </main>
 </div>
@@ -536,24 +1347,53 @@ async function fetchAll(table, cols) {
 /* =============================================
    INIT
 ============================================= */
+/* =============================================
+   LOADING — INLINE HELPERS
+   Tidak ada progress bar; cukup update teks status + hide saat selesai.
+============================================= */
+function setLoadingProgress(_pct, label) {
+  const sub = document.getElementById('rpLoadingSub');
+  if (label && sub) sub.textContent = label;
+}
+function hideLoading() {
+  const el = document.getElementById('rpLoading');
+  if (el) el.classList.add('hide');
+}
+
 async function init(){
   window.addEventListener('load',()=>{
     setTimeout(()=>{ if(window._authRole&&window._authRole!=='admin'&&window._authRole!=='operator') location.replace('index.html'); },1500);
   });
-  try {
-    [_rekap, _mhs] = await Promise.all([
-      fetchAll('rekap_bsi','no_induk,nama,kampus,kelompok,tanggal,pre_test,post_test,assessment,mentoring,pembinaan,kelas_al_quran'),
-      fetchAll('mahasiswa_bsi','no_induk,nama,kampus,kelompok,fakultas,prodi,cluster,lecture,email,wa,status'),
-    ]);
-  } catch(e){ toast('Gagal memuat data. Silakan coba lagi.', 'err'); return; }
 
+  setLoadingProgress(0, 'Memuat data rekap');
+
+  try {
+    // Fetch paralel; update teks status saat masing-masing selesai
+    const pRekap = fetchAll('rekap_bsi','no_induk,nama,kampus,kelompok,tanggal,pre_test,post_test,assessment,mentoring,pembinaan,kelas_al_quran')
+      .then(r => { setLoadingProgress(0, 'Memuat data awardee'); return r; });
+    const pMhs   = fetchAll('mahasiswa_bsi','no_induk,nama,kampus,kelompok,fakultas,prodi,cluster,lecture,email,wa,status')
+      .then(r => { setLoadingProgress(0, 'Menyusun perhitungan'); return r; });
+
+    [_rekap, _mhs] = await Promise.all([pRekap, pMhs]);
+  } catch(e){
+    toast('Gagal memuat data. Silakan coba lagi.', 'err');
+    hideLoading();
+    return;
+  }
+
+  setLoadingProgress(0, 'Membangun tabel rekap');
   buildSemua();
+  setLoadingProgress(0, 'Menghitung skor partisipasi');
   buildSkor();
+  setLoadingProgress(0, 'Mengelompokkan per kampus');
   buildKampus();
+  setLoadingProgress(0, 'Mengelompokkan per kelompok');
   buildKelompok();
+  setLoadingProgress(0, 'Menyiapkan tampilan');
   renderStats();
   populateFilters();
   renderAllTabs();
+  hideLoading();
 }
 
 /* =============================================
@@ -640,7 +1480,7 @@ function buildKelompok(){
 }
 
 /* =============================================
-   STATS
+   STATS — clickable KPI cards dengan count-up animation
 ============================================= */
 function renderStats(){
   const tH=_rekap.reduce((s,r)=>s+ACTS.filter(a=>isH(r[a.key])).length,0);
@@ -649,12 +1489,50 @@ function renderStats(){
   const last=_rekap.map(r=>r.tanggal).filter(Boolean).sort().at(-1);
   const lastLabel=last?new Date(last).toLocaleDateString('id-ID',{month:'long',year:'numeric'}):'—';
 
+  // Simpan target values supaya bisa diakses lagi (untuk detail KPI)
+  window._kpiData = {
+    rekap:    { val: _rekap.length,       label: 'Total Data Rekap' },
+    awardee:  { val: _mhs.length,         label: 'Total Awardee' },
+    kegiatan: { val: _semuaData.length,   label: 'Total Kegiatan' },
+    avg:      { val: avg,                 label: 'Rata-rata Partisipasi', tH, tP },
+    last:     { val: lastLabel,           label: 'Data Terakhir', date: last }
+  };
+
+  const arrowSvg = '<span class="rp-stat-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>';
+
   document.getElementById('rpStats').innerHTML=`
-    <div class="rp-stat"><div class="rp-stat-icon si--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div><div class="rp-stat-val">${_rekap.length.toLocaleString('id-ID')}</div><div class="rp-stat-lbl">Total Data Rekap</div></div></div>
-    <div class="rp-stat"><div class="rp-stat-icon si--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div><div class="rp-stat-val">${_mhs.length.toLocaleString('id-ID')}</div><div class="rp-stat-lbl">Total Awardee</div></div></div>
-    <div class="rp-stat"><div class="rp-stat-icon si--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="13" y2="18"/></svg></div><div><div class="rp-stat-val">${_semuaData.length.toLocaleString('id-ID')}</div><div class="rp-stat-lbl">Total Kegiatan</div><div class="rp-stat-note">Semua entri aktivitas tercatat</div></div></div>
-    <div class="rp-stat"><div class="rp-stat-icon si--orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="rp-stat-val">${avg}%</div><div class="rp-stat-lbl">Rata-rata Partisipasi</div><div class="rp-stat-note">Semua kegiatan</div></div></div>
-    <div class="rp-stat"><div class="rp-stat-icon si--purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><div><div class="rp-stat-val" style="font-size:17px;padding-top:4px">${lastLabel}</div><div class="rp-stat-lbl">Data Terakhir</div></div></div>`;
+    <div class="rp-stat" onclick="showKpiDetail('rekap')" role="button" tabindex="0">
+      ${arrowSvg}
+      <div class="rp-stat-icon si--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div><div class="rp-stat-val" data-count="${_rekap.length}">0</div><div class="rp-stat-lbl">Total Data Rekap</div></div>
+    </div>
+    <div class="rp-stat" onclick="showKpiDetail('awardee')" role="button" tabindex="0">
+      ${arrowSvg}
+      <div class="rp-stat-icon si--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+      <div><div class="rp-stat-val" data-count="${_mhs.length}">0</div><div class="rp-stat-lbl">Total Awardee</div></div>
+    </div>
+    <div class="rp-stat" onclick="showKpiDetail('kegiatan')" role="button" tabindex="0">
+      ${arrowSvg}
+      <div class="rp-stat-icon si--green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="13" y2="18"/></svg></div>
+      <div><div class="rp-stat-val" data-count="${_semuaData.length}">0</div><div class="rp-stat-lbl">Total Kegiatan</div><div class="rp-stat-note">Semua entri aktivitas tercatat</div></div>
+    </div>
+    <div class="rp-stat" onclick="showKpiDetail('avg')" role="button" tabindex="0">
+      ${arrowSvg}
+      <div class="rp-stat-icon si--orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      <div><div class="rp-stat-val" data-count="${avg}" data-suffix="%">0%</div><div class="rp-stat-lbl">Rata-rata Partisipasi</div><div class="rp-stat-note">Semua kegiatan</div></div>
+    </div>
+    <div class="rp-stat" onclick="showKpiDetail('last')" role="button" tabindex="0">
+      ${arrowSvg}
+      <div class="rp-stat-icon si--purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div><div class="rp-stat-val" style="font-size:17px;padding-top:4px">${lastLabel}</div><div class="rp-stat-lbl">Data Terakhir</div></div>
+    </div>`;
+
+  // Animasi count-up untuk semua KPI numerik
+  document.querySelectorAll('#rpStats .rp-stat-val[data-count]').forEach(el => {
+    const target = +el.dataset.count;
+    const suffix = el.dataset.suffix || '';
+    animateCount(el, target, 1200, suffix);
+  });
 
   document.getElementById('badge-semua').textContent    = _semuaData.length.toLocaleString('id-ID');
   document.getElementById('badge-rekap').textContent    = _rekap.length.toLocaleString('id-ID');
@@ -662,6 +1540,19 @@ function renderStats(){
   document.getElementById('badge-skor').textContent     = _skorData.length.toLocaleString('id-ID');
   document.getElementById('badge-kampus').textContent   = _kampusData.length;
   document.getElementById('badge-kelompok').textContent = _kelompokData.length;
+}
+
+/* Util: count-up dari 0 ke target dengan ease-out cubic */
+function animateCount(el, target, duration = 1200, suffix = '') {
+  const start = performance.now();
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  (function tick(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const v = Math.round(target * ease(t));
+    el.textContent = v.toLocaleString('id-ID') + suffix;
+    if (t < 1) requestAnimationFrame(tick);
+    else el.textContent = target.toLocaleString('id-ID') + suffix;
+  })(performance.now());
 }
 
 /* =============================================
@@ -843,24 +1734,27 @@ function renderTable(tab){
 
   document.getElementById('body-'+tab).innerHTML=slice.map((r,i)=>{
     const no=start+i+1;
+    // Index global di _views[tab] supaya tinggal diakses langsung saat klik
+    const gi=start+i;
+    const click=`onclick="onRowClick('${tab}',${gi})"`;
     switch(tab){
-      case 'semua': return `<tr>
+      case 'semua': return `<tr ${click}>
         <td style="color:#9ca3af;width:40px">${no}</td>
         <td class="td-mono">${r.no_induk||'—'}</td>
-        <td class="td-name">${r.nama||'—'}</td>
+        <td class="td-name"><span class="row-name-wrap">${avatarHtml(r.nama)}<span>${r.nama||'—'}</span></span></td>
         <td>${r.kampus||'—'}</td>
         <td>${r.kelompok||'—'}</td>
         <td style="white-space:nowrap">${r.tanggal||'—'}</td>
-        <td><span style="display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:600;background:#eff6ff;color:#1d4ed8">${r.kegiatan}</span></td>
+        <td><span class="act-pill ${r.kegiatan_key}">${r.kegiatan}</span></td>
         <td style="text-align:center">${r.hadir
           ?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>'
           :'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
         }</td>
       </tr>`;
-      case 'rekap': return `<tr>
+      case 'rekap': return `<tr ${click}>
         <td style="color:#9ca3af;width:40px">${no}</td>
         <td class="td-mono">${r.no_induk||'—'}</td>
-        <td class="td-name">${r.nama||'—'}</td>
+        <td class="td-name"><span class="row-name-wrap">${avatarHtml(r.nama)}<span>${r.nama||'—'}</span></span></td>
         <td>${r.kampus||'—'}</td>
         <td>${r.kelompok||'—'}</td>
         <td style="white-space:nowrap">${r.tanggal||'—'}</td>
@@ -871,10 +1765,10 @@ function renderTable(tab){
           return             `<td style="text-align:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></td>`;
         }).join('')}
       </tr>`;
-      case 'awardee': return `<tr>
+      case 'awardee': return `<tr ${click}>
         <td style="color:#9ca3af;width:40px">${no}</td>
         <td class="td-mono">${r.no_induk||'—'}</td>
-        <td class="td-name">${r.nama||'—'}</td>
+        <td class="td-name"><span class="row-name-wrap">${avatarHtml(r.nama)}<span>${r.nama||'—'}</span></span></td>
         <td>${r.kampus||'—'}</td>
         <td>${r.kelompok||'—'}</td>
         <td>${r.fakultas||'—'}</td>
@@ -886,39 +1780,39 @@ function renderTable(tab){
         <td><span class="pct-chip ${r.status==='aktif'?'pct-high':r.status?'pct-mid':'pct-low'}">${r.status||'—'}</span></td>
       </tr>`;
       case 'skor':{
-        const cls=r.pct>=70?'pct-high':r.pct>=50?'pct-mid':'pct-low';
-        return `<tr>
+        const cls=r.pct>=70?'high':r.pct>=50?'mid':'low';
+        return `<tr ${click}>
           <td style="color:#9ca3af;width:40px">${no}</td>
           <td class="td-mono">${r.nim||'—'}</td>
-          <td class="td-name">${r.nama||'—'}</td>
+          <td class="td-name"><span class="row-name-wrap">${avatarHtml(r.nama)}<span>${r.nama||'—'}</span></span></td>
           <td>${r.kampus||'—'}</td>
           <td>${r.kelompok||'—'}</td>
           ${ACTS.map(a=>`<td style="text-align:center">${r['h_'+a.key]||0}/${r['s_'+a.key]||0}</td>`).join('')}
           <td style="font-weight:700;text-align:center">${r.totalH}</td>
           <td style="text-align:center">${r.totalP}</td>
-          <td><span class="pct-chip ${cls}">${r.pct}%</span></td>
+          <td>${skorBarHtml(r.pct,cls)}</td>
         </tr>`;}
       case 'kampus':{
-        const cls=r.pct>=70?'pct-high':r.pct>=50?'pct-mid':'pct-low';
-        return `<tr>
+        const cls=r.pct>=70?'high':r.pct>=50?'mid':'low';
+        return `<tr ${click}>
           <td style="color:#9ca3af;width:40px">${no}</td>
-          <td class="td-name">${r.kampus}</td>
+          <td class="td-name" style="max-width:280px;white-space:normal">${r.kampus}</td>
           <td style="text-align:center">${r.awardee||0}</td>
           ${ACTS.map(a=>`<td style="text-align:center">${r['h_'+a.key]||0}</td>`).join('')}
           <td style="font-weight:700;text-align:center">${r.totalH}</td>
           <td style="text-align:center">${r.totalP}</td>
-          <td><span class="pct-chip ${cls}">${r.pct}%</span></td>
+          <td>${skorBarHtml(r.pct,cls)}</td>
         </tr>`;}
       case 'kelompok':{
-        const cls=r.pct>=70?'pct-high':r.pct>=50?'pct-mid':'pct-low';
-        return `<tr>
+        const cls=r.pct>=70?'high':r.pct>=50?'mid':'low';
+        return `<tr ${click}>
           <td style="color:#9ca3af;width:40px">${no}</td>
           <td class="td-name">${r.kelompok}</td>
           <td>${r.kampus||'—'}</td>
           ${ACTS.map(a=>`<td style="text-align:center">${r['h_'+a.key]||0}</td>`).join('')}
           <td style="font-weight:700;text-align:center">${r.totalH}</td>
           <td style="text-align:center">${r.totalP}</td>
-          <td><span class="pct-chip ${cls}">${r.pct}%</span></td>
+          <td>${skorBarHtml(r.pct,cls)}</td>
         </tr>`;}
     }
   }).join('');
@@ -1034,6 +1928,767 @@ function toast(msg,type='ok'){
   el.className='show '+type;
   el.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${col}" stroke-width="2.5" stroke-linecap="round">${ico}</svg><span>${msg}</span>`;
   clearTimeout(_tt); _tt=setTimeout(()=>el.className='',4000);
+}
+
+/* =============================================
+   AVATAR & SKOR HELPER (rendering tabel)
+============================================= */
+const _avatarColors = [
+  'linear-gradient(135deg,#0055a5,#1d4ed8)',
+  'linear-gradient(135deg,#0d9488,#14b8a6)',
+  'linear-gradient(135deg,#7c3aed,#a78bfa)',
+  'linear-gradient(135deg,#dc2626,#f87171)',
+  'linear-gradient(135deg,#d97706,#fbbf24)',
+  'linear-gradient(135deg,#16a34a,#4ade80)',
+  'linear-gradient(135deg,#db2777,#f472b6)',
+  'linear-gradient(135deg,#0891b2,#22d3ee)',
+];
+function _hashStr(s) {
+  let h = 0;
+  for (let i = 0; i < (s||'').length; i++) h = ((h<<5)-h+s.charCodeAt(i))|0;
+  return Math.abs(h);
+}
+function avatarHtml(nama) {
+  const n = (nama||'').trim();
+  if (!n) return '<span class="row-avatar" style="background:#e5e7eb;color:#9ca3af">?</span>';
+  const parts = n.split(/\s+/);
+  const initials = (parts[0][0] + (parts[parts.length-1][0]||'')).toUpperCase();
+  const bg = _avatarColors[_hashStr(n) % _avatarColors.length];
+  return `<span class="row-avatar" style="background:${bg}">${initials}</span>`;
+}
+function skorBarHtml(pct, cls) {
+  return `<div class="skor-cell">
+    <div class="skor-bar"><div class="skor-bar-fill ${cls}" style="width:${pct}%"></div></div>
+    <span class="skor-pct ${cls}">${pct}%</span>
+  </div>`;
+}
+
+/* =============================================
+   DETAIL VIEW — show/hide inline (bukan modal)
+============================================= */
+function _scrollToTop(){ window.scrollTo({ top:0, behavior:'smooth' }); }
+
+function showDetail(html) {
+  const page    = document.getElementById('rpPage');
+  const dv      = document.getElementById('rpDetailView');
+  dv.innerHTML  = html;
+  page.classList.add('detail-mode');
+  _scrollToTop();
+  // Trigger animasi progress bar di dalam detail
+  requestAnimationFrame(() => {
+    dv.querySelectorAll('[data-bar-w]').forEach(el => {
+      el.style.width = el.dataset.barW + '%';
+    });
+    dv.querySelectorAll('[data-ring-pct]').forEach(el => {
+      const pct = +el.dataset.ringPct;
+      const r = +el.getAttribute('r');
+      const c = 2 * Math.PI * r;
+      el.setAttribute('stroke-dasharray', c);
+      el.setAttribute('stroke-dashoffset', c);
+      requestAnimationFrame(() => {
+        el.setAttribute('stroke-dashoffset', c * (1 - pct/100));
+      });
+    });
+    dv.querySelectorAll('[data-num]').forEach(el => {
+      animateCount(el, +el.dataset.num, 1100, el.dataset.suffix||'');
+    });
+  });
+}
+function hideDetail() {
+  document.getElementById('rpPage').classList.remove('detail-mode');
+  _scrollToTop();
+}
+window.hideDetail = hideDetail;
+window.showDetail = showDetail;
+
+/* Header back-button & hero (dipakai di tiap detail) */
+function backBtnHtml() {
+  return `<button class="detail-back" onclick="hideDetail()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Kembali
+  </button>`;
+}
+function heroHtml({ tag, name, meta=[], color='h-blue', avatar='', cta='' }) {
+  const metaHtml = meta.filter(Boolean).map(m =>
+    `<span>${m.icon||''}${m.text}</span>`
+  ).join('');
+  const avatarBlock = avatar
+    ? `<div class="detail-hero-avatar">${avatar}</div>`
+    : '';
+  return `<div class="detail-hero ${color}">
+    <div class="detail-hero-row">
+      ${avatarBlock}
+      <div class="detail-hero-text">
+        <div class="detail-hero-tag">${tag}</div>
+        <div class="detail-hero-name">${name}</div>
+        ${metaHtml ? `<div class="detail-hero-meta">${metaHtml}</div>` : ''}
+      </div>
+      ${cta || ''}
+    </div>
+  </div>`;
+}
+function initialsOf(name){
+  const n=(name||'').trim(); if(!n) return '?';
+  const p=n.split(/\s+/);
+  return (p[0][0]+(p[p.length-1][0]||'')).toUpperCase();
+}
+
+/* =============================================
+   ROW CLICK — dispatch ke detail builder yang tepat
+============================================= */
+window.onRowClick = function(tab, idx) {
+  const row = _views[tab][idx];
+  if (!row) return;
+  switch(tab){
+    case 'awardee':  showDetail(buildAwardeeDetail(row)); break;
+    case 'skor':     showDetail(buildSkorDetail(row));    break;
+    case 'rekap':    showDetail(buildRekapRowDetail(row));break;
+    case 'semua':    showDetail(buildSemuaRowDetail(row));break;
+    case 'kampus':   showDetail(buildKampusDetail(row));  break;
+    case 'kelompok': showDetail(buildKelompokDetail(row));break;
+  }
+};
+
+/* =============================================
+   AWARDEE DETAIL — profil + stats + riwayat kegiatan
+============================================= */
+function awardeeStats(no_induk) {
+  const myRekap = _rekap.filter(r => r.no_induk === no_induk);
+  let tH = 0, tP = 0;
+  const perAct = {};
+  ACTS.forEach(a => perAct[a.key] = { hadir:0, sesi:0 });
+  myRekap.forEach(r => {
+    ACTS.forEach(a => {
+      if (!isFilled(r[a.key])) return;
+      perAct[a.key].sesi++;
+      tP++;
+      if (isH(r[a.key])) { perAct[a.key].hadir++; tH++; }
+    });
+  });
+  return { myRekap, tH, tP, perAct, pct: tP>0 ? Math.round(tH/tP*100) : 0 };
+}
+
+function buildAwardeeDetail(m) {
+  const stats = awardeeStats(m.no_induk);
+  const cls = stats.pct>=70?'high':stats.pct>=50?'mid':'low';
+  const pctColor = cls==='high'?'#15803d':cls==='mid'?'#92400e':'#b91c1c';
+
+  // Riwayat sorted by tanggal desc
+  const riwayat = [...stats.myRekap].sort((a,b)=>String(b.tanggal||'').localeCompare(String(a.tanggal||'')));
+
+  return `${backBtnHtml()}
+    ${heroHtml({
+      tag: 'Detail Awardee',
+      name: m.nama || '—',
+      avatar: initialsOf(m.nama),
+      color: 'h-blue',
+      meta: [
+        { text: m.no_induk||'—' },
+        { text: m.kampus||'—' },
+        { text: 'Kelompok '+(m.kelompok||'—') },
+        m.status ? { text: m.status } : null,
+      ]
+    })}
+
+    <div class="detail-kpis">
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Skor Partisipasi</div><div class="detail-kpi-val" style="color:${pctColor}" data-num="${stats.pct}" data-suffix="%">0%</div><div class="detail-kpi-sub">${cls==='high'?'Sangat baik':cls==='mid'?'Cukup baik':'Perlu ditingkatkan'}</div></div>
+      <div class="detail-kpi accent-green"><div class="detail-kpi-lbl">Total Hadir</div><div class="detail-kpi-val" data-num="${stats.tH}">0</div><div class="detail-kpi-sub">dari ${stats.tP} sesi</div></div>
+      <div class="detail-kpi accent-red"><div class="detail-kpi-lbl">Tidak Hadir</div><div class="detail-kpi-val" data-num="${stats.tP - stats.tH}">0</div><div class="detail-kpi-sub">sesi tidak dihadiri</div></div>
+      <div class="detail-kpi accent-blue"><div class="detail-kpi-lbl">Total Bulan</div><div class="detail-kpi-val" data-num="${stats.myRekap.length}">0</div><div class="detail-kpi-sub">data rekap tercatat</div></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h">Breakdown per Kegiatan <span class="h-tag">${ACTS.length} jenis</span></div>
+      <div class="breakdown-list">
+        ${ACTS.map(a=>{
+          const v=stats.perAct[a.key];
+          const pct = v.sesi>0 ? Math.round(v.hadir/v.sesi*100) : 0;
+          const barCls = pct>=70?'b-green':pct>=50?'b-orange':'b-red';
+          return `<div class="breakdown-item">
+            <div class="breakdown-label">${a.label}</div>
+            <div><span class="breakdown-val">${v.hadir}/${v.sesi}</span><span class="breakdown-pct">${pct}%</span></div>
+            <div class="breakdown-bar-wrap"><div class="breakdown-bar ${barCls}" data-bar-w="${pct}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h">Profil Lengkap</div>
+      <div class="detail-section-body padded" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;font-size:13px">
+        ${[
+          ['Fakultas',m.fakultas],['Prodi',m.prodi],['Cluster',m.cluster],
+          ['Lecture',m.lecture],['Email',m.email],['WhatsApp',m.wa],
+        ].map(([k,v])=>`<div><div style="font-size:10.5px;color:#6b7280;font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-bottom:2px">${k}</div><div style="color:#111827;word-break:break-all">${v||'—'}</div></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h">Riwayat Kehadiran <span class="h-tag">${riwayat.length} bulan</span></div>
+      <div class="tbl-scroll" style="border-top:0">
+        <table class="rp-table" style="width:100%">
+          <thead><tr><th>Tanggal</th>${ACTS.map(a=>`<th style="text-align:center">${a.label}</th>`).join('')}</tr></thead>
+          <tbody>${
+            riwayat.length === 0
+              ? `<tr><td colspan="${ACTS.length+1}" class="detail-empty">Belum ada riwayat</td></tr>`
+              : riwayat.map(r=>`<tr style="cursor:default">
+                  <td style="white-space:nowrap;font-weight:600">${r.tanggal||'—'}</td>
+                  ${ACTS.map(a=>{
+                    const v=r[a.key];
+                    if(!isFilled(v)) return `<td style="text-align:center;color:#d1d5db">·</td>`;
+                    if(isH(v))       return `<td style="text-align:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg></td>`;
+                    return             `<td style="text-align:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></td>`;
+                  }).join('')}
+                </tr>`).join('')
+          }</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+/* =============================================
+   SKOR DETAIL — pakai struktur awardee tapi cari mahasiswa-nya
+============================================= */
+function buildSkorDetail(s) {
+  const m = _mhs.find(x => x.no_induk === s.nim) || { no_induk:s.nim, nama:s.nama, kampus:s.kampus, kelompok:s.kelompok };
+  return buildAwardeeDetail(m);
+}
+
+/* =============================================
+   REKAP-ROW DETAIL — single bulan record awardee
+============================================= */
+function buildRekapRowDetail(r) {
+  const m = _mhs.find(x => x.no_induk === r.no_induk) || { no_induk:r.no_induk, nama:r.nama, kampus:r.kampus, kelompok:r.kelompok };
+  const hadirCount  = ACTS.filter(a=>isH(r[a.key])).length;
+  const sesiCount   = ACTS.filter(a=>isFilled(r[a.key])).length;
+  const pct         = sesiCount>0 ? Math.round(hadirCount/sesiCount*100) : 0;
+  const cls = pct>=70?'high':pct>=50?'mid':'low';
+
+  return `${backBtnHtml()}
+    ${heroHtml({
+      tag: 'Rekap '+(r.tanggal||'—'),
+      name: r.nama||'—',
+      avatar: initialsOf(r.nama),
+      color: 'h-teal',
+      meta: [{text:r.no_induk}, {text:r.kampus||'—'}, {text:'Kelompok '+(r.kelompok||'—')}],
+      cta: `<button class="detail-hero-cta" onclick="window.showDetail(buildAwardeeDetail(${JSON.stringify(m).replace(/"/g,'&quot;')}))">Lihat Profil Awardee</button>`
+    })}
+
+    <div class="detail-kpis">
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Hadir Bulan Ini</div><div class="detail-kpi-val" data-num="${hadirCount}">0</div><div class="detail-kpi-sub">dari ${sesiCount} sesi tercatat</div></div>
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Skor Bulan Ini</div><div class="detail-kpi-val" style="color:${cls==='high'?'#15803d':cls==='mid'?'#92400e':'#b91c1c'}" data-num="${pct}" data-suffix="%">0%</div></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h">Detail Kegiatan</div>
+      <div class="breakdown-list">
+        ${ACTS.map(a=>{
+          const v=r[a.key];
+          const filled = isFilled(v);
+          const hadir  = isH(v);
+          const stat = !filled ? `<span style="color:#9ca3af;font-size:12px">— belum tercatat —</span>`
+                     : hadir   ? `<span class="badge-h">Hadir</span>`
+                               : `<span class="badge-a">Tidak Hadir</span>`;
+          return `<div class="breakdown-item">
+            <div class="breakdown-label"><span class="act-pill ${a.key}">${a.label}</span></div>
+            <div>${stat}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+/* =============================================
+   SEMUA-ROW DETAIL — single kegiatan
+============================================= */
+function buildSemuaRowDetail(r) {
+  const m = _mhs.find(x => x.no_induk === r.no_induk) || { no_induk:r.no_induk, nama:r.nama, kampus:r.kampus, kelompok:r.kelompok };
+  const stats = awardeeStats(r.no_induk);
+  const cls = stats.pct>=70?'high':stats.pct>=50?'mid':'low';
+
+  return `${backBtnHtml()}
+    ${heroHtml({
+      tag: 'Detail Aktivitas',
+      name: r.kegiatan,
+      avatar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+      color: r.hadir ? 'h-green' : 'h-red',
+      meta: [{text:r.tanggal||'—'}, {text:r.hadir?'✓ Hadir':'✕ Tidak Hadir'}],
+    })}
+
+    <div class="detail-section">
+      <div class="detail-section-h">Awardee</div>
+      <div class="detail-section-body padded">
+        <div style="display:flex;align-items:center;gap:14px">
+          ${avatarHtml(r.nama)}
+          <div>
+            <div style="font-weight:700;font-size:15px;color:#111827">${r.nama||'—'}</div>
+            <div style="font-size:12px;color:#6b7280;margin-top:2px">${r.no_induk||'—'} · ${r.kampus||'—'} · Kelompok ${r.kelompok||'—'}</div>
+          </div>
+          <button class="btn-dl" style="margin-left:auto" onclick="window.showDetail(buildAwardeeDetail(${JSON.stringify(m).replace(/"/g,'&quot;')}))">Lihat Profil</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h">Skor Partisipasi Awardee Ini</div>
+      <div class="stat-grid-3">
+        <div><div class="v" style="color:${cls==='high'?'#15803d':cls==='mid'?'#92400e':'#b91c1c'}" data-num="${stats.pct}" data-suffix="%">0%</div><div class="l">Skor Total</div></div>
+        <div><div class="v green" data-num="${stats.tH}">0</div><div class="l">Total Hadir</div></div>
+        <div><div class="v red" data-num="${stats.tP - stats.tH}">0</div><div class="l">Tidak Hadir</div></div>
+      </div>
+    </div>
+  `;
+}
+
+/* =============================================
+   KAMPUS DETAIL — daftar awardee di kampus + breakdown kelompok
+============================================= */
+function buildKampusDetail(k) {
+  const awardees = _mhs.filter(m => m.kampus === k.kampus);
+  const skors    = _skorData.filter(s => s.kampus === k.kampus);
+  const kelompok = [...new Set(awardees.map(a => a.kelompok).filter(Boolean))].sort();
+  const cls = k.pct>=70?'high':k.pct>=50?'mid':'low';
+  const pctColor = cls==='high'?'#15803d':cls==='mid'?'#92400e':'#b91c1c';
+
+  // Top & bottom 5 awardee by skor
+  const sortedSkor = [...skors].sort((a,b)=>b.pct-a.pct);
+  const top5 = sortedSkor.slice(0,5);
+  const bot5 = [...sortedSkor].reverse().slice(0,5);
+
+  return `${backBtnHtml()}
+    ${heroHtml({
+      tag: 'Detail Kampus',
+      name: k.kampus,
+      avatar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg>',
+      color: 'h-purple',
+      meta: [
+        { text: (k.awardee||0)+' awardee' },
+        { text: kelompok.length+' kelompok' },
+        { text: 'Skor '+k.pct+'%' },
+      ]
+    })}
+
+    <div class="detail-kpis">
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Total Awardee</div><div class="detail-kpi-val" data-num="${k.awardee||0}">0</div></div>
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Skor Rata-rata</div><div class="detail-kpi-val" style="color:${pctColor}" data-num="${k.pct}" data-suffix="%">0%</div></div>
+      <div class="detail-kpi accent-green"><div class="detail-kpi-lbl">Total Hadir</div><div class="detail-kpi-val" data-num="${k.totalH}">0</div></div>
+      <div class="detail-kpi accent-blue"><div class="detail-kpi-lbl">Total Sesi</div><div class="detail-kpi-val" data-num="${k.totalP}">0</div></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h">Kehadiran per Jenis Kegiatan</div>
+      <div class="breakdown-list">
+        ${ACTS.map((a,i)=>{
+          const h = k['h_'+a.key]||0;
+          const s = k['s_'+a.key]||0;
+          const pct = s>0?Math.round(h/s*100):0;
+          const colors=['b-teal','b-green','b-orange','b-purple','b-red',''];
+          return `<div class="breakdown-item">
+            <div class="breakdown-label"><span class="act-pill ${a.key}">${a.label}</span></div>
+            <div><span class="breakdown-val">${h}/${s}</span><span class="breakdown-pct">${pct}%</span></div>
+            <div class="breakdown-bar-wrap"><div class="breakdown-bar ${colors[i%colors.length]}" data-bar-w="${pct}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h">Top 5 Skor Tertinggi <span class="h-tag">${top5.length} dari ${skors.length}</span></div>
+      <div class="tbl-scroll">
+        <table class="rp-table" style="width:100%">
+          <thead><tr><th>Nama</th><th>Kelompok</th><th>Hadir/Sesi</th><th>Skor</th></tr></thead>
+          <tbody>${top5.map(s=>{
+            const c=s.pct>=70?'high':s.pct>=50?'mid':'low';
+            return `<tr onclick="window.showDetail(buildSkorDetail(${JSON.stringify(s).replace(/"/g,'&quot;')}))">
+              <td class="td-name"><span class="row-name-wrap">${avatarHtml(s.nama)}<span>${s.nama}</span></span></td>
+              <td>${s.kelompok||'—'}</td>
+              <td style="text-align:center">${s.totalH}/${s.totalP}</td>
+              <td>${skorBarHtml(s.pct,c)}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h" style="color:#b91c1c">Bottom 5 Skor Terendah <span class="h-tag">perlu perhatian</span></div>
+      <div class="tbl-scroll">
+        <table class="rp-table" style="width:100%">
+          <thead><tr><th>Nama</th><th>Kelompok</th><th>Hadir/Sesi</th><th>Skor</th></tr></thead>
+          <tbody>${bot5.map(s=>{
+            const c=s.pct>=70?'high':s.pct>=50?'mid':'low';
+            return `<tr onclick="window.showDetail(buildSkorDetail(${JSON.stringify(s).replace(/"/g,'&quot;')}))">
+              <td class="td-name"><span class="row-name-wrap">${avatarHtml(s.nama)}<span>${s.nama}</span></span></td>
+              <td>${s.kelompok||'—'}</td>
+              <td style="text-align:center">${s.totalH}/${s.totalP}</td>
+              <td>${skorBarHtml(s.pct,c)}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+/* =============================================
+   KELOMPOK DETAIL — daftar awardee + breakdown
+============================================= */
+function buildKelompokDetail(k) {
+  const awardees = _mhs.filter(m => String(m.kelompok) === String(k.kelompok));
+  const skors    = _skorData.filter(s => String(s.kelompok) === String(k.kelompok)).sort((a,b)=>b.pct-a.pct);
+  const cls = k.pct>=70?'high':k.pct>=50?'mid':'low';
+  const pctColor = cls==='high'?'#15803d':cls==='mid'?'#92400e':'#b91c1c';
+
+  return `${backBtnHtml()}
+    ${heroHtml({
+      tag: 'Detail Kelompok',
+      name: 'Kelompok '+k.kelompok,
+      avatar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>',
+      color: 'h-red',
+      meta: [
+        { text: awardees.length+' awardee' },
+        { text: k.kampus||'—' },
+        { text: 'Skor '+k.pct+'%' },
+      ]
+    })}
+
+    <div class="detail-kpis">
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Anggota</div><div class="detail-kpi-val" data-num="${awardees.length}">0</div></div>
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Skor Rata-rata</div><div class="detail-kpi-val" style="color:${pctColor}" data-num="${k.pct}" data-suffix="%">0%</div></div>
+      <div class="detail-kpi accent-green"><div class="detail-kpi-lbl">Total Hadir</div><div class="detail-kpi-val" data-num="${k.totalH}">0</div></div>
+      <div class="detail-kpi accent-blue"><div class="detail-kpi-lbl">Total Sesi</div><div class="detail-kpi-val" data-num="${k.totalP}">0</div></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h">Kehadiran per Jenis Kegiatan</div>
+      <div class="breakdown-list">
+        ${ACTS.map((a,i)=>{
+          const h = k['h_'+a.key]||0;
+          const s = k['s_'+a.key]||0;
+          const pct = s>0?Math.round(h/s*100):0;
+          const colors=['b-teal','b-green','b-orange','b-purple','b-red',''];
+          return `<div class="breakdown-item">
+            <div class="breakdown-label"><span class="act-pill ${a.key}">${a.label}</span></div>
+            <div><span class="breakdown-val">${h}/${s}</span><span class="breakdown-pct">${pct}%</span></div>
+            <div class="breakdown-bar-wrap"><div class="breakdown-bar ${colors[i%colors.length]}" data-bar-w="${pct}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h">Daftar Anggota <span class="h-tag">${skors.length}</span></div>
+      <div class="tbl-scroll">
+        <table class="rp-table" style="width:100%">
+          <thead><tr><th>No Induk</th><th>Nama</th><th>Hadir/Sesi</th><th>Skor</th></tr></thead>
+          <tbody>${
+            skors.length===0
+              ? `<tr><td colspan="4" class="detail-empty">Belum ada data skor untuk kelompok ini</td></tr>`
+              : skors.map(s=>{
+                  const c=s.pct>=70?'high':s.pct>=50?'mid':'low';
+                  return `<tr onclick="window.showDetail(buildSkorDetail(${JSON.stringify(s).replace(/"/g,'&quot;')}))">
+                    <td class="td-mono">${s.nim||'—'}</td>
+                    <td class="td-name"><span class="row-name-wrap">${avatarHtml(s.nama)}<span>${s.nama}</span></span></td>
+                    <td style="text-align:center">${s.totalH}/${s.totalP}</td>
+                    <td>${skorBarHtml(s.pct,c)}</td>
+                  </tr>`;
+                }).join('')
+          }</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+/* =============================================
+   KPI DETAIL — 5 jenis (rekap, awardee, kegiatan, avg, last)
+============================================= */
+window.showKpiDetail = function(kind) {
+  switch(kind){
+    case 'rekap':    showDetail(buildKpiRekapDetail());    break;
+    case 'awardee':  showDetail(buildKpiAwardeeDetail());  break;
+    case 'kegiatan': showDetail(buildKpiKegiatanDetail()); break;
+    case 'avg':      showDetail(buildKpiAvgDetail());      break;
+    case 'last':     showDetail(buildKpiLastDetail());     break;
+  }
+};
+
+function _topNCounter(items, key, n=8) {
+  const cnt = {};
+  items.forEach(it => { const v = it[key]; if (v) cnt[v] = (cnt[v]||0)+1; });
+  return Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,n);
+}
+
+/* KPI 1: TOTAL DATA REKAP — breakdown per kampus, kelompok, bulan */
+function buildKpiRekapDetail() {
+  const total = _rekap.length;
+  const perKampus   = _topNCounter(_rekap, 'kampus', 10);
+  const perKelompok = _topNCounter(_rekap, 'kelompok', 10);
+  const perBulan = {};
+  _rekap.forEach(r=>{ const ym=String(r.tanggal||'').slice(0,7); if(ym) perBulan[ym]=(perBulan[ym]||0)+1;});
+  const bulanArr = Object.entries(perBulan).sort((a,b)=>a[0].localeCompare(b[0]));
+  const maxKampus   = Math.max(1, ...perKampus.map(x=>x[1]));
+  const maxKelompok = Math.max(1, ...perKelompok.map(x=>x[1]));
+  const maxBulan    = Math.max(1, ...bulanArr.map(x=>x[1]));
+
+  return `${backBtnHtml()}
+    ${heroHtml({
+      tag: 'KPI · Total Data Rekap',
+      name: total.toLocaleString('id-ID')+' baris rekap',
+      avatar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',
+      color: 'h-teal',
+      meta: [{text:'Mencakup '+bulanArr.length+' bulan'},{text:perKampus.length+' kampus'}],
+    })}
+
+    <div class="detail-kpis">
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Total Baris</div><div class="detail-kpi-val" data-num="${total}">0</div></div>
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Rata-rata / Bulan</div><div class="detail-kpi-val" data-num="${bulanArr.length>0?Math.round(total/bulanArr.length):0}">0</div></div>
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Bulan Tercatat</div><div class="detail-kpi-val" data-num="${bulanArr.length}">0</div></div>
+    </div>
+
+    ${_breakdownSection('Top 10 Kampus','Berdasarkan jumlah baris rekap', perKampus, maxKampus, 'b-purple')}
+    ${_breakdownSection('Top 10 Kelompok','Berdasarkan jumlah baris rekap', perKelompok, maxKelompok, 'b-red')}
+    ${_breakdownSection('Distribusi per Bulan','Volume rekap dari waktu ke waktu',
+        bulanArr.map(([ym,c])=>{ const [y,m]=ym.split('-'); return [new Date(+y,+m-1).toLocaleDateString('id-ID',{month:'long',year:'numeric'}),c]; }),
+        maxBulan, 'b-teal')}
+  `;
+}
+
+/* KPI 2: TOTAL AWARDEE — distribusi per kampus, kelompok, status */
+function buildKpiAwardeeDetail() {
+  const total = _mhs.length;
+  const perKampus   = _topNCounter(_mhs, 'kampus', 12);
+  const perKelompok = _topNCounter(_mhs, 'kelompok', 12);
+  const perStatus   = _topNCounter(_mhs, 'status', 6);
+  const max1 = Math.max(1, ...perKampus.map(x=>x[1]));
+  const max2 = Math.max(1, ...perKelompok.map(x=>x[1]));
+  const max3 = Math.max(1, ...perStatus.map(x=>x[1]));
+
+  return `${backBtnHtml()}
+    ${heroHtml({
+      tag: 'KPI · Total Awardee',
+      name: total.toLocaleString('id-ID')+' awardee',
+      avatar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>',
+      color: 'h-blue',
+      meta: [{text:perKampus.length+' kampus'},{text:perKelompok.length+' kelompok'}],
+    })}
+
+    <div class="detail-kpis">
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Total Awardee</div><div class="detail-kpi-val" data-num="${total}">0</div></div>
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Jumlah Kampus</div><div class="detail-kpi-val" data-num="${perKampus.length}">0</div></div>
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Jumlah Kelompok</div><div class="detail-kpi-val" data-num="${perKelompok.length}">0</div></div>
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Awardee/Kampus</div><div class="detail-kpi-val" data-num="${perKampus.length>0?Math.round(total/perKampus.length):0}">0</div></div>
+    </div>
+
+    ${_breakdownSection('Top 12 Kampus','Awardee terbanyak per institusi', perKampus, max1, 'b-purple')}
+    ${_breakdownSection('Sebaran Kelompok','Distribusi awardee per kelompok bina', perKelompok, max2, 'b-orange')}
+    ${perStatus.length ? _breakdownSection('Status Awardee','Aktif vs lainnya', perStatus, max3, 'b-green') : ''}
+  `;
+}
+
+/* KPI 3: TOTAL KEGIATAN — breakdown per jenis, hadir vs tidak */
+function buildKpiKegiatanDetail() {
+  const total = _semuaData.length;
+  const hadir = _semuaData.filter(x=>x.hadir).length;
+  const tidak = total - hadir;
+  const pct = total>0?Math.round(hadir/total*100):0;
+
+  // Per jenis kegiatan
+  const perJenis = ACTS.map(a => {
+    const filtered = _semuaData.filter(x => x.kegiatan_key === a.key);
+    const h = filtered.filter(x=>x.hadir).length;
+    return { label:a.label, key:a.key, total:filtered.length, hadir:h, pct: filtered.length>0?Math.round(h/filtered.length*100):0 };
+  }).sort((a,b)=>b.total-a.total);
+  const maxTot = Math.max(1, ...perJenis.map(x=>x.total));
+
+  return `${backBtnHtml()}
+    ${heroHtml({
+      tag: 'KPI · Total Kegiatan',
+      name: total.toLocaleString('id-ID')+' entri kegiatan',
+      avatar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+      color: 'h-green',
+      meta: [{text:hadir.toLocaleString('id-ID')+' hadir'},{text:tidak.toLocaleString('id-ID')+' tidak hadir'},{text:pct+'% kehadiran'}],
+    })}
+
+    <div class="detail-kpis">
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Total Entri</div><div class="detail-kpi-val" data-num="${total}">0</div></div>
+      <div class="detail-kpi accent-green"><div class="detail-kpi-lbl">Hadir</div><div class="detail-kpi-val" data-num="${hadir}">0</div></div>
+      <div class="detail-kpi accent-red"><div class="detail-kpi-lbl">Tidak Hadir</div><div class="detail-kpi-val" data-num="${tidak}">0</div></div>
+      <div class="detail-kpi"><div class="detail-kpi-lbl">% Kehadiran</div><div class="detail-kpi-val" data-num="${pct}" data-suffix="%">0%</div></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h">Breakdown per Jenis Kegiatan</div>
+      <div class="breakdown-list">
+        ${perJenis.map((x,i)=>{
+          const colors=['b-teal','b-green','b-orange','b-purple','b-red',''];
+          const w = Math.round(x.total/maxTot*100);
+          return `<div class="breakdown-item">
+            <div class="breakdown-label"><span class="act-pill ${x.key}">${x.label}</span></div>
+            <div><span class="breakdown-val">${x.total.toLocaleString('id-ID')}</span><span class="breakdown-pct">${x.pct}% hadir</span></div>
+            <div class="breakdown-bar-wrap"><div class="breakdown-bar ${colors[i%colors.length]}" data-bar-w="${w}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `;
+}
+
+/* KPI 4: RATA-RATA PARTISIPASI — distribusi skor + top/bottom */
+function buildKpiAvgDetail() {
+  const data = _kpiData.avg;
+  const buckets = [
+    { lbl:'90–100% (Excellent)', min:90, max:101, color:'b-green'  },
+    { lbl:'70–89% (Baik)',       min:70, max:90,  color:'b-teal'   },
+    { lbl:'50–69% (Cukup)',      min:50, max:70,  color:'b-orange' },
+    { lbl:'25–49% (Rendah)',     min:25, max:50,  color:'b-red'    },
+    { lbl:'0–24% (Kritis)',      min:0,  max:25,  color:'b-red'    },
+  ];
+  const filledSkor = _skorData.filter(s => s.totalP > 0);
+  const dist = buckets.map(b => ({
+    ...b, count: filledSkor.filter(s => s.pct >= b.min && s.pct < b.max).length
+  }));
+  const maxDist = Math.max(1, ...dist.map(d=>d.count));
+
+  const top5    = [...filledSkor].sort((a,b)=>b.pct-a.pct).slice(0,5);
+  const bottom5 = [...filledSkor].sort((a,b)=>a.pct-b.pct).slice(0,5);
+
+  return `${backBtnHtml()}
+    ${heroHtml({
+      tag: 'KPI · Rata-rata Partisipasi',
+      name: data.val+'% rata-rata kehadiran',
+      avatar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+      color: 'h-orange',
+      meta: [{text:data.tH.toLocaleString('id-ID')+' hadir'},{text:'dari '+data.tP.toLocaleString('id-ID')+' sesi'}],
+    })}
+
+    <div class="detail-kpis">
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Rata-rata</div><div class="detail-kpi-val" data-num="${data.val}" data-suffix="%">0%</div></div>
+      <div class="detail-kpi accent-green"><div class="detail-kpi-lbl">Total Hadir</div><div class="detail-kpi-val" data-num="${data.tH}">0</div></div>
+      <div class="detail-kpi accent-blue"><div class="detail-kpi-lbl">Total Sesi</div><div class="detail-kpi-val" data-num="${data.tP}">0</div></div>
+      <div class="detail-kpi"><div class="detail-kpi-lbl">Awardee Diukur</div><div class="detail-kpi-val" data-num="${filledSkor.length}">0</div></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h">Distribusi Skor Awardee</div>
+      <div class="breakdown-list">
+        ${dist.map(d=>{
+          const w = Math.round(d.count/maxDist*100);
+          return `<div class="breakdown-item">
+            <div class="breakdown-label">${d.lbl}</div>
+            <div><span class="breakdown-val">${d.count}</span><span class="breakdown-pct">${filledSkor.length>0?Math.round(d.count/filledSkor.length*100):0}%</span></div>
+            <div class="breakdown-bar-wrap"><div class="breakdown-bar ${d.color}" data-bar-w="${w}"></div></div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h" style="color:#15803d">Top 5 Performers</div>
+      <div class="tbl-scroll">
+        <table class="rp-table" style="width:100%">
+          <thead><tr><th>Nama</th><th>Kampus</th><th>Skor</th></tr></thead>
+          <tbody>${top5.map(s=>{
+            const c=s.pct>=70?'high':s.pct>=50?'mid':'low';
+            return `<tr onclick="window.showDetail(buildSkorDetail(${JSON.stringify(s).replace(/"/g,'&quot;')}))">
+              <td class="td-name"><span class="row-name-wrap">${avatarHtml(s.nama)}<span>${s.nama}</span></span></td>
+              <td>${s.kampus||'—'}</td>
+              <td>${skorBarHtml(s.pct,c)}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-h" style="color:#b91c1c">Bottom 5 — Perlu Perhatian</div>
+      <div class="tbl-scroll">
+        <table class="rp-table" style="width:100%">
+          <thead><tr><th>Nama</th><th>Kampus</th><th>Skor</th></tr></thead>
+          <tbody>${bottom5.map(s=>{
+            const c=s.pct>=70?'high':s.pct>=50?'mid':'low';
+            return `<tr onclick="window.showDetail(buildSkorDetail(${JSON.stringify(s).replace(/"/g,'&quot;')}))">
+              <td class="td-name"><span class="row-name-wrap">${avatarHtml(s.nama)}<span>${s.nama}</span></span></td>
+              <td>${s.kampus||'—'}</td>
+              <td>${skorBarHtml(s.pct,c)}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+/* KPI 5: DATA TERAKHIR — timeline */
+function buildKpiLastDetail() {
+  const data = _kpiData.last;
+  const sortedRekap = [..._rekap].sort((a,b)=>String(b.tanggal||'').localeCompare(String(a.tanggal||'')));
+  const recent = sortedRekap.slice(0, 30);
+  const perBulan = {};
+  _rekap.forEach(r=>{ const ym=String(r.tanggal||'').slice(0,7); if(ym) perBulan[ym]=(perBulan[ym]||0)+1;});
+  const recentMonths = Object.entries(perBulan).sort((a,b)=>b[0].localeCompare(a[0])).slice(0,12);
+  const maxMonth = Math.max(1, ...recentMonths.map(x=>x[1]));
+
+  return `${backBtnHtml()}
+    ${heroHtml({
+      tag: 'KPI · Data Terakhir',
+      name: data.val,
+      avatar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+      color: 'h-purple',
+      meta: [{text:'Update terakhir: '+(data.date||'—')}],
+    })}
+
+    ${_breakdownSection('12 Bulan Terakhir','Volume entri rekap per bulan',
+        recentMonths.reverse().map(([ym,c])=>{
+          const [y,m]=ym.split('-');
+          return [new Date(+y,+m-1).toLocaleDateString('id-ID',{month:'long',year:'numeric'}),c];
+        }),
+        maxMonth, 'b-purple')}
+
+    <div class="detail-section">
+      <div class="detail-section-h">30 Entri Rekap Terbaru</div>
+      <div class="tbl-scroll">
+        <table class="rp-table" style="width:100%">
+          <thead><tr><th>Tanggal</th><th>Nama</th><th>Kampus</th><th>Kelompok</th><th>Hadir</th><th>Sesi</th></tr></thead>
+          <tbody>${recent.map(r=>{
+            const m = _mhs.find(x => x.no_induk === r.no_induk) || { no_induk:r.no_induk, nama:r.nama, kampus:r.kampus, kelompok:r.kelompok };
+            const h = ACTS.filter(a=>isH(r[a.key])).length;
+            const s = ACTS.filter(a=>isFilled(r[a.key])).length;
+            return `<tr onclick="window.showDetail(buildAwardeeDetail(${JSON.stringify(m).replace(/"/g,'&quot;')}))">
+              <td style="white-space:nowrap;font-weight:600">${r.tanggal||'—'}</td>
+              <td class="td-name"><span class="row-name-wrap">${avatarHtml(r.nama)}<span>${r.nama||'—'}</span></span></td>
+              <td>${r.kampus||'—'}</td>
+              <td>${r.kelompok||'—'}</td>
+              <td style="text-align:center;color:#15803d;font-weight:700">${h}</td>
+              <td style="text-align:center">${s}</td>
+            </tr>`;
+          }).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+/* Util: section breakdown reusable untuk KPI detail */
+function _breakdownSection(title, subtitle, items, max, barColor='') {
+  if (!items || items.length === 0) {
+    return `<div class="detail-section"><div class="detail-section-h">${title}</div><div class="detail-empty">Tidak ada data</div></div>`;
+  }
+  return `<div class="detail-section">
+    <div class="detail-section-h">${title}<span class="h-tag">${subtitle}</span></div>
+    <div class="breakdown-list">
+      ${items.map(([label,val]) => {
+        const w = Math.round(val/max*100);
+        return `<div class="breakdown-item">
+          <div class="breakdown-label">${label}</div>
+          <div><span class="breakdown-val">${val.toLocaleString('id-ID')}</span></div>
+          <div class="breakdown-bar-wrap"><div class="breakdown-bar ${barColor}" data-bar-w="${w}"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
 }
 
 init();

@@ -3,400 +3,500 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Panel | BSI Scholarship Inspirasi</title>
+  <title>Kelola Pengguna | BSI Scholarship Inspirasi</title>
   <link rel="icon" href="assets/logo.png" type="image/png" />
   <link rel="stylesheet" href="assets/style.css" />
   <style>
-    body[data-page="admin"] { background: #f5f7fb; }
+    /* ============================================================
+       PAGE SHELL
+       ============================================================ */
+    .page-header { margin-bottom: 20px; }
+    .page-header h1 { font-size: 22px; font-weight: 800; color: #111827; margin: 0 0 4px; }
+    .page-header p  { font-size: 13px; color: #6b7280; margin: 0; }
+    .page-header, .st-ph, .rp-ph { display: none !important; }
 
-    .admin-page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 28px 20px 80px;
+    /* ============================================================
+       LOADING — BSI ring + skeleton + bouncing dots
+       ============================================================ */
+    #adminLoading {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 60px 20px 40px; gap: 26px;
+      animation: admViewIn .35s cubic-bezier(.2,.8,.2,1);
+    }
+    #adminLoading.hide { display: none; }
+    @keyframes admViewIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .adm-loader-skeletons {
+      display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
+      max-width: 720px; width: 100%;
+    }
+    .adm-skel-card {
+      flex: 1 1 200px; max-width: 220px; border-radius: 14px;
+      overflow: hidden; background: #f3f4f6;
+    }
+    .adm-skel-img {
+      height: 84px;
+      background: linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%);
+      background-size: 400% 100%; animation: admShimmer 1.4s ease infinite;
+    }
+    .adm-skel-body { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .adm-skel-line {
+      height: 9px; border-radius: 6px;
+      background: linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 50%,#e5e7eb 75%);
+      background-size: 400% 100%; animation: admShimmer 1.4s ease infinite;
+    }
+    .adm-skel-line.short { width: 60%; }
+    .adm-skel-card:nth-child(2) .adm-skel-img,
+    .adm-skel-card:nth-child(2) .adm-skel-line { animation-delay: .15s; }
+    .adm-skel-card:nth-child(3) .adm-skel-img,
+    .adm-skel-card:nth-child(3) .adm-skel-line { animation-delay: .3s; }
+    @keyframes admShimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    .adm-loader-ring { position: relative; width: 72px; height: 72px; }
+    .adm-loader-ring svg.ring-svg {
+      position: absolute; inset: 0;
+      animation: admRingSpin 1.1s cubic-bezier(.6,.1,.4,.9) infinite;
+    }
+    .adm-loader-ring .ring-logo {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .adm-loader-ring .ring-logo img {
+      width: 36px; height: 36px; object-fit: contain;
+      animation: admLogoPulse 1.1s ease-in-out infinite;
+    }
+    @keyframes admRingSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes admLogoPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: .75; transform: scale(.88); }
+    }
+    .adm-loader-text {
+      font-size: 14px; font-weight: 600; color: #374151;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .adm-loader-dots span {
+      display: inline-block; width: 5px; height: 5px; border-radius: 50%;
+      background: #0055a5; animation: admDotBounce 1.1s ease-in-out infinite;
+    }
+    .adm-loader-dots span:nth-child(2) { animation-delay: .18s; background: #00a59f; }
+    .adm-loader-dots span:nth-child(3) { animation-delay: .36s; background: #feb23e; }
+    @keyframes admDotBounce {
+      0%, 80%, 100% { transform: translateY(0); opacity: .4; }
+      40%           { transform: translateY(-6px); opacity: 1; }
+    }
+    @keyframes admItemIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* PAGE HEADER */
-    .admin-ph {
-      margin-bottom: 24px;
-    }
-    .admin-ph h1 {
-      font-size: 20px;
-      font-weight: 700;
-      color: #111827;
-      margin: 0 0 4px;
-    }
-    .admin-ph p {
-      font-size: 13px;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    /* STATS ROW */
-    .admin-stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 24px;
-    }
-
+    /* ============================================================
+       STATS — clickable, count-up, hover arrow
+       ============================================================ */
+    .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 18px; }
     .stat-card {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 18px 20px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 14px;
+      padding: 16px 18px; cursor: pointer; position: relative; overflow: hidden;
+      transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s, border-color .25s;
+      animation: admItemIn .4s cubic-bezier(.2,.8,.2,1) backwards;
     }
-
-    .stat-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+    .stat-card:nth-of-type(1) { animation-delay: 0ms; }
+    .stat-card:nth-of-type(2) { animation-delay: 60ms; }
+    .stat-card:nth-of-type(3) { animation-delay: 120ms; }
+    .stat-card:nth-of-type(4) { animation-delay: 180ms; }
+    .stat-card::before {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,165,159,0) 0%, rgba(0,165,159,.05) 100%);
+      opacity: 0; pointer-events: none; transition: opacity .2s;
     }
-
-    .stat-icon svg { width: 22px; height: 22px; }
-
-    .stat-icon--pending { background: #fef9c3; color: #d97706; }
-    .stat-icon--active  { background: #dcfce7; color: #16a34a; }
-    .stat-icon--admin   { background: #ede9fe; color: #6d28d9; }
-    .stat-icon--total   { background: #dbeafe; color: #1d4ed8; }
-
-    .stat-info { min-width: 0; }
-    .stat-val  { font-size: 28px; font-weight: 700; color: #111827; line-height: 1; }
-    .stat-lbl  { font-size: 12px; color: #6b7280; margin-top: 4px; }
-
-    /* TABS */
-    .admin-tabs {
-      display: flex;
-      gap: 0;
-      border-bottom: 2px solid #e5e7eb;
-      margin-bottom: 20px;
+    .stat-card:hover {
+      transform: translateY(-3px); border-color: #c5d6e8;
+      box-shadow: 0 12px 28px rgba(13,67,118,.10);
     }
-
-    .admin-tab {
-      padding: 10px 20px;
-      font-size: 13.5px;
-      font-weight: 600;
-      color: #6b7280;
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      transition: color .15s, border-color .15s;
-      white-space: nowrap;
+    .stat-card:hover::before { opacity: 1; }
+    .stat-card .s-arrow {
+      position: absolute; top: 12px; right: 12px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #f3f4f6; color: #9ca3af;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translateX(-4px);
+      transition: opacity .25s, transform .25s, background .25s, color .25s;
     }
-
-    .admin-tab.active {
-      color: #0055a5;
-      border-bottom-color: #0055a5;
+    .stat-card .s-arrow svg { width: 11px; height: 11px; }
+    .stat-card:hover .s-arrow {
+      opacity: 1; transform: translateX(0);
+      background: #00A59F; color: #fff;
     }
-
-    .tab-count {
-      background: #e0e7ff;
-      color: #3730a3;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 1px 7px;
-      border-radius: 20px;
+    .stat-card .s-label {
+      font-size: 11px; color: #6b7280; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .4px;
     }
-
-    .tab-count--orange { background: #fef9c3; color: #92400e; }
-
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* CARD WRAPPER */
-    .admin-card {
-      background: #fff;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      overflow: hidden;
+    .stat-card .s-val {
+      font-size: 26px; font-weight: 800; color: #111827; line-height: 1.1; margin-top: 4px;
+      font-variant-numeric: tabular-nums; letter-spacing: -.5px;
     }
+    .stat-card .s-val.teal   { color: #00A59F; }
+    .stat-card .s-val.yellow { color: #d97706; }
+    .stat-card .s-val.blue   { color: #0055A5; }
+    .stat-card .s-val.purple { color: #7c3aed; }
+    .stat-card .s-val.red    { color: #dc2626; }
+    @media (max-width: 768px) { .stat-row { grid-template-columns: repeat(2,1fr); } }
 
-    /* TOOLBAR */
-    .admin-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
-      border-bottom: 1px solid #f3f4f6;
-      gap: 10px;
-      flex-wrap: wrap;
+    /* ============================================================
+       TOOLBAR
+       ============================================================ */
+    .toolbar {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+      margin-bottom: 14px;
+      animation: admItemIn .35s cubic-bezier(.2,.8,.2,1) .2s backwards;
     }
-
-    .admin-toolbar-title {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: #374151;
+    .toolbar input {
+      flex: 1; min-width: 200px; padding: 9px 14px;
+      border: 1.5px solid #e5e7eb; border-radius: 10px;
+      font-size: 13px; outline: none;
     }
-
-    .admin-search {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      padding: 6px 12px;
-      font-size: 13px;
-      color: #374151;
-      width: 220px;
+    .toolbar input:focus { border-color: #00A59F; }
+    .toolbar select {
+      padding: 9px 12px; border: 1.5px solid #e5e7eb; border-radius: 10px;
+      font-size: 13px; outline: none; background: #fff;
     }
-
-    .admin-search input {
-      background: none;
-      border: none;
-      outline: none;
-      font-size: 13px;
-      color: #374151;
-      width: 100%;
+    .btn-sync {
+      padding: 9px 18px; background: #00A59F; color: #fff;
+      border: none; border-radius: 10px; font-size: 13px; font-weight: 700;
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+      transition: background .15s, transform .15s;
     }
-
-    .admin-search svg { flex-shrink: 0; color: #9ca3af; }
-
-    /* TABLE */
-    .admin-table-wrap { overflow-x: auto; }
-
-    .admin-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
+    .btn-sync:hover { background: #009690; }
+    .btn-sync:disabled { opacity: .6; cursor: not-allowed; }
+    .btn-add {
+      background: #0055a5;
     }
+    .btn-add:hover { background: #003d7a; }
+    .btn-reset {
+      background: #fff; color: #6b7280;
+      border: 1.5px solid #e5e7eb;
+    }
+    .btn-reset:hover { background: #f9fafb; color: #374151; }
 
-    .admin-table th {
-      background: #f9fafb;
-      padding: 10px 16px;
-      text-align: left;
-      font-size: 11.5px;
-      font-weight: 600;
-      color: #6b7280;
+    /* ============================================================
+       TABLE
+       ============================================================ */
+    .table-wrap {
+      background: #fff; border: 1px solid #e5e7eb;
+      border-radius: 14px; overflow: hidden;
+      animation: admItemIn .4s cubic-bezier(.2,.8,.2,1) .25s backwards;
+    }
+    .table-wrap table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .table-wrap thead th {
+      background: linear-gradient(180deg, #fafbfc 0%, #f1f5f9 100%);
+      padding: 12px 14px; text-align: left;
+      font-size: 10.5px; font-weight: 800;
+      color: #475569; letter-spacing: .08em;
       text-transform: uppercase;
-      letter-spacing: .04em;
-      border-bottom: 1px solid #e5e7eb;
-      white-space: nowrap;
+      border-bottom: 1px solid #e5e7eb; white-space: nowrap;
+      box-shadow: inset 0 2px 0 0 #00A59F;
+      position: sticky; top: 0; z-index: 1;
     }
-
-    .admin-table td {
-      padding: 13px 16px;
-      border-bottom: 1px solid #f3f4f6;
+    .table-wrap tbody td {
+      padding: 11px 14px; border-bottom: 1px solid #f3f4f6;
       vertical-align: middle;
-      color: #374151;
     }
-
-    .admin-table tbody tr:last-child td { border-bottom: none; }
-    .admin-table tbody tr:hover td { background: #f9fafb; }
+    .table-wrap tbody tr:last-child td { border-bottom: none; }
+    .table-wrap tbody tr {
+      cursor: pointer;
+      transition: background .18s, transform .18s;
+      animation: admItemIn .35s cubic-bezier(.2,.8,.2,1) backwards;
+    }
+    .table-wrap tbody tr:nth-child(1)  { animation-delay: 0ms; }
+    .table-wrap tbody tr:nth-child(2)  { animation-delay: 25ms; }
+    .table-wrap tbody tr:nth-child(3)  { animation-delay: 50ms; }
+    .table-wrap tbody tr:nth-child(4)  { animation-delay: 75ms; }
+    .table-wrap tbody tr:nth-child(5)  { animation-delay: 100ms; }
+    .table-wrap tbody tr:nth-child(6)  { animation-delay: 125ms; }
+    .table-wrap tbody tr:nth-child(7)  { animation-delay: 150ms; }
+    .table-wrap tbody tr:nth-child(8)  { animation-delay: 175ms; }
+    .table-wrap tbody tr:nth-child(9)  { animation-delay: 200ms; }
+    .table-wrap tbody tr:nth-child(10) { animation-delay: 225ms; }
+    .table-wrap tbody tr:hover td {
+      background: linear-gradient(90deg, #f0f9ff 0%, #f8fafc 70%, transparent 100%);
+    }
+    .table-wrap tbody tr:hover td:first-child {
+      box-shadow: inset 3px 0 0 #00A59F;
+    }
 
     /* AVATAR */
-    .user-avatar {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #1f3c88, #00a79d);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+    .avatar-sm {
+      width: 30px; height: 30px; border-radius: 50%;
+      color: #fff; font-size: 11px; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      letter-spacing: -.3px; transition: transform .2s;
     }
-
-    .user-info { display: flex; align-items: center; gap: 10px; }
-    .user-name { font-weight: 600; color: #111827; font-size: 13px; }
-    .user-email { font-size: 11.5px; color: #6b7280; }
+    .table-wrap tbody tr:hover .avatar-sm { transform: scale(1.08); }
+    .td-name { display: flex; align-items: center; gap: 10px; }
+    .td-name .n-main { font-weight: 600; color: #111827; }
+    .td-name .n-sub  { font-size: 11px; color: #9ca3af; }
 
     /* BADGES */
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 11.5px;
-      font-weight: 600;
-      white-space: nowrap;
+      display: inline-block; padding: 2px 9px; border-radius: 999px;
+      font-size: 10.5px; font-weight: 700;
     }
-
-    .badge-pending       { background: #fef9c3; color: #92400e; }
-    .badge-approved      { background: #dcfce7; color: #15803d; }
-    .badge-admin         { background: #ede9fe; color: #6d28d9; }
-    .badge-mentor        { background: #dbeafe; color: #1d4ed8; }
-    .badge-operator      { background: #ffedd5; color: #c2410c; }
+    .badge-aktif    { background: #dcfce7; color: #16a34a; }
+    .badge-pending  { background: #fef3c7; color: #92400e; }
+    .badge-nonaktif { background: #fee2e2; color: #dc2626; }
+    .badge-admin    { background: #ede9fe; color: #6d28d9; }
+    .badge-mentor   { background: #dbeafe; color: #1d4ed8; }
+    .badge-operator { background: #ffedd5; color: #c2410c; }
     .badge-administrator { background: #fce7f3; color: #9d174d; }
+    .badge-awardee  { background: #d1fae5; color: #047857; }
+    .badge-self     { background: #f3f4f6; color: #6b7280; }
 
-    /* ACTION BUTTONS */
-    .btn-sm {
-      padding: 5px 12px;
-      font-size: 12px;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      border: 1px solid transparent;
+    /* ROW ACTION BUTTONS */
+    .row-actions { display: flex; gap: 6px; align-items: center; }
+    .row-actions button {
+      width: 30px; height: 30px;
+      display: inline-flex; align-items: center; justify-content: center;
+      border: 1px solid #e5e7eb; border-radius: 8px;
+      background: #fff; cursor: pointer; color: #374151;
       transition: all .15s;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
     }
+    .row-actions button:hover { transform: translateY(-1px); border-color: #cbd5e1; background: #f9fafb; }
+    .row-actions button.act-approve { color: #16a34a; }
+    .row-actions button.act-reject  { color: #dc2626; }
+    .row-actions button.act-role    { color: #6d28d9; }
+    .row-actions button.act-revoke  { color: #d97706; }
 
-    .btn-sm svg { width: 12px; height: 12px; }
-
-    .btn-approve { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
-    .btn-approve:hover { background: #bbf7d0; }
-
-    .btn-reject  { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
-    .btn-reject:hover { background: #fecaca; }
-
-    .btn-admin   { background: #ede9fe; color: #6d28d9; border-color: #ddd6fe; }
-    .btn-admin:hover { background: #ddd6fe; }
-
-    .btn-revoke  { background: #f3f4f6; color: #6b7280; border-color: #e5e7eb; }
-    .btn-revoke:hover { background: #e5e7eb; color: #374151; }
-
-    .btn-add-user {
-      display:inline-flex; align-items:center; gap:6px;
-      padding:7px 14px; font-size:12.5px; font-weight:700;
-      background:#0055a5; color:#fff; border:none; border-radius:9px;
-      cursor:pointer; transition:background .15s; white-space:nowrap; flex-shrink:0;
+    /* PAGINATION */
+    .pagination {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; border-top: 1px solid #f3f4f6;
+      font-size: 13px; color: #6b7280; flex-wrap: wrap; gap: 10px;
     }
-    .btn-add-user:hover { background:#00429e; }
-
-    /* MODAL */
-    .au-modal-bg {
-      position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:1000;
-      display:flex; align-items:center; justify-content:center;
-      opacity:0; pointer-events:none; transition:opacity .2s;
+    .pag-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pag-btn {
+      padding: 6px 12px; border: 1.5px solid #e5e7eb; border-radius: 8px;
+      background: #fff; cursor: pointer; font-size: 12px;
+      font-weight: 600; color: #374151;
     }
-    .au-modal-bg.show { opacity:1; pointer-events:all; }
-    .au-modal {
-      background:#fff; border-radius:18px; padding:28px; width:100%; max-width:440px;
-      box-shadow:0 20px 60px rgba(0,0,0,.2);
-      transform:translateY(16px); transition:transform .2s;
-    }
-    .au-modal-bg.show .au-modal { transform:translateY(0); }
-    .au-modal h3 { font-size:16px; font-weight:800; color:#111827; margin:0 0 4px; }
-    .au-modal p  { font-size:12.5px; color:#6b7280; margin:0 0 20px; }
-    .au-field { margin-bottom:14px; }
-    .au-field label { display:block; font-size:12px; font-weight:600; color:#374151; margin-bottom:5px; }
-    .au-field input, .au-field select {
-      width:100%; box-sizing:border-box; padding:9px 12px; font-size:13px;
-      border:1.5px solid #e5e7eb; border-radius:9px; outline:none;
-      background:#f9fafb; color:#111827; transition:border-color .15s;
-    }
-    .au-field input:focus, .au-field select:focus { border-color:#0055a5; background:#fff; }
-    .au-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
-    .au-btn-cancel {
-      padding:8px 16px; font-size:13px; font-weight:600; border-radius:9px;
-      border:1.5px solid #e5e7eb; background:#fff; color:#374151; cursor:pointer;
-    }
-    .au-btn-cancel:hover { background:#f3f4f6; }
-    .au-btn-submit {
-      padding:8px 18px; font-size:13px; font-weight:700; border-radius:9px;
-      border:none; background:#0055a5; color:#fff; cursor:pointer; transition:background .15s;
-      display:inline-flex; align-items:center; gap:6px;
-    }
-    .au-btn-submit:hover { background:#00429e; }
-    .au-btn-submit:disabled { opacity:.55; cursor:not-allowed; }
-    .au-msg { font-size:12.5px; margin-top:12px; padding:10px 12px; border-radius:8px; display:none; }
-    .au-msg.ok  { background:#dcfce7; color:#15803d; display:block; }
-    .au-msg.err { background:#fee2e2; color:#b91c1c; display:block; }
-
-    .action-wrap { display: flex; gap: 6px; flex-wrap: wrap; }
-
-    /* EMPTY STATE */
-    .empty-state {
-      text-align: center;
-      padding: 56px 20px;
-      color: #9ca3af;
-    }
-
-    .empty-state svg {
-      width: 52px;
-      height: 52px;
-      margin-bottom: 14px;
-      opacity: .35;
-    }
-
-    .empty-state p { font-size: 14px; margin: 0 0 4px; color: #6b7280; }
-    .empty-state small { font-size: 12px; color: #9ca3af; }
+    .pag-btn:hover { background: #f9fafb; }
+    .pag-btn.active { background: #00A59F; color: #fff; border-color: #00A59F; }
+    .pag-btn:disabled { opacity: .4; cursor: not-allowed; }
 
     /* TOAST */
-    #adminToast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 18px;
-      border-radius: 12px;
-      font-size: 13px;
-      font-weight: 500;
-      box-shadow: 0 8px 24px rgba(0,0,0,.12);
-      transform: translateY(80px);
-      opacity: 0;
-      transition: all .25s ease;
+    .toast {
+      position: fixed; bottom: 90px; right: 20px;
+      background: #111827; color: #fff;
+      padding: 12px 18px; border-radius: 12px;
+      font-size: 13px; font-weight: 600;
+      display: none; z-index: 999; max-width: 320px;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+    }
+    .toast.show { display: flex; align-items: center; gap: 8px; }
+    .toast.ok  { background: #16a34a; }
+    .toast.err { background: #dc2626; }
+
+    /* ============================================================
+       INLINE DETAIL VIEW
+       ============================================================ */
+    #aaDetailView { display: none; animation: admViewIn .42s cubic-bezier(.2,.8,.2,1); }
+    body.aa-detail-mode #adminContent { display: none !important; }
+    body.aa-detail-mode #aaDetailView { display: block; }
+
+    .aa-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 16px 9px 12px;
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 11px;
+      color: #374151; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all .2s cubic-bezier(.2,.8,.2,1);
+      margin-bottom: 18px; box-shadow: 0 1px 2px rgba(0,0,0,.03);
+    }
+    .aa-back:hover {
+      background: #f9fafb; transform: translateX(-3px);
+      border-color: #c5d6e8; box-shadow: 0 4px 10px rgba(0,0,0,.06);
+    }
+    .aa-back svg { width: 16px; height: 16px; }
+
+    .aa-hero {
+      position: relative; color: #fff; border-radius: 18px;
+      padding: 26px 28px; margin-bottom: 22px;
+      box-shadow: 0 12px 32px rgba(0,0,0,.10); overflow: hidden;
+      animation: aaHeroIn .55s cubic-bezier(.2,.8,.2,1);
+      background: linear-gradient(135deg, #1d4ed8 0%, #0055a5 100%);
+    }
+    @keyframes aaHeroIn {
+      from { opacity: 0; transform: scale(.97) translateY(6px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .aa-hero::before {
+      content: ""; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 90% 0%, rgba(255,255,255,.18) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 60% at 0% 100%, rgba(255,255,255,.10) 0%, transparent 60%);
       pointer-events: none;
     }
-
-    #adminToast.show {
-      transform: translateY(0);
-      opacity: 1;
+    .aa-hero-row { position: relative; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+    .aa-hero-avatar {
+      width: 64px; height: 64px; border-radius: 18px;
+      background: rgba(255,255,255,.22);
+      border: 2px solid rgba(255,255,255,.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 800;
+      backdrop-filter: blur(10px); flex-shrink: 0;
+      letter-spacing: -.5px;
+    }
+    .aa-hero-text { flex: 1; min-width: 220px; }
+    .aa-hero-tag {
+      font-size: 10.5px; font-weight: 700; letter-spacing: 1.4px;
+      text-transform: uppercase; opacity: .75; margin-bottom: 4px;
+    }
+    .aa-hero-name {
+      font-size: 22px; font-weight: 800; letter-spacing: -.3px;
+      margin-bottom: 6px; line-height: 1.15;
+    }
+    .aa-hero-meta {
+      font-size: 12.5px; opacity: .92;
+      display: flex; gap: 14px; flex-wrap: wrap;
     }
 
-    #adminToast.toast-ok  { background: #fff; border-left: 4px solid #16a34a; color: #111827; }
-    #adminToast.toast-err { background: #fff; border-left: 4px solid #dc2626; color: #111827; }
+    .aa-detail-kpis {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px; margin-bottom: 22px;
+    }
+    .aa-detail-kpi {
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 14px;
+      padding: 14px 16px; transition: transform .2s, box-shadow .2s;
+    }
+    .aa-detail-kpi:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.06); }
+    .aa-detail-kpi-lbl {
+      font-size: 11px; color: #6b7280; font-weight: 600;
+      letter-spacing: .3px; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .aa-detail-kpi-val {
+      font-size: 22px; font-weight: 800; color: #111827;
+      letter-spacing: -.5px; font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+    }
+    .aa-detail-kpi-sub { font-size: 11px; color: #9ca3af; margin-top: 4px; }
 
-    /* FILTER BAR */
-    .admin-filters {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
+    .aa-section {
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 16px;
+      margin-bottom: 18px; overflow: hidden;
+    }
+    .aa-section-h {
+      padding: 14px 18px; font-size: 13px; font-weight: 800;
+      color: #111827; border-bottom: 1px solid #f1f5f9;
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+    }
+    .aa-section-h .h-tag {
+      background: #f3f4f6; color: #6b7280;
+      font-size: 10.5px; font-weight: 700; padding: 2px 8px; border-radius: 99px;
+    }
+    .aa-section-body { padding: 16px 20px; }
+    .aa-info-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .aa-info-item { font-size: 13px; }
+    .aa-info-item .k {
+      font-size: 10.5px; color: #6b7280; font-weight: 700;
+      letter-spacing: .3px; text-transform: uppercase; margin-bottom: 3px;
+    }
+    .aa-info-item .v {
+      color: #111827; word-break: break-word; font-weight: 500;
     }
 
-    .filter-select {
-      padding: 6px 10px;
-      font-size: 12.5px;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
-      background: #f9fafb;
-      color: #374151;
-      cursor: pointer;
-      outline: none;
+    /* Breakdown bars */
+    .aa-breakdown-list { display: flex; flex-direction: column; }
+    .aa-breakdown-item {
+      display: grid; grid-template-columns: 1fr auto; gap: 10px;
+      align-items: center; padding: 10px 18px;
+      border-bottom: 1px solid #f3f4f6; transition: background .15s;
+    }
+    .aa-breakdown-item:hover { background: #f9fafb; }
+    .aa-breakdown-item:last-child { border-bottom: none; }
+    .aa-breakdown-label { font-size: 13px; font-weight: 600; color: #374151; }
+    .aa-breakdown-bar-wrap {
+      grid-column: 1 / -1; height: 5px; background: #f1f5f9;
+      border-radius: 3px; overflow: hidden; margin-top: 4px;
+    }
+    .aa-breakdown-bar {
+      height: 100%; border-radius: 3px; width: 0;
+      transition: width .9s cubic-bezier(.2,.8,.2,1);
+      background: linear-gradient(90deg, #00A59F, #14b8a6);
+    }
+    .aa-breakdown-bar.b-blue   { background: linear-gradient(90deg, #1d4ed8, #60a5fa); }
+    .aa-breakdown-bar.b-green  { background: linear-gradient(90deg, #16a34a, #4ade80); }
+    .aa-breakdown-bar.b-orange { background: linear-gradient(90deg, #ea580c, #fb923c); }
+    .aa-breakdown-bar.b-purple { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+    .aa-breakdown-bar.b-yellow { background: linear-gradient(90deg, #d97706, #fbbf24); }
+    .aa-breakdown-val {
+      font-weight: 700; color: #111827; font-size: 13px;
+      font-variant-numeric: tabular-nums;
     }
 
-    .filter-select:focus { border-color: #0055a5; }
+    /* Detail action buttons */
+    .aa-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .aa-actions .btn-sync { white-space: nowrap; }
 
-    /* MOBILE */
+    /* ============================================================
+       MODAL (Add User / Change Role)
+       ============================================================ */
+    .au-modal-bg {
+      position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .au-modal-bg.show { opacity: 1; pointer-events: all; }
+    .au-modal {
+      background: #fff; border-radius: 18px; padding: 28px;
+      width: 100%; max-width: 440px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+      transform: translateY(16px); transition: transform .2s;
+    }
+    .au-modal-bg.show .au-modal { transform: translateY(0); }
+    .au-modal h3 { font-size: 16px; font-weight: 800; color: #111827; margin: 0 0 4px; }
+    .au-modal p  { font-size: 12.5px; color: #6b7280; margin: 0 0 20px; }
+    .au-field { margin-bottom: 14px; }
+    .au-field label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+    .au-field input, .au-field select {
+      width: 100%; box-sizing: border-box; padding: 9px 12px; font-size: 13px;
+      border: 1.5px solid #e5e7eb; border-radius: 9px; outline: none;
+      background: #f9fafb; color: #111827; transition: border-color .15s;
+    }
+    .au-field input:focus, .au-field select:focus { border-color: #00A59F; background: #fff; }
+    .au-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+    .au-btn-cancel {
+      padding: 8px 16px; font-size: 13px; font-weight: 600; border-radius: 9px;
+      border: 1.5px solid #e5e7eb; background: #fff; color: #374151; cursor: pointer;
+    }
+    .au-btn-cancel:hover { background: #f3f4f6; }
+    .au-btn-submit {
+      padding: 8px 18px; font-size: 13px; font-weight: 700; border-radius: 9px;
+      border: none; background: #00A59F; color: #fff; cursor: pointer; transition: background .15s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .au-btn-submit:hover { background: #009690; }
+    .au-btn-submit:disabled { opacity: .55; cursor: not-allowed; }
+    .au-msg { font-size: 12.5px; margin-top: 12px; padding: 10px 12px; border-radius: 8px; display: none; }
+    .au-msg.ok  { background: #dcfce7; color: #15803d; display: block; }
+    .au-msg.err { background: #fee2e2; color: #b91c1c; display: block; }
+
+    /* Mobile adjustments */
     @media (max-width: 640px) {
-      .admin-stats { grid-template-columns: 1fr 1fr; }
-      .admin-stats .stat-card:last-child { grid-column: unset; }
-
-      .admin-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-
-      .admin-search { width: 100%; }
-
-      .admin-toolbar { flex-direction: column; align-items: stretch; }
-    }
-
-    @media (max-width: 480px) {
-      .admin-stats { grid-template-columns: 1fr 1fr; }
+      .toolbar input { width: 100%; }
+      .stat-card .s-val { font-size: 22px; }
+      .aa-hero { padding: 20px 22px; }
+      .aa-hero-name { font-size: 18px; }
     }
   </style>
 </head>
 
-<body data-page="admin" data-page="admin">
-
+<body data-page="admin">
 
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 <aside class="sidebar" id="sidebar">
@@ -409,32 +509,32 @@
   </div>
   <div class="sidebar-section">
     <div class="sidebar-section-label">Menu</div>
-      <a href="index.html" class="sidebar-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-5H9v5H4a1 1 0 0 1-1-1V9.5z"/></svg>
-        Home
-      </a>
-      <a href="list-form.html" class="sidebar-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
-        List Form
-      </a>
-      <a href="rekap.html" class="sidebar-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Rekap Aktivitas
-      </a>
-      <a href="lapor.html" class="sidebar-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Lapor
-      </a>
-      <a href="galeri.html" class="sidebar-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-        Galeri Saya
-      </a>
-      <a href="galeri-peringatan.html" class="sidebar-link">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        Galeri Peringatan
-      </a>
+    <a href="index.html" class="sidebar-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-5H9v5H4a1 1 0 0 1-1-1V9.5z"/></svg>
+      Home
+    </a>
+    <a href="list-form.html" class="sidebar-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>
+      List Form
+    </a>
+    <a href="rekap.html" class="sidebar-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Rekap Aktivitas
+    </a>
+    <a href="lapor.html" class="sidebar-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Lapor
+    </a>
+    <a href="galeri.html" class="sidebar-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+      Galeri Saya
+    </a>
+    <a href="galeri-peringatan.html" class="sidebar-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Galeri Peringatan
+    </a>
 
-        <div class="sidebar-admin-group" id="adminGroup" style="display:none;">
+    <div class="sidebar-admin-group" id="adminGroup" style="display:none;">
       <div class="sidebar-section-label" style="margin-top:16px;">Portal Admin</div>
       <a href="admin-leaderboard.html" class="sidebar-link">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
@@ -476,37 +576,38 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Pengaturan
       </a>
-    </div><div class="sidebar-lecture-group" id="lectureGroup" style="display:none;">
-        <div class="sidebar-section-label" style="margin-top:16px;">Portal Lecture</div>
-        <a href="lecture.html#dashboard" class="sidebar-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
-          Dashboard
-        </a>
-        <a href="lecture.html#awardee" class="sidebar-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-          Daftar Awardee
-        </a>
-        <a href="lecture.html#rekap" class="sidebar-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          Rekap Kehadiran
-        </a>
-        <a href="lecture.html#prestasi" class="sidebar-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>
-          Prestasi
-        </a>
-        <a href="lecture.html#organisasi" class="sidebar-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Organisasi
-        </a>
-        <a href="lecture.html#leaderboard" class="sidebar-link">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
-          Leaderboard
-        </a>
-        <a href="galeri-peringatan.html" class="sidebar-link" id="navLecturePeringatan">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          Galeri Peringatan
-        </a>
-      </div>
+    </div>
+    <div class="sidebar-lecture-group" id="lectureGroup" style="display:none;">
+      <div class="sidebar-section-label" style="margin-top:16px;">Portal Lecture</div>
+      <a href="lecture.html#dashboard" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
+        Dashboard
+      </a>
+      <a href="lecture.html#awardee" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        Daftar Awardee
+      </a>
+      <a href="lecture.html#rekap" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Rekap Kehadiran
+      </a>
+      <a href="lecture.html#prestasi" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>
+        Prestasi
+      </a>
+      <a href="lecture.html#organisasi" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Organisasi
+      </a>
+      <a href="lecture.html#leaderboard" class="sidebar-link">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+        Leaderboard
+      </a>
+      <a href="galeri-peringatan.html" class="sidebar-link" id="navLecturePeringatan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Galeri Peringatan
+      </a>
+    </div>
   </div>
   <div class="sidebar-footer">
     <a href="profile.html" class="sidebar-link" id="sidebarUserLink">
@@ -523,659 +624,150 @@
   </div>
   <div class="sidebar-copyright">&copy; 2026 BSI Scholarship Inspirasi</div>
 </aside>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="assets/auth.js"></script>
+
 <div class="app-main">
-
-<header class="app-header">
-  <button class="app-header-toggle" onclick="toggleSidebar()" aria-label="Menu">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
-  <div class="app-header-title">Panel Admin</div>
+  <header class="app-header">
+    <button class="app-header-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="app-header-title">Kelola Pengguna</div>
     <div class="app-header-right">
-    <div class="header-user-info" id="headerUserInfo">
-      <div class="header-greeting"><span id="headerGreeting">Selamat datang,</span> <strong id="headerName">...</strong> <span class="header-role-badge" id="headerRoleBadge">Awardee</span></div><div id="headerSubInfo" style="font-size:11px;color:#6b7280;display:none;"></div>
+      <div class="header-user-info" id="headerUserInfo">
+        <div class="header-greeting"><span id="headerGreeting">Selamat Datang,</span> <strong id="headerName">...</strong> <span class="header-role-badge" id="headerRoleBadge">Administrator</span></div>
+        <div id="headerSubInfo" style="font-size:11px;color:#6b7280;display:none;"></div>
+      </div>
+      <a href="profile.html" class="header-avatar-btn" id="navUserBtn">
+        <span class="header-avatar" id="headerAvatar">?</span>
+      </a>
     </div>
-    <a href="profile.html" class="header-avatar-btn" id="navUserBtn">
-      <span class="header-avatar" id="headerAvatar">?</span>
-    </a>
-  </div>
-</header>
+  </header>
+
   <main class="app-content">
-<div class="admin-page">
 
-  <div class="admin-ph">
-    <h1>Panel Admin</h1>
-    <p>Kelola akun dan persetujuan pengguna BSI Scholarship Inspirasi</p>
-  </div>
-
-  <!-- STATS -->
-  <div class="admin-stats">
-    <div class="stat-card">
-      <div class="stat-icon stat-icon--pending">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-        </svg>
+    <!-- LOADING -->
+    <div id="adminLoading" role="status" aria-live="polite" aria-label="Memuat data">
+      <div class="adm-loader-skeletons">
+        <div class="adm-skel-card"><div class="adm-skel-img"></div><div class="adm-skel-body"><div class="adm-skel-line"></div><div class="adm-skel-line short"></div></div></div>
+        <div class="adm-skel-card"><div class="adm-skel-img"></div><div class="adm-skel-body"><div class="adm-skel-line"></div><div class="adm-skel-line short"></div></div></div>
+        <div class="adm-skel-card"><div class="adm-skel-img"></div><div class="adm-skel-body"><div class="adm-skel-line"></div><div class="adm-skel-line short"></div></div></div>
       </div>
-      <div class="stat-info">
-        <div class="stat-val" id="statPending">—</div>
-        <div class="stat-lbl">Menunggu Persetujuan</div>
+      <div class="adm-loader-ring">
+        <svg class="ring-svg" width="72" height="72" viewBox="0 0 72 72" fill="none">
+          <circle cx="36" cy="36" r="30" stroke="#e5e7eb" stroke-width="4"/>
+          <path d="M36 6 a30 30 0 0 1 26 15" stroke="url(#admGrad)" stroke-width="4" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="admGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%"   stop-color="#0055a5"/>
+              <stop offset="50%"  stop-color="#00a59f"/>
+              <stop offset="100%" stop-color="#feb23e"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="ring-logo"><img src="assets/logo.png" alt="BSI"></div>
+      </div>
+      <div class="adm-loader-text">
+        <span id="admLoadingSub">Memuat data pengguna</span>
+        <span class="adm-loader-dots"><span></span><span></span><span></span></span>
       </div>
     </div>
 
-    <div class="stat-card">
-      <div class="stat-icon stat-icon--active">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-        </svg>
-      </div>
-      <div class="stat-info">
-        <div class="stat-val" id="statActive">—</div>
-        <div class="stat-lbl">Pengguna Aktif</div>
-      </div>
-    </div>
+    <!-- INLINE DETAIL VIEW -->
+    <div id="aaDetailView"></div>
 
-    <div class="stat-card">
-      <div class="stat-icon stat-icon--admin">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-      </div>
-      <div class="stat-info">
-        <div class="stat-val" id="statAdmin">—</div>
-        <div class="stat-lbl">Administrator</div>
-      </div>
-    </div>
+    <!-- MAIN CONTENT -->
+    <div id="adminContent" style="display:none;">
 
-    <div class="stat-card">
-      <div class="stat-icon stat-icon--total">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-        </svg>
-      </div>
-      <div class="stat-info">
-        <div class="stat-val" id="statTotal">—</div>
-        <div class="stat-lbl">Total Pengguna</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TABS -->
-  <div class="admin-tabs">
-    <button class="admin-tab active" id="tab-btn-pending" onclick="switchTab('pending', this)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Menunggu Approval
-      <span class="tab-count tab-count--orange" id="tabCountPending" style="display:none"></span>
-    </button>
-    <button class="admin-tab" id="tab-btn-all" onclick="switchTab('all', this)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      Semua Pengguna
-      <span class="tab-count" id="tabCountAll" style="display:none"></span>
-    </button>
-  </div>
-
-  <!-- TAB PENDING -->
-  <div class="tab-panel active" id="tab-pending">
-    <div class="admin-card">
-      <div class="admin-toolbar">
-        <span class="admin-toolbar-title">Akun Menunggu Persetujuan</span>
-        <div class="admin-search">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Cari nama atau email..." oninput="filterTable('pending', this.value)" />
+      <!-- Stats -->
+      <div class="stat-row">
+        <div class="stat-card" onclick="showKpiDetail('pending')" role="button" tabindex="0">
+          <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="s-label">Menunggu Persetujuan</div>
+          <div class="s-val yellow" id="statPending" data-count="0">0</div>
+        </div>
+        <div class="stat-card" onclick="showKpiDetail('active')" role="button" tabindex="0">
+          <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="s-label">Pengguna Aktif</div>
+          <div class="s-val teal" id="statActive" data-count="0">0</div>
+        </div>
+        <div class="stat-card" onclick="showKpiDetail('admin')" role="button" tabindex="0">
+          <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="s-label">Administrator</div>
+          <div class="s-val purple" id="statAdmin" data-count="0">0</div>
+        </div>
+        <div class="stat-card" onclick="showKpiDetail('total')" role="button" tabindex="0">
+          <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="s-label">Total Pengguna</div>
+          <div class="s-val blue" id="statTotal" data-count="0">0</div>
         </div>
       </div>
-      <div class="admin-table-wrap" id="pendingTableWrap">
-        <div class="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <p>Memuat data...</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- TAB ALL -->
-  <div class="tab-panel" id="tab-all">
-    <div class="admin-card">
-      <div class="admin-toolbar">
-        <span class="admin-toolbar-title">Semua Pengguna Terdaftar</span>
-        <button class="btn-add-user" onclick="openAddUserModal()">
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <input type="text" id="searchInput" placeholder="Cari nama, email, NIM, atau kampus..." oninput="filterTable()" />
+        <select id="filterRole" onchange="filterTable()">
+          <option value="">Semua Role</option>
+          <option value="awardee">Awardee</option>
+          <option value="mentor">Mentor</option>
+          <option value="operator">Operator</option>
+          <option value="admin">Admin</option>
+          <option value="administrator">Administrator</option>
+        </select>
+        <select id="filterStatus" onchange="filterTable()">
+          <option value="">Semua Status</option>
+          <option value="approved">Aktif</option>
+          <option value="pending">Menunggu</option>
+        </select>
+        <select id="filterKampus" onchange="filterTable()">
+          <option value="">Semua Kampus</option>
+        </select>
+        <button class="btn-sync btn-add" onclick="openAddUserModal()">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
           Tambah Pengguna
         </button>
-        <div class="admin-filters">
-          <select class="filter-select" id="filterRole" onchange="applyFilters()">
-            <option value="">Semua Role</option>
-            <option value="awardee">Awardee</option>
-            <option value="mentor">Mentor</option>
-            <option value="operator">Operator</option>
-            <option value="administrator">Administrator</option>
-          </select>
-          <select class="filter-select" id="filterStatus" onchange="applyFilters()">
-            <option value="">Semua Status</option>
-            <option value="approved">Aktif</option>
-            <option value="pending">Menunggu</option>
-          </select>
-          <select class="filter-select" id="filterKampus" onchange="applyFilters()">
-            <option value="">Semua Kampus</option>
-          </select>
-          <div class="admin-search">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="searchAll" placeholder="Cari nama / email / NIM..." oninput="applyFilters()" />
-          </div>
+        <button class="btn-sync btn-reset" onclick="resetFilter()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Reset Filter
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table id="userTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Pengguna</th>
+              <th>NIM</th>
+              <th>Kampus</th>
+              <th>Kelompok</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Terdaftar</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="userBody">
+            <tr><td colspan="9" style="text-align:center;padding:40px;color:#9ca3af;">Memuat data...</td></tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <span id="pagInfo">—</span>
+          <div class="pag-btns" id="pagBtns"></div>
         </div>
       </div>
-      <div class="admin-table-wrap" id="allTableWrap">
-        <div class="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <p>Memuat data...</p>
-        </div>
-      </div>
-    </div>
-  </div>
 
-</div>
+    </div><!-- /adminContent -->
 
-<!-- TOAST -->
-<div id="adminToast"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="scripts/main.js"></script>
-<script>
-(async () => {
-  await new Promise(r => setTimeout(r, 80));
-
-  const sb = window._supabase;
-  if (!sb) { location.replace("login.html"); return; }
-
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session) { location.replace("login.html"); return; }
-
-  const { data: prof } = await sb.from("profiles").select("role, approved").eq("id", session.user.id).single();
-  if (!prof || prof.role !== "admin" && prof.role !== "operator") { location.replace("index.html"); return; }
-
-  let allUsers = [];
-  const myId = session.user.id;
-
-  /* ---- LOAD ---- */
-  async function loadUsers() {
-    // paginate profiles (bypass 1000-row limit)
-    let profiles = [];
-    let from = 0;
-    while (true) {
-      const { data, error } = await sb.from("profiles")
-        .select("id, email, full_name, role, approved, created_at")
-        .order("full_name", { ascending: true })
-        .range(from, from + 999);
-      if (error) { toast("Gagal memuat profil: " + error.message, "err"); return; }
-      profiles = profiles.concat(data || []);
-      if (!data || data.length < 1000) break;
-      from += 1000;
-    }
-
-    // paginate mahasiswa_bsi for NIM/kampus/kelompok/fakultas by email
-    const mhsMap = {};
-    let mFrom = 0;
-    while (true) {
-      const { data: mData, error: mErr } = await sb.from("mahasiswa_bsi")
-        .select("nama, email, no_induk, kampus, kelompok, fakultas")
-        .range(mFrom, mFrom + 999);
-      if (mErr) { console.error("[admin] mahasiswa_bsi fetch error:", mErr); break; }
-      if (!mData || mData.length === 0) break;
-      mData.forEach(m => {
-        if (m.email)  mhsMap['email:' + m.email.trim().toLowerCase()] = m;
-        if (m.nama)   mhsMap['nama:'  + m.nama.trim().toLowerCase()]  = m;
-      });
-      if (mData.length < 1000) break;
-      mFrom += 1000;
-    }
-    console.log("[admin] mhsMap loaded:", Object.keys(mhsMap).length, "records");
-
-    allUsers = profiles.map(u => {
-      const emailKey = u.email     ? 'email:' + u.email.trim().toLowerCase()     : null;
-      const namaKey  = u.full_name ? 'nama:'  + u.full_name.trim().toLowerCase() : null;
-      const mhs = (emailKey && mhsMap[emailKey]) || (namaKey && mhsMap[namaKey]) || null;
-      return { ...u, mhs };
-    }).sort((a, b) => (a.full_name || '').localeCompare(b.full_name || '', 'id'));
-
-    renderStats();
-    renderPending(allUsers.filter(u => !u.approved && u.role !== "admin"));
-    populateKampusFilter();
-    renderAll(allUsers);
-  }
-
-  /* ---- STATS ---- */
-  function renderStats() {
-    const pending = allUsers.filter(u => !u.approved && u.role !== "admin").length;
-    const active  = allUsers.filter(u => u.approved && u.role !== "admin").length;
-    const adminCount = allUsers.filter(u => u.role === "admin").length;
-    document.getElementById("statPending").textContent = pending.toLocaleString("id-ID");
-    document.getElementById("statActive").textContent  = active.toLocaleString("id-ID");
-    document.getElementById("statAdmin").textContent   = adminCount.toLocaleString("id-ID");
-    document.getElementById("statTotal").textContent   = allUsers.length.toLocaleString("id-ID");
-
-    const cp = document.getElementById("tabCountPending");
-    const ca = document.getElementById("tabCountAll");
-    if (pending > 0) { cp.textContent = pending; cp.style.display = "inline"; }
-    else cp.style.display = "none";
-    ca.textContent = allUsers.length.toLocaleString("id-ID"); ca.style.display = "inline";
-  }
-
-  /* ---- KAMPUS FILTER ---- */
-  function populateKampusFilter() {
-    const sel = document.getElementById("filterKampus");
-    const kampusSet = new Set();
-    allUsers.forEach(u => { if (u.mhs?.kampus) kampusSet.add(u.mhs.kampus); });
-    const sorted = Array.from(kampusSet).sort();
-    sorted.forEach(k => {
-      const opt = document.createElement("option");
-      opt.value = k; opt.textContent = k;
-      sel.appendChild(opt);
-    });
-
-    // Attach multi-select widgets
-    if (window.BsisMultiSelect) {
-      const MS = window.BsisMultiSelect;
-      MS.attach(document.getElementById("filterRole"),   { placeholder:'Semua Role',   itemLabelSingular:'Role',   searchable:false });
-      MS.attach(document.getElementById("filterStatus"), { placeholder:'Semua Status', itemLabelSingular:'Status', searchable:false });
-      MS.attach(document.getElementById("filterKampus"), { placeholder:'Semua Kampus', itemLabelSingular:'Kampus' });
-    }
-  }
-
-  /* ---- RENDER TABLE ---- */
-  const PAGE_SIZE = 10;
-  const _pages = { pendingTableWrap: 1, allTableWrap: 1 };
-
-  function renderPending(rows) { _pages.pendingTableWrap = 1; renderTable("pendingTableWrap", rows, true); }
-  function renderAll(rows)     { _pages.allTableWrap = 1;     renderTable("allTableWrap", rows, false); }
-
-  window._goPage = function(wrapId, p) {
-    const rows      = window[`__rows_${wrapId}`]    || [];
-    const isPending = window[`__pending_${wrapId}`] || false;
-    renderTable(wrapId, rows, isPending, p);
-  };
-
-  function mkInitials(name, email) {
-    const src = (name || "").trim();
-    if (!src) return (email || "U").slice(0, 2).toUpperCase();
-    const parts = src.split(/\s+/);
-    return parts.length >= 2
-      ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-      : src.slice(0, 2).toUpperCase();
-  }
-
-  function renderTable(wrapId, rows, isPending, forcePage) {
-    const wrap = document.getElementById(wrapId);
-    if (!rows.length) {
-      wrap.innerHTML = `<div class="empty-state">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-        </svg>
-        <p>${isPending ? "Tidak ada akun yang menunggu persetujuan" : "Belum ada pengguna terdaftar"}</p>
-        ${isPending ? "<small>Semua akun sudah disetujui</small>" : ""}
-      </div>`;
-      return;
-    }
-
-    const totalPages = Math.ceil(rows.length / PAGE_SIZE);
-    const page = Math.min(Math.max(forcePage || _pages[wrapId] || 1, 1), totalPages);
-    _pages[wrapId] = page;
-    const pageRows = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-    const tbody = pageRows.map(u => {
-      const name     = u.full_name || "";
-      const initials = mkInitials(name, u.email);
-      const date     = new Date(u.created_at).toLocaleDateString("id-ID", { day:"2-digit", month:"short", year:"numeric" });
-      const nim      = u.mhs?.no_induk || "—";
-      const kampus   = u.mhs?.kampus   || "—";
-      const kelompok = u.mhs?.kelompok || "—";
-
-      const ROLE_BADGE = {
-        administrator: ['badge-administrator', 'Administrator'],
-        admin:         ['badge-admin',         'Admin'],
-        operator:      ['badge-operator',      'Operator'],
-        mentor:        ['badge-mentor',        'Mentor'],
-        awardee:       ['badge-approved',      'Awardee'],
-      };
-      const [bClass, bLabel] = ROLE_BADGE[u.role] || (u.approved ? ['badge-approved','Aktif'] : ['badge-pending','Menunggu']);
-      const badge = `<span class="badge ${bClass}">${bLabel}</span>`;
-
-      let actions = "";
-      if (!u.approved && u.role !== "admin") {
-        actions = `<div class="action-wrap">
-          <button class="btn-sm btn-approve" onclick="approveUser('${u.id}')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Setujui
-          </button>
-          <button class="btn-sm btn-reject" onclick="rejectUser('${u.id}','${u.email}')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tolak
-          </button>
-        </div>`;
-      } else if (u.id !== myId) {
-        actions = `<div class="action-wrap">
-          <button class="btn-sm btn-admin" onclick="openChangeRoleModal('${u.id}','${u.role || 'awardee'}')">Change Role</button>
-          <button class="btn-sm btn-revoke" onclick="revokeUser('${u.id}')">Nonaktifkan</button>
-        </div>`;
-      } else {
-        actions = `<span style="color:#9ca3af;font-size:12px;">—</span>`;
-      }
-
-      const escEmail = u.email.replace(/'/g, "\\'");
-      const escName  = name.toLowerCase().replace(/"/g, "");
-      return `<tr data-search="${escName} ${u.email.toLowerCase()} ${nim.toLowerCase()} ${kampus.toLowerCase()}">
-        <td>
-          <div class="user-info">
-            <span class="user-avatar">${initials}</span>
-            <div>
-              <div class="user-name">${name || "—"}</div>
-              <div class="user-email">${u.email}</div>
-            </div>
-          </div>
-        </td>
-        <td style="white-space:nowrap">${nim}</td>
-        <td style="white-space:nowrap;max-width:140px;overflow:hidden;text-overflow:ellipsis" title="${kampus}">${kampus}</td>
-        <td style="white-space:nowrap">${kelompok}</td>
-        <td style="white-space:nowrap">${date}</td>
-        <td>${badge}</td>
-        <td>${actions}</td>
-      </tr>`;
-    }).join("");
-
-    const colSpan = isPending ? 5 : 7;
-
-    // pagination controls
-    const from1 = (page - 1) * PAGE_SIZE + 1;
-    const to1   = Math.min(page * PAGE_SIZE, rows.length);
-    // store rows for page navigation
-    window[`__rows_${wrapId}`]    = rows;
-    window[`__pending_${wrapId}`] = isPending;
-
-    let pagBtns = '';
-    if (totalPages > 1) {
-      const prev = page > 1
-        ? `<button onclick="_goPage('${wrapId}',${page-1})" style="padding:5px 10px;border:1px solid #e5e7eb;border-radius:7px;background:#fff;cursor:pointer;font-size:12px;">‹ Prev</button>` : '';
-      const next = page < totalPages
-        ? `<button onclick="_goPage('${wrapId}',${page+1})" style="padding:5px 10px;border:1px solid #e5e7eb;border-radius:7px;background:#fff;cursor:pointer;font-size:12px;">Next ›</button>` : '';
-      const nums = Array.from({length: totalPages}, (_,i) => i+1)
-        .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 1)
-        .reduce((acc, p, i, arr) => { if (i > 0 && p - arr[i-1] > 1) acc.push('…'); acc.push(p); return acc; }, [])
-        .map(p => typeof p === 'number'
-          ? `<button onclick="_goPage('${wrapId}',${p})" style="padding:5px 9px;border:1px solid ${p===page?'#0055a5':'#e5e7eb'};border-radius:7px;background:${p===page?'#0055a5':'#fff'};color:${p===page?'#fff':'#374151'};cursor:pointer;font-size:12px;font-weight:${p===page?700:400};">${p}</button>`
-          : `<span style="padding:0 4px;color:#9ca3af;">…</span>`
-        ).join('');
-      pagBtns = `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid #f3f4f6;gap:8px;flex-wrap:wrap;">
-        <span style="font-size:12px;color:#6b7280;">${from1}–${to1} dari ${rows.length} pengguna</span>
-        <div style="display:flex;gap:6px;align-items:center;">${prev}${nums}${next}</div>
-      </div>`;
-    }
-
-    wrap.innerHTML = `<table class="admin-table">
-      <thead><tr>
-        <th>Pengguna</th>
-        ${isPending ? "" : "<th>NIM</th><th>Kampus</th><th>Kelompok</th>"}
-        <th>Terdaftar</th>
-        <th>Status</th>
-        <th>Aksi</th>
-      </tr></thead>
-      <tbody>${tbody}</tbody>
-    </table>${pagBtns}`;
-  }
-
-  /* ---- FILTER ---- */
-  window.applyFilters = () => {
-    const q       = (document.getElementById("searchAll")?.value || "").toLowerCase();
-    const role    = document.getElementById("filterRole")?.value || "";
-    const status  = document.getElementById("filterStatus")?.value || "";
-    const kampus  = document.getElementById("filterKampus")?.value || "";
-
-    // Multi-value support (comma-separated from BsisMultiSelect)
-    const roleSet   = role   ? new Set(role.split(',').filter(Boolean))   : null;
-    const statusSet = status ? new Set(status.split(',').filter(Boolean)) : null;
-    const kampusSet = kampus ? new Set(kampus.split(',').filter(Boolean)) : null;
-
-    let filtered = allUsers;
-    if (roleSet)   filtered = filtered.filter(u => roleSet.has(u.role));
-    if (statusSet) filtered = filtered.filter(u => {
-      // User is "approved" if u.approved; "pending" if !approved and not admin
-      if (statusSet.has('approved') && u.approved) return true;
-      if (statusSet.has('pending')  && !u.approved && u.role !== "admin") return true;
-      return false;
-    });
-    if (kampusSet) filtered = filtered.filter(u => kampusSet.has(u.mhs?.kampus));
-    if (q) filtered = filtered.filter(u => {
-      const s = `${u.full_name || ""} ${u.email} ${u.mhs?.no_induk || ""} ${u.mhs?.kampus || ""}`.toLowerCase();
-      return s.includes(q);
-    });
-    _pages.allTableWrap = 1;
-    renderAll(filtered);
-  };
-
-  window.filterTable = (tab, q) => {
-    const rows = document.querySelectorAll(`#pendingTableWrap tbody tr`);
-    const kw = q.toLowerCase();
-    rows.forEach(r => {
-      r.style.display = (r.dataset.search || "").includes(kw) ? "" : "none";
-    });
-  };
-
-  /* ---- TABS ---- */
-  window.switchTab = (tab, btn) => {
-    document.querySelectorAll(".admin-tab").forEach(t => t.classList.remove("active"));
-    document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-    btn.classList.add("active");
-    document.getElementById("tab-" + tab).classList.add("active");
-  };
-
-  /* ---- ACTIONS ---- */
-  window.approveUser = async (id) => {
-    const { error } = await sb.from("profiles").update({ approved: true }).eq("id", id);
-    if (error) { toast("Gagal menyetujui: " + error.message, "err"); return; }
-    toast("Akun berhasil disetujui", "ok");
-    await loadUsers();
-  };
-
-  window.rejectUser = async (id, email) => {
-    if (!confirm(`Hapus akun ${email}?\nTindakan ini tidak dapat dibatalkan.`)) return;
-    const { error } = await sb.from("profiles").delete().eq("id", id);
-    if (error) { toast("Gagal menghapus: " + error.message, "err"); return; }
-    toast("Akun berhasil dihapus", "ok");
-    await loadUsers();
-  };
-
-  window.revokeUser = async (id) => {
-    if (!confirm("Nonaktifkan akun ini?")) return;
-    const { error } = await sb.from("profiles").update({ approved: false }).eq("id", id);
-    if (error) { toast("Gagal: " + error.message, "err"); return; }
-    toast("Akun berhasil dinonaktifkan", "ok");
-    await loadUsers();
-  };
-
-  window.openChangeRoleModal = (id, currentRole) => {
-    document.getElementById('crUserId').value = id;
-    document.getElementById('crRole').value   = currentRole || 'awardee';
-    document.getElementById('crMsg').className = 'au-msg'; document.getElementById('crMsg').textContent = '';
-    document.getElementById('crModalBg').classList.add('show');
-  };
-  window.closeChangeRoleModal = () => {
-    document.getElementById('crModalBg').classList.remove('show');
-  };
-  window.submitChangeRole = async () => {
-    const id   = document.getElementById('crUserId').value;
-    const role = document.getElementById('crRole').value;
-    const msg  = document.getElementById('crMsg');
-    const btn  = document.getElementById('crSubmitBtn');
-    msg.className = 'au-msg'; msg.textContent = '';
-    btn.disabled = true; btn.textContent = 'Menyimpan...';
-    const { error } = await sb.from("profiles").update({ role }).eq("id", id);
-    btn.disabled = false; btn.textContent = 'Simpan';
-    if (error) { msg.className = 'au-msg err'; msg.textContent = 'Gagal. Silakan coba lagi.'; return; }
-    toast("Role berhasil diubah", "ok");
-    closeChangeRoleModal();
-    await loadUsers();
-  };
-
-  /* ---- TOAST ---- */
-  let toastTimer;
-  function toast(msg, type) {
-    const el = document.getElementById("adminToast");
-    el.className = "show toast-" + type;
-    el.innerHTML = `
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${type==='ok'?'#16a34a':'#dc2626'}" stroke-width="2.5" stroke-linecap="round">
-        ${type === 'ok'
-          ? '<polyline points="20 6 9 17 4 12"/>'
-          : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'}
-      </svg>
-      <span>${msg}</span>`;
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => { el.className = ""; }, 3500);
-  }
-
-  await loadUsers();
-})();
-
-/* ── Add User Modal ── */
-function openAddUserModal() {
-  document.getElementById('auName').value     = '';
-  document.getElementById('auEmail').value    = '';
-  document.getElementById('auPassword').value = '';
-  document.getElementById('auRole').value     = 'awardee';
-  const msg = document.getElementById('auMsg');
-  msg.className = 'au-msg'; msg.textContent = '';
-  document.getElementById('auModalBg').classList.add('show');
-  document.getElementById('auName').focus();
-}
-function closeAddUserModal() {
-  document.getElementById('auModalBg').classList.remove('show');
-}
-
-async function submitAddUser() {
-  const name  = document.getElementById('auName').value.trim();
-  const email = document.getElementById('auEmail').value.trim();
-  const pw    = document.getElementById('auPassword').value;
-  const role  = document.getElementById('auRole').value;
-  const msg   = document.getElementById('auMsg');
-  const btn   = document.getElementById('auSubmitBtn');
-
-  msg.className = 'au-msg'; msg.textContent = '';
-
-  if (!name)          { msg.className='au-msg err'; msg.textContent='Nama tidak boleh kosong.'; return; }
-  if (!email)         { msg.className='au-msg err'; msg.textContent='Email tidak boleh kosong.'; return; }
-  if (pw.length < 6)  { msg.className='au-msg err'; msg.textContent='Password minimal 6 karakter.'; return; }
-
-  btn.disabled = true; btn.textContent = 'Memproses...';
-
-  try {
-    // Supabase URL + anon key (sama dengan yang ada di auth.js; anon key aman di-expose)
-    const SUPABASE_URL      = 'https://iyfwaqwmnmjfagszttts.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5ZndhcXdtbm1qZmFnc3p0dHRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NTEwMTgsImV4cCI6MjA4MzQyNzAxOH0.f2xb_aQDIj4tIPKwTTC9dgIi-9qFv0G252T5uo9XwXo';
-
-    // Buat client terisolasi agar session admin saat ini tidak tersentuh
-    // (supabase-js default auto-signin setelah signUp → admin bakal kelogout tanpa ini)
-    const tmpClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: {
-        persistSession:    false,
-        autoRefreshToken:  false,
-        storageKey:        'signup-tmp-' + Date.now(),
-      }
-    });
-
-    // 1. Sign up via client terisolasi
-    const { data: authData, error: authErr } = await tmpClient.auth.signUp({
-      email,
-      password: pw,
-      options: { data: { full_name: name } }
-    });
-    if (authErr) throw authErr;
-
-    const uid = authData?.user?.id;
-    if (!uid) throw new Error('Gagal mendapatkan user ID dari Supabase');
-
-    // 2. Upsert profil via main client (admin's auth context, masih login)
-    const { error: profErr } = await window._supabase.from('profiles').upsert({
-      id: uid, email, full_name: name, role, approved: true,
-    });
-    if (profErr) throw profErr;
-
-    msg.className = 'au-msg ok';
-    const needsConfirm = !authData?.user?.email_confirmed_at;
-    msg.textContent = needsConfirm
-      ? `Akun "${name}" dibuat sebagai ${role}. User perlu konfirmasi email sebelum bisa login.`
-      : `Akun "${name}" berhasil dibuat sebagai ${role}.`;
-    toast(`Pengguna ${name} berhasil ditambahkan`, 'ok');
-    loadUsers();
-  } catch (e) {
-    msg.className = 'au-msg err';
-    msg.textContent = 'Gagal. Silakan coba lagi.';
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg> Buat Akun';
-  }
-}
-</script>
-<script src="assets/multiselect.js"></script>
   </main>
 </div>
 
-<script>
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sidebarOverlay').classList.toggle('show');
-}
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('show');
-}
-</script>
-<nav class="mob-nav" id="mobNav">
-  <a href="index.html" class="mob-nav-item">
-    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg>
-    <span>Home</span>
-  </a>
-  <a href="list-form.html" class="mob-nav-item">
-    <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="12" height="4" rx="1"/></svg>
-    <span>Form</span>
-  </a>
-  <a href="rekap.html" class="mob-nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-    <span>Rekap</span>
-  </a>
-  <a href="lapor.html" class="mob-nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    <span>Lapor</span>
-  </a>
-  <a href="admin.html" id="mobNavAdmin" class="mob-nav-item active" style="display:none;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    <span>Admin</span>
-  </a>
-  <a href="profile.html" class="mob-nav-item">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    <span>Profil</span>
-  </a>
-</nav>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
-<!-- MODAL CHANGE ROLE -->
-<div class="au-modal-bg" id="crModalBg" onclick="if(event.target===this)closeChangeRoleModal()">
-  <div class="au-modal">
-    <h3>Ubah Role</h3>
-    <p>Pilih role baru untuk pengguna ini.</p>
-    <input type="hidden" id="crUserId" />
-    <div class="au-field">
-      <label>Role</label>
-      <select id="crRole">
-        <option value="awardee">Awardee</option>
-        <option value="mentor">Mentor</option>
-        <option value="operator">Operator</option>
-        <option value="administrator">Administrator</option>
-      </select>
-    </div>
-    <div id="crMsg" class="au-msg"></div>
-    <div class="au-actions">
-      <button class="au-btn-cancel" onclick="closeChangeRoleModal()">Batal</button>
-      <button class="au-btn-submit" id="crSubmitBtn" onclick="submitChangeRole()">Simpan</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL TAMBAH PENGGUNA -->
+<!-- MODAL: Tambah Pengguna -->
 <div class="au-modal-bg" id="auModalBg" onclick="if(event.target===this)closeAddUserModal()">
   <div class="au-modal">
     <h3>Tambah Pengguna</h3>
@@ -1211,6 +803,872 @@ function closeSidebar() {
     </div>
   </div>
 </div>
+
+<!-- MODAL: Change Role -->
+<div class="au-modal-bg" id="crModalBg" onclick="if(event.target===this)closeChangeRoleModal()">
+  <div class="au-modal">
+    <h3>Ubah Role</h3>
+    <p>Pilih role baru untuk pengguna ini.</p>
+    <input type="hidden" id="crUserId" />
+    <div class="au-field">
+      <label>Role</label>
+      <select id="crRole">
+        <option value="awardee">Awardee</option>
+        <option value="mentor">Mentor</option>
+        <option value="operator">Operator</option>
+        <option value="administrator">Administrator</option>
+      </select>
+    </div>
+    <div id="crMsg" class="au-msg"></div>
+    <div class="au-actions">
+      <button class="au-btn-cancel" onclick="closeChangeRoleModal()">Batal</button>
+      <button class="au-btn-submit" id="crSubmitBtn" onclick="submitChangeRole()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="mob-nav" id="mobNav">
+  <a href="index.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10.5z"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="list-form.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="12" height="4" rx="1"/></svg>
+    <span>Form</span>
+  </a>
+  <a href="rekap.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    <span>Rekap</span>
+  </a>
+  <a href="admin.html" id="mobNavAdmin" class="mob-nav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <span>Admin</span>
+  </a>
+  <a href="profile.html" class="mob-nav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profil</span>
+  </a>
+</nav>
+
+<!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+<script>
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+</script>
+
+<script src="assets/multiselect.js"></script>
+
+<script>
+/* ============================================================
+   AVATAR GRADIENT — warna unik per nama (hash-based)
+============================================================ */
+const _avatarColors = [
+  'linear-gradient(135deg,#0055a5,#1d4ed8)',
+  'linear-gradient(135deg,#0d9488,#14b8a6)',
+  'linear-gradient(135deg,#7c3aed,#a78bfa)',
+  'linear-gradient(135deg,#dc2626,#f87171)',
+  'linear-gradient(135deg,#d97706,#fbbf24)',
+  'linear-gradient(135deg,#16a34a,#4ade80)',
+  'linear-gradient(135deg,#db2777,#f472b6)',
+  'linear-gradient(135deg,#0891b2,#22d3ee)',
+];
+function _hashStr(str) {
+  let h = 0;
+  for (let i = 0; i < (str||'').length; i++) h = ((h<<5)-h+str.charCodeAt(i))|0;
+  return Math.abs(h);
+}
+function avatarGradient(name) {
+  const n = (name || '').trim();
+  if (!n) return '<div class="avatar-sm" style="background:#e5e7eb;color:#9ca3af">?</div>';
+  const parts = n.split(/\s+/);
+  const initials = (parts[0][0] + (parts[parts.length-1][0]||'')).toUpperCase();
+  const bg = _avatarColors[_hashStr(n) % _avatarColors.length];
+  return `<div class="avatar-sm" style="background:${bg}">${initials}</div>`;
+}
+function _initialsOf(name){
+  const n=(name||'').trim(); if(!n) return '?';
+  const p=n.split(/\s+/);
+  return (p[0][0]+(p[p.length-1][0]||'')).toUpperCase();
+}
+
+/* ============================================================
+   KPI count-up animation
+============================================================ */
+const _kpiTimers = {};
+function setKpi(id, target, duration = 1100) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (_kpiTimers[id]) cancelAnimationFrame(_kpiTimers[id]);
+  const start = performance.now();
+  const from = parseInt((el.textContent || '0').replace(/[^0-9-]/g,''), 10) || 0;
+  const ease = t => 1 - Math.pow(1 - t, 3);
+  function tick(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const v = Math.round(from + (target - from) * ease(t));
+    el.textContent = v.toLocaleString('id-ID');
+    if (t < 1) _kpiTimers[id] = requestAnimationFrame(tick);
+    else { el.textContent = target.toLocaleString('id-ID'); el.dataset.count = target; }
+  }
+  _kpiTimers[id] = requestAnimationFrame(tick);
+}
+
+/* ============================================================
+   HELPERS
+============================================================ */
+function escapeHtml(str) {
+  return String(str || '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+const ROLE_BADGE = {
+  administrator: ['badge-administrator', 'Administrator'],
+  admin:         ['badge-admin',         'Admin'],
+  operator:      ['badge-operator',      'Operator'],
+  mentor:        ['badge-mentor',        'Mentor'],
+  awardee:       ['badge-awardee',       'Awardee'],
+};
+function roleBadge(role) {
+  const [cls, lbl] = ROLE_BADGE[role] || ['badge-self', role || '—'];
+  return `<span class="badge ${cls}">${lbl}</span>`;
+}
+function statusBadge(u) {
+  if (u.role === 'admin' || u.role === 'administrator') return `<span class="badge badge-aktif">Aktif</span>`;
+  if (u.approved) return `<span class="badge badge-aktif">Aktif</span>`;
+  return `<span class="badge badge-pending">Menunggu</span>`;
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' });
+}
+
+/* ============================================================
+   INLINE DETAIL VIEW — show/hide
+============================================================ */
+function _scrollToTop(){ window.scrollTo({ top:0, behavior:'smooth' }); }
+
+function _showDetail(html) {
+  const dv = document.getElementById('aaDetailView');
+  dv.innerHTML = html;
+  document.body.classList.add('aa-detail-mode');
+  _scrollToTop();
+  // Trigger progress bar + count-up animations inside the detail view
+  requestAnimationFrame(() => {
+    dv.querySelectorAll('[data-bar-w]').forEach(el => {
+      el.style.width = el.dataset.barW + '%';
+    });
+    dv.querySelectorAll('[data-num]').forEach(el => {
+      const target = +el.dataset.num;
+      const suffix = el.dataset.suffix || '';
+      const start = performance.now();
+      const ease = t => 1 - Math.pow(1 - t, 3);
+      (function tick(now) {
+        const t = Math.min((now - start) / 1100, 1);
+        const v = Math.round(target * ease(t));
+        el.textContent = v.toLocaleString('id-ID') + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+        else el.textContent = target.toLocaleString('id-ID') + suffix;
+      })(performance.now());
+    });
+  });
+}
+function hideDetail() {
+  document.body.classList.remove('aa-detail-mode');
+  _scrollToTop();
+}
+window.hideDetail = hideDetail;
+
+function _backBtn() {
+  return `<button class="aa-back" onclick="hideDetail()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Kembali
+  </button>`;
+}
+
+/* ============================================================
+   BREAKDOWN HELPER
+============================================================ */
+function _topNCounter(items, key, n=12) {
+  const cnt = {};
+  items.forEach(it => { const v = it[key]; if (v) cnt[v] = (cnt[v]||0)+1; });
+  return Object.entries(cnt).sort((a,b) => b[1]-a[1]).slice(0, n);
+}
+function _breakdownSection(title, items, max, colorCls='') {
+  if (!items || items.length === 0) {
+    return `<div class="aa-section"><div class="aa-section-h">${title}</div><div class="aa-section-body" style="text-align:center;color:#9ca3af">Tidak ada data</div></div>`;
+  }
+  return `<div class="aa-section">
+    <div class="aa-section-h">${title}<span class="h-tag">${items.length} item</span></div>
+    <div class="aa-breakdown-list">
+      ${items.map(([label, val]) => {
+        const w = Math.round(val/max*100);
+        return `<div class="aa-breakdown-item">
+          <div class="aa-breakdown-label">${escapeHtml(label)}</div>
+          <div><span class="aa-breakdown-val">${val.toLocaleString('id-ID')}</span></div>
+          <div class="aa-breakdown-bar-wrap"><div class="aa-breakdown-bar ${colorCls}" data-bar-w="${w}"></div></div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   STATE — populated by loadUsers() in the IIFE below
+============================================================ */
+let allUsers = [];
+let filteredUsers = [];
+let myId = null;
+const PAGE_SIZE = 10;
+let currentPage = 1;
+
+/* ============================================================
+   USER DETAIL VIEW — clicking a row
+============================================================ */
+window.showUserDetail = function(userId) {
+  const u = allUsers.find(x => x.id === userId);
+  if (!u) return;
+
+  const isSelf = u.id === myId;
+  const isPending = !u.approved && u.role !== 'admin';
+  const role = u.role || 'awardee';
+  const [bClass, bLabel] = ROLE_BADGE[role] || ['badge-self', role];
+  const heroGrad = (role === 'admin' || role === 'administrator')
+    ? 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)'
+    : role === 'operator'
+    ? 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)'
+    : role === 'mentor'
+    ? 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)'
+    : isPending
+    ? 'linear-gradient(135deg, #d97706 0%, #b45309 100%)'
+    : 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)';
+
+  // Same-cohort counts
+  const sameRole   = allUsers.filter(x => x.role === u.role).length;
+  const sameKampus = u.mhs?.kampus ? allUsers.filter(x => x.mhs?.kampus === u.mhs.kampus).length : 0;
+  const sameKel    = u.mhs?.kelompok ? allUsers.filter(x => x.mhs?.kelompok === u.mhs.kelompok).length : 0;
+
+  const actions = isSelf
+    ? `<div style="color:#9ca3af;font-size:13px;font-style:italic;">Tidak dapat memodifikasi akun sendiri</div>`
+    : `<div class="aa-actions">
+        ${isPending ? `<button class="btn-sync" style="background:#16a34a" onclick="approveUser('${u.id}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Setujui Akun
+        </button>` : ''}
+        ${isPending ? `<button class="btn-sync" style="background:#dc2626" onclick="rejectUser('${u.id}','${escapeHtml(u.email)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Tolak / Hapus
+        </button>` : ''}
+        ${!isPending ? `<button class="btn-sync" style="background:#7c3aed" onclick="openChangeRoleModal('${u.id}','${role}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Ubah Role
+        </button>` : ''}
+        ${!isPending ? `<button class="btn-sync" style="background:#d97706" onclick="revokeUser('${u.id}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          Nonaktifkan
+        </button>` : ''}
+        <button class="btn-sync" style="background:#991b1b" onclick="rejectUser('${u.id}','${escapeHtml(u.email)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14H7L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          Hapus Akun
+        </button>
+      </div>`;
+
+  const html = `${_backBtn()}
+    <div class="aa-hero" style="background:${heroGrad}">
+      <div class="aa-hero-row">
+        <div class="aa-hero-avatar">${_initialsOf(u.full_name || u.email)}</div>
+        <div class="aa-hero-text">
+          <div class="aa-hero-tag">Detail Pengguna · ${bLabel}</div>
+          <div class="aa-hero-name">${escapeHtml(u.full_name || '—')}</div>
+          <div class="aa-hero-meta">
+            <span>${escapeHtml(u.email)}</span>
+            ${u.mhs?.no_induk ? `<span>NIM ${escapeHtml(u.mhs.no_induk)}</span>` : ''}
+            ${u.mhs?.kampus ? `<span>${escapeHtml(u.mhs.kampus)}</span>` : ''}
+            ${u.mhs?.kelompok ? `<span>Kelompok ${escapeHtml(u.mhs.kelompok)}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="aa-detail-kpis">
+      <div class="aa-detail-kpi">
+        <div class="aa-detail-kpi-lbl">Status</div>
+        <div class="aa-detail-kpi-val" style="color:${isPending?'#92400e':'#15803d'};font-size:18px">${isPending?'Menunggu':'Aktif'}</div>
+        <div class="aa-detail-kpi-sub">${isPending?'Belum disetujui admin':'Akun terverifikasi'}</div>
+      </div>
+      <div class="aa-detail-kpi">
+        <div class="aa-detail-kpi-lbl">Role</div>
+        <div class="aa-detail-kpi-val" style="font-size:18px">${bLabel}</div>
+        <div class="aa-detail-kpi-sub">Tingkat akses pengguna</div>
+      </div>
+      <div class="aa-detail-kpi">
+        <div class="aa-detail-kpi-lbl">Sesama Role</div>
+        <div class="aa-detail-kpi-val" data-num="${sameRole}">0</div>
+        <div class="aa-detail-kpi-sub">pengguna ber-role ${bLabel}</div>
+      </div>
+      <div class="aa-detail-kpi">
+        <div class="aa-detail-kpi-lbl">Sesama Kampus</div>
+        <div class="aa-detail-kpi-val" data-num="${sameKampus}">0</div>
+        <div class="aa-detail-kpi-sub">${u.mhs?.kampus ? 'di ' + escapeHtml(u.mhs.kampus) : 'tidak terkait awardee'}</div>
+      </div>
+    </div>
+
+    <div class="aa-section">
+      <div class="aa-section-h">Profil Akun <span class="h-tag">${isSelf ? 'Anda' : bLabel}</span></div>
+      <div class="aa-section-body">
+        <div class="aa-info-grid">
+          <div class="aa-info-item"><div class="k">Nama Lengkap</div><div class="v">${escapeHtml(u.full_name || '—')}</div></div>
+          <div class="aa-info-item"><div class="k">Email</div><div class="v">${escapeHtml(u.email)}</div></div>
+          <div class="aa-info-item"><div class="k">Role</div><div class="v">${bLabel}</div></div>
+          <div class="aa-info-item"><div class="k">Status</div><div class="v">${isPending?'Menunggu Persetujuan':'Aktif'}</div></div>
+          <div class="aa-info-item"><div class="k">Tanggal Terdaftar</div><div class="v">${fmtDate(u.created_at)}</div></div>
+          <div class="aa-info-item"><div class="k">User ID</div><div class="v" style="font-family:monospace;font-size:11px">${escapeHtml(u.id)}</div></div>
+        </div>
+      </div>
+    </div>
+
+    ${u.mhs ? `<div class="aa-section">
+      <div class="aa-section-h">Data Awardee Terhubung <span class="h-tag">mahasiswa_bsi</span></div>
+      <div class="aa-section-body">
+        <div class="aa-info-grid">
+          <div class="aa-info-item"><div class="k">NIM / No Induk</div><div class="v" style="font-family:monospace">${escapeHtml(u.mhs.no_induk || '—')}</div></div>
+          <div class="aa-info-item"><div class="k">Kampus</div><div class="v">${escapeHtml(u.mhs.kampus || '—')}</div></div>
+          <div class="aa-info-item"><div class="k">Kelompok</div><div class="v">${escapeHtml(u.mhs.kelompok || '—')}</div></div>
+          <div class="aa-info-item"><div class="k">Fakultas</div><div class="v">${escapeHtml(u.mhs.fakultas || '—')}</div></div>
+          <div class="aa-info-item"><div class="k">Sesama Kelompok</div><div class="v">${sameKel} pengguna</div></div>
+        </div>
+      </div>
+    </div>` : `<div class="aa-section">
+      <div class="aa-section-h">Data Awardee <span class="h-tag">tidak terhubung</span></div>
+      <div class="aa-section-body" style="color:#9ca3af;font-size:13px">Email dan nama pengguna ini tidak cocok dengan data <code>mahasiswa_bsi</code>. Hanya data profil yang tersedia.</div>
+    </div>`}
+
+    <div class="aa-section">
+      <div class="aa-section-h">Aksi Akun</div>
+      <div class="aa-section-body">${actions}</div>
+    </div>
+  `;
+  _showDetail(html);
+};
+
+/* ============================================================
+   KPI DETAIL — clicking a stat card
+============================================================ */
+window.showKpiDetail = function(kind) {
+  const pending = allUsers.filter(u => !u.approved && u.role !== 'admin');
+  const active  = allUsers.filter(u => u.approved && u.role !== 'admin');
+  const admins  = allUsers.filter(u => u.role === 'admin' || u.role === 'administrator');
+
+  let dataset, tag, title, color, num, sub;
+  switch (kind) {
+    case 'pending':
+      dataset = pending;
+      tag = 'KPI · Menunggu Persetujuan';
+      title = `${pending.length} akun menunggu`;
+      color = 'linear-gradient(135deg, #d97706 0%, #b45309 100%)';
+      num = pending.length;
+      sub = 'Akun baru yang belum disetujui admin';
+      break;
+    case 'active':
+      dataset = active;
+      tag = 'KPI · Pengguna Aktif';
+      title = `${active.length} pengguna aktif`;
+      color = 'linear-gradient(135deg, #0d9488 0%, #0f766e 100%)';
+      num = active.length;
+      sub = 'Pengguna yang sudah disetujui dan dapat login';
+      break;
+    case 'admin':
+      dataset = admins;
+      tag = 'KPI · Administrator';
+      title = `${admins.length} administrator`;
+      color = 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)';
+      num = admins.length;
+      sub = 'Pengguna dengan akses panel admin';
+      break;
+    case 'total':
+    default:
+      dataset = allUsers;
+      tag = 'KPI · Total Pengguna';
+      title = `${allUsers.length} pengguna total`;
+      color = 'linear-gradient(135deg, #1d4ed8 0%, #0055a5 100%)';
+      num = allUsers.length;
+      sub = 'Semua akun terdaftar di sistem';
+  }
+
+  // Breakdowns
+  const perRole = {};
+  dataset.forEach(u => {
+    const r = u.role || 'awardee';
+    perRole[r] = (perRole[r] || 0) + 1;
+  });
+  const perRoleArr = Object.entries(perRole).sort((a,b) => b[1]-a[1]).map(([r,v]) => {
+    const [, lbl] = ROLE_BADGE[r] || [null, r];
+    return [lbl, v];
+  });
+  const maxRole = Math.max(1, ...perRoleArr.map(x=>x[1]));
+
+  const perKampusArr = _topNCounter(dataset.map(u => ({ kampus: u.mhs?.kampus })).filter(x => x.kampus), 'kampus', 12);
+  const maxKampus = Math.max(1, ...perKampusArr.map(x=>x[1]));
+
+  // Registration trend (per month, last 6 months)
+  const monthCnt = {};
+  dataset.forEach(u => {
+    if (!u.created_at) return;
+    const d = new Date(u.created_at);
+    const k = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    monthCnt[k] = (monthCnt[k] || 0) + 1;
+  });
+  const monthArr = Object.entries(monthCnt).sort((a,b) => a[0].localeCompare(b[0])).slice(-6).map(([k,v]) => {
+    const [y, m] = k.split('-');
+    const lbl = new Date(+y, +m-1, 1).toLocaleDateString('id-ID', { month:'short', year:'numeric' });
+    return [lbl, v];
+  });
+  const maxMonth = Math.max(1, ...monthArr.map(x=>x[1]));
+
+  // First 10 in this dataset
+  const top10 = dataset.slice(0, 10);
+  const tableRows = top10.map(u => {
+    const [bClass, bLabel] = ROLE_BADGE[u.role] || ['badge-self', u.role || '—'];
+    return `<tr onclick="showUserDetail('${u.id}')" style="cursor:pointer">
+      <td>${avatarGradient(u.full_name || u.email)}</td>
+      <td><div class="n-main">${escapeHtml(u.full_name || '—')}</div><div class="n-sub" style="font-size:11px;color:#9ca3af">${escapeHtml(u.email)}</div></td>
+      <td><span class="badge ${bClass}">${bLabel}</span></td>
+      <td>${statusBadge(u)}</td>
+      <td style="font-size:12px">${fmtDate(u.created_at)}</td>
+    </tr>`;
+  }).join('');
+
+  const html = `${_backBtn()}
+    <div class="aa-hero" style="background:${color}">
+      <div class="aa-hero-row">
+        <div class="aa-hero-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></div>
+        <div class="aa-hero-text">
+          <div class="aa-hero-tag">${tag}</div>
+          <div class="aa-hero-name">${title}</div>
+          <div class="aa-hero-meta"><span>${sub}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="aa-detail-kpis">
+      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Jumlah</div><div class="aa-detail-kpi-val" data-num="${num}">0</div></div>
+      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Total Role</div><div class="aa-detail-kpi-val" data-num="${perRoleArr.length}">0</div></div>
+      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Total Kampus</div><div class="aa-detail-kpi-val" data-num="${perKampusArr.length}">0</div></div>
+      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">% dari Total</div><div class="aa-detail-kpi-val" data-num="${Math.round(num/Math.max(allUsers.length,1)*100)}" data-suffix="%">0%</div></div>
+    </div>
+
+    ${_breakdownSection('Distribusi Role', perRoleArr, maxRole, 'b-purple')}
+    ${_breakdownSection('Top 12 Kampus', perKampusArr, maxKampus, 'b-blue')}
+    ${_breakdownSection('Pendaftaran (6 Bulan Terakhir)', monthArr, maxMonth, 'b-green')}
+
+    <div class="aa-section">
+      <div class="aa-section-h">10 Pengguna Pertama <span class="h-tag">klik untuk detail</span></div>
+      <div class="table-wrap" style="border:none;border-radius:0;animation:none">
+        <table style="width:100%">
+          <thead><tr><th></th><th>Pengguna</th><th>Role</th><th>Status</th><th>Terdaftar</th></tr></thead>
+          <tbody>${tableRows || '<tr><td colspan="5" style="text-align:center;padding:30px;color:#9ca3af">Tidak ada data</td></tr>'}</tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  _showDetail(html);
+};
+
+/* ============================================================
+   TOAST
+============================================================ */
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3500);
+}
+
+/* ============================================================
+   FILTER + RENDER
+============================================================ */
+function filterTable() {
+  const q       = (document.getElementById('searchInput')?.value || '').toLowerCase();
+  const role    = document.getElementById('filterRole')?.value || '';
+  const status  = document.getElementById('filterStatus')?.value || '';
+  const kampus  = document.getElementById('filterKampus')?.value || '';
+
+  // Multi-value support (comma-separated from BsisMultiSelect)
+  const roleSet   = role   ? new Set(role.split(',').filter(Boolean))   : null;
+  const statusSet = status ? new Set(status.split(',').filter(Boolean)) : null;
+  const kampusSet = kampus ? new Set(kampus.split(',').filter(Boolean)) : null;
+
+  filteredUsers = allUsers.filter(u => {
+    if (roleSet && !roleSet.has(u.role)) return false;
+    if (statusSet) {
+      const isApproved = u.approved || u.role === 'admin' || u.role === 'administrator';
+      if (statusSet.has('approved') && !isApproved) return false;
+      if (statusSet.has('pending')  && isApproved) return false;
+      if (!statusSet.has('approved') && !statusSet.has('pending')) return false;
+    }
+    if (kampusSet && !kampusSet.has(u.mhs?.kampus)) return false;
+    if (q) {
+      const s = `${u.full_name || ''} ${u.email} ${u.mhs?.no_induk || ''} ${u.mhs?.kampus || ''}`.toLowerCase();
+      if (!s.includes(q)) return false;
+    }
+    return true;
+  });
+
+  currentPage = 1;
+  renderTable();
+}
+
+function resetFilter() {
+  const sIn = document.getElementById('searchInput');
+  if (sIn) sIn.value = '';
+  ['filterRole','filterStatus','filterKampus'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (typeof el.setValues === 'function') el.setValues([]);
+    else el.value = '';
+  });
+  filteredUsers = [...allUsers];
+  currentPage = 1;
+  renderTable();
+}
+
+function renderStats() {
+  const pending = allUsers.filter(u => !u.approved && u.role !== 'admin').length;
+  const active  = allUsers.filter(u => u.approved && u.role !== 'admin').length;
+  const admins  = allUsers.filter(u => u.role === 'admin' || u.role === 'administrator').length;
+  setKpi('statPending', pending);
+  setKpi('statActive',  active);
+  setKpi('statAdmin',   admins);
+  setKpi('statTotal',   allUsers.length);
+}
+
+function renderTable() {
+  const tbody = document.getElementById('userBody');
+  const total = filteredUsers.length;
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const slice = filteredUsers.slice(start, start + PAGE_SIZE);
+
+  if (!slice.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:#9ca3af;">Tidak ada pengguna yang cocok dengan filter</td></tr>';
+    document.getElementById('pagInfo').textContent = '0 pengguna';
+    document.getElementById('pagBtns').innerHTML = '';
+    return;
+  }
+
+  tbody.innerHTML = slice.map((u, i) => {
+    const isSelf    = u.id === myId;
+    const isPending = !u.approved && u.role !== 'admin';
+    const nim       = u.mhs?.no_induk || '—';
+    const kampus    = u.mhs?.kampus   || '—';
+    const kelompok  = u.mhs?.kelompok || '—';
+
+    let actions;
+    if (isSelf) {
+      actions = '<span style="color:#9ca3af;font-size:12px;">—</span>';
+    } else if (isPending) {
+      actions = `<div class="row-actions" onclick="event.stopPropagation()">
+        <button class="act-approve" title="Setujui" onclick="approveUser('${u.id}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </button>
+        <button class="act-reject" title="Tolak / Hapus" onclick="rejectUser('${u.id}','${escapeHtml(u.email)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>`;
+    } else {
+      actions = `<div class="row-actions" onclick="event.stopPropagation()">
+        <button class="act-role" title="Ubah role" onclick="openChangeRoleModal('${u.id}','${u.role || 'awardee'}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </button>
+        <button class="act-revoke" title="Nonaktifkan" onclick="revokeUser('${u.id}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </button>
+        <button class="act-reject" title="Hapus akun" onclick="rejectUser('${u.id}','${escapeHtml(u.email)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14H7L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+      </div>`;
+    }
+
+    return `<tr onclick="showUserDetail('${u.id}')">
+      <td style="color:#9ca3af;font-size:12px;">${start + i + 1}</td>
+      <td>
+        <div class="td-name">
+          ${avatarGradient(u.full_name || u.email)}
+          <div>
+            <div class="n-main">${escapeHtml(u.full_name || '—')}${isSelf ? ' <span class="badge badge-self" style="margin-left:4px">Anda</span>' : ''}</div>
+            <div class="n-sub">${escapeHtml(u.email)}</div>
+          </div>
+        </div>
+      </td>
+      <td style="font-family:monospace;font-size:12px;">${escapeHtml(nim)}</td>
+      <td style="font-size:12px;">${escapeHtml(kampus)}</td>
+      <td style="font-size:12px;">${escapeHtml(kelompok)}</td>
+      <td>${roleBadge(u.role)}</td>
+      <td>${statusBadge(u)}</td>
+      <td style="font-size:12px;color:#6b7280;white-space:nowrap;">${fmtDate(u.created_at)}</td>
+      <td>${actions}</td>
+    </tr>`;
+  }).join('');
+
+  // Pagination
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  document.getElementById('pagInfo').textContent = `Menampilkan ${start+1}–${Math.min(start+PAGE_SIZE,total)} dari ${total} pengguna`;
+  const btns = document.getElementById('pagBtns');
+  btns.innerHTML = '';
+  const addBtn = (label, page, disabled=false, active=false) => {
+    const b = document.createElement('button');
+    b.className = 'pag-btn' + (active ? ' active' : '');
+    b.textContent = label;
+    b.disabled = disabled;
+    b.onclick = () => { currentPage = page; renderTable(); };
+    btns.appendChild(b);
+  };
+  addBtn('‹', currentPage - 1, currentPage === 1);
+  for (let p = Math.max(1, currentPage-2); p <= Math.min(totalPages, currentPage+2); p++) {
+    addBtn(p, p, false, p === currentPage);
+  }
+  addBtn('›', currentPage + 1, currentPage === totalPages);
+}
+
+/* ============================================================
+   ADD USER MODAL
+============================================================ */
+function openAddUserModal() {
+  document.getElementById('auName').value     = '';
+  document.getElementById('auEmail').value    = '';
+  document.getElementById('auPassword').value = '';
+  document.getElementById('auRole').value     = 'awardee';
+  const msg = document.getElementById('auMsg');
+  msg.className = 'au-msg'; msg.textContent = '';
+  document.getElementById('auModalBg').classList.add('show');
+  setTimeout(() => document.getElementById('auName').focus(), 100);
+}
+function closeAddUserModal() {
+  document.getElementById('auModalBg').classList.remove('show');
+}
+
+async function submitAddUser() {
+  const name  = document.getElementById('auName').value.trim();
+  const email = document.getElementById('auEmail').value.trim();
+  const pw    = document.getElementById('auPassword').value;
+  const role  = document.getElementById('auRole').value;
+  const msg   = document.getElementById('auMsg');
+  const btn   = document.getElementById('auSubmitBtn');
+
+  msg.className = 'au-msg'; msg.textContent = '';
+
+  if (!name)         { msg.className='au-msg err'; msg.textContent='Nama tidak boleh kosong.'; return; }
+  if (!email)        { msg.className='au-msg err'; msg.textContent='Email tidak boleh kosong.'; return; }
+  if (pw.length < 6) { msg.className='au-msg err'; msg.textContent='Password minimal 6 karakter.'; return; }
+
+  btn.disabled = true; btn.textContent = 'Memproses...';
+
+  try {
+    const SUPABASE_URL      = 'https://iyfwaqwmnmjfagszttts.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5ZndhcXdtbm1qZmFnc3p0dHRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NTEwMTgsImV4cCI6MjA4MzQyNzAxOH0.f2xb_aQDIj4tIPKwTTC9dgIi-9qFv0G252T5uo9XwXo';
+
+    // Isolated client so admin's session isn't replaced after signUp
+    const tmpClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession:    false,
+        autoRefreshToken:  false,
+        storageKey:        'signup-tmp-' + Date.now(),
+      }
+    });
+
+    const { data: authData, error: authErr } = await tmpClient.auth.signUp({
+      email, password: pw,
+      options: { data: { full_name: name } }
+    });
+    if (authErr) throw authErr;
+
+    const uid = authData?.user?.id;
+    if (!uid) throw new Error('Gagal mendapatkan user ID dari Supabase');
+
+    const { error: profErr } = await window._supabase.from('profiles').upsert({
+      id: uid, email, full_name: name, role, approved: true,
+    });
+    if (profErr) throw profErr;
+
+    msg.className = 'au-msg ok';
+    const needsConfirm = !authData?.user?.email_confirmed_at;
+    msg.textContent = needsConfirm
+      ? `Akun "${name}" dibuat sebagai ${role}. User perlu konfirmasi email sebelum bisa login.`
+      : `Akun "${name}" berhasil dibuat sebagai ${role}.`;
+    showToast(`Pengguna ${name} berhasil ditambahkan`, 'ok');
+    setTimeout(() => closeAddUserModal(), 1200);
+    if (typeof loadUsers === 'function') loadUsers();
+  } catch (e) {
+    msg.className = 'au-msg err';
+    msg.textContent = 'Gagal. Silakan coba lagi.';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg> Buat Akun';
+  }
+}
+
+/* ============================================================
+   MAIN APP — runs after auth + supabase ready
+============================================================ */
+(async () => {
+  await new Promise(r => setTimeout(r, 80));
+  const sb = window._supabase;
+  if (!sb) { location.replace('login.html'); return; }
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { location.replace('login.html'); return; }
+
+  const { data: prof } = await sb.from('profiles').select('role, approved').eq('id', session.user.id).single();
+  if (!prof || (prof.role !== 'admin' && prof.role !== 'operator' && prof.role !== 'administrator')) {
+    location.replace('index.html'); return;
+  }
+
+  myId = session.user.id;
+
+  /* ---- LOAD ---- */
+  window.loadUsers = async function loadUsers() {
+    const sub = document.getElementById('admLoadingSub');
+    if (sub) sub.textContent = 'Memuat data pengguna';
+
+    // paginate profiles
+    let profiles = [], from = 0;
+    while (true) {
+      const { data, error } = await sb.from('profiles')
+        .select('id, email, full_name, role, approved, created_at')
+        .order('full_name', { ascending: true })
+        .range(from, from + 999);
+      if (error) { showToast('Gagal memuat profil. Silakan coba lagi.', 'err'); return; }
+      profiles = profiles.concat(data || []);
+      if (!data || data.length < 1000) break;
+      from += 1000;
+    }
+
+    // paginate mahasiswa_bsi for NIM/kampus/kelompok/fakultas
+    const mhsMap = {};
+    let mFrom = 0;
+    while (true) {
+      const { data: mData, error: mErr } = await sb.from('mahasiswa_bsi')
+        .select('nama, email, no_induk, kampus, kelompok, fakultas')
+        .range(mFrom, mFrom + 999);
+      if (mErr) break;
+      if (!mData || mData.length === 0) break;
+      mData.forEach(m => {
+        if (m.email) mhsMap['email:' + m.email.trim().toLowerCase()] = m;
+        if (m.nama)  mhsMap['nama:'  + m.nama.trim().toLowerCase()]  = m;
+      });
+      if (mData.length < 1000) break;
+      mFrom += 1000;
+    }
+
+    allUsers = profiles.map(u => {
+      const emailKey = u.email     ? 'email:' + u.email.trim().toLowerCase()     : null;
+      const namaKey  = u.full_name ? 'nama:'  + u.full_name.trim().toLowerCase() : null;
+      const mhs = (emailKey && mhsMap[emailKey]) || (namaKey && mhsMap[namaKey]) || null;
+      return { ...u, mhs };
+    }).sort((a, b) => (a.full_name || '').localeCompare(b.full_name || '', 'id'));
+
+    filteredUsers = [...allUsers];
+
+    // hide loader, reveal content before count-up runs
+    const ld = document.getElementById('adminLoading');
+    if (ld) ld.classList.add('hide');
+    const ac = document.getElementById('adminContent');
+    if (ac) ac.style.display = 'block';
+
+    renderStats();
+    populateKampusFilter();
+    renderTable();
+  };
+
+  /* ---- KAMPUS FILTER POPULATION ---- */
+  function populateKampusFilter() {
+    const sel = document.getElementById('filterKampus');
+    if (!sel) return;
+    // Clear existing options except first
+    while (sel.options.length > 1) sel.remove(1);
+
+    const kampusSet = new Set();
+    allUsers.forEach(u => { if (u.mhs?.kampus) kampusSet.add(u.mhs.kampus); });
+    Array.from(kampusSet).sort().forEach(k => {
+      const opt = document.createElement('option');
+      opt.value = k; opt.textContent = k;
+      sel.appendChild(opt);
+    });
+
+    // Attach multi-select widgets
+    if (window.BsisMultiSelect && !sel.dataset.msAttached) {
+      const MS = window.BsisMultiSelect;
+      MS.attach(document.getElementById('filterRole'),   { placeholder:'Semua Role',   itemLabelSingular:'Role',   searchable:false });
+      MS.attach(document.getElementById('filterStatus'), { placeholder:'Semua Status', itemLabelSingular:'Status', searchable:false });
+      MS.attach(sel, { placeholder:'Semua Kampus', itemLabelSingular:'Kampus' });
+      sel.dataset.msAttached = '1';
+    }
+  }
+
+  /* ---- ACTIONS ---- */
+  window.approveUser = async (id) => {
+    const { error } = await sb.from('profiles').update({ approved: true }).eq('id', id);
+    if (error) { showToast('Gagal menyetujui. Silakan coba lagi.', 'err'); return; }
+    showToast('Akun berhasil disetujui', 'ok');
+    if (document.body.classList.contains('aa-detail-mode')) hideDetail();
+    await loadUsers();
+  };
+
+  window.rejectUser = async (id, email) => {
+    if (!confirm(`Hapus akun ${email}?\nTindakan ini tidak dapat dibatalkan.`)) return;
+    const { error } = await sb.from('profiles').delete().eq('id', id);
+    if (error) { showToast('Gagal menghapus. Silakan coba lagi.', 'err'); return; }
+    showToast('Akun berhasil dihapus', 'ok');
+    if (document.body.classList.contains('aa-detail-mode')) hideDetail();
+    await loadUsers();
+  };
+
+  window.revokeUser = async (id) => {
+    if (!confirm('Nonaktifkan akun ini? Pengguna tidak akan bisa login sampai disetujui kembali.')) return;
+    const { error } = await sb.from('profiles').update({ approved: false }).eq('id', id);
+    if (error) { showToast('Gagal menonaktifkan. Silakan coba lagi.', 'err'); return; }
+    showToast('Akun berhasil dinonaktifkan', 'ok');
+    if (document.body.classList.contains('aa-detail-mode')) hideDetail();
+    await loadUsers();
+  };
+
+  window.openChangeRoleModal = (id, currentRole) => {
+    document.getElementById('crUserId').value = id;
+    document.getElementById('crRole').value   = currentRole || 'awardee';
+    const m = document.getElementById('crMsg');
+    m.className = 'au-msg'; m.textContent = '';
+    document.getElementById('crModalBg').classList.add('show');
+  };
+  window.closeChangeRoleModal = () => {
+    document.getElementById('crModalBg').classList.remove('show');
+  };
+  window.submitChangeRole = async () => {
+    const id   = document.getElementById('crUserId').value;
+    const role = document.getElementById('crRole').value;
+    const msg  = document.getElementById('crMsg');
+    const btn  = document.getElementById('crSubmitBtn');
+    msg.className = 'au-msg'; msg.textContent = '';
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+    const { error } = await sb.from('profiles').update({ role }).eq('id', id);
+    btn.disabled = false; btn.textContent = 'Simpan';
+    if (error) { msg.className = 'au-msg err'; msg.textContent = 'Gagal. Silakan coba lagi.'; return; }
+    showToast('Role berhasil diubah', 'ok');
+    closeChangeRoleModal();
+    if (document.body.classList.contains('aa-detail-mode')) hideDetail();
+    await loadUsers();
+  };
+
+  // initial load
+  await loadUsers();
+})();
+</script>
 
 </body>
 </html>
