@@ -235,14 +235,182 @@
     /* Modal */
     .lb-modal-bg {
       display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:500;
-      align-items:center; justify-content:center; padding:16px; backdrop-filter: blur(2px);
+      align-items:flex-start; justify-content:center; padding:16px; backdrop-filter: blur(3px);
+      animation: modalBgIn .25s ease;
+      overflow-y: auto;
     }
+    @keyframes modalBgIn { from { opacity: 0; } to { opacity: 1; } }
     .lb-modal-bg.show { display:flex; }
     .lb-modal {
-      background:#fff; border-radius:18px; padding:26px;
-      max-width:760px; width:100%; max-height:92vh; overflow-y:auto;
-      box-shadow:0 20px 50px rgba(0,0,0,.2);
+      background:#fff; border-radius:18px;
+      max-width:780px; width:100%;
+      box-shadow:0 24px 60px rgba(0,0,0,.22);
+      margin: 24px auto;
+      animation: modalIn .35s cubic-bezier(.2,.8,.2,1);
+      position: relative;
     }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(20px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* BACK BUTTON — kiri atas, di luar konten utama */
+    .modal-back {
+      position: sticky; top: 0; left: 0;
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 10px 16px 10px 12px;
+      margin: 0;
+      border: none; background: #fff;
+      color: #475569; font-size: 13px; font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      border-radius: 18px 0 12px 0;
+      transition: color .2s, background .2s, transform .15s;
+      z-index: 2;
+    }
+    .modal-back:hover { color: #0055a5; background: #f1f5f9; transform: translateX(-2px); }
+    .modal-back svg { transition: transform .2s; }
+    .modal-back:hover svg { transform: translateX(-2px); }
+
+    .modal-content { padding: 6px 26px 26px; }
+
+    /* INLINE DETAIL PANEL — smooth expand */
+    .inline-detail {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height .55s cubic-bezier(.4,0,.2,1),
+                  opacity .35s ease,
+                  margin-top .4s ease,
+                  padding .4s ease;
+      margin-top: 0;
+      padding: 0 0;
+      border-top: 0 solid transparent;
+    }
+    .inline-detail.show {
+      max-height: 2000px;
+      opacity: 1;
+      margin-top: 16px;
+      padding: 16px 0 0;
+      border-top: 1px solid #e5e7eb;
+    }
+    .inline-detail-head {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 12px;
+      animation: detailFadeIn .5s .1s both;
+    }
+    .inline-detail-head .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 10px;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #78350f;
+      border-radius: 999px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .02em;
+    }
+    .inline-detail-head .close-inline {
+      margin-left: auto;
+      width: 24px; height: 24px; border-radius: 8px;
+      border: none; background: #f1f5f9;
+      color: #64748b; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background .2s, color .2s, transform .15s;
+    }
+    .inline-detail-head .close-inline:hover { background: #fee2e2; color: #dc2626; transform: scale(1.05); }
+
+    .inline-detail-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      animation: detailFadeIn .5s .15s both;
+    }
+    .id-stat-card {
+      background: #f8fafc; border: 1px solid #e5e7eb;
+      border-radius: 12px; padding: 12px 14px;
+    }
+    .id-stat-lbl { font-size: 10.5px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+    .id-stat-val { font-size: 22px; font-weight: 800; color: #0f172a; line-height: 1; font-variant-numeric: tabular-nums; }
+    .id-stat-sub { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+    .inline-detail-list {
+      animation: detailFadeIn .5s .2s both;
+    }
+    .inline-detail-list .id-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 10px;
+      cursor: pointer; transition: background .2s, transform .15s;
+      animation: rowSlideIn .4s ease both;
+    }
+    .inline-detail-list .id-row:hover { background: #f1f5f9; transform: translateX(4px); }
+    .inline-detail-list .id-row + .id-row { border-top: 1px solid #f1f5f9; }
+    .id-row-rank { font-size: 11px; font-weight: 800; color: #78350f; min-width: 22px; text-align: right; }
+    .id-row-name { flex: 1; min-width: 0; font-size: 13px; font-weight: 700; color: #111827; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .id-row-meta { font-size: 11px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .id-row-val { font-size: 13px; font-weight: 800; color: #0d9488; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+
+    @keyframes detailFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes rowSlideIn {
+      from { opacity: 0; transform: translateX(-12px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .id-row:nth-child(1) { animation-delay: .05s; }
+    .id-row:nth-child(2) { animation-delay: .10s; }
+    .id-row:nth-child(3) { animation-delay: .15s; }
+    .id-row:nth-child(4) { animation-delay: .20s; }
+    .id-row:nth-child(5) { animation-delay: .25s; }
+    .id-row:nth-child(6) { animation-delay: .30s; }
+    .id-row:nth-child(7) { animation-delay: .35s; }
+    .id-row:nth-child(8) { animation-delay: .40s; }
+    .id-row:nth-child(9) { animation-delay: .45s; }
+    .id-row:nth-child(10){ animation-delay: .50s; }
+
+    /* CLICKABLE HINTS */
+    .clickable {
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .25s ease, border-color .25s ease;
+      position: relative;
+    }
+    .clickable::after {
+      content: '';
+      position: absolute; inset: -1px;
+      border-radius: inherit;
+      box-shadow: 0 0 0 2px transparent;
+      pointer-events: none;
+      transition: box-shadow .25s ease;
+    }
+    .clickable:hover { transform: translateY(-2px); }
+    .clickable:active { transform: translateY(0); }
+    .aspect-card.clickable:hover::after { box-shadow: 0 0 0 2px var(--asp-from); }
+    .insight-card .rank-item { transition: background .2s, transform .15s; }
+    .insight-card .rank-item.clickable:hover { background: #f8fafc; transform: translateX(3px); }
+
+    /* Histogram bar clickable */
+    .hist-bar-wrap.clickable .hist-bar {
+      transition: transform .2s, filter .2s;
+    }
+    .hist-bar-wrap.clickable:hover .hist-bar {
+      transform: scaleY(1.04);
+      filter: brightness(1.1);
+    }
+    .hist-bar-wrap.clickable:hover .hist-lbl { color: #0d9488; font-weight: 700; }
+
+    /* Activity bar clickable */
+    .asp-bar-row.clickable {
+      cursor: pointer;
+      padding: 4px 8px; margin: 0 -8px;
+      border-radius: 10px;
+      transition: background .2s, transform .15s;
+    }
+    .asp-bar-row.clickable:hover { background: #f1f5f9; transform: translateX(4px); }
+
+    /* Active state — when detail is showing */
+    .clickable.active-detail {
+      box-shadow: 0 6px 18px rgba(0,85,165,.15);
+    }
+    .aspect-card.clickable.active-detail::after { box-shadow: 0 0 0 2px var(--asp-from); }
+
     .lb-modal-head { display:flex; align-items:center; gap:14px; padding-bottom:14px; border-bottom:1px solid #f1f5f9; margin-bottom:14px; }
     .lb-avatar {
       width:54px; height:54px; border-radius:14px; flex-shrink:0;
@@ -535,13 +703,14 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                 Rata-rata per Aspek
               </div>
-              <span class="insight-sub">Ranking aspek tertinggi vs terendah</span>
+              <span class="insight-sub">Klik kartu aspek untuk detail · ranking aspek tertinggi vs terendah</span>
             </div>
             <div class="aspect-cards" id="aspectCards">
               <div class="aspect-card mind"><div class="aspect-name">Mindful</div><div class="aspect-score">—<span class="aspect-score-max"> / 35</span></div><div class="aspect-sub">Memuat…</div></div>
               <div class="aspect-card acc"><div class="aspect-name">Accountable</div><div class="aspect-score">—<span class="aspect-score-max"> / 15</span></div><div class="aspect-sub">Memuat…</div></div>
               <div class="aspect-card self"><div class="aspect-name">Self-Development</div><div class="aspect-score">—<span class="aspect-score-max"> / 50</span></div><div class="aspect-sub">Memuat…</div></div>
             </div>
+            <div class="inline-detail" id="aspectDetail"></div>
           </div>
           <div class="insight-card">
             <div class="insight-head">
@@ -559,7 +728,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
                 Top 10 Kampus
               </div>
-              <span class="insight-sub">Rata-rata skor per kampus</span>
+              <span class="insight-sub">Klik baris untuk lihat awardee per kampus</span>
             </div>
             <div id="top10Kampus" class="rank-list"><div class="tbl-empty"><p>Memuat...</p></div></div>
           </div>
@@ -572,6 +741,7 @@
               <span class="insight-sub" id="histSub">—</span>
             </div>
             <div id="scoreHist"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            <div class="inline-detail" id="histDetail"></div>
           </div>
           <div class="insight-card full">
             <div class="insight-head">
@@ -579,9 +749,10 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 Kontribusi Rata-rata per Aktivitas
               </div>
-              <span class="insight-sub">Per aktivitas dibagi bobot maksnya</span>
+              <span class="insight-sub">Klik baris untuk detail · per aktivitas dibagi bobot maksnya</span>
             </div>
             <div class="aspect-bars" id="activityBars"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            <div class="inline-detail" id="activityDetail"></div>
           </div>
         </div>
       </div>
@@ -720,13 +891,14 @@
 
 <div id="lbToast"></div>
 
-<!-- MODAL: Detail awardee -->
+<!-- MODAL: Detail awardee / kampus -->
 <div class="lb-modal-bg" id="detailModalBg" onclick="if(event.target===this)closeDetail()">
   <div class="lb-modal">
-    <button class="modal-close-x" onclick="closeDetail()" aria-label="Tutup">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    <button class="modal-back" onclick="closeDetail()" aria-label="Kembali">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Kembali
     </button>
-    <div id="detailBody"></div>
+    <div class="modal-content" id="detailBody"></div>
   </div>
 </div>
 
@@ -849,7 +1021,7 @@ async function init(){
 
     const [mhs, rekap, prestasi, org] = await Promise.all([
       fetchAll('mahasiswa_bsi', 'no_induk,nama,kampus,kelompok,ipk,status,fakultas,prodi'),
-      fetchAll('rekap_bsi', 'no_induk,tanggal,pre_test,post_test,assessment,mentoring,pembinaan'),
+      fetchAll('rekap_bsi', 'no_induk,nama,kampus,kelompok,tanggal,pre_test,post_test,assessment,mentoring,pembinaan,kelas_al_quran'),
       fetchAll('prestasi_bsi', 'no_induk,tingkatan,juara').catch(()=>[]),
       fetchAll('organisasi_bsi', 'no_induk,tingkatan,keterlibatan').catch(()=>[]),
     ]);
@@ -909,30 +1081,71 @@ function computeRanked(mhs, rekap, prestasi, org, view){
   const rekapFiltered = q ? rekap.filter(r => inRange(r.tanggal, q)) : rekap;
 
   const acc = new Map();
+
+  // Helper: get-or-create entry untuk no_induk apapun (tidak harus ada di mahasiswa_bsi)
+  const ensureEntry = (no_induk, fallback = {}) => {
+    const key = String(no_induk || '').trim();
+    if(!key) return null;
+    if(!acc.has(key)){
+      acc.set(key, {
+        no_induk: key,
+        nama: fallback.nama || '—',
+        kampus: fallback.kampus || '—',
+        kelompok: fallback.kelompok || '—',
+        fakultas: '—', prodi: '—', status: '',
+        ipk: 0,
+        ment:{ok:0,total:0}, pem:{ok:0,total:0}, pre:{ok:0,total:0}, post:{ok:0,total:0}, ass:{ok:0,total:0},
+        prestasiPoints:0, prestasiCount:0, orgPoints:0, orgCount:0,
+      });
+    } else {
+      // Isi field kosong dari fallback (rekap kasih nama/kampus kalau mhs ga punya)
+      const a = acc.get(key);
+      if(a.nama === '—' && fallback.nama) a.nama = fallback.nama;
+      if(a.kampus === '—' && fallback.kampus) a.kampus = fallback.kampus;
+      if(a.kelompok === '—' && fallback.kelompok) a.kelompok = fallback.kelompok;
+    }
+    return acc.get(key);
+  };
+
+  // 1. Pre-populate dari mahasiswa_bsi (gives full identity + IPK)
   mhs.forEach(m => {
     if(!m.no_induk) return;
-    acc.set(String(m.no_induk), {
-      no_induk: String(m.no_induk),
-      nama: m.nama || '—', kampus: m.kampus || '—', kelompok: m.kelompok || '—',
-      fakultas: m.fakultas || '—', prodi: m.prodi || '—', status: m.status || '',
-      ipk: parseFloat(m.ipk) || 0,
-      ment:{ok:0,total:0}, pem:{ok:0,total:0}, pre:{ok:0,total:0}, post:{ok:0,total:0}, ass:{ok:0,total:0},
-      prestasiPoints:0, prestasiCount:0, orgPoints:0, orgCount:0,
-    });
+    const a = ensureEntry(m.no_induk);
+    if(!a) return;
+    a.nama = m.nama || a.nama;
+    a.kampus = m.kampus || a.kampus;
+    a.kelompok = m.kelompok || a.kelompok;
+    a.fakultas = m.fakultas || a.fakultas;
+    a.prodi = m.prodi || a.prodi;
+    a.status = m.status || '';
+    a.ipk = parseFloat(m.ipk) || 0;
   });
+
+  // 2. Process rekap — INCLUDE awardee yang ada di rekap meski tidak ada di mahasiswa_bsi
+  //    (rekap punya field nama/kampus/kelompok jadi awardee tetap terdata)
   rekapFiltered.forEach(r => {
-    const a = acc.get(String(r.no_induk||'')); if(!a) return;
+    if(!r.no_induk) return;
+    const a = ensureEntry(r.no_induk, { nama: r.nama, kampus: r.kampus, kelompok: r.kelompok });
+    if(!a) return;
     [['mentoring','ment'],['pembinaan','pem'],['pre_test','pre'],['post_test','post'],['assessment','ass']].forEach(([src,dst]) => {
       if(isEvent(r[src])) { a[dst].total++; if(isHadir(r[src])) a[dst].ok++; }
     });
   });
+
+  // 3. Prestasi
   prestasi.forEach(r => {
-    const a = acc.get(String(r.no_induk||'')); if(!a) return;
+    if(!r.no_induk) return;
+    const a = ensureEntry(r.no_induk);
+    if(!a) return;
     a.prestasiPoints += lbTingkatanBonusPrestasi(r.tingkatan) + lbJuaraBonus(r.juara);
     a.prestasiCount++;
   });
+
+  // 4. Organisasi
   org.forEach(r => {
-    const a = acc.get(String(r.no_induk||'')); if(!a) return;
+    if(!r.no_induk) return;
+    const a = ensureEntry(r.no_induk);
+    if(!a) return;
     a.orgPoints += lbTingkatanBonusOrg(r.tingkatan) + lbKeterlibatanBonus(r.keterlibatan);
     a.orgCount++;
   });
@@ -975,25 +1188,59 @@ function renderStats(){
   el.innerHTML = `
     <div class="lb-stat">
       <div class="lb-stat-icon si--gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg></div>
-      <div><div class="lb-stat-val">${total.toLocaleString('id-ID')}</div><div class="lb-stat-lbl">Total Awardee Terdata</div></div>
+      <div><div class="lb-stat-val" data-target="${total}" data-format="int">0</div><div class="lb-stat-lbl">Total Awardee Terdata</div></div>
     </div>
     <div class="lb-stat">
       <div class="lb-stat-icon si--blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-      <div><div class="lb-stat-val">${avg.toFixed(1)}%</div><div class="lb-stat-lbl">Rata-rata Skor</div></div>
+      <div><div class="lb-stat-val" data-target="${avg}" data-format="pct1">0.0%</div><div class="lb-stat-lbl">Rata-rata Skor</div></div>
     </div>
     <div class="lb-stat">
       <div class="lb-stat-icon si--teal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7z"/></svg></div>
-      <div><div class="lb-stat-val">${top.toFixed(1)}%</div><div class="lb-stat-lbl">Skor Tertinggi</div><div class="lb-stat-sub">${escH(_ranked[0]?.nama||'—')}</div></div>
+      <div><div class="lb-stat-val" data-target="${top}" data-format="pct1">0.0%</div><div class="lb-stat-lbl">Skor Tertinggi</div><div class="lb-stat-sub">${escH(_ranked[0]?.nama||'—')}</div></div>
     </div>
     <div class="lb-stat">
       <div class="lb-stat-icon si--purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div><div class="lb-stat-val">${pct80.toLocaleString('id-ID')}</div><div class="lb-stat-lbl">Skor ≥ 80%</div><div class="lb-stat-sub">${total?((pct80*100/total).toFixed(1)):'0'}% dari total</div></div>
+      <div><div class="lb-stat-val" data-target="${pct80}" data-format="int">0</div><div class="lb-stat-lbl">Skor ≥ 80%</div><div class="lb-stat-sub">${total?((pct80*100/total).toFixed(1)):'0'}% dari total</div></div>
     </div>
     <div class="lb-stat">
       <div class="lb-stat-icon si--pink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
-      <div><div class="lb-stat-val">${pct40.toLocaleString('id-ID')}</div><div class="lb-stat-lbl">Butuh Perhatian (&lt;40%)</div><div class="lb-stat-sub">${total?((pct40*100/total).toFixed(1)):'0'}% dari total</div></div>
+      <div><div class="lb-stat-val" data-target="${pct40}" data-format="int">0</div><div class="lb-stat-lbl">Butuh Perhatian (&lt;40%)</div><div class="lb-stat-sub">${total?((pct40*100/total).toFixed(1)):'0'}% dari total</div></div>
     </div>
   `;
+  animateValues(el);
+}
+
+/* =========================================================
+   ANIMATED COUNTER — number tween from 0 → target
+========================================================= */
+function animateValues(scope){
+  const targets = (scope || document).querySelectorAll('[data-target]');
+  targets.forEach(el => {
+    if(el.dataset.animated === '1') return;          // skip kalau sudah pernah
+    el.dataset.animated = '1';
+    const target = parseFloat(el.dataset.target) || 0;
+    const fmt = el.dataset.format || 'int';
+    const duration = 1200;                            // ms
+    const startTime = performance.now();
+
+    const formatVal = (v) => {
+      if(fmt === 'int')   return Math.round(v).toLocaleString('id-ID');
+      if(fmt === 'pct1')  return v.toFixed(1) + '%';
+      if(fmt === 'dec1')  return v.toFixed(1);
+      return String(v);
+    };
+
+    const tick = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      // easeOutCubic — fast start, soft landing
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = formatVal(target * eased);
+      if(progress < 1) requestAnimationFrame(tick);
+      else el.textContent = formatVal(target);       // pastikan exact value di akhir
+    };
+    requestAnimationFrame(tick);
+  });
 }
 
 /* =========================================================
@@ -1006,11 +1253,15 @@ function renderDashboard(){
 
   // Aspect cards
   const avgMind = avg(a=>a.mindful), avgAcc=avg(a=>a.account), avgSelf=avg(a=>a.selfDev);
-  document.getElementById('aspectCards').innerHTML = `
-    <div class="aspect-card mind"><div class="aspect-name">Mindful</div><div class="aspect-score">${avgMind.toFixed(1)}<span class="aspect-score-max"> / 35</span></div><div class="aspect-sub">Mentoring & Pembinaan · ${((avgMind/35)*100).toFixed(1)}% dari max</div></div>
-    <div class="aspect-card acc"><div class="aspect-name">Accountable</div><div class="aspect-score">${avgAcc.toFixed(1)}<span class="aspect-score-max"> / 15</span></div><div class="aspect-sub">Pre/Post Test + Assessment · ${((avgAcc/15)*100).toFixed(1)}% dari max</div></div>
-    <div class="aspect-card self"><div class="aspect-name">Self-Development</div><div class="aspect-score">${avgSelf.toFixed(1)}<span class="aspect-score-max"> / 50</span></div><div class="aspect-sub">Prestasi + Organisasi + IPK · ${((avgSelf/50)*100).toFixed(1)}% dari max</div></div>
+  const aspectEl = document.getElementById('aspectCards');
+  aspectEl.innerHTML = `
+    <div class="aspect-card mind clickable" data-aspect="mindful" onclick="toggleAspectDetail('mindful', this)"><div class="aspect-name">Mindful</div><div class="aspect-score"><span data-target="${avgMind}" data-format="dec1">0.0</span><span class="aspect-score-max"> / 35</span></div><div class="aspect-sub">Mentoring & Pembinaan · ${((avgMind/35)*100).toFixed(1)}% dari max</div></div>
+    <div class="aspect-card acc clickable" data-aspect="account" onclick="toggleAspectDetail('account', this)"><div class="aspect-name">Accountable</div><div class="aspect-score"><span data-target="${avgAcc}" data-format="dec1">0.0</span><span class="aspect-score-max"> / 15</span></div><div class="aspect-sub">Pre/Post Test + Assessment · ${((avgAcc/15)*100).toFixed(1)}% dari max</div></div>
+    <div class="aspect-card self clickable" data-aspect="selfDev" onclick="toggleAspectDetail('selfDev', this)"><div class="aspect-name">Self-Development</div><div class="aspect-score"><span data-target="${avgSelf}" data-format="dec1">0.0</span><span class="aspect-score-max"> / 50</span></div><div class="aspect-sub">Prestasi + Organisasi + IPK · ${((avgSelf/50)*100).toFixed(1)}% dari max</div></div>
   `;
+  animateValues(aspectEl);
+  // Reset detail saat re-render
+  closeAspectDetail();
 
   // Top 10 awardee
   document.getElementById('top10Awardee').innerHTML = _ranked.slice(0,10).map((a,i) => `
@@ -1035,7 +1286,7 @@ function renderDashboard(){
     .map(e => ({ kampus:e.kampus, avg: e.sum/e.count, count:e.count }))
     .sort((a,b) => b.avg - a.avg).slice(0,10);
   document.getElementById('top10Kampus').innerHTML = topK.map((a,i) => `
-    <div class="rank-item">
+    <div class="rank-item clickable" onclick="showKampusDetail('${escAttr(a.kampus)}')">
       <span class="rank-pos ${i===0?'gold':i===1?'silver':i===2?'bronze':''}">${i+1}</span>
       <div style="flex:1;min-width:0;">
         <div class="rank-name">${escH(a.kampus)}</div>
@@ -1055,33 +1306,35 @@ function renderDashboard(){
     <div class="hist">
       ${bins.map((v,i) => {
         const h = maxBin ? Math.max(2, v/maxBin*140) : 2;
-        return `<div class="hist-bar-wrap">
+        return `<div class="hist-bar-wrap ${v>0?'clickable':''}" ${v>0?`onclick="toggleHistDetail(${i}, this)"`:''}>
           <div class="hist-bar ${v===0?'zero':''}" style="height:${h}px;">${v?`<span class="hist-val">${v}</span>`:''}</div>
           <div class="hist-lbl">${i*10}–${i*10+9}%</div>
         </div>`;
       }).join('')}
     </div>`;
-  document.getElementById('histSub').textContent = `${total} awardee · bin 10%`;
+  document.getElementById('histSub').textContent = `${total} awardee · klik bar untuk detail`;
+  closeHistDetail();
 
   // Activity contribution bars (avg per activity / its max)
   const actRows = [
-    { lbl:'Mentoring',          val: avg(a=>a.sMent),  max:WEIGHTS.mentoring,  cls:'bf-mind' },
-    { lbl:'Pembinaan',          val: avg(a=>a.sPem),   max:WEIGHTS.pembinaan,  cls:'bf-mind' },
-    { lbl:'Pre Test',           val: avg(a=>a.sPre),   max:WEIGHTS.pre,        cls:'bf-acc'  },
-    { lbl:'Post Test',          val: avg(a=>a.sPost),  max:WEIGHTS.post,       cls:'bf-acc'  },
-    { lbl:'Quartal Assignment', val: avg(a=>a.sAss),   max:WEIGHTS.assessment, cls:'bf-acc'  },
-    { lbl:'Prestasi',           val: avg(a=>a.sPrest), max:WEIGHTS.prestasi,   cls:'bf-self' },
-    { lbl:'Organisasi',         val: avg(a=>a.sOrg),   max:WEIGHTS.organisasi, cls:'bf-self' },
-    { lbl:'IPK',                val: avg(a=>a.sIpk),   max:WEIGHTS.ipk,        cls:'bf-self' },
+    { key:'sMent',  lbl:'Mentoring',          val: avg(a=>a.sMent),  max:WEIGHTS.mentoring,  cls:'bf-mind' },
+    { key:'sPem',   lbl:'Pembinaan',          val: avg(a=>a.sPem),   max:WEIGHTS.pembinaan,  cls:'bf-mind' },
+    { key:'sPre',   lbl:'Pre Test',           val: avg(a=>a.sPre),   max:WEIGHTS.pre,        cls:'bf-acc'  },
+    { key:'sPost',  lbl:'Post Test',          val: avg(a=>a.sPost),  max:WEIGHTS.post,       cls:'bf-acc'  },
+    { key:'sAss',   lbl:'Quartal Assignment', val: avg(a=>a.sAss),   max:WEIGHTS.assessment, cls:'bf-acc'  },
+    { key:'sPrest', lbl:'Prestasi',           val: avg(a=>a.sPrest), max:WEIGHTS.prestasi,   cls:'bf-self' },
+    { key:'sOrg',   lbl:'Organisasi',         val: avg(a=>a.sOrg),   max:WEIGHTS.organisasi, cls:'bf-self' },
+    { key:'sIpk',   lbl:'IPK',                val: avg(a=>a.sIpk),   max:WEIGHTS.ipk,        cls:'bf-self' },
   ];
-  document.getElementById('activityBars').innerHTML = actRows.map(r => {
+  document.getElementById('activityBars').innerHTML = actRows.map((r,i) => {
     const pct = r.max ? (r.val/r.max*100) : 0;
-    return `<div class="asp-bar-row">
+    return `<div class="asp-bar-row clickable" onclick="toggleActivityDetail('${r.key}', '${escAttr(r.lbl)}', this)">
       <div class="asp-bar-lbl">${r.lbl}</div>
       <div class="asp-bar-track"><div class="asp-bar-fill ${r.cls}" style="width:${pct}%">${pct>15?pct.toFixed(0)+'%':''}</div></div>
       <div class="asp-bar-val">${r.val.toFixed(2)} / ${r.max}</div>
     </div>`;
   }).join('');
+  closeActivityDetail();
 
   // Distribution tab content
   renderDistribution();
@@ -1382,6 +1635,408 @@ function renderGap(){
     </div>`;
   }).join('');
 }
+
+/* =========================================================
+   INLINE DETAIL HANDLERS
+========================================================= */
+
+/* ===== ASPECT DETAIL ===== */
+function closeAspectDetail(){
+  const d = document.getElementById('aspectDetail');
+  if(d){ d.classList.remove('show'); d.innerHTML = ''; }
+  document.querySelectorAll('.aspect-card').forEach(c => c.classList.remove('active-detail'));
+}
+window.toggleAspectDetail = (key, btn) => {
+  const d = document.getElementById('aspectDetail');
+  if(!d) return;
+  const wasActive = btn.classList.contains('active-detail');
+  closeAspectDetail();
+  if(wasActive) return;
+  btn.classList.add('active-detail');
+
+  const meta = {
+    mindful:  { name:'Mindful',          max:35, comps:[
+      {lbl:'Mentoring',  field:'mentPct', score:'sMent', okF:'ment.ok', totF:'ment.total', weight:17.5},
+      {lbl:'Pembinaan',  field:'pemPct',  score:'sPem',  okF:'pem.ok',  totF:'pem.total',  weight:17.5},
+    ]},
+    account:  { name:'Accountable',      max:15, comps:[
+      {lbl:'Pre Test',           field:'prePct',  score:'sPre',  okF:'pre.ok',  totF:'pre.total',  weight:4},
+      {lbl:'Post Test',          field:'postPct', score:'sPost', okF:'post.ok', totF:'post.total', weight:4},
+      {lbl:'Quartal Assignment', field:'assPct',  score:'sAss',  okF:'ass.ok',  totF:'ass.total',  weight:7},
+    ]},
+    selfDev:  { name:'Self-Development', max:50, comps:[
+      {lbl:'Prestasi',  field:'prestPct', score:'sPrest', weight:20, special:'prestasi'},
+      {lbl:'Organisasi',field:'orgPct',   score:'sOrg',   weight:20, special:'org'},
+      {lbl:'IPK',       field:'ipkPct',   score:'sIpk',   weight:10, special:'ipk'},
+    ]},
+  }[key];
+  if(!meta) return;
+
+  const total = _ranked.length;
+  const totalScore = _ranked.reduce((s,a)=>s+a[key],0);
+  const avgScore = total ? totalScore/total : 0;
+  const sorted = [..._ranked].sort((a,b)=>b[key]-a[key]);
+  const top5 = sorted.slice(0,5);
+  const bot5 = sorted.slice(-5).reverse();
+  const above = _ranked.filter(a => (a[key]/meta.max) >= 0.7).length;
+  const below = _ranked.filter(a => (a[key]/meta.max) < 0.4).length;
+
+  const compHTML = meta.comps.map(c => {
+    const compAvg = _ranked.reduce((s,a)=>s+a[c.score],0)/(total||1);
+    const pct = c.weight ? (compAvg/c.weight*100) : 0;
+    return `<div class="id-stat-card">
+      <div class="id-stat-lbl">${c.lbl}</div>
+      <div class="id-stat-val">${compAvg.toFixed(2)}<span style="font-size:13px;color:#94a3b8;font-weight:600;"> / ${c.weight}</span></div>
+      <div class="id-stat-sub">${pct.toFixed(1)}% dari max bobot</div>
+    </div>`;
+  }).join('');
+
+  const renderRow = (a) => `<div class="id-row" onclick="showDetail('${escAttr(a.no_induk)}')">
+    <span class="id-row-rank">#${a.rank}</span>
+    <div style="flex:1;min-width:0;">
+      <div class="id-row-name">${escH(a.nama)}</div>
+      <div class="id-row-meta">${escH(a.kampus)} · Kelompok ${escH(a.kelompok)}</div>
+    </div>
+    <span class="id-row-val">${a[key].toFixed(2)} / ${meta.max}</span>
+  </div>`;
+
+  d.innerHTML = `
+    <div class="inline-detail-head">
+      <span class="pill">📊 Detail Aspek: ${meta.name}</span>
+      <button class="close-inline" onclick="closeAspectDetail()" aria-label="Tutup detail">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="inline-detail-grid">
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Rata-rata Aspek</div>
+        <div class="id-stat-val">${avgScore.toFixed(2)}<span style="font-size:13px;color:#94a3b8;font-weight:600;"> / ${meta.max}</span></div>
+        <div class="id-stat-sub">${((avgScore/meta.max)*100).toFixed(1)}% dari max</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Skor ≥ 70% (${meta.name})</div>
+        <div class="id-stat-val">${above.toLocaleString('id-ID')}</div>
+        <div class="id-stat-sub">${total?((above/total)*100).toFixed(1):'0'}% dari total</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Skor < 40% (${meta.name})</div>
+        <div class="id-stat-val" style="color:#dc2626;">${below.toLocaleString('id-ID')}</div>
+        <div class="id-stat-sub">${total?((below/total)*100).toFixed(1):'0'}% dari total</div>
+      </div>
+      ${compHTML}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;">
+      <div>
+        <div style="font-size:11.5px;font-weight:700;color:#0d9488;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">🏆 Top 5 Tertinggi</div>
+        <div class="inline-detail-list">${top5.map(renderRow).join('')}</div>
+      </div>
+      <div>
+        <div style="font-size:11.5px;font-weight:700;color:#dc2626;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">⚠️ Top 5 Terendah</div>
+        <div class="inline-detail-list">${bot5.map(renderRow).join('')}</div>
+      </div>
+    </div>
+  `;
+  // Trigger reflow + show with animation
+  requestAnimationFrame(() => d.classList.add('show'));
+  // Smooth scroll into view
+  setTimeout(() => d.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
+};
+
+/* ===== HISTOGRAM BIN DETAIL ===== */
+function closeHistDetail(){
+  const d = document.getElementById('histDetail');
+  if(d){ d.classList.remove('show'); d.innerHTML = ''; }
+  document.querySelectorAll('.hist-bar-wrap').forEach(c => c.classList.remove('active-detail'));
+}
+window.toggleHistDetail = (binIdx, btn) => {
+  const d = document.getElementById('histDetail');
+  if(!d) return;
+  const wasActive = btn.classList.contains('active-detail');
+  closeHistDetail();
+  if(wasActive) return;
+  btn.classList.add('active-detail');
+
+  const lo = binIdx*10, hi = binIdx*10+9;
+  const inBin = _ranked.filter(a => {
+    let b = Math.floor(a.total/10); if(b>=10) b=9;
+    return b === binIdx;
+  }).sort((a,b)=>b.total-a.total);
+
+  // Group by kampus
+  const byKampus = new Map();
+  inBin.forEach(a => {
+    const k = a.kampus || '—';
+    byKampus.set(k, (byKampus.get(k)||0)+1);
+  });
+  const topKampus = Array.from(byKampus.entries())
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0,5);
+
+  const total = _ranked.length;
+  const pctOfTotal = total ? (inBin.length/total*100) : 0;
+  const avgInBin = inBin.length ? inBin.reduce((s,a)=>s+a.total,0)/inBin.length : 0;
+
+  const renderRow = (a, i) => `<div class="id-row" onclick="showDetail('${escAttr(a.no_induk)}')">
+    <span class="id-row-rank">#${a.rank}</span>
+    <div style="flex:1;min-width:0;">
+      <div class="id-row-name">${escH(a.nama)}</div>
+      <div class="id-row-meta">${escH(a.no_induk)} · ${escH(a.kampus)}</div>
+    </div>
+    <span class="id-row-val">${a.total.toFixed(1)}%</span>
+  </div>`;
+
+  const showRows = inBin.slice(0, 10);
+  const moreCount = Math.max(0, inBin.length - 10);
+
+  d.innerHTML = `
+    <div class="inline-detail-head">
+      <span class="pill">📈 Bin Skor: ${lo}–${hi}%</span>
+      <button class="close-inline" onclick="closeHistDetail()" aria-label="Tutup detail">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="inline-detail-grid">
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Total Awardee</div>
+        <div class="id-stat-val">${inBin.length.toLocaleString('id-ID')}</div>
+        <div class="id-stat-sub">${pctOfTotal.toFixed(1)}% dari total</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Rata-rata di Bin</div>
+        <div class="id-stat-val">${avgInBin.toFixed(1)}<span style="font-size:13px;color:#94a3b8;font-weight:600;">%</span></div>
+        <div class="id-stat-sub">Range: ${lo}–${hi}%</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Kampus Terbanyak</div>
+        <div class="id-stat-val" style="font-size:14px;line-height:1.3;">${topKampus[0]?escH(topKampus[0][0]):'—'}</div>
+        <div class="id-stat-sub">${topKampus[0]?topKampus[0][1]+' awardee':''}</div>
+      </div>
+    </div>
+    ${topKampus.length > 1 ? `
+    <div style="margin-top:14px;">
+      <div style="font-size:11.5px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Sebaran Kampus</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${topKampus.map(([k,c]) => `<span style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:#f1f5f9;border-radius:999px;font-size:11.5px;color:#475569;"><b style="color:#0d9488;">${c}</b> ${escH(k)}</span>`).join('')}
+      </div>
+    </div>` : ''}
+    <div style="margin-top:14px;">
+      <div style="font-size:11.5px;font-weight:700;color:#0d9488;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Awardee di Bin Ini ${inBin.length>10?`(menampilkan 10 dari ${inBin.length})`:''}</div>
+      <div class="inline-detail-list">${showRows.map(renderRow).join('')}</div>
+      ${moreCount > 0 ? `<div style="font-size:11.5px;color:#94a3b8;text-align:center;margin-top:8px;">+ ${moreCount} awardee lain — buka tab "Ranking Lengkap" untuk lihat semua</div>` : ''}
+    </div>
+  `;
+  requestAnimationFrame(() => d.classList.add('show'));
+  setTimeout(() => d.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
+};
+
+/* ===== ACTIVITY DETAIL ===== */
+function closeActivityDetail(){
+  const d = document.getElementById('activityDetail');
+  if(d){ d.classList.remove('show'); d.innerHTML = ''; }
+  document.querySelectorAll('.asp-bar-row').forEach(c => c.classList.remove('active-detail'));
+}
+window.toggleActivityDetail = (key, label, btn) => {
+  const d = document.getElementById('activityDetail');
+  if(!d) return;
+  const wasActive = btn.classList.contains('active-detail');
+  closeActivityDetail();
+  if(wasActive) return;
+  btn.classList.add('active-detail');
+
+  const total = _ranked.length;
+  const sorted = [..._ranked].sort((a,b) => b[key] - a[key]);
+  const top5 = sorted.slice(0,5);
+  const sum = _ranked.reduce((s,a)=>s+a[key],0);
+  const avg = total ? sum/total : 0;
+  const max = Math.max(0, ...(_ranked.map(a=>a[key])));
+  const min = _ranked.length ? Math.min(...(_ranked.map(a=>a[key]))) : 0;
+
+  // Map key to weight + raw activity field
+  const meta = {
+    sMent:  { weight:WEIGHTS.mentoring,  okF:a=>a.ment, pctF:'mentPct', desc:'Hadir mentoring' },
+    sPem:   { weight:WEIGHTS.pembinaan,  okF:a=>a.pem,  pctF:'pemPct',  desc:'Hadir pembinaan' },
+    sPre:   { weight:WEIGHTS.pre,        okF:a=>a.pre,  pctF:'prePct',  desc:'Hadir pre test' },
+    sPost:  { weight:WEIGHTS.post,       okF:a=>a.post, pctF:'postPct', desc:'Hadir post test' },
+    sAss:   { weight:WEIGHTS.assessment, okF:a=>a.ass,  pctF:'assPct',  desc:'Hadir assessment' },
+    sPrest: { weight:WEIGHTS.prestasi,   okF:null,      pctF:'prestPct',desc:'Poin prestasi' },
+    sOrg:   { weight:WEIGHTS.organisasi, okF:null,      pctF:'orgPct',  desc:'Poin organisasi' },
+    sIpk:   { weight:WEIGHTS.ipk,        okF:null,      pctF:'ipkPct',  desc:'IPK awardee' },
+  }[key] || { weight:0, desc:'' };
+
+  // Stats khusus untuk aktivitas absensi
+  let absenStats = '';
+  if(meta.okF){
+    let totalEv = 0, totalOk = 0, awardeeWithData = 0;
+    _ranked.forEach(a => {
+      const o = meta.okF(a);
+      if(o.total > 0){ awardeeWithData++; totalEv += o.total; totalOk += o.ok; }
+    });
+    const rate = totalEv ? (totalOk/totalEv*100) : 0;
+    absenStats = `
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Total Sesi</div>
+        <div class="id-stat-val">${totalEv.toLocaleString('id-ID')}</div>
+        <div class="id-stat-sub">${awardeeWithData} awardee terlibat</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Tingkat Kehadiran</div>
+        <div class="id-stat-val">${rate.toFixed(1)}<span style="font-size:13px;color:#94a3b8;font-weight:600;">%</span></div>
+        <div class="id-stat-sub">${totalOk.toLocaleString('id-ID')} / ${totalEv.toLocaleString('id-ID')} hadir</div>
+      </div>`;
+  }
+
+  const renderRow = (a) => {
+    const subText = meta.okF ? `${meta.okF(a).ok}/${meta.okF(a).total} hadir · ${(a[meta.pctF]*100).toFixed(0)}%` :
+      (key==='sIpk' ? `IPK ${a.ipk.toFixed(2)}` :
+       key==='sPrest' ? `${a.prestasiCount} kegiatan · ${a.prestasiPoints.toFixed(1)} pts` :
+       `${a.orgCount} keterlibatan · ${a.orgPoints.toFixed(1)} pts`);
+    return `<div class="id-row" onclick="showDetail('${escAttr(a.no_induk)}')">
+      <span class="id-row-rank">#${a.rank}</span>
+      <div style="flex:1;min-width:0;">
+        <div class="id-row-name">${escH(a.nama)}</div>
+        <div class="id-row-meta">${escH(a.kampus)} · ${subText}</div>
+      </div>
+      <span class="id-row-val">${a[key].toFixed(2)}</span>
+    </div>`;
+  };
+
+  d.innerHTML = `
+    <div class="inline-detail-head">
+      <span class="pill">⚡ Detail: ${escH(label)}</span>
+      <button class="close-inline" onclick="closeActivityDetail()" aria-label="Tutup detail">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="inline-detail-grid">
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Rata-rata Skor</div>
+        <div class="id-stat-val">${avg.toFixed(2)}<span style="font-size:13px;color:#94a3b8;font-weight:600;"> / ${meta.weight}</span></div>
+        <div class="id-stat-sub">${meta.weight?(avg/meta.weight*100).toFixed(1):'0'}% dari max bobot</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Skor Tertinggi</div>
+        <div class="id-stat-val" style="color:#0d9488;">${max.toFixed(2)}</div>
+        <div class="id-stat-sub">Skor maksimum aktivitas</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Skor Terendah</div>
+        <div class="id-stat-val" style="color:#dc2626;">${min.toFixed(2)}</div>
+        <div class="id-stat-sub">Skor minimum aktivitas</div>
+      </div>
+      ${absenStats}
+    </div>
+    <div style="margin-top:14px;">
+      <div style="font-size:11.5px;font-weight:700;color:#0d9488;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">🏆 Top 5 Awardee</div>
+      <div class="inline-detail-list">${top5.map(renderRow).join('')}</div>
+    </div>
+  `;
+  requestAnimationFrame(() => d.classList.add('show'));
+  setTimeout(() => d.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 200);
+};
+
+/* =========================================================
+   KAMPUS DETAIL — modal popup
+========================================================= */
+window.showKampusDetail = (kampusName) => {
+  const k = String(kampusName);
+  const list = _ranked.filter(a => (a.kampus||'—') === k).sort((a,b)=>b.total-a.total);
+  if(!list.length) return;
+
+  const total = list.length;
+  const avg = list.reduce((s,a)=>s+a.total,0)/total;
+  const top = list[0];
+  const above80 = list.filter(a=>a.total>=80).length;
+  const below40 = list.filter(a=>a.total<40).length;
+  const avgMind = list.reduce((s,a)=>s+a.mindful,0)/total;
+  const avgAcc  = list.reduce((s,a)=>s+a.account,0)/total;
+  const avgSelf = list.reduce((s,a)=>s+a.selfDev,0)/total;
+  const avgIpk = list.reduce((s,a)=>s+(a.ipk||0),0)/total;
+
+  // Group by kelompok
+  const byKel = new Map();
+  list.forEach(a => {
+    const kel = a.kelompok || '—';
+    if(!byKel.has(kel)) byKel.set(kel, { sum:0, count:0 });
+    const e = byKel.get(kel); e.sum += a.total; e.count++;
+  });
+  const kelArr = Array.from(byKel.entries())
+    .map(([nm,e]) => ({ nm, avg:e.sum/e.count, count:e.count }))
+    .sort((a,b)=>b.avg-a.avg);
+
+  const initials = mkInit(k);
+
+  document.getElementById('detailBody').innerHTML = `
+    <div class="lb-modal-head">
+      <div class="lb-avatar" style="background:linear-gradient(135deg,#0d9488,#0891b2);">${initials}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="lb-modal-name">${escH(k)}</div>
+        <div class="lb-modal-sub">${total} awardee · Rata-rata IPK ${avgIpk.toFixed(2)}</div>
+      </div>
+      <div class="lb-modal-score-box">
+        <div class="lb-modal-rank">Rata-rata</div>
+        <div class="lb-modal-total">${avg.toFixed(1)}%</div>
+        <div class="lb-modal-total-lbl">Skor Total</div>
+      </div>
+    </div>
+
+    <div class="inline-detail-grid" style="margin-bottom:14px;">
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Total Awardee</div>
+        <div class="id-stat-val">${total.toLocaleString('id-ID')}</div>
+        <div class="id-stat-sub">Dari kampus ini</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Skor ≥ 80%</div>
+        <div class="id-stat-val" style="color:#0d9488;">${above80.toLocaleString('id-ID')}</div>
+        <div class="id-stat-sub">${((above80/total)*100).toFixed(1)}% dari kampus</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Butuh Perhatian</div>
+        <div class="id-stat-val" style="color:#dc2626;">${below40.toLocaleString('id-ID')}</div>
+        <div class="id-stat-sub">${((below40/total)*100).toFixed(1)}% di bawah 40%</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Mindful</div>
+        <div class="id-stat-val" style="color:#10b981;">${avgMind.toFixed(1)}<span style="font-size:13px;color:#94a3b8;font-weight:600;"> / 35</span></div>
+        <div class="id-stat-sub">${((avgMind/35)*100).toFixed(1)}%</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Accountable</div>
+        <div class="id-stat-val" style="color:#3b82f6;">${avgAcc.toFixed(1)}<span style="font-size:13px;color:#94a3b8;font-weight:600;"> / 15</span></div>
+        <div class="id-stat-sub">${((avgAcc/15)*100).toFixed(1)}%</div>
+      </div>
+      <div class="id-stat-card">
+        <div class="id-stat-lbl">Self-Development</div>
+        <div class="id-stat-val" style="color:#f59e0b;">${avgSelf.toFixed(1)}<span style="font-size:13px;color:#94a3b8;font-weight:600;"> / 50</span></div>
+        <div class="id-stat-sub">${((avgSelf/50)*100).toFixed(1)}%</div>
+      </div>
+    </div>
+
+    ${kelArr.length > 1 ? `
+    <div style="margin-bottom:14px;">
+      <div style="font-size:11.5px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Per Kelompok (${kelArr.length} kelompok)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${kelArr.slice(0,12).map(e => `<span style="display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:#f1f5f9;border-radius:999px;font-size:11.5px;color:#475569;"><b style="color:#0d9488;">${e.avg.toFixed(0)}%</b> ${escH(e.nm)} <span style="color:#94a3b8;">(${e.count})</span></span>`).join('')}
+      </div>
+    </div>` : ''}
+
+    <div>
+      <div style="font-size:11.5px;font-weight:700;color:#0d9488;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">📋 Daftar Awardee — ${total} orang</div>
+      <div class="inline-detail-list" style="max-height:420px;overflow-y:auto;border:1px solid #e5e7eb;border-radius:12px;padding:6px;">
+        ${list.map((a,i) => `
+          <div class="id-row" onclick="showDetail('${escAttr(a.no_induk)}')">
+            <span class="id-row-rank">#${a.rank}</span>
+            <div style="flex:1;min-width:0;">
+              <div class="id-row-name">${escH(a.nama)}</div>
+              <div class="id-row-meta">${escH(a.no_induk)} · Kelompok ${escH(a.kelompok)}${a.fakultas&&a.fakultas!=='—'?' · '+escH(a.fakultas):''}</div>
+            </div>
+            <span class="id-row-val" style="color:${a.total>=80?'#0d9488':a.total<40?'#dc2626':'#78350f'};">${a.total.toFixed(1)}%</span>
+          </div>`).join('')}
+      </div>
+    </div>
+  `;
+  document.getElementById('detailModalBg').classList.add('show');
+};
 
 /* =========================================================
    DETAIL MODAL

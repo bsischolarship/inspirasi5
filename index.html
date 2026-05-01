@@ -2474,6 +2474,13 @@ const arrKelompok= Object.values(kelompok)
         el.style.transform = el.dataset.act===actKey ? 'translateY(-3px) scale(1.05)' : '';
       });
 
+      // Auto-buka Tren Partisipasi Bulanan saat ring diklik
+      const trenDet = document.getElementById('trenDetail');
+      const trenBtn = document.getElementById('trenDetailBtn');
+      if (trenDet && trenDet.style.display === 'none') {
+        if (typeof toggleTrenDetail === 'function') toggleTrenDetail();
+      }
+
       const detail = document.getElementById('actRingDetail');
       detail.style.display = 'block';
       detail.style.animation = 'hkpi-in .3s ease both';
@@ -2606,6 +2613,13 @@ const arrKelompok= Object.values(kelompok)
     window.closeActRingDetail = function() {
       document.getElementById('actRingDetail').style.display = 'none';
       document.querySelectorAll('#activityRings [data-act]').forEach(el=>{ el.style.opacity=''; el.style.transform=''; });
+      // Tutup juga Tren Partisipasi Bulanan
+      const trenDet = document.getElementById('trenDetail');
+      const trenBtn = document.getElementById('trenDetailBtn');
+      if (trenDet && trenDet.style.display !== 'none') {
+        trenDet.style.display = 'none';
+        if (trenBtn) trenBtn.innerHTML = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg> Lihat detail`;
+      }
     };
   })();
 
