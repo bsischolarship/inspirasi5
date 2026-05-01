@@ -1154,14 +1154,7 @@
     }
     .inline-detail-body {
       padding: 18px 20px 20px;
-      max-height: 70vh;
-      overflow-y: auto;
-      overflow-x: hidden;
     }
-    .inline-detail-body::-webkit-scrollbar { width: 8px; }
-    .inline-detail-body::-webkit-scrollbar-track { background: transparent; }
-    .inline-detail-body::-webkit-scrollbar-thumb { background: #ccfbf1; border-radius: 4px; }
-    .inline-detail-body::-webkit-scrollbar-thumb:hover { background: #99f6e4; }
 
     /* Color variants per detail type */
     .inline-detail.id--kpi      { border-color: #fcd34d; }
@@ -1188,7 +1181,7 @@
     .inline-detail.id--prestasi { border-color: #99f6e4; } /* default teal */
 
     @media (max-width: 700px) {
-      .inline-detail-body { padding: 14px 14px 16px; max-height: 80vh; }
+      .inline-detail-body { padding: 14px 14px 16px; }
       .inline-detail-head { padding: 10px 14px; }
       .inline-detail-title { font-size: 12.5px; }
     }
@@ -1213,20 +1206,16 @@
     }
     .pr-tab.expanded svg { color: var(--tc, #0d9488) !important; transform: scale(1.1); }
 
-    .browse-detail-host {
-      max-height: 0;
-      opacity: 0;
-      overflow: hidden;
-      transition: max-height .55s cubic-bezier(.4,0,.2,1),
-                  opacity .35s ease,
-                  margin .35s ease;
-      margin-bottom: 0;
+    .browse-detail-host { display:none; }
+    #browsePage { animation: tabPanelInUp .3s cubic-bezier(.2,.8,.2,1); }
+    .browse-back-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: #f1f5f9; border: 1.5px solid #e2e8f0;
+      color: #374151; font-size: 13px; font-weight: 700;
+      padding: 8px 16px; border-radius: 10px; cursor: pointer;
+      margin-bottom: 18px; transition: background .15s;
     }
-    .browse-detail-host.show {
-      max-height: 5000px;
-      opacity: 1;
-      margin-bottom: 22px;
-    }
+    .browse-back-btn:hover { background: #e2e8f0; }
     .browse-detail {
       background: #fff;
       border: 1.5px solid #e5e7eb;
@@ -1359,16 +1348,16 @@
       display: flex; align-items: center; gap: 10px;
       padding: 9px 12px; border-radius: 10px;
       background: #f8fafc;
+      border: 1px solid transparent;
       cursor: pointer;
-      transition: all .18s;
+      transition: background .18s, border-color .18s, box-shadow .18s, transform .18s;
       animation: bsRowIn .35s ease both;
     }
     .bs-top-row:nth-child(1){animation-delay:.05s} .bs-top-row:nth-child(2){animation-delay:.08s} .bs-top-row:nth-child(3){animation-delay:.11s} .bs-top-row:nth-child(4){animation-delay:.14s} .bs-top-row:nth-child(5){animation-delay:.17s} .bs-top-row:nth-child(6){animation-delay:.2s} .bs-top-row:nth-child(7){animation-delay:.23s} .bs-top-row:nth-child(8){animation-delay:.26s} .bs-top-row:nth-child(9){animation-delay:.29s} .bs-top-row:nth-child(10){animation-delay:.32s}
     @keyframes bsRowIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
     .bs-top-row:hover {
       background: #fff;
-      border: 1px solid var(--bs-c, #0d9488);
-      padding: 8px 11px;
+      border-color: var(--bs-c, #0d9488);
       box-shadow: 0 4px 12px color-mix(in srgb, var(--bs-c, #0d9488) 15%, transparent);
       transform: translateX(3px);
     }
@@ -1688,7 +1677,7 @@
       </div>
 
       <!-- TABS -->
-      <div class="pr-tabs">
+      <div class="pr-tabs" id="prTabsBar">
         <button class="pr-tab active" data-tab="insight" onclick="switchTab('insight',this)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 21H4.6c-.34 0-.6-.26-.6-.6V3"/><path d="m8 11 4-7 4 3 4-6"/></svg>
           Dashboard & Insight
@@ -1883,6 +1872,12 @@
           <div class="tbl-footer" id="pg-kampus" style="display:none;"></div>
         </div>
       </div>
+
+      <!-- BROWSE PAGE — full-page view replacing tabs -->
+      <div id="browsePage" style="display:none;"></div>
+
+      <!-- DETAIL PAGE — full-page detail view -->
+      <div id="detailPage" style="display:none;"></div>
 
     </div><!-- /pr-page -->
   </main>
@@ -2532,18 +2527,27 @@ function barChart(entries, colorMap, onClickJs){
   }).join('');
 }
 
-/* Helper: switch to "Semua" tab and pre-fill a filter */
+/* Open browse page (Semua tab) with a pre-applied filter */
 window.jumpToSemuaWithFilter = function(filterType, value) {
-  const tabBtn = document.querySelector('.pr-tab[data-tab="semua"]');
-  if (tabBtn) tabBtn.click();
-  const map = { tingkatan: 'ft-semua', juara: 'fj-semua', kampus: 'fk-semua' };
-  const id = map[filterType];
-  if (!id) return;
-  const el = document.getElementById(id);
-  if (!el) return;
-  if (typeof el.setValues === 'function') el.setValues([value]);
-  else el.value = value;
-  if (typeof filterPanel === 'function') filterPanel('semua');
+  const keyMap = { tingkatan: 'ft', juara: 'fj', kampus: 'fk' };
+  const filterKey = keyMap[filterType];
+  if (!filterKey) return;
+  const filter = {};
+  filter[filterKey] = value;
+  openBrowseWithFilter('semua', filter, value);
+};
+
+window.openBrowseWithFilter = function(tab, filterObj, label) {
+  if (!_browseFilter[tab]) return;
+  Object.keys(_browseFilter[tab]).forEach(k => _browseFilter[tab][k] = '');
+  Object.assign(_browseFilter[tab], filterObj);
+  _browseSource = label || null;
+  const btn = document.querySelector(`.pr-tab[data-tab="${tab}"]`);
+  _browseExpanded = null;
+  document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('active','expanded'));
+  if (btn) btn.classList.add('active');
+  _browseExpanded = tab;
+  renderBrowseDetail(tab);
 };
 
 function renderInsights(){
@@ -3014,12 +3018,7 @@ window.toggleBrowseDetail = (type, btn) => {
   }
   // Direct tab click → clear KPI source label
   _browseSource = null;
-  // Make sure Insight panel is the visible one (browse detail lives there)
   document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('active','expanded'));
-  document.querySelectorAll('.pr-tab-panel').forEach(p => p.classList.remove('active'));
-  const insightPanel = document.getElementById('panel-insight');
-  if (insightPanel) insightPanel.classList.add('active');
-  // Mark clicked tab as active
   if (btn) btn.classList.add('active');
   _browseExpanded = type;
   // Direct tab click also resets filters
@@ -3031,11 +3030,18 @@ window.closeBrowseDetail = (immediate) => {
   _browseExpanded = null;
   _browseSource = null;
   document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('expanded'));
-  const host = document.getElementById('browseDetailHost');
-  if (!host) return;
-  host.classList.remove('show');
-  if (immediate) { host.innerHTML = ''; return; }
-  setTimeout(() => { if (_browseExpanded === null) host.innerHTML = ''; }, 450);
+  const bp = document.getElementById('browsePage');
+  if (bp) { bp.style.display = 'none'; bp.innerHTML = ''; }
+  // Restore tabs + insight panel
+  document.getElementById('prTabsBar').style.display = '';
+  const insightTab = document.querySelector('.pr-tab[data-tab="insight"]');
+  if (insightTab) {
+    document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('active'));
+    insightTab.classList.add('active');
+  }
+  document.querySelectorAll('.pr-tab-panel').forEach(p => p.classList.remove('active'));
+  const insightPanel = document.getElementById('panel-insight');
+  if (insightPanel) insightPanel.classList.add('active');
 };
 
 /* ----- Filtered data per browse tab ----- */
@@ -3454,7 +3460,7 @@ function _bsTotalCount(type){
 }
 
 function _bsRefreshBody(type){
-  const host = document.getElementById('browseDetailHost');
+  const host = document.getElementById('browsePage');
   if (!host || _browseExpanded !== type) return;
   const data = type==='semua' ? _bsFilteredSemua() : (type==='awardee' ? _bsFilteredAwardee() : _bsFilteredKampus());
   const total = _bsTotalCount(type);
@@ -3503,12 +3509,20 @@ function _bsRefreshBody(type){
 }
 
 function renderBrowseDetail(type){
-  const host = document.getElementById('browseDetailHost');
-  if (!host) return;
+  const bp = document.getElementById('browsePage');
+  if (!bp) return;
   const data = type==='semua' ? _bsFilteredSemua() : (type==='awardee' ? _bsFilteredAwardee() : _bsFilteredKampus());
   const total = _bsTotalCount(type);
   const accent = type==='semua'?'#0d9488':type==='awardee'?'#1d4ed8':'#7c3aed';
-  host.innerHTML = `
+  // Hide tabs, show browse page
+  document.getElementById('prTabsBar').style.display = 'none';
+  document.querySelectorAll('.pr-tab-panel').forEach(p => p.classList.remove('active'));
+  bp.style.display = 'block';
+  bp.innerHTML = `
+    <button class="browse-back-btn" onclick="closeBrowseDetail()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Kembali
+    </button>
     <div class="browse-detail bd--${type}">
       ${_bsHeader(type, data.length, total)}
       <div class="browse-body">
@@ -3529,9 +3543,6 @@ function renderBrowseDetail(type){
       </div>
     </div>
   `;
-  requestAnimationFrame(() => {
-    host.classList.add('show');
-  });
 }
 
 /* =============================================
@@ -4635,68 +4646,76 @@ function renderKpiDetail(type){
    INLINE DETAIL HELPER — render detail panel right
    below the chart / element the user clicked.
 ============================================= */
+let _detailFromBrowse = false; // track if detail was opened from browse page
+
 window.showInlineDetail = function(triggerEl, htmlContent, opts){
   opts = opts || {};
-  // Close any existing inline detail first
   closeInlineDetail(true);
 
-  // Determine where to insert: prefer the closest insight-card (chart),
-  // then KPI stats row, then table wrap, then talent finder area.
-  let host = null;
-  if (triggerEl) {
-    host = triggerEl.closest && (
-      triggerEl.closest('.browse-detail-host')          // NEW: nested click inside browse detail
-      || triggerEl.closest('.insight-card')
-      || (triggerEl.closest('.pr-stat') && triggerEl.closest('.pr-stat').parentElement) // .pr-stats row
-      || triggerEl.closest('.tbl-wrap')
-      || triggerEl.closest('.tf-grid')
-      || triggerEl.closest('.tf-hero')
-    );
+  const bp = document.getElementById('browsePage');
+  const tabsBar = document.getElementById('prTabsBar');
+  _detailFromBrowse = bp && bp.style.display !== 'none';
+
+  // Hide current view
+  if (_detailFromBrowse) {
+    bp.style.display = 'none';
+  } else {
+    if (tabsBar) tabsBar.style.display = 'none';
+    document.querySelectorAll('.pr-tab-panel').forEach(p => p.classList.remove('active'));
   }
-  if (!host) {
-    // Fallback: end of currently-active tab panel, or main page
-    host = document.querySelector('.pr-tab-panel.active') || document.getElementById('prMainPage');
-    // Append-style fallback uses last child of host
-    if (host && host.lastElementChild) host = host.lastElementChild;
-  }
-  if (!host) return null;
 
   const variant = opts.variant || 'prestasi';
   const crumb = escapeHtml(opts.crumb || 'Detail');
   const name  = escapeHtml(opts.name  || '');
   const sub   = opts.sub ? `<div style="font-size:11.5px;color:#6b7280;margin-top:2px;font-weight:500;">${escapeHtml(opts.sub)}</div>` : '';
 
-  const panel = document.createElement('div');
-  panel.className = 'inline-detail id--' + variant;
-  panel.id = 'inlineDetailActive';
-  panel.setAttribute('data-trigger-source', opts.source || '');
-  panel.innerHTML = `
-    <div class="inline-detail-head">
-      <div class="inline-detail-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-        <div style="flex:1;min-width:0;">
-          <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
-            <span class="it-crumb">${crumb}</span>
-            ${name ? `<span class="it-name">${name}</span>` : ''}
+  const detailPage = document.getElementById('detailPage');
+  detailPage.style.display = 'block';
+  detailPage.innerHTML = `
+    <button class="browse-back-btn" onclick="closeInlineDetail()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Kembali
+    </button>
+    <div class="inline-detail id--${variant}" id="inlineDetailActive" data-trigger-source="${escapeHtml(opts.source||'')}">
+      <div class="inline-detail-head">
+        <div class="inline-detail-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;">
+              <span class="it-crumb">${crumb}</span>
+              ${name ? `<span class="it-name">${name}</span>` : ''}
+            </div>
+            ${sub}
           </div>
-          ${sub}
         </div>
       </div>
-      <button class="inline-detail-close" onclick="closeInlineDetail()" aria-label="Tutup detail" title="Tutup detail">×</button>
+      <div class="inline-detail-body">${htmlContent}</div>
     </div>
-    <div class="inline-detail-body">${htmlContent}</div>
   `;
-  host.insertAdjacentElement('afterend', panel);
-
-  return panel;
+  return detailPage;
 };
 
 window.closeInlineDetail = function(immediate){
-  const el = document.getElementById('inlineDetailActive');
-  if (!el) return;
-  if (immediate) { el.remove(); return; }
-  el.classList.add('closing');
-  setTimeout(() => { if (el && el.parentNode) el.remove(); }, 200);
+  const detailPage = document.getElementById('detailPage');
+  if (!detailPage || detailPage.style.display === 'none') return;
+  detailPage.style.display = 'none';
+  detailPage.innerHTML = '';
+
+  const bp = document.getElementById('browsePage');
+  const tabsBar = document.getElementById('prTabsBar');
+  if (_detailFromBrowse && bp) {
+    bp.style.display = 'block';
+  } else {
+    if (tabsBar) tabsBar.style.display = '';
+    document.querySelectorAll('.pr-tab-panel').forEach(p => p.classList.remove('active'));
+    const insightTab = document.querySelector('.pr-tab[data-tab="insight"]');
+    if (insightTab) {
+      document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('active'));
+      insightTab.classList.add('active');
+    }
+    const insightPanel = document.getElementById('panel-insight');
+    if (insightPanel) insightPanel.classList.add('active');
+  }
 };
 
 /* Resolve the element that triggered the current inline onclick.
@@ -4734,12 +4753,7 @@ window.openBrowseFromKpi = function(kpiType){
     _browseExpanded = null;
     if (btn) {
       document.querySelectorAll('.pr-tab').forEach(t => t.classList.remove('active','expanded'));
-      document.querySelectorAll('.pr-tab-panel').forEach(p => p.classList.remove('active'));
-      const insightTab = document.querySelector('.pr-tab[data-tab="insight"]');
-      if (insightTab) insightTab.classList.add('active');
-      const insightPanel = document.getElementById('panel-insight');
-      if (insightPanel) insightPanel.classList.add('active');
-      btn.classList.add('expanded');
+      btn.classList.add('active');
       _browseExpanded = cfg.tab;
       renderBrowseDetail(cfg.tab);
     }
