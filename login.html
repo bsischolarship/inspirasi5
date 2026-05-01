@@ -55,14 +55,23 @@
       position: relative;
       overflow: hidden;
       color: #fff;
-      padding: 40px 56px 44px;
+      padding: 32px 56px 44px;
       display: flex;
       flex-direction: column;
       background: #034440;
     }
 
     /* Brand mark di atas, mid di bawah peta, footer di paling bawah */
-    .brand-top { position: relative; z-index: 4; }
+    .brand-top {
+      position: relative;
+      z-index: 4;
+      margin-bottom: auto;
+      animation: brand-top-in .7s cubic-bezier(.22,1,.36,1) both;
+    }
+    @keyframes brand-top-in {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
     .brand-mid {
       position: relative;
       z-index: 4;
@@ -185,27 +194,35 @@
       gap: 14px;
       padding: 10px 18px 10px 10px;
       background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.20);
+      border: 1px solid rgba(255,255,255,.22);
       border-radius: 999px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      animation: markIn 1s cubic-bezier(.2,.8,.2,1) both;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      animation: markIn .8s .1s cubic-bezier(.22,1,.36,1) both;
+      transition: background .2s, border-color .2s, transform .2s;
+      cursor: default;
+    }
+    .brand-mark:hover {
+      background: rgba(255,255,255,.16);
+      border-color: rgba(255,255,255,.35);
+      transform: translateY(-2px);
     }
     @keyframes markIn {
-      from { opacity: 0; transform: translateY(-12px) scale(.95); }
+      from { opacity: 0; transform: translateY(-16px) scale(.93); }
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
     .brand-mark img {
-      width: 40px; height: 40px;
+      width: 42px; height: 42px;
       flex-shrink: 0;
       background: #fff;
       border-radius: 50%;
       padding: 5px;
       object-fit: contain;
-      animation: logoSpin 1.2s cubic-bezier(.2,.8,.2,1) both;
+      animation: logoSpin 1s .2s cubic-bezier(.34,1.56,.64,1) both;
+      box-shadow: 0 0 0 3px rgba(255,255,255,.15), 0 4px 12px rgba(0,0,0,.2);
     }
     @keyframes logoSpin {
-      from { opacity: 0; transform: scale(.5) rotate(-90deg); }
+      from { opacity: 0; transform: scale(.3) rotate(-120deg); }
       to   { opacity: 1; transform: scale(1) rotate(0deg); }
     }
     .brand-mark-text {
@@ -913,6 +930,252 @@
         transition-duration: .01ms !important;
       }
     }
+
+    /* ============================================================
+       ZOOM TOUR — focus per wilayah dengan kamera viewBox
+       ============================================================ */
+    /* Saat tour aktif, pause animasi drift supaya kamera stabil */
+    .indo-map.touring { animation-play-state: paused !important; }
+
+    /* Pin badge: transisi halus untuk highlight & dim */
+    .map-badge {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+    }
+    .map-badge.tour-dim {
+      opacity: 0.18 !important;
+      transition: opacity .35s cubic-bezier(.2,.8,.2,1) !important;
+    }
+    .map-badge.tour-focus {
+      opacity: 1 !important;
+      transform: scale(1.55) translateY(-2px) !important;
+      transition:
+        opacity .35s cubic-bezier(.2,.8,.2,1),
+        transform .55s cubic-bezier(.34,1.56,.64,1) !important;
+      filter: drop-shadow(0 0 6px rgba(254,178,62,.95))
+              drop-shadow(0 0 14px rgba(254,178,62,.6));
+    }
+
+    /* Overlay kartu label saat focus per wilayah */
+    .tour-card {
+      position: absolute;
+      top: 26%;
+      left: 50%;
+      transform: translate(-50%, -50%) translateY(14px) scale(.92);
+      background: rgba(0,40,38,.62);
+      backdrop-filter: blur(22px) saturate(1.4);
+      -webkit-backdrop-filter: blur(22px) saturate(1.4);
+      border: 1px solid rgba(254,178,62,.45);
+      border-radius: 18px;
+      padding: 14px 26px 18px;
+      color: #fff;
+      text-align: center;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .42s cubic-bezier(.2,.8,.2,1),
+                  transform .55s cubic-bezier(.34,1.56,.64,1);
+      z-index: 5;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      box-shadow: 0 18px 48px rgba(0,0,0,.5),
+                  0 0 0 1px rgba(255,255,255,.05) inset;
+      min-width: 200px;
+    }
+    .tour-card.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) translateY(0) scale(1);
+    }
+    .tour-card-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: rgba(254,178,62,.95);
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .tour-card-name {
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.3px;
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+    .tour-card-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 6px;
+      line-height: 1;
+    }
+    .tour-card-num {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      font-variant-numeric: tabular-nums;
+      background: linear-gradient(180deg, #fff 0%, #ffd97a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tour-card-unit {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,.65);
+      letter-spacing: .3px;
+    }
+    .tour-card-bar {
+      position: absolute;
+      left: 14%; right: 14%; bottom: 6px;
+      height: 2px;
+      background: rgba(255,255,255,.12);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .tour-card-bar > span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--bsi-yellow), #fff);
+    }
+
+    /* ============================================================
+       PIN HOVER — tooltip detail per wilayah saat kursor mendekat
+       ============================================================ */
+    /* Aktifkan interaksi pointer hanya pada pin (parent .map-layer
+       tetap pointer-events: none supaya area peta lain ngga blocking). */
+    .map-badge {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    /* Saat tour jalan, hover dimatikan supaya ngga konflik sama kartu tour */
+    .indo-map.touring .map-badge { pointer-events: none; }
+
+    /* Hover effect ringan: pin sedikit naik + glow */
+    .map-badge:hover:not(.tour-focus) {
+      filter: drop-shadow(0 0 5px rgba(254,178,62,.85))
+              drop-shadow(0 0 12px rgba(254,178,62,.5));
+    }
+
+    .pin-tooltip {
+      position: absolute;
+      background: linear-gradient(180deg, rgba(4,55,52,.96) 0%, rgba(0,30,28,.96) 100%);
+      backdrop-filter: blur(14px) saturate(1.3);
+      -webkit-backdrop-filter: blur(14px) saturate(1.3);
+      border: 1px solid rgba(254,178,62,.45);
+      border-radius: 12px;
+      padding: 10px 14px 11px;
+      color: #fff;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 13px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translate(-50%, calc(-100% - 16px)) scale(.92);
+      transform-origin: center bottom;
+      transition: opacity .18s ease, transform .25s cubic-bezier(.34,1.56,.64,1);
+      z-index: 6;
+      box-shadow: 0 12px 32px rgba(0,0,0,.5),
+                  0 0 0 1px rgba(255,255,255,.04) inset;
+      min-width: 180px;
+      max-width: 260px;
+    }
+    .pin-tooltip.show {
+      opacity: 1;
+      transform: translate(-50%, calc(-100% - 16px)) scale(1);
+    }
+    /* Flip ke bawah pin kalau sempit di atas */
+    .pin-tooltip.below {
+      transform: translate(-50%, 16px) scale(.92);
+      transform-origin: center top;
+    }
+    .pin-tooltip.below.show {
+      transform: translate(-50%, 16px) scale(1);
+    }
+
+    .pin-tooltip-name {
+      font-weight: 700;
+      font-size: 13.5px;
+      letter-spacing: -.2px;
+      color: #fff;
+      margin-bottom: 5px;
+      line-height: 1.2;
+    }
+    .pin-tooltip-row {
+      display: flex;
+      align-items: baseline;
+      gap: 5px;
+      line-height: 1;
+    }
+    .pin-tooltip-num {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--bsi-yellow);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.5px;
+    }
+    .pin-tooltip-unit {
+      font-size: 11px;
+      color: rgba(255,255,255,.7);
+      font-weight: 600;
+    }
+    .pin-tooltip-pct {
+      font-size: 11px;
+      color: rgba(255,255,255,.5);
+      font-weight: 500;
+      margin-left: auto;
+      font-variant-numeric: tabular-nums;
+    }
+    .pin-tooltip-breakdown {
+      margin-top: 7px;
+      padding-top: 7px;
+      border-top: 1px dashed rgba(255,255,255,.12);
+      font-size: 11.5px;
+      color: rgba(255,255,255,.7);
+      font-weight: 500;
+      display: grid;
+      gap: 2px;
+    }
+    .pin-tooltip-breakdown:empty {
+      display: none;
+      margin-top: 0;
+      padding-top: 0;
+      border: 0;
+    }
+    .pin-tooltip-breakdown > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .pin-tooltip-breakdown > div > span:first-child::before {
+      content: "└ ";
+      color: rgba(254,178,62,.6);
+      font-weight: 600;
+    }
+    .pin-tooltip-breakdown > div > span:last-child {
+      color: rgba(255,255,255,.92);
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Tail / arrow */
+    .pin-tooltip::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 11px; height: 11px;
+      background: rgba(0,30,28,.96);
+      border-right: 1px solid rgba(254,178,62,.45);
+      border-bottom: 1px solid rgba(254,178,62,.45);
+    }
+    .pin-tooltip.below::after {
+      bottom: auto;
+      top: -6px;
+      border: 0;
+      border-left: 1px solid rgba(254,178,62,.45);
+      border-top: 1px solid rgba(254,178,62,.45);
+    }
   </style>
 </head>
 <body>
@@ -1114,6 +1377,30 @@
     </div>
     <!-- ===== END MAP BACKGROUND ===== -->
 
+    <!-- ===== TOUR CARD: kartu overlay saat zoom ke wilayah ===== -->
+    <div class="tour-card" id="tourCard" aria-hidden="true">
+      <div class="tour-card-tag">Wilayah Inspirator</div>
+      <div class="tour-card-name" id="tourName">—</div>
+      <div class="tour-card-row">
+        <span class="tour-card-num" id="tourNum">0</span>
+        <span class="tour-card-unit">awardee</span>
+      </div>
+      <div class="tour-card-bar"><span id="tourBar"></span></div>
+    </div>
+    <!-- ===== END TOUR CARD ===== -->
+
+    <!-- ===== PIN TOOLTIP: detail wilayah saat kursor mendekat ===== -->
+    <div class="pin-tooltip" id="pinTooltip" aria-hidden="true">
+      <div class="pin-tooltip-name" id="ttName">—</div>
+      <div class="pin-tooltip-row">
+        <span class="pin-tooltip-num" id="ttNum">0</span>
+        <span class="pin-tooltip-unit">awardee</span>
+        <span class="pin-tooltip-pct" id="ttPct"></span>
+      </div>
+      <div class="pin-tooltip-breakdown" id="ttBreakdown"></div>
+    </div>
+    <!-- ===== END PIN TOOLTIP ===== -->
+
     <div class="deco-circle c1"></div>
     <div class="deco-circle c2"></div>
 
@@ -1298,38 +1585,22 @@
 
 <!-- ===== MODAL LUPA PASSWORD ===== -->
 <style>
-  @keyframes fp-pop  { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
-  @keyframes fp-in   { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes fp-shake{ 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+  @keyframes fp-pop    { from{transform:scale(.5);opacity:0} to{transform:scale(1);opacity:1} }
+  @keyframes fp-in     { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fp-shake  { 0%,100%{transform:translateX(0)} 20%,60%{transform:translateX(-6px)} 40%,80%{transform:translateX(6px)} }
+  @keyframes fp-ripple { 0%{transform:scale(.8);opacity:.6} 100%{transform:scale(2);opacity:0} }
+  @keyframes fp-draw   { to{stroke-dashoffset:0} }
 
   .fp-step { animation: fp-in .3s ease both; }
-
-  /* Progress dots */
-  .fp-dots { display:flex; gap:6px; justify-content:center; margin-bottom:24px; }
-  .fp-dot  { width:8px; height:8px; border-radius:50%; background:#e5e7eb; transition:all .3s ease; }
-  .fp-dot.active { background:#00A59F; width:24px; border-radius:4px; }
-  .fp-dot.done   { background:#a7f3d0; }
-
-  /* OTP input group */
-  .fp-otp-wrap { display:flex; gap:10px; justify-content:center; margin:8px 0; }
-  .fp-otp-wrap input {
-    width:44px; height:52px; text-align:center; font-size:22px; font-weight:800;
-    border:2px solid #e5e7eb; border-radius:12px; outline:none; color:#111827;
-    transition:border-color .15s, box-shadow .15s, transform .15s;
-    caret-color:transparent;
-  }
-  .fp-otp-wrap input:focus  { border-color:#00A59F; box-shadow:0 0 0 3px rgba(0,165,159,.15); transform:translateY(-2px); }
-  .fp-otp-wrap input.filled { border-color:#00A59F; background:#f0fdfa; }
-  .fp-otp-wrap input.error  { border-color:#ef4444; box-shadow:0 0 0 3px rgba(239,68,68,.12); animation:fp-shake .35s ease; }
 
   /* Password field dalam modal */
   .fp-pw-wrap { position:relative; }
   .fp-pw-wrap input {
-    width:100%; padding:11px 42px 11px 14px; border:1.5px solid #e5e7eb;
-    border-radius:12px; font-size:14px; outline:none; box-sizing:border-box;
+    width:100%; padding:12px 42px 12px 14px; border:1.5px solid #e5e7eb;
+    border-radius:14px; font-size:14px; outline:none; box-sizing:border-box;
     color:#111827; transition:border-color .15s,box-shadow .15s;
   }
-  .fp-pw-wrap input:focus { border-color:#00A59F; box-shadow:0 0 0 3px rgba(0,165,159,.12); }
+  .fp-pw-wrap input:focus { border-color:#7c3aed; box-shadow:0 0 0 3px rgba(124,58,237,.1); }
   .fp-pw-wrap .fp-eye {
     position:absolute; right:12px; top:50%; transform:translateY(-50%);
     background:none; border:none; cursor:pointer; color:#9ca3af; padding:2px;
@@ -1356,123 +1627,148 @@
   #fpResendBtn:hover { text-decoration:underline; }
 </style>
 
-<div id="forgotOverlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(15,23,42,.58);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .25s ease;" aria-modal="true" role="dialog" aria-labelledby="forgotTitle">
-  <div id="forgotCard" style="background:#fff;border-radius:24px;box-shadow:0 32px 80px rgba(0,165,159,.2),0 4px 24px rgba(0,0,0,.12);width:100%;max-width:420px;padding:32px 28px 26px;transform:translateY(28px) scale(.96);transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .25s ease;position:relative;overflow:hidden;">
-
-    <!-- Top gradient bar -->
-    <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#00A59F 0%,#0055a5 50%,#7c3aed 100%);border-radius:24px 24px 0 0;"></div>
+<div id="forgotOverlay" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(15,23,42,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .25s ease;" aria-modal="true" role="dialog" aria-labelledby="forgotTitle">
+  <div id="forgotCard" style="background:#fff;border-radius:28px;box-shadow:0 40px 100px rgba(0,0,0,.18),0 8px 32px rgba(0,165,159,.12);width:100%;max-width:400px;padding:36px 28px 28px;transform:translateY(32px) scale(.95);transition:transform .32s cubic-bezier(.34,1.56,.64,1),opacity .25s ease;position:relative;">
 
     <!-- Close button -->
-    <button id="forgotCloseBtn" onclick="closeForgotModal()" style="position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;color:#9ca3af;transition:background .15s,color .15s;" onmouseover="this.style.background='#f3f4f6';this.style.color='#374151'" onmouseout="this.style.background='none';this.style.color='#9ca3af'" aria-label="Tutup">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    <button id="forgotCloseBtn" onclick="closeForgotModal()" style="position:absolute;top:16px;right:16px;background:#f3f4f6;border:none;cursor:pointer;padding:7px;border-radius:10px;color:#6b7280;transition:background .15s,color .15s;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.background='#e5e7eb';this.style.color='#111827'" onmouseout="this.style.background='#f3f4f6';this.style.color='#6b7280'" aria-label="Tutup">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-
-    <!-- Icon header -->
-    <div style="text-align:center;margin-bottom:18px;">
-      <div id="fpIconWrap" style="width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#e0faf9,#dbeafe);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;transition:all .3s ease;">
-        <svg id="fpIcon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00A59F" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-      </div>
-      <h3 id="forgotTitle" style="font-size:19px;font-weight:800;color:#111827;margin:0 0 6px;">Lupa Password?</h3>
-      <p id="forgotDesc" style="font-size:13px;color:#6b7280;margin:0;line-height:1.6;"></p>
-    </div>
-
-    <!-- Progress dots -->
-    <div class="fp-dots" id="fpDotsWrap">
-      <div class="fp-dot active" id="fpDot0"></div>
-      <div class="fp-dot" id="fpDot1"></div>
-      <div class="fp-dot" id="fpDot2"></div>
-    </div>
 
     <!-- STEP 1: Email -->
     <div id="fpStep1" class="fp-step">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="width:60px;height:60px;border-radius:20px;background:linear-gradient(135deg,#e0faf9,#dbeafe);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00A59F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+        </div>
+        <h3 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 6px;">Lupa Password?</h3>
+        <p style="font-size:13px;color:#9ca3af;margin:0;line-height:1.6;">Masukkan email akunmu, kami kirimkan<br>link reset ke inbox-mu.</p>
+      </div>
       <div style="margin-bottom:14px;">
-        <label style="display:block;font-size:12.5px;font-weight:700;color:#374151;margin-bottom:6px;">Alamat Email</label>
+        <label style="display:block;font-size:12.5px;font-weight:600;color:#374151;margin-bottom:7px;">Alamat Email</label>
         <div style="position:relative;">
           <input id="forgotEmail" type="email" placeholder="nama@email.com" autocomplete="email"
-            style="width:100%;padding:11px 14px 11px 40px;border:1.5px solid #e5e7eb;border-radius:12px;font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s,box-shadow .15s;color:#111827;"
-            onfocus="this.style.borderColor='#00A59F';this.style.boxShadow='0 0 0 3px rgba(0,165,159,.12)'"
-            onblur="this.style.borderColor='#e5e7eb';this.style.boxShadow='none'"
+            style="width:100%;padding:12px 14px 12px 42px;border:1.5px solid #e5e7eb;border-radius:14px;font-size:14px;outline:none;box-sizing:border-box;transition:border-color .15s,box-shadow .15s;color:#111827;background:#fafafa;"
+            onfocus="this.style.borderColor='#00A59F';this.style.boxShadow='0 0 0 3px rgba(0,165,159,.1)';this.style.background='#fff'"
+            onblur="this.style.borderColor='#e5e7eb';this.style.boxShadow='none';this.style.background='#fafafa'"
             onkeydown="if(event.key==='Enter')fpSendReset()" />
-          <svg style="position:absolute;left:13px;top:50%;transform:translateY(-50%);pointer-events:none;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);pointer-events:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
         </div>
       </div>
       <div class="fp-alert" id="fpMsg1"></div>
-      <button id="fpBtn1" onclick="fpSendReset()" style="width:100%;padding:13px;border:none;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#00A59F,#0088a3);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(0,165,159,.28);transition:opacity .15s;" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+      <button id="fpBtn1" onclick="fpSendReset()" style="width:100%;padding:13px;border:none;border-radius:14px;cursor:pointer;background:linear-gradient(135deg,#00A59F,#007a96);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(0,165,159,.3);transition:opacity .15s,transform .1s;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         Kirim Link Reset
       </button>
+      <p style="text-align:center;margin:14px 0 0;font-size:12.5px;color:#9ca3af;">Ingat password? <a href="#" onclick="closeForgotModal();return false;" style="color:#00A59F;font-weight:600;text-decoration:none;">Kembali login</a></p>
     </div>
 
-    <!-- STEP 2: Cek email (sent state) -->
-    <div id="fpStep2" class="fp-step" style="display:none;text-align:center;">
-      <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#dbeafe,#e0faf9);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:fp-pop .4s cubic-bezier(.34,1.56,.64,1) both;">
-        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0055a5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+    <!-- STEP 2: Email terkirim -->
+    <div id="fpStep2" class="fp-step" style="display:none;">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#d1fae5,#a7f3d0);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:fp-pop .4s cubic-bezier(.34,1.56,.64,1) both;">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h3 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 6px;">Email Terkirim!</h3>
+        <p id="fpSentTo" style="font-size:13px;color:#9ca3af;margin:0;line-height:1.6;"></p>
       </div>
-      <p style="font-size:15px;font-weight:800;color:#111827;margin:0 0 6px;">Email Terkirim!</p>
-      <p id="fpSentTo" style="font-size:13px;color:#6b7280;margin:0 0 18px;line-height:1.6;"></p>
-      <div style="background:#f8fafc;border-radius:12px;padding:14px 16px;text-align:left;margin-bottom:18px;border:1px solid #e5e7eb;">
-        <div style="font-size:12.5px;color:#374151;line-height:1.8;">
-          <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:4px;">
-            <span style="color:#00A59F;font-weight:800;flex-shrink:0;">1.</span> Buka email dan klik tombol <b>"Reset Password"</b>
+      <div style="background:#f8fafc;border-radius:16px;padding:16px 18px;margin-bottom:18px;border:1px solid #f1f5f9;">
+        <div style="font-size:13px;color:#374151;line-height:1.9;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="width:22px;height:22px;border-radius:50%;background:#00A59F;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">1</span>
+            Buka email → klik <b>"Reset Password Sekarang"</b>
           </div>
-          <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:4px;">
-            <span style="color:#00A59F;font-weight:800;flex-shrink:0;">2.</span> Kamu akan diarahkan kembali ke halaman ini
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+            <span style="width:22px;height:22px;border-radius:50%;background:#00A59F;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">2</span>
+            Diarahkan kembali ke halaman ini
           </div>
-          <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:4px;">
-            <span style="color:#00A59F;font-weight:800;flex-shrink:0;">3.</span> Isi password baru yang muncul otomatis
-          </div>
-          <div style="display:flex;gap:8px;align-items:flex-start;">
-            <span style="color:#9ca3af;font-weight:800;flex-shrink:0;">💡</span> <span style="color:#9ca3af;">Cek folder <b>Spam</b> jika tidak muncul · Link berlaku <b>1 jam</b></span>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="width:22px;height:22px;border-radius:50%;background:#00A59F;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">3</span>
+            Form password baru muncul otomatis
           </div>
         </div>
       </div>
-      <button onclick="closeForgotModal()" style="width:100%;padding:11px;border:1.5px solid #e5e7eb;border-radius:12px;background:#fff;cursor:pointer;font-size:13.5px;font-weight:600;color:#374151;transition:background .15s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
-        Tutup
+      <div style="background:#fffbeb;border-radius:12px;padding:10px 14px;margin-bottom:18px;display:flex;gap:8px;align-items:flex-start;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.5" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span style="font-size:12px;color:#92400e;line-height:1.6;">Cek folder <b>Spam/Junk</b> jika tidak muncul. Link berlaku <b>1 jam</b>.</span>
+      </div>
+      <!-- Auto close countdown -->
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:11.5px;color:#9ca3af;">Menutup otomatis dalam</span>
+          <span style="font-size:11.5px;color:#00A59F;font-weight:700;"><span id="fpAutoCloseCount">5</span> detik</span>
+        </div>
+        <div style="height:3px;background:#e5e7eb;border-radius:2px;overflow:hidden;">
+          <div id="fpAutoCloseBar" style="height:100%;background:linear-gradient(90deg,#00A59F,#0055a5);border-radius:2px;width:100%;transition:width 1s linear;"></div>
+        </div>
+      </div>
+      <button onclick="if(window._fpAutoClose)clearInterval(window._fpAutoClose);closeForgotModal();" style="width:100%;padding:13px;border:1.5px solid #e5e7eb;border-radius:14px;background:#fff;cursor:pointer;font-size:13.5px;font-weight:600;color:#374151;transition:background .15s;" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
+        Tutup Sekarang
       </button>
     </div>
 
     <!-- STEP 3: Password baru -->
     <div id="fpStep3" class="fp-step" style="display:none;">
+      <div style="text-align:center;margin-bottom:24px;">
+        <div style="width:60px;height:60px;border-radius:20px;background:linear-gradient(135deg,#ede9fe,#dbeafe);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3 style="font-size:20px;font-weight:800;color:#111827;margin:0 0 6px;">Buat Password Baru</h3>
+        <p style="font-size:13px;color:#9ca3af;margin:0;">Buat password yang kuat dan mudah diingat.</p>
+      </div>
       <div style="margin-bottom:14px;">
-        <label style="display:block;font-size:12.5px;font-weight:700;color:#374151;margin-bottom:6px;">Password Baru</label>
+        <label style="display:block;font-size:12.5px;font-weight:600;color:#374151;margin-bottom:7px;">Password Baru</label>
         <div class="fp-pw-wrap">
-          <input id="fpPw1" type="password" placeholder="Min. 8 karakter" autocomplete="new-password" oninput="fpCheckStrength()" onkeydown="if(event.key==='Enter')fpUpdatePassword()" />
+          <input id="fpPw1" type="password" placeholder="Min. 8 karakter" autocomplete="new-password" oninput="fpCheckStrength()" onkeydown="if(event.key==='Enter')fpUpdatePassword()"
+            style="background:#fafafa;" onfocus="this.style.background='#fff'" onblur="this.style.background='#fafafa'" />
           <button class="fp-eye" onclick="fpTogglePw('fpPw1',this)" type="button" tabindex="-1">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
-        <div class="fp-strength" id="fpStrengthBar">
+        <div class="fp-strength" id="fpStrengthBar" style="margin-top:8px;">
           <span></span><span></span><span></span><span></span>
         </div>
         <div id="fpStrengthLbl" style="font-size:11px;color:#9ca3af;margin-top:4px;height:14px;"></div>
       </div>
-      <div style="margin-bottom:14px;">
-        <label style="display:block;font-size:12.5px;font-weight:700;color:#374151;margin-bottom:6px;">Konfirmasi Password</label>
+      <div style="margin-bottom:16px;">
+        <label style="display:block;font-size:12.5px;font-weight:600;color:#374151;margin-bottom:7px;">Konfirmasi Password</label>
         <div class="fp-pw-wrap">
-          <input id="fpPw2" type="password" placeholder="Ulangi password baru" autocomplete="new-password" onkeydown="if(event.key==='Enter')fpUpdatePassword()" />
+          <input id="fpPw2" type="password" placeholder="Ulangi password baru" autocomplete="new-password" onkeydown="if(event.key==='Enter')fpUpdatePassword()"
+            style="background:#fafafa;" onfocus="this.style.background='#fff'" onblur="this.style.background='#fafafa'" />
           <button class="fp-eye" onclick="fpTogglePw('fpPw2',this)" type="button" tabindex="-1">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
       </div>
       <div class="fp-alert" id="fpMsg3"></div>
-      <button id="fpBtn3" onclick="fpUpdatePassword()" style="width:100%;padding:13px;border:none;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#00A59F,#0088a3);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(0,165,159,.28);transition:opacity .15s;" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
+      <button id="fpBtn3" onclick="fpUpdatePassword()" style="width:100%;padding:13px;border:none;border-radius:14px;cursor:pointer;background:linear-gradient(135deg,#7c3aed,#4f46e5);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 20px rgba(124,58,237,.3);transition:opacity .15s;" onmouseover="this.style.opacity='.9'" onmouseout="this.style.opacity='1'">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         Simpan Password Baru
       </button>
     </div>
 
-    <!-- STEP 4: Selesai -->
+    <!-- STEP 4: Sukses + auto login -->
     <div id="fpStep4" class="fp-step" style="display:none;text-align:center;padding:8px 0 4px;">
-      <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#d1fae5,#a7f3d0);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;animation:fp-pop .4s cubic-bezier(.34,1.56,.64,1) both;">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <!-- Ripple sukses -->
+      <div style="position:relative;width:100px;height:100px;margin:0 auto 24px;">
+        <div style="position:absolute;inset:0;border-radius:50%;background:rgba(5,150,105,.12);animation:fp-ripple 1.6s ease-out infinite;"></div>
+        <div style="position:absolute;inset:8px;border-radius:50%;background:rgba(5,150,105,.18);animation:fp-ripple 1.6s .4s ease-out infinite;"></div>
+        <div style="position:absolute;inset:16px;border-radius:50%;background:linear-gradient(135deg,#059669,#10b981);display:flex;align-items:center;justify-content:center;animation:fp-pop .5s cubic-bezier(.34,1.56,.64,1) both;">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="animation:fp-draw .6s .3s ease both;stroke-dasharray:30;stroke-dashoffset:30;"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
       </div>
-      <p style="font-size:16px;font-weight:800;color:#111827;margin:0 0 6px;">Password Berhasil Diubah!</p>
-      <p style="font-size:13px;color:#6b7280;margin:0 0 22px;line-height:1.6;">Kamu bisa login sekarang dengan<br>password barumu.</p>
-      <button onclick="closeForgotModal()" style="width:100%;padding:13px;border:none;border-radius:12px;cursor:pointer;background:linear-gradient(135deg,#00A59F,#0088a3);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px rgba(0,165,159,.28);transition:opacity .15s;" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-        Masuk Sekarang
-      </button>
+      <h3 style="font-size:21px;font-weight:800;color:#111827;margin:0 0 8px;">Password Berhasil!</h3>
+      <p style="font-size:13.5px;color:#6b7280;margin:0 0 24px;line-height:1.7;">Password akunmu telah diperbarui.<br>Kamu akan masuk otomatis...</p>
+      <!-- Progress login -->
+      <div style="background:#f1f5f9;border-radius:12px;padding:14px 16px;margin-bottom:6px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div id="fpLoginSpinner" style="width:18px;height:18px;border:2px solid #e2e8f0;border-top-color:#00A59F;border-radius:50%;animation:spin 1s linear infinite;flex-shrink:0;"></div>
+          <span style="font-size:13px;color:#374151;font-weight:600;" id="fpLoginStatus">Masuk ke aplikasi...</span>
+        </div>
+        <div style="height:3px;background:#e2e8f0;border-radius:2px;margin-top:10px;overflow:hidden;">
+          <div id="fpLoginBar" style="height:100%;background:linear-gradient(90deg,#00A59F,#0055a5);border-radius:2px;width:0%;transition:width .1s linear;"></div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -1557,15 +1853,18 @@ function setupParallax() {
   }
 }
 
-/* Init micro-interactions + deteksi recovery link */
+/* Init micro-interactions */
 window.addEventListener('DOMContentLoaded', () => {
   animateCounters();
   setupParallax();
+});
 
-  // Deteksi redirect dari email reset (type=recovery di URL hash)
-  const params = new URLSearchParams(window.location.hash.replace('#','?').slice(1));
-  if (params.get('type') === 'recovery') {
+// Deteksi recovery session — tunggu Supabase proses token dulu
+sb.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    // Bersihkan hash setelah Supabase sudah baca token
     history.replaceState(null, '', window.location.pathname);
+
     const overlay = document.getElementById('forgotOverlay');
     const card    = document.getElementById('forgotCard');
     fpAlert(3,'','err');
@@ -1601,9 +1900,8 @@ async function clearStaleAuth() {
 }
 
 (async () => {
-  // Kalau ini recovery session dari link reset password, jangan redirect — biarkan modal yang handle
-  const _hashParams = new URLSearchParams(window.location.hash.replace('#','?').slice(1));
-  if (_hashParams.get('type') === 'recovery') return;
+  // Kalau ini recovery session, jangan redirect — onAuthStateChange yang handle
+  if (window.location.hash.includes('type=recovery')) return;
 
   try {
     const { data, error } = await sb.auth.getSession();
@@ -1690,43 +1988,9 @@ function fpGoStep(n) {
     const el = document.getElementById('fpStep' + i);
     if (el) el.style.display = i === n ? '' : 'none';
   });
-  // dots: 1=email, 2=sent(tidak ada dot), 3=new pw
-  const dotMap = {1:0, 3:1, 4:2};
-  [0,1,2].forEach(di => {
-    const dot = document.getElementById('fpDot' + di);
-    if (!dot) return;
-    const stepForDot = di === 0 ? 1 : di === 1 ? 3 : 4;
-    dot.className = 'fp-dot' + (n > stepForDot ? ' done' : n === stepForDot ? ' active' : '');
-  });
-
-  const showDots  = n === 1 || n === 3 || n === 4;
-  const showClose = n !== 4;
-  document.getElementById('fpDotsWrap').style.display  = showDots  ? '' : 'none';
-  document.getElementById('forgotCloseBtn').style.display = showClose ? '' : 'none';
-
-  const cfg = {
-    1: { title:'Lupa Password?',      desc:'Masukkan email akunmu, kami kirimkan<br>link reset ke inbox-mu.',
-         bg:'linear-gradient(135deg,#e0faf9,#dbeafe)', stroke:'#00A59F',
-         path:`<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>` },
-    2: { title:'Cek Email Kamu',       desc:'', bg:'', stroke:'', path:'' },
-    3: { title:'Buat Password Baru',   desc:'Buat password yang kuat dan mudah diingat.',
-         bg:'linear-gradient(135deg,#ede9fe,#dbeafe)', stroke:'#7c3aed',
-         path:`<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>` },
-    4: { title:'', desc:'', bg:'', stroke:'', path:'' },
-  };
-  const c = cfg[n] || cfg[1];
-  document.getElementById('forgotTitle').textContent = c.title;
-  document.getElementById('forgotDesc').innerHTML    = c.desc;
-  const wrap = document.getElementById('fpIconWrap');
-  const ico  = document.getElementById('fpIcon');
-  if (c.bg) {
-    wrap.style.display    = '';
-    wrap.style.background = c.bg;
-    ico.setAttribute('stroke', c.stroke);
-    ico.innerHTML = c.path;
-  } else {
-    wrap.style.display = 'none';
-  }
+  // Sembunyikan close di step 4
+  const closeBtn = document.getElementById('forgotCloseBtn');
+  if (closeBtn) closeBtn.style.display = n === 4 ? 'none' : '';
 }
 
 function openForgotModal(e) {
@@ -1753,6 +2017,7 @@ function openForgotModal(e) {
 }
 
 function closeForgotModal() {
+  if (window._fpAutoClose) { clearInterval(window._fpAutoClose); window._fpAutoClose = null; }
   const overlay = document.getElementById('forgotOverlay');
   const card    = document.getElementById('forgotCard');
   overlay.style.opacity = '0';
@@ -1786,6 +2051,23 @@ async function fpSendReset() {
   document.getElementById('fpSentTo').innerHTML =
     `Link reset dikirim ke <b>${masked}</b>.<br>Klik link di email untuk melanjutkan.`;
   fpGoStep(2);
+
+  // Auto close dalam 5 detik dengan countdown
+  let sec = 5;
+  const countEl = document.getElementById('fpAutoCloseCount');
+  const barEl   = document.getElementById('fpAutoCloseBar');
+  if (countEl) countEl.textContent = sec;
+  if (barEl)   barEl.style.width   = '100%';
+
+  const autoClose = setInterval(() => {
+    sec--;
+    if (countEl) countEl.textContent = sec;
+    if (barEl)   barEl.style.width   = (sec / 5 * 100) + '%';
+    if (sec <= 0) { clearInterval(autoClose); closeForgotModal(); }
+  }, 1000);
+
+  // Simpan ref agar bisa dibatalkan kalau user tutup manual
+  window._fpAutoClose = autoClose;
 }
 
 // ── Step 3: Update password (dipanggil setelah redirect dari email) ──
@@ -1831,8 +2113,42 @@ async function fpUpdatePassword() {
     return;
   }
 
-  await sb.auth.signOut();
+  // Tampilkan animasi sukses dulu, lalu auto login
   fpGoStep(4);
+
+  // Animasi progress bar login
+  const bar    = document.getElementById('fpLoginBar');
+  const status = document.getElementById('fpLoginStatus');
+  let pct = 0;
+  const prog = setInterval(() => {
+    pct += 2;
+    if (bar) bar.style.width = Math.min(pct, 90) + '%';
+    if (pct >= 90) clearInterval(prog);
+  }, 40);
+
+  // Login dengan password baru
+  try {
+    const { data: { user } } = await sb.auth.getUser();
+    const email = user?.email || '';
+    await sb.auth.signOut();
+    const { data, error: loginErr } = await sb.auth.signInWithPassword({ email, password: pw1 });
+
+    if (loginErr) throw loginErr;
+
+    if (bar) bar.style.width = '100%';
+    if (status) status.textContent = 'Berhasil! Mengalihkan...';
+
+    const { data: prof } = await sb.from('profiles').select('approved,role').eq('id', data.user.id).single();
+    setTimeout(() => {
+      window.location.replace(prof?.role === 'admin' ? 'admin.html' : 'index.html');
+    }, 800);
+  } catch (_) {
+    // Kalau auto login gagal, tetap tampilkan sukses dan suruh login manual
+    if (bar) bar.style.width = '100%';
+    if (status) { status.textContent = 'Password berhasil diubah. Silakan login.'; }
+    document.getElementById('fpLoginSpinner').style.display = 'none';
+    setTimeout(() => closeForgotModal(), 2500);
+  }
 }
 
 
@@ -1883,6 +2199,522 @@ async function handleLogin(e) {
     window.location.replace(prof.role === "admin" ? "admin.html" : "index.html");
   }, 700);
 }
+
+/* ============================================================
+   MAP LABELS — awardee count per wilayah (kolom langsung)
+   ============================================================ */
+(async function initMapLabels() {
+  // Normalisasi nilai wilayah → kunci PROVINCE_POS
+  const NORM = {
+    'aceh': 'Aceh', 'nanggroe aceh darussalam': 'Aceh', 'nad': 'Aceh',
+    'sumatera utara': 'Sumatra Utara', 'sumatra utara': 'Sumatra Utara', 'sumut': 'Sumatra Utara',
+    'sumatera barat': 'Sumatra Barat', 'sumatra barat': 'Sumatra Barat', 'sumbar': 'Sumatra Barat',
+    'riau': 'Riau',
+    'kepulauan riau': 'Riau', 'kepri': 'Riau',
+    'jambi': 'Jambi',
+    'sumatera selatan': 'Sumatra Selatan', 'sumatra selatan': 'Sumatra Selatan', 'sumsel': 'Sumatra Selatan',
+    'bangka belitung': 'Sumatra Selatan', 'babel': 'Sumatra Selatan',
+    'bengkulu': 'Bengkulu',
+    'lampung': 'Lampung',
+    'banten': 'Banten',
+    'dki jakarta': 'DKI Jakarta', 'jakarta': 'DKI Jakarta',
+    'jawa barat': 'Jawa Barat', 'jabar': 'Jawa Barat',
+    'jawa tengah': 'Jawa Tengah', 'jateng': 'Jawa Tengah',
+    'di yogyakarta': 'DI Yogyakarta', 'daerah istimewa yogyakarta': 'DI Yogyakarta',
+    'yogyakarta': 'DI Yogyakarta', 'diy': 'DI Yogyakarta',
+    'jawa timur': 'Jawa Timur', 'jatim': 'Jawa Timur',
+    'bali': 'Bali',
+    'nusa tenggara barat': 'NTB', 'ntb': 'NTB',
+    'nusa tenggara timur': 'NTT', 'ntt': 'NTT',
+    'kalimantan barat': 'Kalimantan Barat', 'kalbar': 'Kalimantan Barat',
+    'kalimantan tengah': 'Kalimantan Tengah', 'kalteng': 'Kalimantan Tengah',
+    'kalimantan selatan': 'Kalimantan Selatan', 'kalsel': 'Kalimantan Selatan',
+    'kalimantan timur': 'Kalimantan Timur', 'kaltim': 'Kalimantan Timur',
+    'kalimantan utara': 'Kalimantan Timur', 'kaltara': 'Kalimantan Timur',
+    'sulawesi selatan': 'Sulawesi Selatan', 'sulsel': 'Sulawesi Selatan',
+    'sulawesi barat': 'Sulawesi Selatan', 'sulbar': 'Sulawesi Selatan',
+    'sulawesi tengah': 'Sulawesi Tengah', 'sulteng': 'Sulawesi Tengah',
+    'sulawesi utara': 'Sulawesi Utara', 'sulut': 'Sulawesi Utara',
+    'gorontalo': 'Sulawesi Utara',
+    'sulawesi tenggara': 'Sulawesi Tenggara', 'sultra': 'Sulawesi Tenggara',
+    'maluku': 'Maluku',
+    'maluku utara': 'Maluku', 'malut': 'Maluku',
+    'papua barat': 'Papua', 'papua barat daya': 'Papua', 'papbar': 'Papua',
+    'papua': 'Papua', 'papua tengah': 'Papua', 'papua selatan': 'Papua',
+    'papua pegunungan': 'Papua',
+  };
+
+  function normWilayah(w) {
+    const lower = w.toLowerCase().trim();
+    if (NORM[lower]) return NORM[lower];
+    // fallback: cari partial
+    for (const [k, v] of Object.entries(NORM)) {
+      if (lower.includes(k)) return v;
+    }
+    return null;
+  }
+
+
+  const PROVINCE_POS = {
+    'Aceh':               { x: 105, y: 56,  abbr: 'Aceh'    },
+    'Sumatra Utara':      { x: 140, y: 78,  abbr: 'Sumut'   },
+    'Sumatra Barat':      { x: 154, y: 150, abbr: 'Sumbar'  },
+    'Riau':               { x: 190, y: 138, abbr: 'Riau'    },
+    'Kepulauan Riau':     { x: 212, y: 164, abbr: 'Kepri'   },
+    'Jambi':              { x: 205, y: 178, abbr: 'Jambi'   },
+    'Sumatra Selatan':    { x: 232, y: 168, abbr: 'Sumsel'  },
+    'Bengkulu':           { x: 190, y: 198, abbr: 'Bkl'     },
+    'Lampung':            { x: 246, y: 228, abbr: 'Lampung' },
+    'Bangka Belitung':    { x: 270, y: 208, abbr: 'Babel'   },
+    'Banten':             { x: 271, y: 262, abbr: 'Banten'  },
+    'DKI Jakarta':        { x: 297, y: 254, abbr: 'Jakarta' },
+    'Jawa Barat':         { x: 322, y: 272, abbr: 'Jabar'   },
+    'Jawa Tengah':        { x: 368, y: 282, abbr: 'Jateng'  },
+    'DI Yogyakarta':      { x: 390, y: 297, abbr: 'DIY'     },
+    'Jawa Timur':         { x: 434, y: 272, abbr: 'Jatim'   },
+    'Bali':               { x: 460, y: 296, abbr: 'Bali'    },
+    'NTB':                { x: 490, y: 306, abbr: 'NTB'     },
+    'NTT':                { x: 567, y: 329, abbr: 'NTT'     },
+    'Kalimantan Barat':   { x: 316, y: 124, abbr: 'Kalbar'  },
+    'Kalimantan Tengah':  { x: 397, y: 148, abbr: 'Kalteng' },
+    'Kalimantan Selatan': { x: 440, y: 220, abbr: 'Kalsel'  },
+    'Kalimantan Timur':   { x: 500, y: 140, abbr: 'Kaltim'  },
+    'Kalimantan Utara':   { x: 498, y: 106, abbr: 'Kaltara' },
+    'Sulawesi Selatan':   { x: 610, y: 244, abbr: 'Sulsel'  },
+    'Sulawesi Tengah':    { x: 580, y: 190, abbr: 'Sulteng' },
+    'Sulawesi Utara':     { x: 654, y: 150, abbr: 'Sulut'   },
+    'Sulawesi Tenggara':  { x: 644, y: 268, abbr: 'Sultra'  },
+    'Gorontalo':          { x: 648, y: 178, abbr: 'Gtlo'    },
+    'Sulawesi Barat':     { x: 572, y: 228, abbr: 'Sulbar'  },
+    'Maluku':             { x: 744, y: 250, abbr: 'Maluku'  },
+    'Maluku Utara':       { x: 706, y: 173, abbr: 'Malut'   },
+    'Papua Barat':        { x: 820, y: 214, abbr: 'Papbar'  },
+    'Papua':              { x: 900, y: 238, abbr: 'Papua'   },
+  };
+
+  // ── Fetch kolom wilayah ────────────────────────────────────────────────────
+  // Supabase default ngembaliin maksimal 1000 baris per query. Kita pakai
+  // pagination dengan .range() supaya semua baris (2204+) kebawa semua.
+  let rows = [];
+  try {
+    const PAGE = 1000;
+    let offset = 0;
+    while (true) {
+      const { data, error } = await sb
+        .from('mahasiswa_bsi')
+        .select('wilayah')
+        .range(offset, offset + PAGE - 1);
+      if (error) throw error;
+      if (!data || data.length === 0) break;
+      rows.push(...data);
+      if (data.length < PAGE) break;   // page terakhir
+      offset += PAGE;
+    }
+    console.info('[MapLabels] Fetched', rows.length, 'baris dari mahasiswa_bsi');
+  } catch(e) { console.error('[MapLabels]', e); return; }
+
+  // Count per wilayah (dinormalisasi) + simpan breakdown sub-wilayah
+  // (mis. Sulsel = "Sulawesi Selatan" + "Sulawesi Barat")
+  const provCnt = {};
+  const provBreakdown = {};   // { 'Sulawesi Selatan': { 'Sulawesi Selatan': 150, 'Sulawesi Barat': 1 } }
+  const unknowns = [];
+  rows.forEach(r => {
+    const w = (r.wilayah || '').trim();
+    if (!w) return;
+    const prov = normWilayah(w);
+    if (prov) {
+      provCnt[prov] = (provCnt[prov] || 0) + 1;
+      if (!provBreakdown[prov]) provBreakdown[prov] = {};
+      provBreakdown[prov][w] = (provBreakdown[prov][w] || 0) + 1;
+    } else {
+      unknowns.push(w);
+    }
+  });
+  if (unknowns.length) {
+    const uq = [...new Set(unknowns)];
+    console.warn('[MapLabels] wilayah tidak dikenal:', uq);
+  }
+  const total = Object.values(provCnt).reduce((a,b)=>a+b,0);
+  console.info('[MapLabels] Total terpetakan:', total, 'dari', rows.length);
+
+  const svg = document.querySelector('.indo-map');
+  if (!svg) return;
+
+  const ns = 'http://www.w3.org/2000/svg';
+  // Pin path: teardrop pointing down, centered at origin, head circle centered at (0,-7), tip at (0,13)
+  // Head radius ~10, total height ~30 SVG units
+  const PIN_PATH = 'M0,13 C-2.5,7 -11,2 -11,-7 A11,11 0 1 1 11,-7 C11,2 2.5,7 0,13Z';
+  let delay = 2000;
+
+  // Kumpulkan referensi setiap badge supaya tour bisa highlight pin yang aktif
+  const badgeList = [];
+
+  Object.entries(provCnt).sort((a,b) => b[1]-a[1]).forEach(([prov, cnt]) => {
+    const pos = PROVINCE_POS[prov];
+    if (!pos || cnt === 0) return;
+
+    const fs = cnt >= 100 ? 6.5 : cnt >= 10 ? 8 : 9.5;
+
+    // Outer group — pure SVG positioning (no CSS transform so it won't be overridden)
+    const gPos = document.createElementNS(ns, 'g');
+    gPos.setAttribute('transform', `translate(${pos.x},${pos.y})`);
+
+    // Inner group — CSS animation target only
+    const g = document.createElementNS(ns, 'g');
+    g.setAttribute('class', 'map-badge');
+    g.style.cssText = [
+      'opacity:0',
+      'transform:scale(0) translateY(6px)',
+      'transform-box:fill-box',
+      'transform-origin:50% 100%',
+      `transition:opacity .4s ${delay}ms ease,transform .6s ${delay}ms cubic-bezier(.34,1.56,.64,1)`
+    ].join(';');
+
+    // Drop shadow ellipse beneath the pin tip
+    const shadow = document.createElementNS(ns, 'ellipse');
+    shadow.setAttribute('cx', '0');
+    shadow.setAttribute('cy', '15');
+    shadow.setAttribute('rx', '6');
+    shadow.setAttribute('ry', '2');
+    shadow.setAttribute('fill', 'rgba(0,0,0,0.28)');
+
+    // Pin body — golden yellow
+    const pin = document.createElementNS(ns, 'path');
+    pin.setAttribute('d', PIN_PATH);
+    pin.setAttribute('fill', '#FEB23E');
+    pin.setAttribute('filter', 'drop-shadow(0 2px 4px rgba(0,0,0,0.45))');
+
+    // Count text centered in pin head
+    const tCount = document.createElementNS(ns, 'text');
+    tCount.setAttribute('x', '0');
+    tCount.setAttribute('y', '-3.5');
+    tCount.setAttribute('text-anchor', 'middle');
+    tCount.setAttribute('dominant-baseline', 'middle');
+    tCount.setAttribute('fill', '#03302e');
+    tCount.setAttribute('font-size', fs);
+    tCount.setAttribute('font-family', 'Plus Jakarta Sans,system-ui,sans-serif');
+    tCount.setAttribute('font-weight', '800');
+    tCount.setAttribute('letter-spacing', '-0.3');
+    tCount.textContent = '0';
+
+    // Province abbr label beneath the pin
+    const tLabel = document.createElementNS(ns, 'text');
+    tLabel.setAttribute('x', '0');
+    tLabel.setAttribute('y', '21');
+    tLabel.setAttribute('text-anchor', 'middle');
+    tLabel.setAttribute('fill', 'rgba(254,178,62,0.9)');
+    tLabel.setAttribute('font-size', '4.8');
+    tLabel.setAttribute('font-family', 'Plus Jakarta Sans,system-ui,sans-serif');
+    tLabel.setAttribute('font-weight', '700');
+    tLabel.setAttribute('letter-spacing', '0.3');
+    tLabel.textContent = pos.abbr.toUpperCase();
+
+    g.appendChild(shadow);
+    g.appendChild(pin);
+    g.appendChild(tCount);
+    g.appendChild(tLabel);
+
+    // Hit-area transparan lebih lebar dari pin asli supaya hover-nya nyaman
+    // ("kursor didekatkan" — kena pin walau ngga tepat di atasnya).
+    // Diappend paling atas supaya jadi lapisan paling depan untuk pointer.
+    const hit = document.createElementNS(ns, 'circle');
+    hit.setAttribute('cx', '0');
+    hit.setAttribute('cy', '0');
+    hit.setAttribute('r', '17');
+    hit.setAttribute('fill', 'rgba(0,0,0,0)');
+    hit.setAttribute('pointer-events', 'all');
+    g.appendChild(hit);
+
+    gPos.appendChild(g);
+    svg.appendChild(gPos);
+
+    // Simpan untuk tour
+    badgeList.push({ name: prov, count: cnt, pos: pos, badge: g, countText: tCount });
+
+    // Animate in (pin drop) + count-up
+    setTimeout(() => {
+      g.style.opacity = '1';
+      g.style.transform = 'scale(1) translateY(0)';
+      const dur = 1400;
+      const start = performance.now();
+      (function tick(now) {
+        const t = Math.min((now - start) / dur, 1);
+        const ease = 1 - Math.pow(1 - t, 3);
+        tCount.textContent = Math.round(ease * cnt);
+        if (t < 1) requestAnimationFrame(tick);
+      })(performance.now());
+    }, delay);
+
+    delay += 65;
+  });
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // PIN TOOLTIP — hover handler: tampilkan detail wilayah saat kursor mendekat
+  // ───────────────────────────────────────────────────────────────────────────
+  (function setupPinTooltip() {
+    const tooltip = document.getElementById('pinTooltip');
+    const panel   = document.querySelector('.brand-panel');
+    if (!tooltip || !panel) return;
+
+    const ttName  = document.getElementById('ttName');
+    const ttNum   = document.getElementById('ttNum');
+    const ttPct   = document.getElementById('ttPct');
+    const ttBrk   = document.getElementById('ttBreakdown');
+
+    function positionTooltip(pinEl) {
+      const pinRect   = pinEl.getBoundingClientRect();
+      const panelRect = panel.getBoundingClientRect();
+      const x = pinRect.left + pinRect.width / 2 - panelRect.left;
+      const yAbove = pinRect.top - panelRect.top;
+
+      tooltip.classList.remove('below');
+      tooltip.style.left = x + 'px';
+      tooltip.style.top  = yAbove + 'px';
+
+      // Setelah elemen ter-position, cek overflow di atas. Kalau kepotong,
+      // flip ke bawah pin.
+      tooltip.classList.add('show');
+      const ttRect = tooltip.getBoundingClientRect();
+      if (ttRect.top < panelRect.top + 8) {
+        tooltip.classList.add('below');
+        tooltip.style.top = (pinRect.bottom - panelRect.top) + 'px';
+      }
+
+      // Jaga supaya ngga keluar tepi kiri/kanan panel
+      const ttRect2 = tooltip.getBoundingClientRect();
+      if (ttRect2.left < panelRect.left + 8) {
+        const shift = (panelRect.left + 8) - ttRect2.left;
+        tooltip.style.left = (x + shift) + 'px';
+      } else if (ttRect2.right > panelRect.right - 8) {
+        const shift = ttRect2.right - (panelRect.right - 8);
+        tooltip.style.left = (x - shift) + 'px';
+      }
+    }
+
+    function showFor(it) {
+      ttName.textContent = it.name;
+      ttNum.textContent  = it.count.toLocaleString('id-ID');
+      const pct = total > 0 ? (it.count / total * 100) : 0;
+      ttPct.textContent  = '· ' + pct.toFixed(1) + '%';
+
+      // Breakdown sub-wilayah, hanya tampilkan jika hasil merge (>1 sumber)
+      ttBrk.innerHTML = '';
+      const sub = provBreakdown[it.name] || {};
+      const subEntries = Object.entries(sub).sort((a, b) => b[1] - a[1]);
+      if (subEntries.length > 1) {
+        subEntries.forEach(([subName, subCnt]) => {
+          const row = document.createElement('div');
+          const a = document.createElement('span');
+          const b = document.createElement('span');
+          a.textContent = subName;
+          b.textContent = subCnt.toLocaleString('id-ID');
+          row.appendChild(a); row.appendChild(b);
+          ttBrk.appendChild(row);
+        });
+      }
+
+      positionTooltip(it.badge);
+    }
+
+    function hide() { tooltip.classList.remove('show'); }
+
+    badgeList.forEach(it => {
+      it.badge.addEventListener('mouseenter', () => showFor(it));
+      it.badge.addEventListener('mouseleave', hide);
+    });
+
+    // Sembunyikan tooltip saat tour mulai jalan (pointer-events sudah dimatikan
+    // via CSS .indo-map.touring .map-badge — tapi tooltip yang sudah tampil
+    // perlu di-hide manual).
+    const obs = new MutationObserver(() => {
+      if (svg.classList.contains('touring')) hide();
+    });
+    obs.observe(svg, { attributes: true, attributeFilter: ['class'] });
+  })();
+
+  // ───────────────────────────────────────────────────────────────────────────
+  // ZOOM TOUR — kamera jalan-jalan ke setiap wilayah, count-up 0→N saat focus
+  // ───────────────────────────────────────────────────────────────────────────
+  // Ringkasan timing:
+  //   • Pan + zoom-in ke provinsi   : 480ms  (easeInOut)
+  //   • Hold di provinsi (count-up) : 950ms  (number naik 0→N)
+  //   • Jeda kecil sebelum next     : 90ms
+  //   • Setelah semua: zoom-out     : 800ms  ke overview penuh
+  // Per provinsi efektif ±1.5 detik. Untuk ~25 provinsi: ±37 detik tour total.
+  //
+  // Cancel: kalau user fokus di input email / password, tour langsung dihentikan
+  // dan kamera kembali ke overview (supaya ngga ganggu user yang mau login).
+
+  // Hormati prefers-reduced-motion: skip tour, biarkan pin saja
+  const prefersReducedMotion =
+    window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (badgeList.length === 0 || prefersReducedMotion) return;
+
+  // Tunggu pin terakhir selesai turun + count-up baru mulai tour
+  const tourStartDelay = delay + 1500;
+
+  setTimeout(() => runZoomTour(svg, badgeList), tourStartDelay);
+
+  function runZoomTour(svg, items) {
+    const card    = document.getElementById('tourCard');
+    const cardName = document.getElementById('tourName');
+    const cardNum  = document.getElementById('tourNum');
+    const cardBar  = document.getElementById('tourBar');
+    if (!card || !cardName || !cardNum || !cardBar) return;
+
+    const ORIGIN_VB = [0, 0, 1000, 368];
+
+    // Ukuran viewport saat zoom-in. Lebih kecil = zoom lebih dalam.
+    // 240 × 88 ≈ 4.2× zoom dari overview. Pas untuk satu provinsi.
+    const ZOOM_W   = 240;
+    const ZOOM_H   = ZOOM_W * (368 / 1000); // jaga aspect ratio (= 88.32)
+
+    const PAN_MS     = 480;
+    const HOLD_MS    = 950;
+    const PAUSE_MS   = 90;
+    const ZOOMOUT_MS = 800;
+
+    // Cancel flag — di-set true kalau user focus ke input
+    let cancelled = false;
+    const onCancel = () => { cancelled = true; };
+    const emailEl = document.getElementById('lEmail');
+    const pwEl    = document.getElementById('lPw');
+    emailEl && emailEl.addEventListener('focus', onCancel, { once: true });
+    pwEl    && pwEl.addEventListener('focus',    onCancel, { once: true });
+
+    // Util easing
+    const easeOutCubic   = t => 1 - Math.pow(1 - t, 3);
+    const easeInOutCubic = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3) / 2;
+
+    // Clamp viewBox supaya kamera ngga keluar bingkai peta
+    function clampVB([x, y, w, h]) {
+      const PAD = 0.15;
+      return [
+        Math.max(-w * PAD,         Math.min(1000 - w * (1 - PAD), x)),
+        Math.max(-h * PAD,         Math.min(368  - h * (1 - PAD), y)),
+        w, h
+      ];
+    }
+
+    function getVB() {
+      return svg.getAttribute('viewBox').split(/\s+/).map(Number);
+    }
+    function setVB(vb) { svg.setAttribute('viewBox', vb.join(' ')); }
+
+    function tweenVB(from, to, dur, ease) {
+      return new Promise(resolve => {
+        const start = performance.now();
+        (function frame(now) {
+          if (cancelled) { resolve(); return; }
+          const t = Math.min((now - start) / dur, 1);
+          const e = ease(t);
+          setVB([
+            from[0] + (to[0] - from[0]) * e,
+            from[1] + (to[1] - from[1]) * e,
+            from[2] + (to[2] - from[2]) * e,
+            from[3] + (to[3] - from[3]) * e
+          ]);
+          if (t < 1) requestAnimationFrame(frame);
+          else resolve();
+        })(performance.now());
+      });
+    }
+
+    function tweenNumber(el, from, to, dur, ease = easeOutCubic) {
+      return new Promise(resolve => {
+        const start = performance.now();
+        (function frame(now) {
+          if (cancelled) { el.textContent = to; resolve(); return; }
+          const t = Math.min((now - start) / dur, 1);
+          const e = ease(t);
+          el.textContent = Math.round(from + (to - from) * e);
+          if (t < 1) requestAnimationFrame(frame);
+          else resolve();
+        })(performance.now());
+      });
+    }
+
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    // ── Mulai tour ──
+    (async () => {
+      // Pause drift agar kamera stabil
+      svg.classList.add('touring');
+
+      // Pastikan viewBox awalnya overview penuh
+      setVB(ORIGIN_VB);
+
+      const allBadges = items.map(it => it.badge);
+
+      for (let i = 0; i < items.length; i++) {
+        if (cancelled) break;
+        const it = items[i];
+        if (!it.pos || !it.badge) continue;
+
+        // Target viewBox: pusatkan kamera ke pin provinsi
+        const targetVB = clampVB([
+          it.pos.x - ZOOM_W / 2,
+          it.pos.y - ZOOM_H / 2,
+          ZOOM_W, ZOOM_H
+        ]);
+
+        // 1. Pan + zoom in
+        await tweenVB(getVB(), targetVB, PAN_MS, easeInOutCubic);
+        if (cancelled) break;
+
+        // 2. Set state focus + reset angka
+        allBadges.forEach(b => {
+          b.classList.add('tour-dim');
+          b.classList.remove('tour-focus');
+        });
+        it.badge.classList.remove('tour-dim');
+        it.badge.classList.add('tour-focus');
+
+        cardName.textContent = it.name;
+        cardNum.textContent  = '0';
+        it.countText.textContent = '0';
+
+        // Reset bar
+        cardBar.style.transition = 'none';
+        cardBar.style.width = '0%';
+        // force reflow biar transition di-apply ulang
+        void cardBar.offsetWidth;
+        cardBar.style.transition = `width ${HOLD_MS}ms linear`;
+
+        // 3. Show card + jalankan progress bar
+        card.classList.add('show');
+        cardBar.style.width = '100%';
+
+        // 4. Count-up paralel: kartu + pin SVG sama-sama 0 → cnt
+        await Promise.all([
+          tweenNumber(cardNum,        0, it.count, HOLD_MS),
+          tweenNumber(it.countText,   0, it.count, HOLD_MS),
+        ]);
+        if (cancelled) break;
+
+        // 5. Hide card, lepas focus, jeda kecil
+        card.classList.remove('show');
+        it.badge.classList.remove('tour-focus');
+
+        await sleep(PAUSE_MS);
+      }
+
+      // Bersihkan state highlight di semua badge
+      items.forEach(it => {
+        it.badge.classList.remove('tour-dim');
+        it.badge.classList.remove('tour-focus');
+      });
+      card.classList.remove('show');
+
+      // Zoom-out smooth ke overview penuh
+      await tweenVB(getVB(), ORIGIN_VB, ZOOMOUT_MS, easeInOutCubic);
+
+      // Lepas drift pause supaya animasi parallax kembali jalan
+      svg.classList.remove('touring');
+    })();
+  }
+})();
 </script>
 </body>
 </html>
