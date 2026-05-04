@@ -523,6 +523,33 @@
     }
     .gap-filter-status .fs-label { color:#94a3b8; }
     .gap-filter-status .fs-value { font-weight:700; color:#111827; }
+
+    /* Status filter pills */
+    .gap-status-bar {
+      display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+      margin-bottom:12px; padding:10px 14px;
+      background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px;
+    }
+    .gap-status-bar .gsb-label {
+      font-size:11.5px; font-weight:700; color:#6b7280;
+      text-transform:uppercase; letter-spacing:.4px; margin-right:4px; white-space:nowrap;
+    }
+    .gsb-pill {
+      padding:5px 13px; border-radius:99px; font-size:12px; font-weight:700;
+      border:1.5px solid #e5e7eb; background:#fff; color:#374151;
+      cursor:pointer; transition:all .18s cubic-bezier(.2,.8,.2,1);
+      display:inline-flex; align-items:center; gap:5px;
+    }
+    .gsb-pill:hover { border-color:#94a3b8; background:#f1f5f9; }
+    .gsb-pill.active-all    { background:#111827; color:#fff; border-color:#111827; }
+    .gsb-pill.active-aktif  { background:#16a34a; color:#fff; border-color:#16a34a; }
+    .gsb-pill.active-undur  { background:#ea580c; color:#fff; border-color:#ea580c; }
+    .gsb-pill.active-do     { background:#9333ea; color:#fff; border-color:#9333ea; }
+    .gsb-pill .gsb-cnt {
+      font-size:10.5px; padding:1px 6px; border-radius:99px;
+      background:rgba(255,255,255,.25); font-weight:800;
+    }
+    .gsb-pill:not([class*="active"]) .gsb-cnt { background:#f3f4f6; color:#6b7280; }
     .gap-filter-reset {
       font-size:11.5px; font-weight:600; color:#dc2626;
       background:transparent; border:1px solid #fecaca; border-radius:99px;
@@ -1242,6 +1269,9 @@
 
         <!-- Risk Summary cards (clickable as filter) -->
         <div class="gap-summary" id="gapSummary"></div>
+
+        <!-- Status awardee filter bar -->
+        <div class="gap-status-bar" id="gapStatusBar"></div>
 
         <!-- Filter status row -->
         <div class="gap-filter-status" id="gapFilterStatus"></div>
@@ -2034,7 +2064,8 @@ function renderKampusTable(){
 /* =========================================================
    GAP PANEL — awardee yang butuh perhatian (v2: risk-tier insight)
 ========================================================= */
-let _gapFilter = 'all'; // 'all' | 'crit' | 'high' | 'med'
+let _gapFilter = 'all';       // 'all' | 'crit' | 'high' | 'med'
+let _gapStatusFilter = 'aktif'; // 'all' | 'aktif' | 'undur diri' | 'drop out'
 let _gapData = [];      // cached classified list
 
 function classifyRisk(a, hasSP, gapFlagged){
@@ -2100,6 +2131,7 @@ function renderGap(){
 
   // Render summary cards
   renderGapSummary(cnt);
+  renderGapStatusBar();
   renderGapFilterStatus(cnt);
   renderGapTable();
 }
@@ -2171,11 +2203,9 @@ function renderGapFilterStatus(cnt){
 
 window.setGapFilter = (key) => {
   _gapFilter = key;
-  // Update card active states
   document.querySelectorAll('.gap-sum-card').forEach(c => c.classList.remove('active'));
   const active = document.querySelector(`.gap-sum-card[onclick*="'${key}'"]`);
   if(active) active.classList.add('active');
-  // Re-render filter status & table
   const cnt = {
     crit: _gapData.filter(a => a._risk === 'crit').length,
     high: _gapData.filter(a => a._risk === 'high').length,
@@ -2183,6 +2213,52 @@ window.setGapFilter = (key) => {
     all:  _gapData.length,
   };
   renderGapFilterStatus(cnt);
+  renderGapStatusBar();
+  renderGapTable();
+};
+
+function _normStatusStr(s) {
+  const v = (s || '').toLowerCase().trim();
+  if (v.includes('undur')) return 'undur diri';
+  if (v.includes('drop') || v === 'do') return 'drop out';
+  if (v === 'aktif' || v === '') return 'aktif';
+  return 'aktif';
+}
+
+function renderGapStatusBar() {
+  const el = document.getElementById('gapStatusBar');
+  if (!el) return;
+  // Hitung per status dari data yang sudah difilter risiko
+  let base = _gapData;
+  if (_gapFilter !== 'all') base = base.filter(a => a._risk === _gapFilter);
+
+  const counts = { all: base.length, aktif: 0, 'undur diri': 0, 'drop out': 0 };
+  base.forEach(a => {
+    const ns = _normStatusStr(a.status);
+    if (ns in counts) counts[ns]++;
+  });
+
+  const pills = [
+    { key: 'all',       label: 'Semua',      activeClass: 'active-all',   cnt: counts.all },
+    { key: 'aktif',     label: 'Aktif',      activeClass: 'active-aktif', cnt: counts['aktif'] },
+    { key: 'undur diri',label: 'Undur Diri', activeClass: 'active-undur', cnt: counts['undur diri'] },
+    { key: 'drop out',  label: 'Drop Out',   activeClass: 'active-do',    cnt: counts['drop out'] },
+  ].filter(p => p.key === 'all' || p.cnt > 0);
+
+  el.innerHTML = `<span class="gsb-label">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:middle;margin-right:3px"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+      Filter Status
+    </span>` +
+    pills.map(p => `<button class="gsb-pill ${_gapStatusFilter === p.key ? p.activeClass : ''}"
+        onclick="setGapStatusFilter('${p.key}')">
+        ${p.label}
+        <span class="gsb-cnt">${p.cnt.toLocaleString('id-ID')}</span>
+      </button>`).join('');
+}
+
+window.setGapStatusFilter = (key) => {
+  _gapStatusFilter = key;
+  renderGapStatusBar();
   renderGapTable();
 };
 
@@ -2209,6 +2285,7 @@ function renderGapTable(){
 
   let data = _gapData;
   if(_gapFilter !== 'all') data = data.filter(a => a._risk === _gapFilter);
+  if(_gapStatusFilter !== 'all') data = data.filter(a => _normStatusStr(a.status) === _gapStatusFilter);
 
   if(!data.length){
     el.innerHTML = `
