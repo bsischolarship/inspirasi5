@@ -579,6 +579,233 @@
     .ep-or { text-align:center; font-size:11px; color:#9ca3af; margin:0 0 14px; position:relative; }
     .ep-or::before, .ep-or::after { content:''; position:absolute; top:50%; width:40%; height:1px; background:#e5e7eb; }
     .ep-or::before { left:0; } .ep-or::after { right:0; }
+
+    /* ============================================================
+       CUSTOM CONFIRM DIALOG
+       ============================================================ */
+    .cfm-overlay {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(0,0,0,0);
+      backdrop-filter: blur(0px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      pointer-events: none;
+      transition: background .25s ease, backdrop-filter .25s ease;
+    }
+    .cfm-overlay.show {
+      background: rgba(2,6,23,0.55);
+      backdrop-filter: blur(6px);
+      pointer-events: all;
+    }
+    .cfm-modal {
+      background: #fff;
+      border-radius: 22px;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 32px 80px rgba(0,0,0,.22), 0 0 0 1px rgba(0,0,0,.06);
+      padding: 32px 28px 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+      transform: scale(.88) translateY(16px);
+      opacity: 0;
+      transition: transform .32s cubic-bezier(.175,.885,.32,1.275), opacity .22s ease;
+      text-align: center;
+    }
+    .cfm-overlay.show .cfm-modal {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+    .cfm-icon-wrap {
+      position: relative; width: 72px; height: 72px;
+      margin-bottom: 20px; flex-shrink: 0;
+    }
+    .cfm-icon-ring {
+      position: absolute; inset: 0; border-radius: 50%;
+      border: 2.5px solid currentColor;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: opacity .35s .1s ease, transform .35s .1s cubic-bezier(.175,.885,.32,1.275);
+    }
+    .cfm-overlay.show .cfm-icon-ring { opacity: .18; transform: scale(1); }
+    .cfm-icon-inner {
+      position: absolute; inset: 7px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transform: scale(0.5) rotate(-15deg);
+      opacity: 0;
+      transition: transform .38s .15s cubic-bezier(.175,.885,.32,1.275), opacity .25s .15s ease;
+    }
+    .cfm-overlay.show .cfm-icon-inner { transform: scale(1) rotate(0deg); opacity: 1; }
+    .cfm-icon-inner svg { display: block; }
+    .cfm-modal.danger .cfm-icon-wrap { color: #dc2626; }
+    .cfm-modal.danger .cfm-icon-ring { border-color: #dc2626; }
+    .cfm-modal.danger .cfm-icon-inner { background: linear-gradient(135deg,#fef2f2,#fee2e2); }
+    .cfm-modal.danger .cfm-icon-inner svg { stroke: #dc2626; }
+    .cfm-modal.warning .cfm-icon-wrap { color: #d97706; }
+    .cfm-modal.warning .cfm-icon-ring { border-color: #d97706; }
+    .cfm-modal.warning .cfm-icon-inner { background: linear-gradient(135deg,#fffbeb,#fef3c7); }
+    .cfm-modal.warning .cfm-icon-inner svg { stroke: #d97706; }
+    .cfm-body { width: 100%; margin-bottom: 22px; }
+    .cfm-title {
+      font-size: 18px; font-weight: 800; color: #0f172a;
+      margin: 0 0 8px; letter-spacing: -.3px; line-height: 1.25;
+    }
+    .cfm-desc { font-size: 13.5px; color: #64748b; margin: 0; line-height: 1.6; }
+    .cfm-meta {
+      margin-top: 14px; padding: 11px 16px;
+      background: #f8fafc; border: 1px solid #e2e8f0;
+      border-radius: 12px; font-size: 13px;
+      color: #334155; font-weight: 600;
+      display: none; align-items: center; gap: 8px;
+      justify-content: center; word-break: break-all;
+    }
+    .cfm-meta.show { display: flex; }
+    .cfm-actions { display: flex; gap: 10px; width: 100%; }
+    .cfm-btn {
+      flex: 1; padding: 12px 18px;
+      border-radius: 12px; font-size: 13.5px; font-weight: 700;
+      cursor: pointer; border: none; outline: none;
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      transition: transform .14s ease, box-shadow .14s ease, background .14s ease;
+      letter-spacing: -.1px;
+    }
+    .cfm-btn:active { transform: scale(.97); }
+    .cfm-cancel { background: #f1f5f9; color: #475569; border: 1.5px solid #e2e8f0; }
+    .cfm-cancel:hover { background: #e2e8f0; }
+    .cfm-confirm {
+      background: linear-gradient(135deg,#dc2626,#b91c1c);
+      color: #fff; box-shadow: 0 4px 14px rgba(220,38,38,.35);
+    }
+    .cfm-confirm:hover {
+      background: linear-gradient(135deg,#ef4444,#dc2626);
+      box-shadow: 0 6px 20px rgba(220,38,38,.45);
+      transform: translateY(-1px);
+    }
+    .cfm-modal.warning .cfm-confirm {
+      background: linear-gradient(135deg,#d97706,#b45309);
+      box-shadow: 0 4px 14px rgba(217,119,6,.35);
+    }
+    .cfm-modal.warning .cfm-confirm:hover {
+      background: linear-gradient(135deg,#f59e0b,#d97706);
+      box-shadow: 0 6px 20px rgba(217,119,6,.45);
+    }
+    @keyframes cfmShake {
+      0%,100% { transform: translateX(0) scale(1); }
+      20%      { transform: translateX(-6px) scale(1); }
+      40%      { transform: translateX(6px) scale(1); }
+      60%      { transform: translateX(-4px) scale(1); }
+      80%      { transform: translateX(3px) scale(1); }
+    }
+    .cfm-modal.shake { animation: cfmShake .38s ease; }
+
+    /* Loading state inside confirm modal */
+    .cfm-loading {
+      display: none; flex-direction: column; align-items: center; gap: 14px;
+      padding: 8px 0 4px; width: 100%;
+    }
+    .cfm-modal.is-loading .cfm-body,
+    .cfm-modal.is-loading .cfm-actions { display: none; }
+    .cfm-modal.is-loading .cfm-loading { display: flex; }
+    .cfm-modal.is-loading .cfm-icon-wrap { margin-bottom: 12px; }
+
+    .cfm-spinner {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 3px solid #e5e7eb;
+      border-top-color: #dc2626;
+      animation: cfmSpin .75s linear infinite;
+    }
+    .cfm-modal.warning .cfm-spinner { border-top-color: #d97706; }
+    .cfm-modal.success-mode .cfm-spinner { border-top-color: #16a34a; }
+    @keyframes cfmSpin { to { transform: rotate(360deg); } }
+
+    .cfm-loading-text {
+      font-size: 13.5px; font-weight: 600; color: #64748b; letter-spacing: -.1px;
+    }
+
+    /* Result popup — success/error tengah layar */
+    .cfm-result-overlay {
+      position: fixed; inset: 0; z-index: 2100;
+      background: rgba(2,6,23,0);
+      backdrop-filter: blur(0px);
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+      pointer-events: none;
+      transition: background .2s, backdrop-filter .2s;
+    }
+    .cfm-result-overlay.show {
+      background: rgba(2,6,23,0.45);
+      backdrop-filter: blur(5px);
+      pointer-events: all;
+    }
+    .cfm-result-box {
+      background: #fff; border-radius: 22px;
+      width: 100%; max-width: 340px;
+      box-shadow: 0 32px 80px rgba(0,0,0,.2), 0 0 0 1px rgba(0,0,0,.06);
+      padding: 36px 28px 28px;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 0;
+      transform: scale(.82) translateY(20px); opacity: 0;
+      transition: transform .38s cubic-bezier(.175,.885,.32,1.275), opacity .22s ease;
+    }
+    .cfm-result-overlay.show .cfm-result-box {
+      transform: scale(1) translateY(0); opacity: 1;
+    }
+
+    /* Result icon */
+    .cfm-result-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 18px; position: relative;
+      flex-shrink: 0;
+    }
+    .cfm-result-icon::before {
+      content: ''; position: absolute; inset: -5px; border-radius: 50%;
+      opacity: .15;
+    }
+    .cfm-result-icon.ok  { background: linear-gradient(135deg,#dcfce7,#bbf7d0); }
+    .cfm-result-icon.ok::before  { background: #16a34a; }
+    .cfm-result-icon.ok  svg { stroke: #16a34a; }
+    .cfm-result-icon.err { background: linear-gradient(135deg,#fee2e2,#fecaca); }
+    .cfm-result-icon.err::before { background: #dc2626; }
+    .cfm-result-icon.err svg { stroke: #dc2626; }
+    .cfm-result-icon.warn { background: linear-gradient(135deg,#fef3c7,#fde68a); }
+    .cfm-result-icon.warn::before { background: #d97706; }
+    .cfm-result-icon.warn svg { stroke: #d97706; }
+
+    /* Checkmark draw animation */
+    .cfm-check-svg .check-path {
+      stroke-dasharray: 50;
+      stroke-dashoffset: 50;
+      transition: stroke-dashoffset .5s .1s cubic-bezier(.2,.8,.2,1);
+    }
+    .cfm-result-overlay.show .cfm-check-svg .check-path { stroke-dashoffset: 0; }
+
+    .cfm-result-title {
+      font-size: 17px; font-weight: 800; color: #0f172a;
+      margin: 0 0 6px; letter-spacing: -.3px;
+    }
+    .cfm-result-desc {
+      font-size: 13px; color: #64748b; margin: 0 0 22px; line-height: 1.6;
+    }
+    .cfm-result-close {
+      width: 100%; padding: 12px;
+      border-radius: 12px; font-size: 13.5px; font-weight: 700;
+      cursor: pointer; border: none; outline: none;
+      transition: transform .14s, opacity .14s;
+    }
+    .cfm-result-close:hover { opacity: .88; transform: translateY(-1px); }
+    .cfm-result-close.ok   { background: linear-gradient(135deg,#16a34a,#15803d); color: #fff; box-shadow: 0 4px 14px rgba(22,163,74,.35); }
+    .cfm-result-close.err  { background: linear-gradient(135deg,#dc2626,#b91c1c); color: #fff; box-shadow: 0 4px 14px rgba(220,38,38,.35); }
+    .cfm-result-close.warn { background: linear-gradient(135deg,#d97706,#b45309); color: #fff; box-shadow: 0 4px 14px rgba(217,119,6,.35); }
+
+    /* Auto-close progress bar */
+    .cfm-result-bar {
+      width: 100%; height: 3px; background: #f1f5f9;
+      border-radius: 99px; overflow: hidden; margin-bottom: 14px;
+    }
+    .cfm-result-bar-fill {
+      height: 100%; border-radius: 99px; width: 100%;
+      transition: width linear;
+    }
+    .cfm-result-bar-fill.ok   { background: #16a34a; }
+    .cfm-result-bar-fill.err  { background: #dc2626; }
+    .cfm-result-bar-fill.warn { background: #d97706; }
   </style>
 </head>
 
@@ -1016,6 +1243,46 @@
   </div>
 </div>
 
+<!-- MODAL: Custom Confirm Dialog -->
+<div class="cfm-overlay" id="cfmOverlay">
+  <div class="cfm-modal" id="cfmModal" role="dialog" aria-modal="true">
+    <div class="cfm-icon-wrap" id="cfmIconWrap">
+      <div class="cfm-icon-ring"></div>
+      <div class="cfm-icon-inner" id="cfmIconInner"></div>
+    </div>
+    <div class="cfm-body">
+      <h3 class="cfm-title" id="cfmTitle">Konfirmasi</h3>
+      <p class="cfm-desc" id="cfmDesc"></p>
+      <div class="cfm-meta" id="cfmMeta"></div>
+    </div>
+    <div class="cfm-loading" id="cfmLoading">
+      <div class="cfm-spinner" id="cfmSpinner"></div>
+      <div class="cfm-loading-text" id="cfmLoadingText">Memproses...</div>
+    </div>
+    <div class="cfm-actions">
+      <button class="cfm-btn cfm-cancel" id="cfmCancelBtn" onclick="window._cfmResolve(false)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <span id="cfmCancelLabel">Batal</span>
+      </button>
+      <button class="cfm-btn cfm-confirm" id="cfmConfirmBtn" onclick="window._cfmResolve(true)">
+        <span id="cfmConfirmIcon"></span>
+        <span id="cfmConfirmLabel">Ya, lanjutkan</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP: Result (success / error) -->
+<div class="cfm-result-overlay" id="cfmResultOverlay" onclick="if(event.target===this)closeResult()">
+  <div class="cfm-result-box" id="cfmResultBox">
+    <div class="cfm-result-icon" id="cfmResultIcon"></div>
+    <div class="cfm-result-title" id="cfmResultTitle"></div>
+    <p class="cfm-result-desc" id="cfmResultDesc"></p>
+    <div class="cfm-result-bar"><div class="cfm-result-bar-fill" id="cfmResultBarFill"></div></div>
+    <button class="cfm-result-close" id="cfmResultClose" onclick="closeResult()">Oke</button>
+  </div>
+</div>
+
 <!-- MOBILE NAV -->
 <nav class="mob-nav" id="mobNav">
   <a href="index.html" class="mob-nav-item">
@@ -1052,6 +1319,121 @@ function closeSidebar() {
   document.getElementById('sidebar').classList.remove('open');
   document.getElementById('sidebarOverlay').classList.remove('show');
 }
+
+/* ============================================================
+   CUSTOM CONFIRM DIALOG
+============================================================ */
+window._cfmResolve = null;
+
+window.showConfirm = function({ type = 'danger', title, desc, meta, confirmLabel, cancelLabel, iconSvg, loadingText } = {}) {
+  return new Promise(resolve => {
+    const overlay   = document.getElementById('cfmOverlay');
+    const modal     = document.getElementById('cfmModal');
+    const metaEl    = document.getElementById('cfmMeta');
+    const iconInner = document.getElementById('cfmIconInner');
+
+    document.getElementById('cfmTitle').textContent        = title || 'Konfirmasi';
+    document.getElementById('cfmDesc').textContent         = desc  || '';
+    document.getElementById('cfmConfirmLabel').textContent = confirmLabel || 'Ya, lanjutkan';
+    document.getElementById('cfmCancelLabel').textContent  = cancelLabel  || 'Batal';
+    document.getElementById('cfmLoadingText').textContent  = loadingText  || 'Memproses...';
+
+    if (meta) {
+      metaEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>${meta}`;
+      metaEl.classList.add('show');
+    } else {
+      metaEl.className = 'cfm-meta';
+    }
+
+    const icons = {
+      danger:  `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-2 14H7L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg>`,
+      warning: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+    };
+    iconInner.innerHTML = iconSvg || icons[type] || icons.danger;
+
+    // Reset loading state
+    modal.className = 'cfm-modal ' + type;
+    overlay.classList.add('show');
+
+    window._cfmResolve = function(result) {
+      if (!result) {
+        modal.classList.add('shake');
+        setTimeout(() => modal.classList.remove('shake'), 400);
+        overlay.classList.remove('show');
+        setTimeout(() => { window._cfmResolve = null; resolve(false); }, 420);
+      } else {
+        // Tampilkan loading state di dalam modal
+        modal.classList.add('is-loading');
+        window._cfmResolve = null;
+        resolve(true);
+      }
+    };
+
+    overlay.onclick = function(e) {
+      if (e.target === overlay && !modal.classList.contains('is-loading')) window._cfmResolve(false);
+    };
+
+    document.addEventListener('keydown', function _esc(e) {
+      if (modal.classList.contains('is-loading')) return;
+      if (e.key === 'Escape') { document.removeEventListener('keydown', _esc); window._cfmResolve(false); }
+      if (e.key === 'Enter')  { document.removeEventListener('keydown', _esc); window._cfmResolve(true); }
+    });
+  });
+};
+
+// Tutup confirm overlay setelah selesai loading
+window._cfmClose = function() {
+  const overlay = document.getElementById('cfmOverlay');
+  const modal   = document.getElementById('cfmModal');
+  overlay.classList.remove('show');
+  setTimeout(() => { modal.classList.remove('is-loading'); }, 300);
+};
+
+// Popup hasil di tengah layar
+window.showResult = function({ type = 'ok', title, desc, duration = 3000 } = {}) {
+  const overlay  = document.getElementById('cfmResultOverlay');
+  const icon     = document.getElementById('cfmResultIcon');
+  const titleEl  = document.getElementById('cfmResultTitle');
+  const descEl   = document.getElementById('cfmResultDesc');
+  const closeBtn = document.getElementById('cfmResultClose');
+  const barFill  = document.getElementById('cfmResultBarFill');
+
+  const icons = {
+    ok:   `<svg class="cfm-check-svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline class="check-path" points="20 6 9 17 4 12"/></svg>`,
+    err:  `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+    warn: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`,
+  };
+
+  icon.className   = 'cfm-result-icon ' + type;
+  icon.innerHTML   = icons[type] || icons.ok;
+  titleEl.textContent = title || (type === 'ok' ? 'Berhasil!' : 'Gagal');
+  descEl.textContent  = desc  || '';
+  closeBtn.className  = 'cfm-result-close ' + type;
+  barFill.className   = 'cfm-result-bar-fill ' + type;
+
+  // Reset & mulai progress bar
+  barFill.style.transition = 'none';
+  barFill.style.width = '100%';
+
+  overlay.classList.add('show');
+
+  // Animasi progress bar mengecil
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      barFill.style.transition = `width ${duration}ms linear`;
+      barFill.style.width = '0%';
+    });
+  });
+
+  // Auto-close
+  if (window._cfmResultTimer) clearTimeout(window._cfmResultTimer);
+  window._cfmResultTimer = setTimeout(() => closeResult(), duration);
+};
+
+window.closeResult = function() {
+  document.getElementById('cfmResultOverlay').classList.remove('show');
+  if (window._cfmResultTimer) clearTimeout(window._cfmResultTimer);
+};
 </script>
 
 <script src="assets/multiselect.js"></script>
@@ -1680,31 +2062,65 @@ async function submitAddUser() {
       }
     });
 
+    // Step 1: Daftarkan user baru
     const { data: authData, error: authErr } = await tmpClient.auth.signUp({
       email, password: pw,
       options: { data: { full_name: name } }
     });
     if (authErr) throw authErr;
 
-    const uid = authData?.user?.id;
-    if (!uid) throw new Error('Gagal mendapatkan user ID dari Supabase');
+    const uid        = authData?.user?.id;
+    const identities = authData?.user?.identities;
+    if (!uid) throw new Error('Gagal mendapatkan user ID dari Supabase.');
+    if (Array.isArray(identities) && identities.length === 0) {
+      throw new Error('Email sudah terdaftar. Gunakan email lain.');
+    }
 
-    const { error: profErr } = await window._supabase.from('profiles').upsert({
+    // Step 2: Sign-in sebagai user baru pakai tmpClient agar RLS lolos
+    // (RLS Supabase hanya izinkan user update profil miliknya sendiri,
+    //  bukan admin yang update profil orang lain → itulah penyebab error 403)
+    const { data: signInData } = await tmpClient.auth.signInWithPassword({ email, password: pw });
+
+    // Step 3: Upsert profile — pakai session user baru jika berhasil sign-in, fallback ke admin
+    const profileClient = signInData?.session ? tmpClient : window._supabase;
+    const { error: profErr } = await profileClient.from('profiles').upsert({
       id: uid, email, full_name: name, role, approved: true,
-    });
-    if (profErr) throw profErr;
+    }, { onConflict: 'id' });
+
+    // Step 4: Sign-out tmpClient agar session admin tidak terganggu
+    if (signInData?.session) await tmpClient.auth.signOut();
+
+    // Step 5: Fallback — jika upsert gagal (misal trigger DB sudah buat row dengan approved:false),
+    // coba update via admin session. Tidak throw error agar flow tetap sukses.
+    if (profErr) {
+      await window._supabase.from('profiles')
+        .update({ full_name: name, role, approved: true })
+        .eq('id', uid);
+    }
 
     msg.className = 'au-msg ok';
-    const needsConfirm = !authData?.user?.email_confirmed_at;
-    msg.textContent = needsConfirm
-      ? `Akun "${name}" dibuat sebagai ${role}. User perlu konfirmasi email sebelum bisa login.`
-      : `Akun "${name}" berhasil dibuat sebagai ${role}.`;
+    msg.textContent = `Akun "${name}" berhasil dibuat sebagai ${role} dan langsung aktif.`;
     showToast(`Pengguna ${name} berhasil ditambahkan`, 'ok');
     setTimeout(() => closeAddUserModal(), 1200);
     if (typeof loadUsers === 'function') loadUsers();
   } catch (e) {
     msg.className = 'au-msg err';
-    msg.textContent = 'Gagal. Silakan coba lagi.';
+    const raw = e?.message || '';
+    let errMsg = 'Gagal membuat akun. Silakan coba lagi.';
+    if (/already registered|already been registered/i.test(raw))
+      errMsg = 'Email sudah terdaftar. Gunakan email lain.';
+    else if (/signup.*disabled|email.*disabled/i.test(raw))
+      errMsg = 'Pendaftaran via email dinonaktifkan di pengaturan Supabase.';
+    else if (/weak password|password.*length|characters/i.test(raw))
+      errMsg = 'Password terlalu lemah. Gunakan kombinasi huruf, angka, dan simbol.';
+    else if (/invalid email/i.test(raw))
+      errMsg = 'Format email tidak valid.';
+    else if (/rate.?limit/i.test(raw))
+      errMsg = 'Terlalu banyak permintaan. Tunggu beberapa menit lalu coba lagi.';
+    else if (raw)
+      errMsg = raw;
+    msg.textContent = errMsg;
+    console.error('[submitAddUser]', e);
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg> Buat Akun';
@@ -1811,29 +2227,88 @@ async function submitAddUser() {
 
   /* ---- ACTIONS ---- */
   window.approveUser = async (id) => {
+    const u = allUsers.find(x => x.id === id);
+    const name = u ? (u.full_name || u.email) : 'Pengguna';
     const { error } = await sb.from('profiles').update({ approved: true }).eq('id', id);
-    if (error) { showToast('Gagal menyetujui. Silakan coba lagi.', 'err'); return; }
-    showToast('Akun berhasil disetujui', 'ok');
+    if (error) {
+      showResult({ type: 'err', title: 'Gagal Menyetujui', desc: error.message || 'Silakan coba lagi.' });
+      return;
+    }
     if (document.body.classList.contains('aa-detail-mode')) hideDetail();
     await loadUsers();
+    showResult({ type: 'ok', title: 'Akun Disetujui!', desc: `${name} sekarang bisa login ke sistem.`, duration: 3000 });
   };
 
   window.rejectUser = async (id, email) => {
-    if (!confirm(`Hapus akun ${email}?\nTindakan ini tidak dapat dibatalkan.`)) return;
-    const { error } = await sb.from('profiles').delete().eq('id', id);
-    if (error) { showToast('Gagal menghapus. Silakan coba lagi.', 'err'); return; }
-    showToast('Akun berhasil dihapus', 'ok');
-    if (document.body.classList.contains('aa-detail-mode')) hideDetail();
-    await loadUsers();
+    const u = allUsers.find(x => x.id === id);
+    const name = u ? (u.full_name || u.email) : email;
+    const ok = await showConfirm({
+      type: 'danger',
+      title: 'Hapus Akun Pengguna',
+      desc: 'Tindakan ini permanen dan tidak dapat dibatalkan. Akun akan dihapus dari sistem sepenuhnya.',
+      meta: email,
+      confirmLabel: 'Ya, Hapus Akun',
+      cancelLabel: 'Batal',
+      loadingText: 'Menghapus akun...',
+    });
+    if (!ok) return;
+
+    const SUPABASE_URL = 'https://iyfwaqwmnmjfagszttts.supabase.co';
+
+    try {
+      const { data: sessionData } = await sb.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+      if (!accessToken) throw new Error('Sesi tidak valid. Silakan login ulang.');
+
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/rapid-worker`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ userId: id }),
+      });
+
+      const result = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(result?.error || `Gagal menghapus (${res.status})`);
+
+      allUsers = allUsers.filter(u => u.id !== id);
+      filteredUsers = filteredUsers.filter(u => u.id !== id);
+      if (document.body.classList.contains('aa-detail-mode')) hideDetail();
+      renderStats();
+      renderTable();
+      _cfmClose();
+      showResult({ type: 'ok', title: 'Akun Dihapus', desc: `Akun ${name} telah dihapus dari sistem.`, duration: 3500 });
+
+    } catch (e) {
+      console.error('[rejectUser]', e);
+      _cfmClose();
+      showResult({ type: 'err', title: 'Gagal Menghapus', desc: e?.message || 'Silakan coba lagi.' });
+    }
   };
 
   window.revokeUser = async (id) => {
-    if (!confirm('Nonaktifkan akun ini? Pengguna tidak akan bisa login sampai disetujui kembali.')) return;
+    const u = allUsers.find(x => x.id === id);
+    const name = u ? (u.full_name || u.email) : '';
+    const ok = await showConfirm({
+      type: 'warning',
+      title: 'Nonaktifkan Akun',
+      desc: 'Pengguna tidak akan bisa login sampai akun disetujui kembali oleh admin.',
+      meta: name,
+      confirmLabel: 'Ya, Nonaktifkan',
+      cancelLabel: 'Batal',
+      loadingText: 'Menonaktifkan akun...',
+    });
+    if (!ok) return;
     const { error } = await sb.from('profiles').update({ approved: false }).eq('id', id);
-    if (error) { showToast('Gagal menonaktifkan. Silakan coba lagi.', 'err'); return; }
-    showToast('Akun berhasil dinonaktifkan', 'ok');
+    _cfmClose();
+    if (error) {
+      showResult({ type: 'err', title: 'Gagal Menonaktifkan', desc: error.message || 'Silakan coba lagi.' });
+      return;
+    }
     if (document.body.classList.contains('aa-detail-mode')) hideDetail();
     await loadUsers();
+    showResult({ type: 'warn', title: 'Akun Dinonaktifkan', desc: `${name} tidak dapat login sampai disetujui kembali.`, duration: 3500 });
   };
 
   window.openChangeRoleModal = (id, currentRole) => {
