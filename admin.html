@@ -1489,8 +1489,13 @@ async function submitAddUser() {
     });
     if (authErr) throw authErr;
 
+    // Supabase kadang mengembalikan user palsu jika email sudah terdaftar
     const uid = authData?.user?.id;
-    if (!uid) throw new Error('Gagal mendapatkan user ID dari Supabase');
+    const identities = authData?.user?.identities;
+    if (!uid) throw new Error('Gagal mendapatkan user ID dari Supabase.');
+    if (Array.isArray(identities) && identities.length === 0) {
+      throw new Error('Email sudah terdaftar. Gunakan email lain atau reset password user tersebut.');
+    }
 
     const { error: profErr } = await window._supabase.from('profiles').upsert({
       id: uid, email, full_name: name, role, approved: true,
@@ -1507,7 +1512,28 @@ async function submitAddUser() {
     if (typeof loadUsers === 'function') loadUsers();
   } catch (e) {
     msg.className = 'au-msg err';
-    msg.textContent = 'Gagal. Silakan coba lagi.';
+
+    // Terjemahkan pesan error Supabase ke Bahasa Indonesia
+    const raw = e?.message || '';
+    let friendlyMsg = 'Gagal membuat akun. Silakan coba lagi.';
+    if (/user already registered|already been registered/i.test(raw)) {
+      friendlyMsg = 'Email sudah terdaftar. Gunakan email lain.';
+    } else if (/email.*disabled|signup.*disabled/i.test(raw)) {
+      friendlyMsg = 'Pendaftaran via email dinonaktifkan di pengaturan Supabase.';
+    } else if (/password.*characters|password.*length|weak password/i.test(raw)) {
+      friendlyMsg = 'Password terlalu lemah. Gunakan kombinasi huruf, angka, dan simbol.';
+    } else if (/invalid email/i.test(raw)) {
+      friendlyMsg = 'Format email tidak valid.';
+    } else if (/rate.?limit/i.test(raw)) {
+      friendlyMsg = 'Terlalu banyak permintaan. Tunggu beberapa menit lalu coba lagi.';
+    } else if (/422/.test(raw) || /unprocessable/i.test(raw)) {
+      friendlyMsg = 'Supabase menolak permintaan (422). Kemungkinan: email signup dinonaktifkan, email sudah terdaftar, atau password tidak memenuhi syarat.';
+    } else if (raw) {
+      friendlyMsg = raw;
+    }
+
+    msg.textContent = friendlyMsg;
+    console.error('[submitAddUser] error:', e);
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg> Buat Akun';
