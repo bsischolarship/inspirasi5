@@ -11,16 +11,54 @@
     .page-header h1 { font-size: 22px; font-weight: 800; color: #111827; margin: 0 0 4px; }
     .page-header p  { font-size: 13px; color: #6b7280; margin: 0; }
 
-    /* Stats row */
-    .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 20px; }
-    .stat-card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:16px 18px; }
-    .stat-card .s-label { font-size:11px; color:#6b7280; font-weight:600; text-transform:uppercase; letter-spacing:.4px; }
-    .stat-card .s-val   { font-size:26px; font-weight:800; color:#111827; line-height:1.1; margin-top:4px; }
-    .stat-card .s-val.teal   { color:#00A59F; }
+    /* Stats row — REDESIGN: colorful pastel cards w/ icon (mengikuti Image 1) */
+    .stat-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 22px; }
+    .stat-card {
+      background:#fff; border:1px solid #e5e7eb; border-radius:18px;
+      padding:18px 18px 16px;
+      display:flex; align-items:flex-start; gap:14px;
+      position:relative; overflow:hidden;
+    }
+    .stat-card .s-icon {
+      width:44px; height:44px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0;
+    }
+    .stat-card .s-icon svg { width:22px; height:22px; }
+    .stat-card .s-content { flex:1; min-width:0; }
+    .stat-card .s-label {
+      font-size:12px; color:#6b7280; font-weight:600;
+      letter-spacing:.2px; margin-bottom:2px;
+    }
+    .stat-card .s-val   { font-size:28px; font-weight:800; line-height:1.05; letter-spacing:-.5px; color:#111827; font-variant-numeric:tabular-nums; }
+    .stat-card .s-val.teal   { color:#0d9488; }
     .stat-card .s-val.yellow { color:#d97706; }
-    .stat-card .s-val.blue   { color:#0055A5; }
+    .stat-card .s-val.blue   { color:#1d4ed8; }
     .stat-card .s-val.red    { color:#dc2626; }
-    @media(max-width:768px){ .stat-row{ grid-template-columns:repeat(2,1fr); } }
+
+    /* Tinted backgrounds per variant (modifier ditambahkan di markup) */
+    .stat-card.var-teal   { background:linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%); border-color:#fed7aa; }
+    .stat-card.var-teal   .s-icon { background:#fff; color:#ea580c; box-shadow:0 2px 6px rgba(234,88,12,.18); }
+    .stat-card.var-teal   .s-val  { color:#ea580c !important; }
+    .stat-card.var-blue   { background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%); border-color:#bfdbfe; }
+    .stat-card.var-blue   .s-icon { background:#fff; color:#1d4ed8; box-shadow:0 2px 6px rgba(29,78,216,.18); }
+    .stat-card.var-blue   .s-val  { color:#1d4ed8 !important; }
+    .stat-card.var-orange { background:linear-gradient(135deg,#fff1e6 0%,#ffe4cc 100%); border-color:#fdba74; }
+    .stat-card.var-orange .s-icon { background:#fff; color:#ea580c; box-shadow:0 2px 6px rgba(234,88,12,.18); }
+    .stat-card.var-orange .s-val  { color:#ea580c !important; }
+    .stat-card.var-purple { background:linear-gradient(135deg,#faf5ff 0%,#f3e8ff 100%); border-color:#d8b4fe; }
+    .stat-card.var-purple .s-icon { background:#fff; color:#9333ea; box-shadow:0 2px 6px rgba(147,51,234,.18); }
+    .stat-card.var-purple .s-val  { color:#9333ea !important; }
+    .stat-card.var-green  { background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%); border-color:#86efac; }
+    .stat-card.var-green  .s-icon { background:#fff; color:#16a34a; box-shadow:0 2px 6px rgba(22,163,74,.18); }
+    .stat-card.var-green  .s-val  { color:#16a34a !important; }
+    .stat-card.var-red    { background:linear-gradient(135deg,#fef2f2 0%,#fee2e2 100%); border-color:#fca5a5; }
+    .stat-card.var-red    .s-icon { background:#fff; color:#dc2626; box-shadow:0 2px 6px rgba(220,38,38,.18); }
+    .stat-card.var-red    .s-val  { color:#dc2626 !important; }
+
+    @media(max-width:1100px){ .stat-row{ grid-template-columns:repeat(3,1fr); } }
+    @media(max-width:768px){  .stat-row{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:480px){  .stat-row{ grid-template-columns:1fr; } }
 
     /* Toolbar */
     .toolbar { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:14px; }
@@ -175,9 +213,9 @@
     }
     /* admin-awardee specific upgrades */
     /* Stats lebih lega + clickable */
-    .stat-row { gap: 14px; margin-bottom: 18px; }
+    .stat-row { gap: 14px; margin-bottom: 22px; }
     .stat-card {
-      cursor: pointer; position: relative; overflow: hidden;
+      cursor: pointer;
       transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s, border-color .25s;
       animation: admItemIn .4s cubic-bezier(.2,.8,.2,1) backwards;
     }
@@ -185,31 +223,23 @@
     .stat-card:nth-of-type(2) { animation-delay: 60ms; }
     .stat-card:nth-of-type(3) { animation-delay: 120ms; }
     .stat-card:nth-of-type(4) { animation-delay: 180ms; }
-    .stat-card::before {
-      content: ""; position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(0,165,159,0) 0%, rgba(0,165,159,.05) 100%);
-      opacity: 0; pointer-events: none; transition: opacity .2s;
-    }
+    .stat-card:nth-of-type(5) { animation-delay: 240ms; }
     .stat-card:hover {
       transform: translateY(-3px);
-      border-color: #c5d6e8;
       box-shadow: 0 12px 28px rgba(13,67,118,.10);
     }
-    .stat-card:hover::before { opacity: 1; }
     .stat-card .s-arrow {
       position: absolute; top: 12px; right: 12px;
       width: 22px; height: 22px; border-radius: 50%;
-      background: #f3f4f6; color: #9ca3af;
+      background: rgba(255,255,255,.7); color: #6b7280;
       display: flex; align-items: center; justify-content: center;
       opacity: 0; transform: translateX(-4px);
-      transition: opacity .25s, transform .25s, background .25s, color .25s;
+      transition: opacity .25s, transform .25s;
     }
     .stat-card .s-arrow svg { width: 11px; height: 11px; }
     .stat-card:hover .s-arrow {
       opacity: 1; transform: translateX(0);
-      background: #00A59F; color: #fff;
     }
-    .stat-card .s-val { font-variant-numeric: tabular-nums; letter-spacing: -.5px; }
 
     /* Toolbar animation */
     .toolbar { animation: admItemIn .35s cubic-bezier(.2,.8,.2,1) .2s backwards; }
@@ -328,24 +358,49 @@
     }
 
     .aa-detail-kpis {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px; margin-bottom: 22px;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 14px; margin-bottom: 22px;
     }
+    @media(max-width:1100px){ .aa-detail-kpis{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:560px){  .aa-detail-kpis{ grid-template-columns:1fr; } }
     .aa-detail-kpi {
-      background: #fff; border: 1px solid #e5e7eb; border-radius: 14px;
-      padding: 14px 16px; transition: transform .2s, box-shadow .2s;
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 18px;
+      padding: 18px 18px 16px; transition: transform .2s, box-shadow .2s;
+      display:flex; align-items:flex-start; gap:14px;
+      position:relative; overflow:hidden;
     }
     .aa-detail-kpi:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.06); }
+    .aa-detail-kpi .k-icon {
+      width:44px; height:44px; border-radius:12px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      background:#fff;
+    }
+    .aa-detail-kpi .k-icon svg { width:22px; height:22px; }
+    .aa-detail-kpi .k-content { flex:1; min-width:0; }
     .aa-detail-kpi-lbl {
-      font-size: 11px; color: #6b7280; font-weight: 600;
-      letter-spacing: .3px; text-transform: uppercase; margin-bottom: 6px;
+      font-size: 12px; color: #6b7280; font-weight: 600;
+      letter-spacing: .2px; margin-bottom: 4px;
     }
     .aa-detail-kpi-val {
-      font-size: 22px; font-weight: 800; color: #111827;
+      font-size: 26px; font-weight: 800; color: #111827;
       letter-spacing: -.5px; font-variant-numeric: tabular-nums;
       line-height: 1.1;
     }
-    .aa-detail-kpi-sub { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+    .aa-detail-kpi-sub { font-size: 11.5px; color: #6b7280; margin-top: 4px; }
+
+    /* Variants for detail KPI cards */
+    .aa-detail-kpi.var-teal   { background:linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%); border-color:#fed7aa; }
+    .aa-detail-kpi.var-teal   .k-icon { color:#ea580c; box-shadow:0 2px 6px rgba(234,88,12,.18); }
+    .aa-detail-kpi.var-teal   .aa-detail-kpi-val { color:#ea580c; }
+    .aa-detail-kpi.var-blue   { background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%); border-color:#bfdbfe; }
+    .aa-detail-kpi.var-blue   .k-icon { color:#1d4ed8; box-shadow:0 2px 6px rgba(29,78,216,.18); }
+    .aa-detail-kpi.var-blue   .aa-detail-kpi-val { color:#1d4ed8; }
+    .aa-detail-kpi.var-purple { background:linear-gradient(135deg,#faf5ff 0%,#f3e8ff 100%); border-color:#d8b4fe; }
+    .aa-detail-kpi.var-purple .k-icon { color:#9333ea; box-shadow:0 2px 6px rgba(147,51,234,.18); }
+    .aa-detail-kpi.var-purple .aa-detail-kpi-val { color:#9333ea; }
+    .aa-detail-kpi.var-green  { background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%); border-color:#86efac; }
+    .aa-detail-kpi.var-green  .k-icon { color:#16a34a; box-shadow:0 2px 6px rgba(22,163,74,.18); }
+    .aa-detail-kpi.var-green  .aa-detail-kpi-val { color:#16a34a; }
 
     .aa-section {
       background: #fff; border: 1px solid #e5e7eb; border-radius: 16px;
@@ -376,33 +431,527 @@
       color: #111827; word-break: break-all; font-weight: 500;
     }
 
-    /* Breakdown bars (untuk KPI detail) */
+    /* Breakdown bars (untuk KPI detail) — IMPROVED */
     .aa-breakdown-list { display: flex; flex-direction: column; }
     .aa-breakdown-item {
-      display: grid; grid-template-columns: 1fr auto; gap: 10px;
-      align-items: center; padding: 10px 18px;
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 14px;
       border-bottom: 1px solid #f3f4f6; transition: background .15s;
     }
     .aa-breakdown-item:hover { background: #f9fafb; }
     .aa-breakdown-item:last-child { border-bottom: none; }
-    .aa-breakdown-label { font-size: 13px; font-weight: 600; color: #374151; }
+    .aa-breakdown-label {
+      font-size: 12px; font-weight: 600; color: #374151;
+      flex: 0 0 auto; max-width: 55%; line-height: 1.35;
+    }
     .aa-breakdown-bar-wrap {
-      grid-column: 1 / -1; height: 5px; background: #f1f5f9;
-      border-radius: 3px; overflow: hidden; margin-top: 4px;
+      flex: 1; height: 5px; background: #f1f5f9;
+      border-radius: 99px; overflow: hidden;
+      position:relative; min-width: 20px;
     }
     .aa-breakdown-bar {
-      height: 100%; border-radius: 3px; width: 0;
-      transition: width .9s cubic-bezier(.2,.8,.2,1);
+      height: 100%; border-radius: 99px; width: 0;
+      transition: width 1s cubic-bezier(.2,.8,.2,1);
       background: linear-gradient(90deg, #00A59F, #14b8a6);
     }
-    .aa-breakdown-bar.b-blue   { background: linear-gradient(90deg, #1d4ed8, #60a5fa); }
+    .aa-breakdown-bar.b-blue   { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
     .aa-breakdown-bar.b-green  { background: linear-gradient(90deg, #16a34a, #4ade80); }
     .aa-breakdown-bar.b-orange { background: linear-gradient(90deg, #ea580c, #fb923c); }
     .aa-breakdown-bar.b-purple { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+    .aa-breakdown-bar.b-teal   { background: linear-gradient(90deg, #0d9488, #2dd4bf); }
     .aa-breakdown-val {
-      font-weight: 700; color: #111827; font-size: 13px;
+      font-weight: 800; color: #111827; font-size: 12px;
+      font-variant-numeric: tabular-nums; min-width:20px; text-align:right;
+      flex-shrink: 0;
+    }
+
+    /* 3-column breakdown grid for KPI detail */
+    .aa-breakdown-grid {
+      display:grid; grid-template-columns: 1.6fr 2.4fr 1fr;
+      gap: 14px; margin-bottom: 18px;
+    }
+    @media(max-width:1100px){ .aa-breakdown-grid{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:768px){  .aa-breakdown-grid{ grid-template-columns:1fr; } }
+    .aa-breakdown-grid > .aa-section { margin-bottom: 0; display:flex; flex-direction:column; }
+    .aa-breakdown-grid .aa-breakdown-list { flex:1; max-height:none; overflow-y:visible; }
+    /* Cantikkan section header pada mode grid */
+    .aa-breakdown-grid .aa-section-h {
+      background:linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      font-size:12px; padding:10px 14px;
+    }
+    .aa-breakdown-grid .aa-section-h::before {
+      content:""; display:inline-block; width:4px; height:18px; border-radius:2px;
+      background:#94a3b8; margin-right:10px; vertical-align:middle;
+    }
+    .aa-breakdown-grid .aa-section.acc-purple .aa-section-h::before { background:linear-gradient(180deg,#9333ea,#a78bfa); }
+    .aa-breakdown-grid .aa-section.acc-blue   .aa-section-h::before { background:linear-gradient(180deg,#1d4ed8,#60a5fa); }
+    .aa-breakdown-grid .aa-section.acc-orange .aa-section-h::before { background:linear-gradient(180deg,#ea580c,#fb923c); }
+    .aa-breakdown-grid .aa-section.acc-teal   .aa-section-h::before { background:linear-gradient(180deg,#0d9488,#2dd4bf); }
+
+    /* ============================================================
+       NEW: 5-column stats untuk status baru (AKTIF / UNDUR / DO)
+       ============================================================ */
+    .stat-row { grid-template-columns: repeat(5, 1fr); }
+    @media(max-width:1280px){ .stat-row{ grid-template-columns:repeat(3,1fr); } }
+    @media(max-width:768px){  .stat-row{ grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:480px){  .stat-row{ grid-template-columns:1fr; } }
+    .stat-card .s-delta {
+      display:inline-flex; align-items:center; gap:3px;
+      font-size:10.5px; font-weight:700; margin-top:6px;
+      padding:2px 7px; border-radius:99px;
+    }
+    .stat-card .s-delta.up   { background:#fee2e2; color:#dc2626; }
+    .stat-card .s-delta.down { background:#dcfce7; color:#16a34a; }
+    .stat-card .s-delta.flat { background:#f3f4f6; color:#6b7280; }
+    .stat-card .s-delta svg  { width:11px; height:11px; }
+    .stat-card .s-tiny { font-size:11px; color:#6b7280; margin-top:4px; font-weight:500; line-height:1.3; }
+
+    /* Status badges — 3 varian */
+    .badge-undur { background:#ffedd5; color:#c2410c; }
+    .badge-do    { background:#fae8ff; color:#86198f; }
+
+    /* ============================================================
+       QUARTERLY REPORT BAR (period selector)
+       ============================================================ */
+    .qr-bar {
+      background: linear-gradient(135deg, #0d4376 0%, #0055a5 50%, #00a59f 100%);
+      border-radius: 18px; padding: 18px 22px; margin-bottom: 20px;
+      color: #fff; position: relative; overflow: hidden;
+      box-shadow: 0 10px 28px rgba(0,85,165,.18);
+      animation: admItemIn .45s cubic-bezier(.2,.8,.2,1) .1s backwards;
+    }
+    .qr-bar::before {
+      content:""; position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 40% 70% at 100% 0%, rgba(254,178,62,.18), transparent 60%),
+        radial-gradient(ellipse 50% 80% at 0% 100%, rgba(0,165,159,.20), transparent 60%);
+      pointer-events:none;
+    }
+    .qr-bar-row {
+      position:relative; display:flex; align-items:center;
+      gap:16px; flex-wrap:wrap; justify-content:space-between;
+    }
+    .qr-bar-title {
+      display:flex; align-items:center; gap:12px; min-width:240px;
+    }
+    .qr-bar-icon {
+      width:44px; height:44px; border-radius:12px;
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.30);
+      display:flex; align-items:center; justify-content:center;
+      backdrop-filter: blur(8px);
+    }
+    .qr-bar-icon svg { width:22px; height:22px; }
+    .qr-bar-h-tag { font-size:10.5px; font-weight:700; letter-spacing:1.4px; text-transform:uppercase; opacity:.78; }
+    .qr-bar-h-name { font-size:18px; font-weight:800; line-height:1.15; margin-top:2px; letter-spacing:-.3px; }
+    .qr-bar-h-sub { font-size:12px; opacity:.85; margin-top:3px; }
+
+    .qr-pills { display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+    .qr-pill {
+      padding:8px 14px; border-radius:99px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.20);
+      color:#fff; font-size:12px; font-weight:700; cursor:pointer;
+      transition: all .2s cubic-bezier(.2,.8,.2,1);
+      backdrop-filter: blur(8px);
+      display:inline-flex; align-items:center; gap:6px;
+    }
+    .qr-pill:hover { background:rgba(255,255,255,.24); transform: translateY(-1px); }
+    .qr-pill.active {
+      background:#fff; color:#0055a5;
+      box-shadow: 0 4px 14px rgba(0,0,0,.18);
+      border-color:#fff;
+    }
+    .qr-pill .qr-pill-cnt {
+      font-size:10.5px; padding:1px 7px; border-radius:99px;
+      background:rgba(255,255,255,.20); font-weight:800;
+    }
+    .qr-pill.active .qr-pill-cnt { background:#feb23e; color:#fff; }
+    .qr-pill.qr-all { background:rgba(254,178,62,.22); border-color:rgba(254,178,62,.40); }
+    .qr-pill.qr-all.active { background:#feb23e; color:#fff; border-color:#feb23e; }
+
+    /* ============================================================
+       PERIOD INSIGHT (selected quarter overview)
+       ============================================================ */
+    .pi-grid {
+      display:grid; grid-template-columns: 2fr 1fr; gap:14px;
+      margin-bottom:18px;
+      animation: admItemIn .4s cubic-bezier(.2,.8,.2,1) .15s backwards;
+    }
+    @media (max-width: 900px) { .pi-grid { grid-template-columns:1fr; } }
+
+    .pi-card {
+      background:#fff; border:1px solid #e5e7eb; border-radius:18px;
+      padding:22px 24px; position:relative; overflow:hidden;
+    }
+    .pi-card::before {
+      content:""; position:absolute; top:0; left:0; right:0; height:4px;
+      background: linear-gradient(90deg, #16a34a 0%, #ea580c 50%, #9333ea 100%);
+    }
+    .pi-card-h {
+      display:flex; justify-content:space-between; align-items:flex-start;
+      margin-bottom:18px; gap:12px;
+    }
+    .pi-card-title { font-size:15px; font-weight:800; color:#111827; }
+    .pi-card-sub   { font-size:12px; color:#6b7280; margin-top:3px; }
+    .pi-card-tag {
+      font-size:10.5px; font-weight:700; letter-spacing:.3px;
+      text-transform:uppercase; padding:5px 11px; border-radius:99px;
+      background:linear-gradient(135deg,#eef2ff 0%,#e0e7ff 100%);
+      color:#4338ca; border:1px solid #c7d2fe; white-space:nowrap;
+    }
+
+    /* Donut chart — REDESIGN: modern ring chart */
+    .pi-donut-wrap { display:flex; align-items:center; gap:28px; flex-wrap:wrap; }
+    .pi-donut { position:relative; width:190px; height:190px; flex-shrink:0; }
+    .pi-donut svg { transform: rotate(-90deg); filter: drop-shadow(0 6px 18px rgba(0,0,0,.10)); }
+    .pi-donut .pi-donut-center {
+      position:absolute; inset:0; display:flex;
+      flex-direction:column; align-items:center; justify-content:center;
+      pointer-events:none;
+    }
+    .pi-donut-center-inner {
+      display:flex; flex-direction:column; align-items:center;
+      background:rgba(255,255,255,.92); border-radius:50%;
+      width:108px; height:108px; justify-content:center;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    .pi-donut-num {
+      font-size:30px; font-weight:800; color:#111827;
+      letter-spacing:-.8px; font-variant-numeric: tabular-nums;
+      line-height:1;
+    }
+    .pi-donut-lbl { font-size:10px; color:#6b7280; font-weight:700; margin-top:3px; text-transform:uppercase; letter-spacing:.8px; }
+    .pi-donut-seg {
+      transition: stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1), opacity .25s, stroke-width .25s, filter .25s;
+      cursor:pointer;
+    }
+    .pi-donut-seg:hover { opacity:.88; stroke-width:22; filter: brightness(1.08); }
+
+    .pi-legend { flex:1; display:flex; flex-direction:column; gap:6px; min-width:180px; }
+    .pi-legend-row {
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; padding:10px 14px; cursor:pointer;
+      border-radius:12px; transition: filter .18s, transform .18s, box-shadow .18s;
+      border:1px solid transparent;
+    }
+    .pi-legend-row:hover { filter:brightness(.97); transform: translateX(2px); box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+    .pi-legend-l { display:flex; align-items:center; gap:10px; min-width:0; flex:1; }
+    .pi-legend-dot { width:12px; height:12px; border-radius:4px; flex-shrink:0; box-shadow:0 1px 3px rgba(0,0,0,.12); }
+    .pi-legend-name { font-size:13px; color:#374151; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .pi-legend-val { font-size:15px; font-weight:800; color:#111827; font-variant-numeric: tabular-nums; }
+    .pi-legend-pct { font-size:11px; color:#6b7280; font-weight:700; min-width:38px; text-align:right; font-variant-numeric: tabular-nums; padding:2px 7px; background:#f3f4f6; border-radius:99px; }
+
+    /* Side stats stack — REDESIGN dgn icon + accent color */
+    .pi-side-stack { display:flex; flex-direction:column; gap:12px; }
+    .pi-mini {
+      background:#fff; border:1px solid #e5e7eb; border-radius:16px;
+      padding:16px 18px; cursor:pointer;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      position:relative; overflow:hidden;
+      display:flex; align-items:flex-start; gap:14px;
+    }
+    .pi-mini:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0,0,0,.08); }
+    .pi-mini .pi-mini-icon {
+      width:40px; height:40px; border-radius:11px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      background:#fff;
+    }
+    .pi-mini .pi-mini-icon svg { width:20px; height:20px; }
+    .pi-mini-body { flex:1; min-width:0; }
+    .pi-mini-l { font-size:11px; color:#6b7280; font-weight:700; letter-spacing:.3px; text-transform:uppercase; margin-bottom:4px; }
+    .pi-mini-v { font-size:24px; font-weight:800; color:#111827; letter-spacing:-.5px; line-height:1.05; font-variant-numeric: tabular-nums; }
+    .pi-mini-sub { font-size:11.5px; color:#6b7280; margin-top:4px; line-height:1.35; }
+
+    /* Variants for side mini-cards */
+    .pi-mini.var-orange { background:linear-gradient(135deg,#fff7ed 0%,#ffedd5 100%); border-color:#fed7aa; }
+    .pi-mini.var-orange .pi-mini-icon { color:#ea580c; box-shadow:0 2px 6px rgba(234,88,12,.18); }
+    .pi-mini.var-orange .pi-mini-v   { color:#ea580c; }
+    .pi-mini.var-blue   { background:linear-gradient(135deg,#eff6ff 0%,#dbeafe 100%); border-color:#bfdbfe; }
+    .pi-mini.var-blue   .pi-mini-icon { color:#1d4ed8; box-shadow:0 2px 6px rgba(29,78,216,.18); }
+    .pi-mini.var-blue   .pi-mini-v   { color:#1d4ed8; }
+    .pi-mini.var-purple { background:linear-gradient(135deg,#faf5ff 0%,#f3e8ff 100%); border-color:#d8b4fe; }
+    .pi-mini.var-purple .pi-mini-icon { color:#9333ea; box-shadow:0 2px 6px rgba(147,51,234,.18); }
+    .pi-mini.var-purple .pi-mini-v   { color:#9333ea; }
+    .pi-mini.var-green  { background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%); border-color:#86efac; }
+    .pi-mini.var-green  .pi-mini-icon { color:#16a34a; box-shadow:0 2px 6px rgba(22,163,74,.18); }
+    .pi-mini.var-green  .pi-mini-v   { color:#16a34a; }
+    .pi-mini.var-teal   { background:linear-gradient(135deg,#ecfeff 0%,#cffafe 100%); border-color:#67e8f9; }
+    .pi-mini.var-teal   .pi-mini-icon { color:#0d9488; box-shadow:0 2px 6px rgba(13,148,136,.18); }
+    .pi-mini.var-teal   .pi-mini-v   { color:#0d9488; }
+
+    /* ============================================================
+       QUARTER TIMELINE (history bar of all quarters) — IMPROVED
+       ============================================================ */
+    .qt-card {
+      background:#fff; border:1px solid #e5e7eb; border-radius:16px;
+      padding:20px 24px 26px; margin-bottom:18px; overflow:hidden;
+      animation: admItemIn .4s cubic-bezier(.2,.8,.2,1) .2s backwards;
+    }
+    .qt-head {
+      display:flex; justify-content:space-between; align-items:flex-start;
+      margin-bottom:22px; gap:12px; flex-wrap:wrap;
+    }
+    .qt-head-l { font-size:15px; font-weight:800; color:#111827; }
+    .qt-head-sub { font-size:12px; color:#6b7280; margin-top:3px; max-width:600px; }
+    .qt-legend { display:flex; gap:16px; flex-wrap:wrap; }
+    .qt-legend-i { display:flex; align-items:center; gap:7px; font-size:11.5px; color:#475569; font-weight:600; }
+    .qt-legend-dot { width:11px; height:11px; border-radius:3px; }
+
+    .qt-chart {
+      display:flex; align-items:flex-end; gap:8px; padding:36px 8px 0;
+      min-height:300px; position:relative;
+    }
+    /* Y-axis grid lines (subtle) */
+    .qt-chart::before {
+      content:""; position:absolute; left:0; right:0; top:36px; bottom:60px;
+      background-image:
+        linear-gradient(0deg, #f1f5f9 1px, transparent 1px);
+      background-size: 100% 25%;
+      pointer-events:none; opacity:.7;
+    }
+    .qt-q {
+      flex:1; min-width:120px; display:flex; flex-direction:column;
+      align-items:center; gap:10px; cursor:pointer;
+      padding:10px 8px 8px; border-radius:14px;
+      transition: background .2s, transform .2s;
+      position:relative; z-index:1;
+    }
+    .qt-q:hover { background:#f8fafc; transform: translateY(-2px); }
+    .qt-q.active { background:linear-gradient(180deg,#eff6ff,#fff); box-shadow: inset 0 0 0 1.5px #93c5fd; }
+    .qt-q.active .qt-q-name { color:#0055a5; }
+    .qt-bars {
+      display:flex; align-items:flex-end; justify-content:center; gap:10px;
+      height:210px; width:100%; max-width:140px; position:relative;
+    }
+    .qt-bar {
+      flex:1; min-width:22px; max-width:38px;
+      border-radius:8px 8px 0 0; position:relative;
+      animation: admBarRise .9s cubic-bezier(.2,.8,.2,1) backwards;
+      cursor:pointer; transition: filter .15s, transform .15s, box-shadow .15s;
+      box-shadow: 0 2px 6px rgba(0,0,0,.08);
+    }
+    .qt-bar:hover {
+      filter: brightness(1.08); transform: translateY(-3px);
+      box-shadow: 0 6px 14px rgba(0,0,0,.16);
+    }
+    .qt-bar.aktif  { background: linear-gradient(180deg,#22c55e,#16a34a); }
+    .qt-bar.undur  { background: linear-gradient(180deg,#fb923c,#ea580c); }
+    .qt-bar.do     { background: linear-gradient(180deg,#c084fc,#9333ea); }
+    /* Data label di atas bar — proper spacing supaya tidak nabrak */
+    .qt-bar-label {
+      position:absolute; bottom:calc(100% + 6px); left:50%; transform:translateX(-50%);
+      font-size:11.5px; font-weight:800; color:#111827;
+      font-variant-numeric: tabular-nums; white-space:nowrap;
+      animation: admItemIn .5s ease .8s backwards;
+      pointer-events:none;
+    }
+    .qt-bar-tip {
+      position:absolute; bottom:calc(100% + 26px); left:50%; transform:translateX(-50%);
+      background:#111827; color:#fff; padding:5px 10px; border-radius:8px;
+      font-size:11px; font-weight:700; white-space:nowrap;
+      opacity:0; pointer-events:none; transition: opacity .15s;
+      z-index:5; box-shadow: 0 4px 12px rgba(0,0,0,.15);
+    }
+    .qt-bar-tip::after {
+      content:""; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+      border:5px solid transparent; border-top-color:#111827;
+    }
+    .qt-bar:hover .qt-bar-tip { opacity:1; }
+    .qt-q-name { font-size:12.5px; font-weight:800; color:#374151; text-align:center; margin-top:6px; }
+    .qt-q-range { font-size:10.5px; color:#9ca3af; font-weight:500; text-align:center; }
+    @keyframes admBarRise {
+      from { transform: scaleY(0); transform-origin: bottom; opacity:0; }
+      to   { transform: scaleY(1); transform-origin: bottom; opacity:1; }
+    }
+    @media(max-width:768px){
+      .qt-chart { gap:4px; min-height:240px; padding-top:30px; }
+      .qt-q { min-width:80px; padding:6px 4px; }
+      .qt-bars { height:170px; max-width:100px; gap:6px; }
+      .qt-bar { min-width:14px; }
+      .qt-bar-label { font-size:10.5px; }
+    }
+
+    /* ============================================================
+       REASON ANALYSIS (parsed from keterangan)
+       ============================================================ */
+    .ra-grid {
+      display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap:12px; margin-bottom:18px;
+      animation: admItemIn .4s cubic-bezier(.2,.8,.2,1) .25s backwards;
+    }
+    .ra-card {
+      background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+      padding:14px 16px; cursor:pointer; position:relative; overflow:hidden;
+      transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s, border-color .25s;
+    }
+    .ra-card::before {
+      content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+      background: var(--ra-accent, #00a59f);
+      opacity:0; transition: opacity .25s;
+    }
+    .ra-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,.07); border-color:#c5d6e8; }
+    .ra-card:hover::before { opacity:1; }
+    .ra-icon {
+      width:34px; height:34px; border-radius:10px;
+      display:flex; align-items:center; justify-content:center;
+      background: var(--ra-bg, #ecfeff); color: var(--ra-accent, #00a59f);
+      margin-bottom:10px;
+    }
+    .ra-icon svg { width:17px; height:17px; }
+    .ra-name { font-size:12px; color:#6b7280; font-weight:700; text-transform:uppercase; letter-spacing:.3px; }
+    .ra-val {
+      font-size:24px; font-weight:800; color:#111827;
+      letter-spacing:-.5px; font-variant-numeric: tabular-nums;
+      line-height:1.1; margin-top:2px;
+    }
+    .ra-bar-wrap {
+      height:5px; background:#f1f5f9; border-radius:3px; overflow:hidden; margin-top:10px;
+    }
+    .ra-bar { height:100%; border-radius:3px; width:0; transition: width .9s cubic-bezier(.2,.8,.2,1); background: var(--ra-accent, #00a59f); }
+    .ra-pct { font-size:11px; color:#9ca3af; margin-top:5px; font-weight:600; }
+
+    /* ============================================================
+       TIMELINE (events list of who left, sorted by date)
+       ============================================================ */
+    .tl-card {
+      background:#fff; border:1px solid #e5e7eb; border-radius:16px;
+      overflow:hidden; margin-bottom:18px;
+      animation: admItemIn .4s cubic-bezier(.2,.8,.2,1) .3s backwards;
+    }
+    .tl-head {
+      padding:14px 18px; border-bottom:1px solid #f1f5f9;
+      display:flex; justify-content:space-between; align-items:center;
+      flex-wrap:wrap; gap:8px;
+    }
+    .tl-head-l { font-size:13px; font-weight:800; color:#111827; }
+    .tl-head-sub { font-size:11px; color:#6b7280; }
+    .tl-list { padding:6px 18px 14px; max-height:520px; overflow-y:auto; }
+    .tl-list::-webkit-scrollbar { width:6px; }
+    .tl-list::-webkit-scrollbar-thumb { background:#e5e7eb; border-radius:3px; }
+
+    .tl-item {
+      display:grid; grid-template-columns: 92px 18px 1fr;
+      gap:10px; padding:10px 0; position:relative;
+      cursor:pointer;
+      transition: background .15s;
+    }
+    .tl-item:hover { background: linear-gradient(90deg,#f9fafb 0%, transparent 100%); }
+    .tl-date {
+      font-size:11px; font-weight:700; color:#374151;
+      padding-top:3px; text-align:right;
+    }
+    .tl-date-rel { font-size:10px; color:#9ca3af; font-weight:500; margin-top:1px; }
+    .tl-marker { position:relative; display:flex; flex-direction:column; align-items:center; }
+    .tl-marker::before {
+      content:""; position:absolute; top:14px; bottom:-10px; left:50%;
+      width:2px; background:#e5e7eb; transform:translateX(-50%);
+    }
+    .tl-item:last-child .tl-marker::before { display:none; }
+    .tl-dot {
+      width:11px; height:11px; border-radius:50%;
+      margin-top:6px; box-shadow: 0 0 0 3px #fff, 0 0 0 4px var(--tl-c, #ea580c);
+      background: var(--tl-c, #ea580c);
+      z-index:1;
+    }
+    .tl-content { padding:2px 0; min-width:0; }
+    .tl-name {
+      font-size:13px; font-weight:700; color:#111827; line-height:1.3;
+      display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    }
+    .tl-meta { font-size:11px; color:#9ca3af; margin-top:2px; }
+    .tl-keterangan {
+      font-size:12px; color:#4b5563; margin-top:5px; line-height:1.5;
+      padding:7px 10px; background:#f9fafb; border-radius:8px;
+      border-left:3px solid var(--tl-c, #ea580c);
+    }
+    .tl-tags { display:flex; gap:5px; flex-wrap:wrap; margin-top:6px; }
+    .tl-tag {
+      font-size:10px; font-weight:700; padding:2px 8px; border-radius:99px;
+      background:#f3f4f6; color:#6b7280; letter-spacing:.2px;
+    }
+    .tl-tag.t-kipk    { background:#dbeafe; color:#1e40af; }
+    .tl-tag.t-undur   { background:#ffedd5; color:#c2410c; }
+    .tl-tag.t-pasif   { background:#fef3c7; color:#92400e; }
+    .tl-tag.t-jenjang { background:#fae8ff; color:#86198f; }
+    .tl-tag.t-grup    { background:#e0e7ff; color:#4338ca; }
+    .tl-tag.t-do      { background:#fee2e2; color:#991b1b; }
+
+    .tl-empty { text-align:center; padding:40px 20px; color:#9ca3af; font-size:13px; }
+    .tl-empty svg { width:42px; height:42px; opacity:.4; margin-bottom:10px; }
+
+    /* ============================================================
+       SOURCE BREAKDOWN (mba muthia, ybs, lecture, dll)
+       ============================================================ */
+    .src-card {
+      background:#fff; border:1px solid #e5e7eb; border-radius:16px;
+      padding:18px 20px; margin-bottom:18px;
+      animation: admItemIn .4s cubic-bezier(.2,.8,.2,1) .35s backwards;
+    }
+    .src-head {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:14px; flex-wrap:wrap; gap:8px;
+    }
+    .src-title { font-size:13px; font-weight:800; color:#111827; }
+    .src-sub { font-size:11px; color:#6b7280; margin-top:2px; }
+    .src-pills { display:flex; flex-wrap:wrap; gap:8px; }
+    .src-pill {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 14px 8px 8px; border-radius:99px;
+      border:1px solid #e5e7eb; background:#fff;
+      cursor:pointer; transition: all .2s;
+      font-size:12px; font-weight:600; color:#374151;
+    }
+    .src-pill:hover { transform: translateY(-1px); border-color:#c5d6e8; box-shadow: 0 4px 10px rgba(0,0,0,.05); }
+    .src-pill-icon {
+      width:24px; height:24px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      color:#fff; flex-shrink:0;
+    }
+    .src-pill-icon svg { width:13px; height:13px; }
+    .src-pill-cnt {
+      font-size:11px; font-weight:800; padding:2px 8px;
+      background:#f3f4f6; color:#374151; border-radius:99px;
       font-variant-numeric: tabular-nums;
     }
+
+    /* ============================================================
+       Tabel: kolom keterangan + keluar
+       ============================================================ */
+    .td-keterangan {
+      max-width: 220px;
+      font-size: 11.5px; color:#6b7280;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .td-keluar {
+      font-size: 11.5px; color:#374151; font-weight:600;
+      white-space: nowrap;
+    }
+
+    /* Section "Catatan & Riwayat" di detail awardee */
+    .aa-history { padding: 14px 18px; }
+    .aa-history-empty { color:#9ca3af; font-size:12.5px; text-align:center; padding:18px; }
+    .aa-history-item {
+      display: grid; grid-template-columns: 100px 1fr; gap:12px;
+      padding: 10px 0; border-bottom: 1px solid #f3f4f6;
+    }
+    .aa-history-item:last-child { border-bottom: none; }
+    .aa-history-date {
+      font-size:11px; font-weight:700; color:#0055a5;
+      background:#eff6ff; border-radius:8px;
+      padding:5px 8px; height:fit-content; text-align:center;
+    }
+    .aa-history-text { font-size:12.5px; color:#374151; line-height:1.5; }
+    .aa-history-tags { display:flex; gap:5px; flex-wrap:wrap; margin-top:5px; }
+
+    /* View toggle (overview vs daftar) */
+    .view-toggle { display:flex; gap:4px; background:#f3f4f6; padding:3px; border-radius:99px; }
+    .view-toggle button {
+      padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer;
+      background:transparent; color:#6b7280; border:none; border-radius:99px;
+      transition: all .2s;
+    }
+    .view-toggle button.active { background:#fff; color:#111827; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
   </style>
 </head>
 <body data-page="admin-awardee">
@@ -588,21 +1137,109 @@
     <!-- ===== MAIN CONTENT (sembunyi sampai data ready) ===== -->
     <div id="awardeeContent" style="display:none;">
 
-    <!-- Stats -->
+    <!-- Stats: 5 kartu (REDESIGN: pastel + icon, mengikuti referensi) -->
     <div class="stat-row">
-      <div class="stat-card" onclick="showKpiDetail('total')" role="button" tabindex="0"><span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span><div class="s-label">Total Awardee</div><div class="s-val teal" id="statTotal" data-count="0">0</div></div>
-      <div class="stat-card" onclick="showKpiDetail('aktif')" role="button" tabindex="0"><span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span><div class="s-label">Status Aktif</div><div class="s-val blue" id="statAktif" data-count="0">0</div></div>
-      <div class="stat-card" onclick="showKpiDetail('akun')" role="button" tabindex="0"><span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span><div class="s-label">Sudah Ada Akun</div><div class="s-val teal" id="statAkun" data-count="0">0</div></div>
-      <div class="stat-card" onclick="showKpiDetail('noakun')" role="button" tabindex="0"><span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span><div class="s-label">Belum Ada Akun</div><div class="s-val yellow" id="statNoAkun" data-count="0">0</div></div>
+      <div class="stat-card var-teal" onclick="showKpiDetail('total')" role="button" tabindex="0">
+        <div class="s-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="s-content">
+          <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="s-label">Total Awardee</div>
+          <div class="s-val" id="statTotal" data-count="0">0</div>
+          <div class="s-tiny" id="statTotalSub">—</div>
+        </div>
+      </div>
+      <div class="stat-card var-blue" onclick="showKpiDetail('aktif')" role="button" tabindex="0">
+        <div class="s-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="s-content">
+          <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="s-label">Status Aktif</div>
+          <div class="s-val" id="statAktif" data-count="0">0</div>
+          <div class="s-tiny" id="statAktifSub">—</div>
+        </div>
+      </div>
+      <div class="stat-card var-orange" onclick="showKpiDetail('undur')" role="button" tabindex="0">
+        <div class="s-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
+        <div class="s-content">
+          <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="s-label">Undur Diri</div>
+          <div class="s-val" id="statUndur" data-count="0">0</div>
+          <div class="s-tiny" id="statUndurSub">—</div>
+        </div>
+      </div>
+      <div class="stat-card var-purple" onclick="showKpiDetail('do')" role="button" tabindex="0">
+        <div class="s-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </div>
+        <div class="s-content">
+          <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="s-label">Drop Out</div>
+          <div class="s-val" id="statDO" data-count="0">0</div>
+          <div class="s-tiny" id="statDOSub">—</div>
+        </div>
+      </div>
+      <div class="stat-card var-green" onclick="showKpiDetail('akun')" role="button" tabindex="0">
+        <div class="s-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        </div>
+        <div class="s-content">
+          <span class="s-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="s-label">Sudah Ada Akun</div>
+          <div class="s-val" id="statAkun" data-count="0">0</div>
+          <div class="s-tiny" id="statAkunSub">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         QUARTERLY REPORT BAR
+         ============================================================ -->
+    <div class="qr-bar">
+      <div class="qr-bar-row">
+        <div class="qr-bar-title">
+          <div class="qr-bar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/></svg>
+          </div>
+          <div>
+            <div class="qr-bar-h-tag">Laporan Periode</div>
+            <div class="qr-bar-h-name" id="qrPeriodName">Memuat…</div>
+            <div class="qr-bar-h-sub" id="qrPeriodSub">Pilih kuartal untuk melihat insight per periode</div>
+          </div>
+        </div>
+        <div class="qr-pills" id="qrPills"></div>
+      </div>
+    </div>
+
+    <!-- Period insight: donut + side stats -->
+    <div class="pi-grid" id="piGrid"></div>
+
+    <!-- Quarter timeline -->
+    <div class="qt-card" id="qtCard"></div>
+
+    <!-- Reason analysis (parsed) -->
+    <div id="raSection" style="margin-bottom:0">
+      <div class="ra-grid" id="raGrid"></div>
+    </div>
+
+    <!-- Recent events timeline + source breakdown -->
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:18px;" id="bottomGrid">
+      <div class="tl-card" id="tlCard"></div>
+      <div class="src-card" id="srcCard"></div>
     </div>
 
     <!-- Toolbar -->
     <div class="toolbar">
-      <input type="text" id="searchInput" placeholder="Cari nama, NIM, email, kampus..." oninput="filterTable()" />
+      <input type="text" id="searchInput" placeholder="Cari nama, NIM, email, kampus, keterangan..." oninput="filterTable()" />
       <select id="filterStatus" onchange="filterTable()">
         <option value="">Semua Status</option>
         <option value="aktif">Aktif</option>
-        <option value="nonaktif">Non-Aktif</option>
+        <option value="undur diri">Undur Diri</option>
+        <option value="drop out">Drop Out</option>
       </select>
       <select id="filterAkun" onchange="filterTable()">
         <option value="">Semua Akun</option>
@@ -628,9 +1265,9 @@
             <th>NIM</th>
             <th>Kampus</th>
             <th>Kelompok</th>
-            <th>Email</th>
-            <th>WhatsApp</th>
             <th>Status</th>
+            <th>Keluar</th>
+            <th>Keterangan</th>
             <th>Akun</th>
             <th>Aksi</th>
           </tr>
@@ -654,6 +1291,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// Disable browser scroll restoration so page always opens at top
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
 /* =============================================
    AVATAR GRADIENT — warna unik per nama (hash-based)
@@ -711,7 +1350,7 @@ function setKpi(id, target, duration = 1100) {
 /* =============================================
    INLINE DETAIL VIEW — show/hide
 ============================================= */
-function _scrollToTop(){ window.scrollTo({ top:0, behavior:'smooth' }); }
+function _scrollToTop(){ window.scrollTo({ top:0, behavior:'instant' }); }
 
 function _showDetail(html) {
   const dv = document.getElementById('aaDetailView');
@@ -758,7 +1397,8 @@ window.showAwardeeDetail = function(idx) {
   const m = allData[idx];
   if (!m) return;
   const hasAkun = m.email && emailSet.has(m.email.toLowerCase());
-  const isAktif = (m.status||'').toLowerCase().trim() === 'aktif';
+  const norm = m._normStatus;
+  const isAktif = norm === 'aktif';
 
   // Same-cohort awardee count
   const sameKampus  = allData.filter(x => x.kampus === m.kampus).length;
@@ -766,8 +1406,62 @@ window.showAwardeeDetail = function(idx) {
   const waNum    = formatWa(m.wa);
   const waLink   = waNum !== '—' ? `<a href="https://wa.me/${waNum}" target="_blank" style="color:#00A59F;text-decoration:none;font-weight:600">${waNum}</a>` : '—';
 
+  // Events history
+  const events = m._events || [];
+  const eventsHtml = events.length === 0
+    ? `<div class="aa-history-empty">Belum ada catatan riwayat untuk awardee ini</div>`
+    : events.map(ev => {
+        // Tags inferred dari teks event
+        const lower = (ev.text || '').toLowerCase();
+        const evTags = [];
+        if (/ki[pj]?k|beasiswa\s*kip/i.test(lower)) evTags.push('kipk');
+        if (/undur|mengundurkan/i.test(lower)) evTags.push('undur');
+        if (/tidak\s*join|tidak\s*aktif|sudah\s*tidak/i.test(lower)) evTags.push('pasif');
+        if (/d3|jenjang/i.test(lower)) evTags.push('jenjang');
+        if (/grup|group|bsim/i.test(lower)) evTags.push('grup');
+        const tagsHtml = evTags.map(t => {
+          const meta = TAG_LABELS[t];
+          return meta ? `<span class="tl-tag t-${t}">${meta.label}</span>` : '';
+        }).join('');
+        return `<div class="aa-history-item">
+          <div class="aa-history-date">${ev.date ? fmtDateShort(ev.date) + '<br>' + ev.date.getFullYear() : '—'}</div>
+          <div>
+            <div class="aa-history-text">${ev.text || ev.raw || '—'}</div>
+            ${tagsHtml ? `<div class="aa-history-tags">${tagsHtml}</div>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+
+  // Status & exit info
+  const exitInfo = m._exitDate
+    ? `${fmtDate(m._exitDate)} <span style="color:#9ca3af;font-weight:500">(${relTime(m._exitDate)})</span>`
+    : 'Masih aktif';
+  const exitQuarter = m._exitDate ? quarterLabel(quarterFromDate(m._exitDate)) : null;
+
+  // Tags summary
+  const tagBadges = m._tags.map(t => {
+    const meta = TAG_LABELS[t];
+    return meta ? `<span class="tl-tag t-${t}">${meta.label}</span>` : '';
+  }).join('');
+
+  // Auto interpretation
+  let interpretation = '';
+  if (m._tags.includes('kipk')) {
+    interpretation = `Awardee ini keluar karena <b>diterima beasiswa lain (KIPK)</b>. Ini adalah kondisi yang umum terjadi dan bukan indikator masalah retensi program.`;
+  } else if (m._tags.includes('jenjang')) {
+    interpretation = `Awardee ini keluar karena <b>tidak memenuhi syarat jenjang</b> (D3 bukan S1). Indikasi proses screening kelayakan perlu diperketat di awal program.`;
+  } else if (m._tags.includes('undur') && m._tags.includes('grup')) {
+    interpretation = `Awardee ini <b>resmi mengundurkan diri</b> dan sudah keluar dari channel komunitas. Pengunduran diri dilakukan secara prosedural.`;
+  } else if (m._tags.includes('pasif') || m._tags.includes('grup')) {
+    interpretation = `Awardee ini <b>tidak aktif di komunitas</b> — sudah keluar dari grup WA kelompok / BSIM. Indikasi engagement rendah; perlu monitoring lebih awal di periode berikutnya.`;
+  } else if (m._tags.includes('do')) {
+    interpretation = `Awardee ini <b>terdaftar sebagai Drop Out</b>. Periksa apakah sudah ada konfirmasi resmi dari kampus.`;
+  } else if (events.length > 0) {
+    interpretation = `Catatan tersedia tapi belum bisa dikategorikan otomatis. Mohon review keterangan untuk memahami konteks.`;
+  }
+
   const html = `${_backBtn()}
-    <div class="aa-hero">
+    <div class="aa-hero" style="background:linear-gradient(135deg, ${statusColor(m.status)} 0%, ${isAktif?'#0055a5':'#0d4376'} 100%)">
       <div class="aa-hero-row">
         <div class="aa-hero-avatar">${_initialsOf(m.nama)}</div>
         <div class="aa-hero-text">
@@ -777,17 +1471,37 @@ window.showAwardeeDetail = function(idx) {
             <span>${m.no_induk || '—'}</span>
             <span>${m.kampus || '—'}</span>
             <span>Kelompok ${m.kelompok || '—'}</span>
-            <span>${m.status || '—'}</span>
+            <span style="font-weight:700">${statusLabel(m.status)}</span>
+            ${exitQuarter ? `<span>Keluar di ${exitQuarter}</span>` : ''}
           </div>
         </div>
       </div>
     </div>
 
     <div class="aa-detail-kpis">
-      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Status</div><div class="aa-detail-kpi-val" style="color:${isAktif?'#15803d':'#b91c1c'};font-size:18px">${isAktif?'Aktif':'Non-aktif'}</div></div>
+      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Status</div><div class="aa-detail-kpi-val" style="color:${statusColor(m.status)};font-size:18px">${statusLabel(m.status)}</div></div>
+      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Tanggal Keluar</div><div class="aa-detail-kpi-val" style="font-size:15px">${exitInfo}</div></div>
       <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Akun</div><div class="aa-detail-kpi-val" style="color:${hasAkun?'#15803d':'#92400e'};font-size:18px">${hasAkun?'Sudah dibuat':'Belum dibuat'}</div></div>
-      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Sesama Kampus</div><div class="aa-detail-kpi-val" data-num="${sameKampus}">0</div><div class="aa-detail-kpi-sub">awardee di ${m.kampus || '—'}</div></div>
       <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Sesama Kelompok</div><div class="aa-detail-kpi-val" data-num="${sameKelompok}">0</div><div class="aa-detail-kpi-sub">awardee di kelompok ${m.kelompok || '—'}</div></div>
+    </div>
+
+    ${interpretation ? `
+    <div class="aa-section" style="border-color:#bfdbfe;background:linear-gradient(180deg,#eff6ff 0%,#fff 100%)">
+      <div class="aa-section-h" style="border-color:#dbeafe">
+        <span style="display:flex;align-items:center;gap:8px;color:#0055a5">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Interpretasi Otomatis
+        </span>
+        ${tagBadges ? `<div style="display:flex;gap:5px;flex-wrap:wrap">${tagBadges}</div>` : ''}
+      </div>
+      <div class="aa-section-body" style="font-size:13px;color:#374151;line-height:1.6">
+        ${interpretation}
+      </div>
+    </div>` : ''}
+
+    <div class="aa-section">
+      <div class="aa-section-h">Riwayat Catatan <span class="h-tag">${events.length} catatan</span></div>
+      <div class="aa-history">${eventsHtml}</div>
     </div>
 
     <div class="aa-section">
@@ -803,21 +1517,21 @@ window.showAwardeeDetail = function(idx) {
           <div class="aa-info-item"><div class="k">Fakultas</div><div class="v">${m.fakultas || '—'}</div></div>
           <div class="aa-info-item"><div class="k">Program Studi</div><div class="v">${m.prodi || '—'}</div></div>
           <div class="aa-info-item"><div class="k">Cluster</div><div class="v">${m.cluster || '—'}</div></div>
+          <div class="aa-info-item"><div class="k">Tanggal Keluar</div><div class="v" style="color:${statusColor(m.status)}">${m._exitDate?fmtDate(m._exitDate):'—'}</div></div>
         </div>
       </div>
     </div>
 
     <div class="aa-section">
-      <div class="aa-section-h">Aksi Akun</div>
+      <div class="aa-section-h">Aksi</div>
       <div class="aa-section-body" style="display:flex;gap:10px;flex-wrap:wrap">
         ${m.email ? `<button class="btn-sync" style="background:#0055a5" onclick="resetPassword('${m.email}','${m.no_induk}')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.68-3.13"/></svg>
           Reset Password ke NIM
         </button>` : ''}
-        <button class="btn-sync" style="background:${isAktif?'#dc2626':'#16a34a'}" onclick="toggleActive('${m.id}','${m.status}')">
-          ${isAktif
-            ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Non-aktifkan Awardee'
-            : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg> Aktifkan Awardee'}
+        <button class="btn-sync" style="background:${statusColor(m.status)}" onclick="cycleStatus('${m.id}','${m._normStatus}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          Ubah Status (${statusLabel(m.status)})
         </button>
       </div>
     </div>
@@ -828,86 +1542,219 @@ window.showAwardeeDetail = function(idx) {
 /* =============================================
    KPI DETAIL — klik kartu KPI
 ============================================= */
-function _topNCounter(items, key, n=10) {
+function _topNCounter(items, key, n=Infinity) {
   const cnt = {};
   items.forEach(it => { const v = it[key]; if (v) cnt[v] = (cnt[v]||0)+1; });
-  return Object.entries(cnt).sort((a,b) => b[1]-a[1]).slice(0, n);
+  const result = Object.entries(cnt).sort((a,b) => b[1]-a[1]);
+  return n === Infinity ? result : result.slice(0, n);
 }
 
-function _breakdownSection(title, items, max, colorCls='') {
+function _breakdownSection(title, items, max, colorCls='', accentCls='') {
   if (!items || items.length === 0) {
-    return `<div class="aa-section"><div class="aa-section-h">${title}</div><div class="aa-section-body" style="text-align:center;color:#9ca3af">Tidak ada data</div></div>`;
+    return `<div class="aa-section ${accentCls}"><div class="aa-section-h">${title}</div><div class="aa-section-body" style="text-align:center;color:#9ca3af;padding:24px">Tidak ada data</div></div>`;
   }
-  return `<div class="aa-section">
+  return `<div class="aa-section ${accentCls}">
     <div class="aa-section-h">${title}<span class="h-tag">${items.length} item</span></div>
     <div class="aa-breakdown-list">
       ${items.map(([label, val]) => {
         const w = Math.round(val/max*100);
         return `<div class="aa-breakdown-item">
-          <div class="aa-breakdown-label">${label}</div>
-          <div><span class="aa-breakdown-val">${val.toLocaleString('id-ID')}</span></div>
+          <div class="aa-breakdown-label" title="${String(label).replace(/"/g,'&quot;')}">${label}</div>
           <div class="aa-breakdown-bar-wrap"><div class="aa-breakdown-bar ${colorCls}" data-bar-w="${w}"></div></div>
+          <div class="aa-breakdown-val">${val.toLocaleString('id-ID')}</div>
         </div>`;
       }).join('')}
     </div>
   </div>`;
 }
 
+/* Detail KPI card builder with icon (mengikuti style Image 1) */
+function _detailKpi(variant, iconSvg, label, num, sub) {
+  return `<div class="aa-detail-kpi var-${variant}">
+    <div class="k-icon">${iconSvg}</div>
+    <div class="k-content">
+      <div class="aa-detail-kpi-lbl">${label}</div>
+      <div class="aa-detail-kpi-val" data-num="${num}">0</div>
+      ${sub ? `<div class="aa-detail-kpi-sub">${sub}</div>` : ''}
+    </div>
+  </div>`;
+}
+const _ICON_USERS    = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
+const _ICON_BUILDING = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 9h2M13 9h2M9 13h2M13 13h2M9 17h2M13 17h2"/></svg>`;
+const _ICON_LAYERS   = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>`;
+const _ICON_TREND    = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`;
+
 window.showKpiDetail = function(kind) {
-  const aktif    = allData.filter(m => (m.status || '').toLowerCase().trim() === 'aktif');
-  const adaAkun  = aktif.filter(m => m.email && emailSet.has(m.email.toLowerCase()));
-  const noAkun   = aktif.filter(m => !m.email || !emailSet.has((m.email||'').toLowerCase()));
+  // Filter dataset berdasarkan kind & periode aktif
+  const period = activePeriodIdx;
+  const periodLabel = period === 'all' ? 'All Time' : (quarterList[period] ? quarterList[period].label : '');
+  const periodSubText = period === 'all' ? 'sepanjang program' : `di ${periodLabel}`;
+
+  // Helper: filter sesuai status pada periode
+  const byStatus = (stat) => allData.filter(m => awardeeStatusInPeriod(m, period) === stat);
+  // Helper: yang exit di periode tertentu
+  const exitedInPeriod = () => period === 'all'
+    ? allData.filter(m => m._normStatus !== 'aktif')
+    : allData.filter(m => m._exitDate && quarterFromDate(m._exitDate) === period);
 
   let dataset, tag, title, color, num, sub;
+
   switch(kind) {
-    case 'total':
+    case 'total': {
       dataset = allData;
-      tag = 'KPI · Total Awardee';
-      title = `${allData.length} awardee total`;
+      tag = `KPI · Total Awardee · ${periodLabel}`;
+      title = `${allData.length} awardee terdaftar`;
       color = 'linear-gradient(135deg,#0d9488 0%,#0f766e 100%)';
       num = allData.length; sub = 'Semua awardee tercatat di sistem';
       break;
-    case 'aktif':
-      dataset = aktif;
-      tag = 'KPI · Status Aktif';
-      title = `${aktif.length} awardee aktif`;
-      color = 'linear-gradient(135deg,#1d4ed8 0%,#0055a5 100%)';
-      num = aktif.length; sub = 'Awardee dengan status aktif';
+    }
+    case 'aktif': {
+      dataset = byStatus('aktif');
+      tag = `KPI · Status Aktif · ${periodLabel}`;
+      title = `${dataset.length} awardee aktif`;
+      color = 'linear-gradient(135deg,#22c55e 0%,#16a34a 100%)';
+      num = dataset.length;
+      sub = period === 'all' ? 'Awardee yang masih aktif sekarang' : `Awardee yang masih aktif pada akhir ${periodLabel}`;
       break;
-    case 'akun':
-      dataset = adaAkun;
-      tag = 'KPI · Sudah Ada Akun';
-      title = `${adaAkun.length} awardee sudah punya akun`;
+    }
+    case 'undur': {
+      dataset = byStatus('undur diri');
+      tag = `KPI · Undur Diri · ${periodLabel}`;
+      title = `${dataset.length} awardee undur diri`;
+      color = 'linear-gradient(135deg,#fb923c 0%,#ea580c 100%)';
+      num = dataset.length;
+      sub = period === 'all' ? 'Total awardee yang sudah mengundurkan diri' : `Sudah berstatus undur diri per ${periodLabel}`;
+      break;
+    }
+    case 'do': {
+      dataset = byStatus('drop out');
+      tag = `KPI · Drop Out · ${periodLabel}`;
+      title = `${dataset.length} awardee drop out`;
+      color = 'linear-gradient(135deg,#c084fc 0%,#9333ea 100%)';
+      num = dataset.length;
+      sub = period === 'all' ? 'Total awardee yang drop out' : `Sudah berstatus DO per ${periodLabel}`;
+      break;
+    }
+    case 'akun': {
+      const aktifNow = byStatus('aktif');
+      dataset = aktifNow.filter(m => m.email && emailSet.has(m.email.toLowerCase()));
+      tag = `KPI · Sudah Ada Akun · ${periodLabel}`;
+      title = `${dataset.length} awardee sudah punya akun`;
       color = 'linear-gradient(135deg,#16a34a 0%,#15803d 100%)';
-      num = adaAkun.length; sub = `${Math.round(adaAkun.length/Math.max(aktif.length,1)*100)}% dari awardee aktif`;
+      num = dataset.length;
+      sub = `${Math.round(dataset.length/Math.max(aktifNow.length,1)*100)}% dari awardee aktif`;
       break;
-    case 'noakun':
-      dataset = noAkun;
-      tag = 'KPI · Belum Ada Akun';
-      title = `${noAkun.length} awardee belum punya akun`;
+    }
+    case 'noakun': {
+      const aktifNow = byStatus('aktif');
+      dataset = aktifNow.filter(m => !m.email || !emailSet.has((m.email||'').toLowerCase()));
+      tag = `KPI · Belum Ada Akun · ${periodLabel}`;
+      title = `${dataset.length} awardee belum punya akun`;
       color = 'linear-gradient(135deg,#d97706 0%,#b45309 100%)';
-      num = noAkun.length; sub = `${Math.round(noAkun.length/Math.max(aktif.length,1)*100)}% dari awardee aktif`;
+      num = dataset.length;
+      sub = `${Math.round(dataset.length/Math.max(aktifNow.length,1)*100)}% dari awardee aktif`;
       break;
+    }
+    case 'exited': {
+      dataset = exitedInPeriod();
+      tag = `KPI · Awardee Keluar · ${periodLabel}`;
+      title = `${dataset.length} awardee keluar program`;
+      color = 'linear-gradient(135deg,#f87171 0%,#dc2626 100%)';
+      num = dataset.length;
+      sub = `Total yang keluar ${periodSubText} (gabungan undur diri + drop out)`;
+      break;
+    }
+    case 'kipk': {
+      dataset = exitedInPeriod().filter(m => m._tags.includes('kipk'));
+      tag = `KPI · Pindah ke KIPK · ${periodLabel}`;
+      title = `${dataset.length} awardee pindah ke beasiswa KIPK`;
+      color = 'linear-gradient(135deg,#3b82f6 0%,#1e40af 100%)';
+      num = dataset.length;
+      sub = `Diterima beasiswa KIPK/KIP ${periodSubText}`;
+      break;
+    }
+    // Tag-based breakdowns (klik kartu reason analysis)
+    case 'tag-kipk': case 'tag-undur': case 'tag-pasif':
+    case 'tag-jenjang': case 'tag-grup': case 'tag-do': {
+      const tagKey = kind.slice(4);
+      const meta = TAG_LABELS[tagKey];
+      dataset = exitedInPeriod().filter(m => m._tags.includes(tagKey));
+      tag = `Analisa Alasan · ${periodLabel}`;
+      title = `${dataset.length} awardee — ${meta.label}`;
+      color = `linear-gradient(135deg, ${meta.color} 0%, ${meta.color}dd 100%)`;
+      num = dataset.length;
+      const totalExit = exitedInPeriod().length;
+      sub = totalExit ? `${Math.round(num/totalExit*100)}% dari ${totalExit} awardee yang keluar ${periodSubText}` : `Tidak ada konteks pembanding`;
+      break;
+    }
+    default: {
+      dataset = allData;
+      tag = 'KPI · Detail';
+      title = 'Detail Awardee';
+      color = 'linear-gradient(135deg,#0d4376 0%,#0055a5 100%)';
+      num = allData.length; sub = '';
+    }
   }
 
-  const perKampus   = _topNCounter(dataset, 'kampus', 12);
-  const perKelompok = _topNCounter(dataset, 'kelompok', 12);
+  const perKampus   = _topNCounter(dataset, 'kampus');
+  const perKelompok = _topNCounter(dataset, 'kelompok');
   const max1 = Math.max(1, ...perKampus.map(x=>x[1]));
   const max2 = Math.max(1, ...perKelompok.map(x=>x[1]));
 
-  const top10 = dataset.slice(0, 10);
-  const tableRows = top10.map(m => {
+  // Tag breakdown — hanya untuk kind yang relevant (exited, kipk, tag-*)
+  const showsTagBreakdown = ['exited','kipk','undur','do','tag-kipk','tag-undur','tag-pasif','tag-jenjang','tag-grup','tag-do'].includes(kind);
+  let tagItems = [];
+  let maxT = 1;
+  if (showsTagBreakdown && dataset.length > 0) {
+    // Pakai PRIMARY TAG saja (priority-based) supaya tiap awardee hanya dihitung 1x
+    // dan total breakdown match dengan jumlah dataset.
+    // Priority dari yg paling spesifik → paling umum:
+    const TAG_PRIORITY = ['do','kipk','jenjang','undur','pasif','grup'];
+    const tagCounts = { kipk:0, undur:0, pasif:0, jenjang:0, grup:0, do:0 };
+    let untagged = 0;
+    dataset.forEach(m => {
+      const primary = TAG_PRIORITY.find(t => m._tags.includes(t));
+      if (primary) tagCounts[primary]++;
+      else untagged++;
+    });
+    tagItems = Object.entries(tagCounts).filter(([_,v]) => v>0).sort((a,b)=>b[1]-a[1])
+      .map(([k,v]) => [TAG_LABELS[k].label, v]);
+    if (untagged > 0) tagItems.push(['Tanpa keterangan spesifik', untagged]);
+    if (tagItems.length > 0) maxT = Math.max(1, ...tagItems.map(x=>x[1]));
+  }
+
+  // Build 3-column breakdown grid
+  const sections = [];
+  if (tagItems.length > 0) {
+    const totalTagged = tagItems.reduce((a,[,v]) => a+v, 0);
+    sections.push(_breakdownSection(
+      `Breakdown Alasan Keluar <span style="font-weight:500;color:#6b7280;font-size:11px"> · alasan utama per awardee · total ${totalTagged}</span>`,
+      tagItems, maxT, 'b-purple', 'acc-purple'
+    ));
+  }
+  sections.push(_breakdownSection('Sebaran Kampus', perKampus, max1, 'b-blue', 'acc-blue'));
+  sections.push(_breakdownSection('Sebaran Kelompok', perKelompok, max2, 'b-orange', 'acc-orange'));
+  const breakdownGrid = `<div class="aa-breakdown-grid">${sections.join('')}</div>`;
+
+  const top20 = dataset.slice(0, 20);
+  const tableRows = top20.map(m => {
     const idx = allData.indexOf(m);
     const has = m.email && emailSet.has(m.email.toLowerCase());
+    const exitStr = m._exitDate ? fmtDateShort(m._exitDate) + ' ' + (m._exitDate.getFullYear()%100) : '—';
+    const ketShort = (m.keterangan || '').split('\n')[0] || '—';
     return `<tr onclick="showAwardeeDetail(${idx})" style="cursor:pointer">
       <td>${avatarGradient(m.nama)}</td>
       <td><div class="n-main">${m.nama||'—'}</div><div class="n-sub" style="font-size:11px;color:#9ca3af">${m.no_induk||'—'}</div></td>
       <td style="font-size:12px">${m.kampus||'—'}</td>
       <td style="font-size:12px">${m.kelompok||'—'}</td>
-      <td><span class="badge ${(m.status||'').toLowerCase().trim()==='aktif'?'badge-aktif':'badge-nonaktif'}">${m.status||'—'}</span></td>
-      <td style="text-align:center;font-size:12px;font-weight:600;color:${has?'#16a34a':'#9ca3af'}">${has?'Ada':'Tidak'}</td>
+      <td><span class="badge ${statusBadgeClass(m.status)}">${statusLabel(m.status)}</span></td>
+      <td style="font-size:11.5px;color:#374151">${exitStr}</td>
+      <td class="td-keterangan" style="max-width:200px" title="${ketShort.replace(/"/g,'&quot;')}">${ketShort}</td>
+      <td style="text-align:center;font-size:12px;font-weight:600;color:${has?'#16a34a':'#9ca3af'}">${has?'Ada':'—'}</td>
     </tr>`;
   }).join('');
+
+  const awardeePerKampus = perKampus.length>0 ? Math.round(num/perKampus.length) : 0;
 
   const html = `${_backBtn()}
     <div class="aa-hero" style="background:${color}">
@@ -922,21 +1769,20 @@ window.showKpiDetail = function(kind) {
     </div>
 
     <div class="aa-detail-kpis">
-      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Jumlah</div><div class="aa-detail-kpi-val" data-num="${num}">0</div></div>
-      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Total Kampus</div><div class="aa-detail-kpi-val" data-num="${perKampus.length}">0</div></div>
-      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Total Kelompok</div><div class="aa-detail-kpi-val" data-num="${perKelompok.length}">0</div></div>
-      <div class="aa-detail-kpi"><div class="aa-detail-kpi-lbl">Awardee/Kampus</div><div class="aa-detail-kpi-val" data-num="${perKampus.length>0?Math.round(num/perKampus.length):0}">0</div></div>
+      ${_detailKpi('teal',   _ICON_USERS,    'Jumlah',           num,                 '')}
+      ${_detailKpi('blue',   _ICON_BUILDING, 'Sebaran Kampus',   perKampus.length,    '')}
+      ${_detailKpi('purple', _ICON_LAYERS,   'Sebaran Kelompok', perKelompok.length,  '')}
+      ${_detailKpi('green',  _ICON_TREND,    'Awardee/Kampus',   awardeePerKampus,    '')}
     </div>
 
-    ${_breakdownSection('Top 12 Kampus', perKampus, max1, 'b-purple')}
-    ${_breakdownSection('Sebaran Kelompok', perKelompok, max2, 'b-orange')}
+    ${breakdownGrid}
 
     <div class="aa-section">
-      <div class="aa-section-h">10 Awardee Pertama <span class="h-tag">klik untuk detail</span></div>
+      <div class="aa-section-h">${dataset.length > 20 ? '20 Awardee Pertama' : 'Daftar Awardee'} <span class="h-tag">klik untuk detail</span></div>
       <div class="table-wrap" style="border:none;border-radius:0">
         <table style="width:100%">
-          <thead><tr><th></th><th>Nama</th><th>Kampus</th><th>Kelompok</th><th>Status</th><th style="text-align:center">Akun</th></tr></thead>
-          <tbody>${tableRows || '<tr><td colspan="6" style="text-align:center;padding:30px;color:#9ca3af">Tidak ada data</td></tr>'}</tbody>
+          <thead><tr><th></th><th>Nama</th><th>Kampus</th><th>Kelompok</th><th>Status</th><th>Keluar</th><th>Keterangan</th><th style="text-align:center">Akun</th></tr></thead>
+          <tbody>${tableRows || '<tr><td colspan="8" style="text-align:center;padding:30px;color:#9ca3af">Tidak ada data</td></tr>'}</tbody>
         </table>
       </div>
     </div>
@@ -974,6 +1820,892 @@ let emailSet = new Set(); // emails yang sudah ada akun
 const PAGE_SIZE = 10;
 let currentPage = 1;
 
+/* =============================================================
+   QUARTERLY ENGINE
+   Q1 dimulai Des 2025 → Feb 2026
+   Q2: Mar – Mei 2026
+   Q3: Jun – Agu 2026
+   Q4: Sep – Nov 2026
+   Q5: Des 2026 – Feb 2027, dst
+============================================================= */
+const QUARTER_ANCHOR = new Date(2025, 11, 1); // 1 Desember 2025 (bulan 0-indexed)
+const MONTH_NAMES_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const MONTH_NAMES_FULL = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+let quarterList = [];      // [{idx, label, start, end, shortRange}]
+let activePeriodIdx = 'all'; // 'all' atau index ke quarterList
+
+function quarterFromDate(d) {
+  // Hitung kuartal index (0-based) sejak QUARTER_ANCHOR. Jika sebelum anchor → -1
+  if (!d) return -1;
+  const monthsDiff = (d.getFullYear() - QUARTER_ANCHOR.getFullYear()) * 12
+                   + (d.getMonth() - QUARTER_ANCHOR.getMonth());
+  if (monthsDiff < 0) return -1;
+  return Math.floor(monthsDiff / 3);
+}
+
+function quarterRange(idx) {
+  const startMonth = QUARTER_ANCHOR.getMonth() + idx * 3;
+  const start = new Date(QUARTER_ANCHOR.getFullYear(), startMonth, 1);
+  const end   = new Date(QUARTER_ANCHOR.getFullYear(), startMonth + 3, 0); // last day of last month
+  return { start, end };
+}
+
+function quarterLabel(idx) {
+  const { start, end } = quarterRange(idx);
+  const yr = start.getFullYear() === end.getFullYear()
+    ? `${end.getFullYear()}`
+    : `${start.getFullYear()}/${end.getFullYear() % 100}`;
+  return `Q${idx + 1} ${yr}`;
+}
+
+function quarterShortRange(idx) {
+  const { start, end } = quarterRange(idx);
+  const sm = MONTH_NAMES_ID[start.getMonth()];
+  const em = MONTH_NAMES_ID[end.getMonth()];
+  const sy = start.getFullYear() % 100;
+  const ey = end.getFullYear() % 100;
+  return start.getFullYear() === end.getFullYear()
+    ? `${sm}–${em} '${ey}`
+    : `${sm} '${sy} – ${em} '${ey}`;
+}
+
+function buildQuarterList(mhs) {
+  // Determine max quarter — dari yg keluar atau hingga kuartal saat ini
+  const now = new Date();
+  let maxIdx = quarterFromDate(now);
+  mhs.forEach(m => {
+    if (m._exitDate) {
+      const qi = quarterFromDate(m._exitDate);
+      if (qi > maxIdx) maxIdx = qi;
+    }
+    (m._events || []).forEach(ev => {
+      if (ev.date) {
+        const qi = quarterFromDate(ev.date);
+        if (qi > maxIdx) maxIdx = qi;
+      }
+    });
+  });
+  // Minimal 4 kuartal pertama supaya selalu ada konteks visual
+  maxIdx = Math.max(maxIdx, 3);
+
+  quarterList = [];
+  for (let i = 0; i <= maxIdx; i++) {
+    quarterList.push({
+      idx: i,
+      label: quarterLabel(i),
+      shortRange: quarterShortRange(i),
+      ...quarterRange(i)
+    });
+  }
+  // Default: All Time
+  activePeriodIdx = 'all';
+}
+
+/* =============================================================
+   KETERANGAN PARSER
+   Memecah teks keterangan jadi multiple events (kalau ada \n
+   atau multiple tanggal). Tiap event punya: date, text, tags, source
+============================================================= */
+const DATE_RE = /(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/g;
+
+function parseDateString(s) {
+  // Coba parse "dd/mm/yyyy" atau "dd-mm-yyyy"
+  const m = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})$/);
+  if (!m) return null;
+  let [_, dd, mm, yy] = m;
+  dd = parseInt(dd,10); mm = parseInt(mm,10); yy = parseInt(yy,10);
+  if (yy < 100) yy += 2000;
+  if (mm < 1 || mm > 12 || dd < 1 || dd > 31) return null;
+  const d = new Date(yy, mm-1, dd);
+  if (isNaN(d.getTime())) return null;
+  return d;
+}
+
+function parseExitDate(m) {
+  // Kolom keluar diasumsikan ISO atau dd/mm/yyyy
+  if (!m.keluar) {
+    // Fallback: cari tanggal pertama di keterangan
+    if (m.keterangan) {
+      const events = parseKeteranganEvents(m.keterangan);
+      if (events.length > 0 && events[0].date) return events[0].date;
+    }
+    return null;
+  }
+  if (m.keluar instanceof Date) return m.keluar;
+  // ISO format YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}/.test(m.keluar)) {
+    const d = new Date(m.keluar);
+    return isNaN(d) ? null : d;
+  }
+  // dd/mm/yyyy
+  return parseDateString(m.keluar.trim());
+}
+
+function parseKeteranganEvents(keterangan) {
+  if (!keterangan) return [];
+  // Pisahkan per baris terlebih dahulu (untuk handle multiple updates)
+  const lines = keterangan.split(/\n+/).map(s => s.trim()).filter(Boolean);
+  const events = [];
+  for (const line of lines) {
+    // Cari semua tanggal di baris
+    const matches = [...line.matchAll(DATE_RE)];
+    if (matches.length === 0) {
+      events.push({ date: null, text: line, raw: line });
+    } else {
+      // Setiap tanggal mulai event baru
+      for (let i = 0; i < matches.length; i++) {
+        const m = matches[i];
+        const dateStr = m[0];
+        const startIdx = m.index;
+        const endIdx = (i+1 < matches.length) ? matches[i+1].index : line.length;
+        const segment = line.slice(startIdx, endIdx).trim();
+        const date = parseDateString(dateStr);
+        // Text setelah tanggal
+        let textAfter = segment.replace(DATE_RE, '').trim().replace(/^[-:,\s]+/, '').trim();
+        // Termasuk text sebelum tanggal pertama (kalau event pertama)
+        if (i === 0 && startIdx > 0) {
+          const before = line.slice(0, startIdx).trim().replace(/[-:,]+$/, '').trim();
+          if (before) textAfter = before + ' ' + textAfter;
+        }
+        events.push({
+          date,
+          text: textAfter || segment,
+          raw: segment
+        });
+      }
+    }
+  }
+  // Sort terbaru → terlama (yang ada tanggal di atas; null tetap di bawah)
+  events.sort((a, b) => {
+    if (a.date && b.date) return b.date - a.date;
+    if (a.date && !b.date) return -1;
+    if (!a.date && b.date) return 1;
+    return 0;
+  });
+  return events;
+}
+
+/* =============================================================
+   TAG INFERENCE — kategorikan alasan keluar dari teks
+============================================================= */
+function inferTags(m) {
+  const txt = (m.keterangan || '').toLowerCase();
+  const tags = new Set();
+  if (/\bki[pj]?k\b|beasiswa\s*kip|kip[\s-]*k|beasiswa\s*lain/i.test(txt)) tags.add('kipk');
+  if (/undur|mengundurkan|pengunduran|mundur/.test(txt)) tags.add('undur');
+  if (/tidak\s*join|tidak\s*aktif|sudah\s*tidak|keluar\s*grup|left\s*group/.test(txt)) tags.add('pasif');
+  if (/d3|jenjang|salah\s*jenjang|bukan\s*s1/.test(txt)) tags.add('jenjang');
+  if (/grup|group|wa\s*grup|whatsapp|bsim/.test(txt)) tags.add('grup');
+  // Drop out specific
+  if ((m._normStatus === 'drop out')) tags.add('do');
+  return [...tags];
+}
+
+const TAG_LABELS = {
+  kipk:    { label: 'Beasiswa Lain (KIPK)',  color: '#1e40af', bg:'#dbeafe', icon: 'school' },
+  undur:   { label: 'Resmi Undur Diri',      color: '#c2410c', bg:'#ffedd5', icon: 'logout' },
+  pasif:   { label: 'Tidak Aktif Komunitas', color: '#92400e', bg:'#fef3c7', icon: 'sleep' },
+  jenjang: { label: 'Salah Jenjang (D3)',    color: '#86198f', bg:'#fae8ff', icon: 'level'  },
+  grup:    { label: 'Tidak Join Grup',       color: '#4338ca', bg:'#e0e7ff', icon: 'chat'   },
+  do:      { label: 'Drop Out / Akademik',   color: '#991b1b', bg:'#fee2e2', icon: 'alert'  },
+};
+
+function tagIconSvg(name) {
+  const icons = {
+    school:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>',
+    logout:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+    sleep:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/></svg>',
+    level:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 11 12 4 21 11"/><path d="M5 11v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9"/></svg>',
+    chat:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+    alert:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  };
+  return icons[name] || '';
+}
+
+/* =============================================================
+   SOURCE INFERENCE — siapa yg memberi info
+============================================================= */
+function inferSources(events) {
+  const sources = new Set();
+  (events || []).forEach(ev => {
+    const t = (ev.text || ev.raw || '').toLowerCase();
+    if (/\bmba\s*muth|muthia|mbak\s*muth/.test(t)) sources.add('muthia');
+    if (/\bybs\b|yang\s*bersangkutan|info\s*dari\s*ybs/.test(t)) sources.add('ybs');
+    if (/lecture|dosen|pengajar/.test(t)) sources.add('lecture');
+    if (/form|formulir/.test(t) && /(undur|pengunduran)/.test(t)) sources.add('form');
+  });
+  if (sources.size === 0) sources.add('other');
+  return [...sources];
+}
+
+const SOURCE_LABELS = {
+  muthia:  { label: 'Mba Muthia',     color: '#0055a5' },
+  ybs:     { label: 'Awardee Sendiri', color: '#16a34a' },
+  lecture: { label: 'Lecturer',        color: '#7c3aed' },
+  form:    { label: 'Form Resmi',      color: '#ea580c' },
+  other:   { label: 'Sumber Lain',     color: '#6b7280' },
+};
+
+/* =============================================================
+   STATUS NORMALIZATION (3 status)
+============================================================= */
+function normStatus(s) {
+  const v = (s || '').toLowerCase().trim();
+  if (v === 'aktif') return 'aktif';
+  if (/undur|mundur/.test(v)) return 'undur diri';
+  if (/drop\s*out|do\b|dropout/.test(v)) return 'drop out';
+  // Legacy "nonaktif" → kelompokkan ke undur diri kalau ada keluar, kalau nggak → drop out
+  if (v === 'nonaktif' || v === 'non-aktif' || v === 'non aktif') return 'undur diri';
+  return v || 'aktif';
+}
+
+function statusLabel(s) {
+  const n = normStatus(s);
+  if (n === 'aktif') return 'Aktif';
+  if (n === 'undur diri') return 'Undur Diri';
+  if (n === 'drop out') return 'Drop Out';
+  return s || '—';
+}
+
+function statusBadgeClass(s) {
+  const n = normStatus(s);
+  if (n === 'aktif') return 'badge-aktif';
+  if (n === 'undur diri') return 'badge-undur';
+  if (n === 'drop out') return 'badge-do';
+  return 'badge-nonaktif';
+}
+
+function statusColor(s) {
+  const n = normStatus(s);
+  if (n === 'aktif') return '#16a34a';
+  if (n === 'undur diri') return '#ea580c';
+  if (n === 'drop out') return '#9333ea';
+  return '#6b7280';
+}
+
+/* =============================================================
+   FORMATTING UTILS
+============================================================= */
+function fmtDate(d) {
+  if (!d) return '—';
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = MONTH_NAMES_ID[d.getMonth()];
+  const yy = d.getFullYear();
+  return `${dd} ${mm} ${yy}`;
+}
+function fmtDateShort(d) {
+  if (!d) return '—';
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = MONTH_NAMES_ID[d.getMonth()];
+  return `${dd} ${mm}`;
+}
+function relTime(d) {
+  if (!d) return '';
+  const now = new Date();
+  const diff = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return 'hari ini';
+  if (diff === 1) return 'kemarin';
+  if (diff < 7)   return `${diff} hari lalu`;
+  if (diff < 30)  return `${Math.floor(diff/7)} mgg lalu`;
+  if (diff < 365) return `${Math.floor(diff/30)} bln lalu`;
+  return `${Math.floor(diff/365)} thn lalu`;
+}
+
+/* =============================================================
+   PERIOD FILTER — return awardee yang relevan utk periode
+   - Untuk 'all': semua awardee
+   - Untuk kuartal X: awardee yang exit-nya di kuartal X
+     (untuk kondisi "berapa yang keluar di kuartal ini")
+============================================================= */
+function inPeriod(m, period) {
+  if (period === 'all') return true;
+  if (m._normStatus === 'aktif') return false; // aktif tidak ada exit date
+  if (!m._exitDate) return false;
+  return quarterFromDate(m._exitDate) === period;
+}
+
+function awardeeStatusInPeriod(m, period) {
+  // Apa status awardee ini PADA AKHIR periode tersebut?
+  // - Kalau period 'all' → status saat ini
+  // - Kalau kuartal X → kalau exit di <=X → pakai status. Kalau exit di >X atau aktif → 'aktif' di kuartal X
+  if (period === 'all') return m._normStatus;
+  if (m._normStatus === 'aktif') return 'aktif';
+  if (!m._exitDate) return m._normStatus;
+  const exitQ = quarterFromDate(m._exitDate);
+  if (exitQ <= period) return m._normStatus;
+  return 'aktif';
+}
+
+/* =============================================================
+   QUARTER PILLS RENDER
+============================================================= */
+function renderQuarterPills() {
+  const wrap = document.getElementById('qrPills');
+  if (!wrap) return;
+  const totalAll = allData.length;
+  let html = `<button class="qr-pill qr-all ${activePeriodIdx === 'all' ? 'active' : ''}" onclick="setPeriod('all')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      All Time
+      <span class="qr-pill-cnt">${totalAll}</span>
+    </button>`;
+  // Tampilkan max 6 kuartal terbaru biar nggak penuh; sisanya pakai dropdown
+  const visible = quarterList.slice(-6);
+  visible.forEach(q => {
+    const cnt = allData.filter(m => m._exitDate && quarterFromDate(m._exitDate) === q.idx).length;
+    const isActive = activePeriodIdx === q.idx;
+    html += `<button class="qr-pill ${isActive?'active':''}" onclick="setPeriod(${q.idx})" title="${q.shortRange}">
+      ${q.label}
+      <span class="qr-pill-cnt">${cnt}</span>
+    </button>`;
+  });
+  wrap.innerHTML = html;
+}
+
+window.setPeriod = function(p) {
+  activePeriodIdx = p;
+  renderForActivePeriod();
+};
+
+/* =============================================================
+   PERIOD HEADER (qr-bar text)
+============================================================= */
+function renderPeriodHeader() {
+  const nameEl = document.getElementById('qrPeriodName');
+  const subEl  = document.getElementById('qrPeriodSub');
+  if (!nameEl) return;
+  if (activePeriodIdx === 'all') {
+    nameEl.textContent = 'All Time — Sepanjang Program';
+    subEl.textContent  = `Ringkasan kondisi awardee dari awal hingga ${fmtDate(new Date())}`;
+  } else {
+    const q = quarterList[activePeriodIdx];
+    nameEl.textContent = `${q.label} · ${q.shortRange}`;
+    const isCurrent = quarterFromDate(new Date()) === q.idx;
+    subEl.textContent = isCurrent
+      ? `Kuartal berjalan — periode ${fmtDate(q.start)} sampai ${fmtDate(q.end)}`
+      : `Periode historis — ${fmtDate(q.start)} sampai ${fmtDate(q.end)}`;
+  }
+}
+
+/* =============================================================
+   STATS COUNT-UP (5 cards)
+============================================================= */
+function computePeriodStats(period) {
+  // Status counts pada periode
+  let aktif = 0, undur = 0, dropout = 0;
+  let exitedThisPeriod = 0;
+  let exitedKipk = 0, exitedUndur = 0, exitedDO = 0;
+  allData.forEach(m => {
+    const st = awardeeStatusInPeriod(m, period);
+    if (st === 'aktif') aktif++;
+    else if (st === 'undur diri') undur++;
+    else if (st === 'drop out') dropout++;
+
+    if (period !== 'all' && m._exitDate && quarterFromDate(m._exitDate) === period) {
+      exitedThisPeriod++;
+      if (m._tags.includes('kipk')) exitedKipk++;
+      if (m._normStatus === 'undur diri') exitedUndur++;
+      if (m._normStatus === 'drop out') exitedDO++;
+    }
+  });
+  // Akun (hanya hitung dari aktif)
+  const adaAkun = allData.filter(m => {
+    const st = awardeeStatusInPeriod(m, period);
+    return st === 'aktif' && m.email && emailSet.has(m.email.toLowerCase());
+  }).length;
+
+  return {
+    total: allData.length,
+    aktif, undur, dropout,
+    adaAkun,
+    exitedThisPeriod,
+    exitedKipk, exitedUndur, exitedDO,
+  };
+}
+
+function renderTopStats() {
+  const s = computePeriodStats(activePeriodIdx);
+  setKpi('statTotal', s.total);
+  setKpi('statAktif', s.aktif);
+  setKpi('statUndur', s.undur);
+  setKpi('statDO',    s.dropout);
+  setKpi('statAkun',  s.adaAkun);
+
+  // Sub-text di tiap kartu
+  const totalSub = activePeriodIdx === 'all'
+    ? 'Total awardee program' : `Snapshot kondisi akhir ${quarterList[activePeriodIdx].label}`;
+  document.getElementById('statTotalSub').textContent = totalSub;
+
+  const pctAktif = s.total ? Math.round(s.aktif/s.total*100) : 0;
+  document.getElementById('statAktifSub').textContent = `${pctAktif}% dari total`;
+
+  const pctUndur = s.total ? Math.round(s.undur/s.total*100) : 0;
+  document.getElementById('statUndurSub').textContent = `${pctUndur}% dari total`;
+
+  const pctDO = s.total ? Math.round(s.dropout/s.total*100) : 0;
+  document.getElementById('statDOSub').textContent = `${pctDO}% dari total`;
+
+  const pctAkun = s.aktif ? Math.round(s.adaAkun/s.aktif*100) : 0;
+  document.getElementById('statAkunSub').textContent = `${pctAkun}% dari aktif`;
+}
+
+/* =============================================================
+   PERIOD INSIGHT (donut + side stack)
+============================================================= */
+function renderPeriodInsight() {
+  const s = computePeriodStats(activePeriodIdx);
+  const grid = document.getElementById('piGrid');
+
+  // Donut data: status distribution
+  const total = s.aktif + s.undur + s.dropout;
+  const segs = [
+    { name: 'Aktif',      val: s.aktif,   color: '#16a34a', dot: 'linear-gradient(135deg,#22c55e,#16a34a)', kpi:'aktif' },
+    { name: 'Undur Diri', val: s.undur,   color: '#ea580c', dot: 'linear-gradient(135deg,#fb923c,#ea580c)', kpi:'undur' },
+    { name: 'Drop Out',   val: s.dropout, color: '#9333ea', dot: 'linear-gradient(135deg,#c084fc,#9333ea)', kpi:'do'    },
+  ];
+  // Donut: 190×190, radius 72, stroke-width 20, gap antar segmen
+  const donutSize = 190, cx = 95, cy = 95, radius = 72, strokeW = 20;
+  const circumference = 2 * Math.PI * radius;
+  const GAP = total > 1 ? 4 : 0; // px gap antar segmen
+  let cumulative = 0;
+  const segElements = segs.map((seg, i) => {
+    const pct = total ? seg.val / total : 0;
+    const rawDash = circumference * pct;
+    const dash = Math.max(0, rawDash - GAP);
+    const offset = -(cumulative + GAP / 2);
+    cumulative += rawDash;
+    if (dash <= 0) return '';
+    return `<circle class="pi-donut-seg" cx="${cx}" cy="${cy}" r="${radius}"
+      fill="none" stroke="${seg.color}" stroke-width="${strokeW}" stroke-linecap="butt"
+      stroke-dasharray="${dash.toFixed(2)} ${(circumference - dash).toFixed(2)}"
+      stroke-dashoffset="${offset.toFixed(2)}"
+      data-kpi="${seg.kpi}"
+      onclick="showKpiDetail('${seg.kpi}')"
+      style="filter:drop-shadow(0 2px 6px ${seg.color}55)"
+      ><title>${seg.name}: ${seg.val.toLocaleString('id-ID')} (${total?(pct*100).toFixed(2):'0.00'}%)</title></circle>`;
+  }).join('');
+
+  // Legend color config per segment
+  const segBgMap = {
+    aktif: { bg:'linear-gradient(135deg,#f0fdf4,#dcfce7)', border:'#86efac', valColor:'#16a34a', pctBg:'#dcfce7', pctColor:'#15803d' },
+    undur: { bg:'linear-gradient(135deg,#fff7ed,#ffedd5)', border:'#fed7aa', valColor:'#ea580c', pctBg:'#ffedd5', pctColor:'#c2410c' },
+    do:    { bg:'linear-gradient(135deg,#faf5ff,#f3e8ff)', border:'#d8b4fe', valColor:'#9333ea', pctBg:'#f3e8ff', pctColor:'#7e22ce' },
+  };
+  const legend = segs.map(seg => {
+    const pct = total ? (seg.val/total*100).toFixed(2) : '0.00';
+    const cfg = segBgMap[seg.kpi] || { bg:'#f9fafb', border:'#e5e7eb', valColor:'#111827', pctBg:'#f3f4f6', pctColor:'#374151' };
+    return `<div class="pi-legend-row" onclick="showKpiDetail('${seg.kpi}')"
+        style="background:${cfg.bg};border-color:${cfg.border};">
+      <div class="pi-legend-l">
+        <div class="pi-legend-dot" style="background:${seg.dot}"></div>
+        <div class="pi-legend-name" style="color:#111827">${seg.name}</div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="pi-legend-val" style="color:${cfg.valColor}">${seg.val.toLocaleString('id-ID')}</div>
+        <div class="pi-legend-pct" style="background:${cfg.pctBg};color:${cfg.pctColor}">${pct}%</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Icons untuk side mini cards
+  const iconExit  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>';
+  const iconKipk  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>';
+  const iconDO    = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+  const iconCheck = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+  const iconKey   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>';
+
+  // Side stack: 3 kartu
+  let sideStack;
+  if (activePeriodIdx === 'all') {
+    const totalExited = s.undur + s.dropout;
+    const retention = s.total ? (s.aktif/s.total*100).toFixed(2) : '0.00';
+    sideStack = `
+      <div class="pi-mini var-orange" onclick="showKpiDetail('exited')">
+        <div class="pi-mini-icon">${iconExit}</div>
+        <div class="pi-mini-body">
+          <div class="pi-mini-l">Total Keluar</div>
+          <div class="pi-mini-v">${totalExited.toLocaleString('id-ID')}</div>
+          <div class="pi-mini-sub">Sepanjang program</div>
+        </div>
+      </div>
+      <div class="pi-mini var-green" onclick="showKpiDetail('aktif')">
+        <div class="pi-mini-icon">${iconCheck}</div>
+        <div class="pi-mini-body">
+          <div class="pi-mini-l">Retention Rate</div>
+          <div class="pi-mini-v">${retention}%</div>
+          <div class="pi-mini-sub">${s.aktif.toLocaleString('id-ID')} aktif dari ${s.total.toLocaleString('id-ID')}</div>
+        </div>
+      </div>
+      <div class="pi-mini var-teal" onclick="showKpiDetail('akun')">
+        <div class="pi-mini-icon">${iconKey}</div>
+        <div class="pi-mini-body">
+          <div class="pi-mini-l">Akun Aktif</div>
+          <div class="pi-mini-v">${s.adaAkun.toLocaleString('id-ID')}</div>
+          <div class="pi-mini-sub">${s.aktif?Math.round(s.adaAkun/s.aktif*100):0}% dari aktif punya akun</div>
+        </div>
+      </div>`;
+  } else {
+    sideStack = `
+      <div class="pi-mini var-orange" onclick="showKpiDetail('exited')">
+        <div class="pi-mini-icon">${iconExit}</div>
+        <div class="pi-mini-body">
+          <div class="pi-mini-l">Keluar Periode Ini</div>
+          <div class="pi-mini-v">${s.exitedThisPeriod.toLocaleString('id-ID')}</div>
+          <div class="pi-mini-sub">Awardee yang keluar di ${quarterList[activePeriodIdx].label}</div>
+        </div>
+      </div>
+      <div class="pi-mini var-blue" onclick="showKpiDetail('kipk')">
+        <div class="pi-mini-icon">${iconKipk}</div>
+        <div class="pi-mini-body">
+          <div class="pi-mini-l">Pindah ke KIPK</div>
+          <div class="pi-mini-v">${s.exitedKipk.toLocaleString('id-ID')}</div>
+          <div class="pi-mini-sub">${s.exitedThisPeriod?Math.round(s.exitedKipk/s.exitedThisPeriod*100):0}% dari yang keluar</div>
+        </div>
+      </div>
+      <div class="pi-mini var-purple" onclick="showKpiDetail('do')">
+        <div class="pi-mini-icon">${iconDO}</div>
+        <div class="pi-mini-body">
+          <div class="pi-mini-l">Drop Out Periode</div>
+          <div class="pi-mini-v">${s.exitedDO.toLocaleString('id-ID')}</div>
+          <div class="pi-mini-sub">${s.exitedThisPeriod?Math.round(s.exitedDO/s.exitedThisPeriod*100):0}% dari yang keluar</div>
+        </div>
+      </div>`;
+  }
+
+  grid.innerHTML = `
+    <div class="pi-card">
+      <div class="pi-card-h">
+        <div>
+          <div class="pi-card-title">Distribusi Status Awardee</div>
+          <div class="pi-card-sub">${activePeriodIdx === 'all' ? 'Snapshot kondisi terkini — setiap awardee dihitung tepat satu kali' : `Kondisi pada akhir ${quarterList[activePeriodIdx].label} — total = ${total.toLocaleString('id-ID')} awardee`}</div>
+        </div>
+        <span class="pi-card-tag" style="display:inline-flex;align-items:center;gap:5px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Klik segmen untuk detail
+        </span>
+      </div>
+      <div class="pi-donut-wrap">
+        <div class="pi-donut">
+          <svg width="${donutSize}" height="${donutSize}" viewBox="0 0 190 190">
+            <circle cx="${cx}" cy="${cy}" r="${radius}" fill="none" stroke="#f1f5f9" stroke-width="${strokeW}"/>
+            ${segElements}
+          </svg>
+          <div class="pi-donut-center">
+            <div class="pi-donut-center-inner">
+              <div class="pi-donut-num">${total.toLocaleString('id-ID')}</div>
+              <div class="pi-donut-lbl">Total</div>
+            </div>
+          </div>
+        </div>
+        <div class="pi-legend">
+          ${legend}
+          <div style="margin-top:10px;padding:8px 12px;background:#f8fafc;border-radius:10px;border:1px solid #e5e7eb;font-size:11px;color:#6b7280;line-height:1.5;">
+            <strong style="color:#374151">Cara baca:</strong> Tiap awardee dihitung <em>tepat satu kali</em> — total ketiga segmen = ${total.toLocaleString('id-ID')} orang.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pi-side-stack">${sideStack}</div>`;
+}
+
+/* =============================================================
+   QUARTER TIMELINE (multi-bar chart)
+============================================================= */
+function renderQuarterTimeline() {
+  const card = document.getElementById('qtCard');
+  // Data per quarter: aktif (kumulatif yang masih aktif di akhir Q), undur exit Q, do exit Q
+  const data = quarterList.map(q => {
+    let exitsUndur = 0, exitsDO = 0, aktifEnd = 0;
+    allData.forEach(m => {
+      if (m._exitDate && quarterFromDate(m._exitDate) === q.idx) {
+        if (m._normStatus === 'undur diri') exitsUndur++;
+        else if (m._normStatus === 'drop out') exitsDO++;
+      }
+      const stEnd = awardeeStatusInPeriod(m, q.idx);
+      if (stEnd === 'aktif') aktifEnd++;
+    });
+    return { q, aktifEnd, exitsUndur, exitsDO };
+  });
+  // Use absolute aktif count as scale reference (so all bars proportional)
+  const maxAktif = Math.max(1, ...data.map(d => d.aktifEnd));
+  const maxUndur = Math.max(1, ...data.map(d => d.exitsUndur));
+  const maxDO    = Math.max(1, ...data.map(d => d.exitsDO));
+
+  const bars = data.map((d, i) => {
+    const isActive = activePeriodIdx === d.q.idx;
+    // Aktif bar relative to maxAktif (full scale)
+    const aktifH = (d.aktifEnd / maxAktif) * 100;
+    // Undur & DO scaled relative to their own max (so visible even when small)
+    const undurH = d.exitsUndur > 0 ? Math.max(8, (d.exitsUndur / maxUndur) * 60) : 0;
+    const doH    = d.exitsDO    > 0 ? Math.max(8, (d.exitsDO    / maxDO)    * 60) : 0;
+
+    // Each bar is individually clickable -> drill into KPI detail for that segment in that period
+    const aktifBar = `<div class="qt-bar aktif" style="height:${aktifH}%;animation-delay:${i*60}ms"
+        onclick="event.stopPropagation(); _drillQuarterBar(${d.q.idx}, 'aktif')"
+        title="Aktif: ${d.aktifEnd} — klik untuk detail">
+        <div class="qt-bar-label">${d.aktifEnd.toLocaleString('id-ID')}</div>
+        <div class="qt-bar-tip">Aktif: ${d.aktifEnd} • klik untuk detail</div>
+      </div>`;
+    const undurBar = d.exitsUndur > 0 ? `<div class="qt-bar undur" style="height:${undurH}%;animation-delay:${i*60+100}ms"
+        onclick="event.stopPropagation(); _drillQuarterBar(${d.q.idx}, 'undur')"
+        title="Undur: ${d.exitsUndur} — klik untuk detail">
+        <div class="qt-bar-label">${d.exitsUndur}</div>
+        <div class="qt-bar-tip">Undur Diri: ${d.exitsUndur} • klik untuk detail</div>
+      </div>` : '';
+    const doBar = d.exitsDO > 0 ? `<div class="qt-bar do" style="height:${doH}%;animation-delay:${i*60+200}ms"
+        onclick="event.stopPropagation(); _drillQuarterBar(${d.q.idx}, 'do')"
+        title="DO: ${d.exitsDO} — klik untuk detail">
+        <div class="qt-bar-label">${d.exitsDO}</div>
+        <div class="qt-bar-tip">Drop Out: ${d.exitsDO} • klik untuk detail</div>
+      </div>` : '';
+
+    return `<div class="qt-q ${isActive?'active':''}" onclick="setPeriod(${d.q.idx})" title="Klik untuk pilih ${d.q.label}">
+      <div class="qt-bars">
+        ${aktifBar}
+        ${undurBar}
+        ${doBar}
+      </div>
+      <div class="qt-q-name">${d.q.label}</div>
+      <div class="qt-q-range">${d.q.shortRange}</div>
+    </div>`;
+  }).join('');
+
+  card.innerHTML = `
+    <div class="qt-head">
+      <div>
+        <div class="qt-head-l">Perkembangan Awardee Per Kuartal</div>
+        <div class="qt-head-sub">Klik label kuartal untuk pilih periode · klik bar untuk drill-down ke detail</div>
+      </div>
+      <div class="qt-legend">
+        <div class="qt-legend-i">
+          <div class="qt-legend-dot" style="background:linear-gradient(180deg,#22c55e,#16a34a)"></div>
+          Aktif <span style="font-size:10px;color:#9ca3af;font-weight:500">(snapshot akhir kuartal)</span>
+        </div>
+        <div class="qt-legend-i">
+          <div class="qt-legend-dot" style="background:linear-gradient(180deg,#fb923c,#ea580c)"></div>
+          Undur Diri <span style="font-size:10px;color:#9ca3af;font-weight:500">(keluar di kuartal tsb)</span>
+        </div>
+        <div class="qt-legend-i">
+          <div class="qt-legend-dot" style="background:linear-gradient(180deg,#c084fc,#9333ea)"></div>
+          Drop Out <span style="font-size:10px;color:#9ca3af;font-weight:500">(keluar di kuartal tsb)</span>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11.5px;color:#6b7280;margin-bottom:14px;padding:8px 12px;background:#f8fafc;border-radius:10px;border:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0055a5" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span><strong style="color:#374151">Cara baca:</strong> Bar hijau = jumlah awardee <em>aktif pada akhir</em> kuartal tersebut (satu per orang). Bar oranye &amp; ungu = jumlah yang keluar <em>di dalam</em> kuartal tersebut (juga satu per orang). Angka di atas bar = nilai aktual.</span>
+    </div>
+    <div class="qt-chart">${bars}</div>`;
+}
+
+/* Helper: drill-down dari bar segmen → set period dulu, lalu showKpiDetail */
+window._drillQuarterBar = function(qIdx, kind) {
+  if (activePeriodIdx !== qIdx) {
+    setPeriod(qIdx);
+  }
+  // Tunggu render selesai, baru tampilkan detail
+  setTimeout(() => showKpiDetail(kind), 60);
+};
+
+/* =============================================================
+   REASON ANALYSIS (chips per kategori alasan)
+============================================================= */
+function renderReasonAnalysis() {
+  const grid = document.getElementById('raGrid');
+  // Filter to relevant subset
+  const relevant = activePeriodIdx === 'all'
+    ? allData.filter(m => m._normStatus !== 'aktif')
+    : allData.filter(m => m._exitDate && quarterFromDate(m._exitDate) === activePeriodIdx);
+
+  if (relevant.length === 0) {
+    grid.innerHTML = `<div class="pi-card" style="grid-column:1/-1;text-align:center;padding:32px;color:#9ca3af">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:8px;opacity:.4"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>
+      <div style="font-size:13px;font-weight:600">Belum ada awardee yang keluar pada periode ini</div>
+      <div style="font-size:11px;margin-top:4px">Semua awardee masih dalam status aktif</div>
+    </div>`;
+    return;
+  }
+  const raInfoNote = `<div style="grid-column:1/-1;margin-bottom:2px;">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+      <div style="display:inline-flex;align-items:center;gap:6px;padding:5px 12px 5px 8px;background:linear-gradient(135deg,#7c3aed,#9333ea);color:#fff;border-radius:99px;font-size:11.5px;font-weight:800;letter-spacing:.4px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+        BY TAGLINE
+      </div>
+      <div style="font-size:13px;font-weight:700;color:#374151;">Analisa Alasan Keluar</div>
+      <div style="font-size:11.5px;color:#6b7280;margin-left:auto;">${relevant.length.toLocaleString('id-ID')} awardee keluar${activePeriodIdx==='all'?'':' periode ini'}</div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:9px;padding:9px 13px;background:linear-gradient(135deg,#fffbeb,#fef3c7);border:1px solid #fde68a;border-radius:10px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div style="font-size:11.5px;color:#92400e;line-height:1.5"><strong>Satu awardee bisa masuk ke lebih dari satu kategori</strong> — total antar kartu bisa melebihi ${relevant.length.toLocaleString('id-ID')} orang. Persentase dihitung dari jumlah awardee yang keluar, bukan jumlah tag.</div>
+    </div>
+  </div>`;
+
+  const tagCounts = { kipk:0, undur:0, pasif:0, jenjang:0, grup:0, do:0 };
+  relevant.forEach(m => m._tags.forEach(t => { if (t in tagCounts) tagCounts[t]++; }));
+
+  const order = ['kipk','undur','pasif','grup','jenjang','do'];
+  const cards = order.filter(k => tagCounts[k] > 0).map(k => {
+    const meta = TAG_LABELS[k];
+    const v = tagCounts[k];
+    const pct = Math.round(v/relevant.length*100);
+    return `<div class="ra-card" style="--ra-accent:${meta.color};--ra-bg:${meta.bg}" onclick="showKpiDetail('tag-${k}')">
+      <div class="ra-icon">${tagIconSvg(meta.icon)}</div>
+      <div class="ra-name">${meta.label}</div>
+      <div class="ra-val">${v.toLocaleString('id-ID')}</div>
+      <div class="ra-bar-wrap"><div class="ra-bar" data-bar-w="${Math.min(pct,100)}"></div></div>
+      <div class="ra-pct">${pct}% dari ${relevant.length.toLocaleString('id-ID')} awardee keluar${activePeriodIdx==='all'?'':' periode ini'} <span style="font-size:10px;opacity:.7">(multi-tag)</span></div>
+    </div>`;
+  }).join('');
+
+  grid.innerHTML = raInfoNote + (cards || `<div style="grid-column:1/-1;color:#9ca3af;text-align:center;padding:20px">Tidak ada keterangan yang dapat dianalisa</div>`);
+
+  // Trigger bar animation
+  requestAnimationFrame(() => {
+    grid.querySelectorAll('[data-bar-w]').forEach(el => { el.style.width = el.dataset.barW + '%'; });
+  });
+}
+
+/* =============================================================
+   RECENT EVENTS TIMELINE
+============================================================= */
+function renderRecentTimeline() {
+  const card = document.getElementById('tlCard');
+  // Collect events: untuk setiap awardee non-aktif yang exit-nya match periode, ambil events
+  const inScope = allData.filter(m => {
+    if (m._normStatus === 'aktif') return false;
+    if (activePeriodIdx === 'all') return true;
+    return m._exitDate && quarterFromDate(m._exitDate) === activePeriodIdx;
+  });
+
+  const items = inScope.map(m => {
+    // Pakai event paling recent dengan tanggal, atau exit date kalau tidak ada
+    const ev = (m._events || []).find(e => e.date) || null;
+    const date = ev ? ev.date : m._exitDate;
+    return { m, date, ev };
+  }).filter(x => x.date)
+    .sort((a,b) => b.date - a.date)
+    .slice(0, 25);
+
+  if (items.length === 0) {
+    card.innerHTML = `
+      <div class="tl-head">
+        <div>
+          <div class="tl-head-l">Riwayat Aktivitas</div>
+          <div class="tl-head-sub">${activePeriodIdx==='all'?'Sepanjang program':quarterList[activePeriodIdx].label}</div>
+        </div>
+      </div>
+      <div class="tl-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div>Belum ada catatan riwayat untuk periode ini</div>
+      </div>`;
+    return;
+  }
+
+  const list = items.map(({m, date, ev}) => {
+    const idx = allData.indexOf(m);
+    const c = statusColor(m.status);
+    const tagsHtml = m._tags.map(t => {
+      const lbl = TAG_LABELS[t];
+      return lbl ? `<span class="tl-tag t-${t}">${lbl.label}</span>` : '';
+    }).join('');
+    const ket = ev ? ev.text : (m.keterangan || '').split('\n')[0];
+    return `<div class="tl-item" onclick="showAwardeeDetail(${idx})" style="--tl-c:${c}">
+      <div class="tl-date">
+        ${fmtDateShort(date)}<br><span style="font-weight:500;color:#9ca3af">${date.getFullYear()}</span>
+        <div class="tl-date-rel">${relTime(date)}</div>
+      </div>
+      <div class="tl-marker"><div class="tl-dot"></div></div>
+      <div class="tl-content">
+        <div class="tl-name">
+          ${m.nama || '—'}
+          <span class="badge ${statusBadgeClass(m.status)}">${statusLabel(m.status)}</span>
+        </div>
+        <div class="tl-meta">${m.kampus || '—'} · Kelompok ${m.kelompok || '—'} · ${m.no_induk || '—'}</div>
+        ${ket ? `<div class="tl-keterangan">"${ket}"</div>` : ''}
+        ${tagsHtml ? `<div class="tl-tags">${tagsHtml}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  card.innerHTML = `
+    <div class="tl-head">
+      <div>
+        <div class="tl-head-l">Riwayat Aktivitas Terbaru</div>
+        <div class="tl-head-sub">${items.length} catatan terakhir · ${activePeriodIdx==='all'?'Sepanjang program':quarterList[activePeriodIdx].label}</div>
+      </div>
+      <span class="pi-card-tag" style="background:#fef3c7;color:#92400e">Klik untuk detail awardee</span>
+    </div>
+    <div class="tl-list">${list}</div>`;
+}
+
+/* =============================================================
+   SOURCE BREAKDOWN (siapa pemberi info)
+============================================================= */
+function renderSourceBreakdown() {
+  const card = document.getElementById('srcCard');
+  const inScope = allData.filter(m => {
+    if (m._normStatus === 'aktif') return false;
+    if (activePeriodIdx === 'all') return true;
+    return m._exitDate && quarterFromDate(m._exitDate) === activePeriodIdx;
+  });
+  const counts = { muthia:0, ybs:0, lecture:0, form:0, other:0 };
+  inScope.forEach(m => (m._sources || []).forEach(s => { if (s in counts) counts[s]++; }));
+
+  const order = ['muthia','ybs','lecture','form','other'];
+  const pills = order.filter(k => counts[k] > 0).map(k => {
+    const meta = SOURCE_LABELS[k];
+    const initials = meta.label.charAt(0).toUpperCase();
+    return `<div class="src-pill">
+      <div class="src-pill-icon" style="background:${meta.color}">${initials}</div>
+      <span>${meta.label}</span>
+      <span class="src-pill-cnt">${counts[k]}</span>
+    </div>`;
+  }).join('');
+
+  // Insight teks otomatis
+  const total = inScope.length;
+  let insight = '';
+  if (total === 0) {
+    insight = 'Belum ada data sumber informasi pada periode ini.';
+  } else {
+    const top = order.filter(k => counts[k] > 0).sort((a,b) => counts[b] - counts[a])[0];
+    if (top) {
+      const pct = Math.round(counts[top]/total*100);
+      insight = `Mayoritas info (${pct}%) datang dari <b>${SOURCE_LABELS[top].label}</b>.`;
+    }
+  }
+
+  card.innerHTML = `
+    <div class="src-head">
+      <div>
+        <div class="src-title">Sumber Informasi</div>
+        <div class="src-sub">Siapa yang memberi info awardee keluar</div>
+      </div>
+    </div>
+    ${pills ? `<div class="src-pills">${pills}</div>` : `<div style="text-align:center;color:#9ca3af;padding:20px;font-size:12px">Tidak ada data</div>`}
+    <div style="margin-top:14px;padding:10px 12px;background:#f9fafb;border-radius:10px;font-size:12px;color:#374151;line-height:1.5">
+      <div style="font-weight:700;color:#0055a5;margin-bottom:3px;display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Insight
+      </div>
+      ${insight}
+    </div>`;
+}
+
+/* =============================================================
+   MASTER RENDER (called when period changes)
+============================================================= */
+function renderForActivePeriod() {
+  renderQuarterPills();
+  renderPeriodHeader();
+  renderTopStats();
+  renderPeriodInsight();
+  renderQuarterTimeline();
+  renderReasonAnalysis();
+  renderRecentTimeline();
+  renderSourceBreakdown();
+}
+
 async function loadData() {
   const sub = document.getElementById('admLoadingSub');
   if (sub) sub.textContent = 'Memuat data awardee';
@@ -984,7 +2716,7 @@ async function loadData() {
   while (!done) {
     const { data: batch, error } = await sb
       .from('mahasiswa_bsi')
-      .select('id,no_induk,nama,kampus,kelompok,status,email,wa,fakultas,prodi,cluster')
+      .select('id,no_induk,nama,kampus,kelompok,status,email,wa,fakultas,prodi,cluster,keterangan,keluar')
       .order('nama')
       .range(from, from + batchSize - 1);
     if (error || !batch) break;
@@ -1006,12 +2738,17 @@ async function loadData() {
   }
   emailSet = new Set(allProfiles.map(p => (p.email || '').toLowerCase()));
 
+  // Pre-process: parse setiap awardee untuk dapat events, tags, & exit info
+  mhs.forEach(m => {
+    m._normStatus = normStatus(m.status);
+    m._exitDate   = parseExitDate(m); // Date object atau null
+    m._events     = parseKeteranganEvents(m.keterangan);
+    m._tags       = inferTags(m);
+    m._sources    = inferSources(m._events);
+  });
+
   allData = mhs;
   filteredData = [...allData];
-
-  // Stats — case-insensitive
-  const aktif    = mhs.filter(m => (m.status || '').toLowerCase().trim() === 'aktif');
-  const adaAkun  = aktif.filter(m => m.email && emailSet.has(m.email.toLowerCase()));
 
   // Hide loader, show content sebelum count-up jalan supaya elemen visible
   const ld = document.getElementById('adminLoading');
@@ -1019,11 +2756,12 @@ async function loadData() {
   const ac = document.getElementById('awardeeContent');
   if (ac) ac.style.display = 'block';
 
-  // Animasi count-up 0 → nilai akhir
-  setKpi('statTotal',  mhs.length);
-  setKpi('statAktif',  aktif.length);
-  setKpi('statAkun',   adaAkun.length);
-  setKpi('statNoAkun', aktif.length - adaAkun.length);
+  // Build quarter list dari data + saat ini
+  buildQuarterList(mhs);
+
+  // Render semua section dinamis
+  renderForActivePeriod();
+  window.scrollTo({ top: 0, behavior: 'instant' });
 
   // Populate kampus filter
   const kampusList = [...new Set(mhs.map(m => m.kampus).filter(Boolean))].sort();
@@ -1063,35 +2801,29 @@ function filterTable() {
   filteredData = allData.filter(m => {
     const hasAkun = m.email && emailSet.has(m.email.toLowerCase());
     const matchQ = !q ||
-      (m.nama   || '').toLowerCase().includes(q) ||
-      (m.no_induk|| '').toLowerCase().includes(q) ||
-      (m.email  || '').toLowerCase().includes(q) ||
-      (m.kampus || '').toLowerCase().includes(q);
-    const matchS = !statusSet || statusSet.has((m.status || '').toLowerCase().trim());
+      (m.nama       || '').toLowerCase().includes(q) ||
+      (m.no_induk   || '').toLowerCase().includes(q) ||
+      (m.email      || '').toLowerCase().includes(q) ||
+      (m.kampus     || '').toLowerCase().includes(q) ||
+      (m.keterangan || '').toLowerCase().includes(q);
+    const matchS = !statusSet || statusSet.has(m._normStatus);
     const matchA = !akun || (akun === 'ada' ? hasAkun : !hasAkun);
     const matchK = !kampusSet || kampusSet.has(m.kampus);
     return matchQ && matchS && matchA && matchK;
   });
 
   currentPage = 1;
-  updateStats();
+  // Tabel saja yg refresh; KPI atas tetap ikuti period (bukan filter table)
   renderTable();
 }
 
 function updateStats() {
-  const aktif   = filteredData.filter(m => (m.status || '').toLowerCase().trim() === 'aktif');
-  const adaAkun = aktif.filter(m => m.email && emailSet.has(m.email.toLowerCase()));
-  // Saat filter berubah, pakai animasi pendek (500ms) supaya tetap responsif
-  setKpi('statTotal',  filteredData.length, 500);
-  setKpi('statAktif',  aktif.length,        500);
-  setKpi('statAkun',   adaAkun.length,      500);
-  setKpi('statNoAkun', aktif.length - adaAkun.length, 500);
+  // KPI utama mengikuti periode aktif, bukan filter tabel.
+  // Filter tabel hanya mempengaruhi list bawah.
 }
 
 function resetFilter() {
   document.getElementById('searchInput').value   = '';
-  // For multi-select widgets, use setValues([]) to clear (updates UI too).
-  // For native selects (akun), setValues may not exist — fallback to .value = ''.
   ['filterStatus','filterAkun','filterKampus'].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -1100,7 +2832,6 @@ function resetFilter() {
   });
   filteredData = [...allData];
   currentPage = 1;
-  updateStats();
   renderTable();
 }
 
@@ -1120,8 +2851,9 @@ function renderTable() {
   tbody.innerHTML = slice.map((m, i) => {
     const idx      = allData.indexOf(m);
     const hasAkun  = m.email && emailSet.has(m.email.toLowerCase());
-    const waNum    = formatWa(m.wa);
-    const waLink   = waNum !== '—' ? `<a href="https://wa.me/${waNum}" target="_blank" style="color:#00A59F;text-decoration:none;" onclick="event.stopPropagation()">${waNum}</a>` : '—';
+    const ketShort = (m.keterangan || '').split('\n')[0] || '—';
+    const exitStr  = m._exitDate ? fmtDateShort(m._exitDate) + ' ' + String(m._exitDate.getFullYear()).slice(-2) : '—';
+    const exitColor = m._exitDate ? statusColor(m.status) : '#9ca3af';
     return `<tr onclick="showAwardeeDetail(${idx})">
       <td style="color:#9ca3af;font-size:12px;">${start + i + 1}</td>
       <td>
@@ -1136,21 +2868,19 @@ function renderTable() {
       <td style="font-family:monospace;font-size:12px;">${m.no_induk || '—'}</td>
       <td style="font-size:12px;">${m.kampus || '—'}</td>
       <td style="font-size:12px;">${m.kelompok || '—'}</td>
-      <td style="font-size:12px;" onclick="event.stopPropagation()">${m.email || '—'}</td>
-      <td style="font-size:12px;">${waLink}</td>
-      <td><span class="badge ${(m.status||'').toLowerCase().trim() === 'aktif' ? 'badge-aktif' : 'badge-nonaktif'}">${m.status || '—'}</span></td>
+      <td><span class="badge ${statusBadgeClass(m.status)}">${statusLabel(m.status)}</span></td>
+      <td class="td-keluar" style="color:${exitColor}">${exitStr}</td>
+      <td class="td-keterangan" title="${(m.keterangan||'').replace(/"/g,'&quot;')}">${ketShort}</td>
       <td style="text-align:center;font-size:12px;font-weight:600;color:${hasAkun ? '#16a34a' : '#9ca3af'};">${hasAkun ? 'Ada' : 'Tidak'}</td>
       <td onclick="event.stopPropagation()">
         <div class="row-actions">
-          <button onclick="resetPassword('${m.email}','${m.no_induk}')" title="Reset password ke NIM"
+          <button onclick="resetPassword('${m.email||''}','${m.no_induk||''}')" title="Reset password ke NIM" ${!m.email?'disabled style="opacity:.4;cursor:not-allowed"':''}
             style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;color:#374151;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.68-3.13"/></svg>
           </button>
-          <button onclick="toggleActive('${m.id}','${m.status}')" title="${(m.status||'').toLowerCase().trim() === 'aktif' ? 'Non-aktifkan' : 'Aktifkan'}"
-            style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;color:${(m.status||'').toLowerCase().trim() === 'aktif' ? '#dc2626' : '#16a34a'};">
-            ${(m.status||'').toLowerCase().trim() === 'aktif'
-              ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
-              : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>'}
+          <button onclick="cycleStatus('${m.id}','${m._normStatus}')" title="Ubah status"
+            style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;color:${statusColor(m.status)};">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
           </button>
         </div>
       </td>
@@ -1177,29 +2907,43 @@ function renderTable() {
 }
 
 
-async function toggleActive(id, currentStatus) {
+async function cycleStatus(id, currentNorm) {
   if (!id) return showToast('ID tidak valid', 'err');
-  const isAktif = (currentStatus || '').toLowerCase().trim() === 'aktif';
-  const newStatus = isAktif ? 'NONAKTIF' : 'AKTIF';
-  const label    = isAktif ? 'non-aktifkan' : 'aktifkan';
+  // Cycle: aktif → undur diri → drop out → aktif
+  const next = currentNorm === 'aktif' ? 'UNDUR DIRI'
+             : currentNorm === 'undur diri' ? 'DROP OUT'
+             : 'AKTIF';
+  const label = `ubah status ke ${next}`;
 
-  if (!confirm(`Yakin ingin ${label} awardee ini?`)) return;
+  if (!confirm(`Yakin ingin ${label}?`)) return;
 
   const sb = window._supabase;
-  const { error } = await sb
-    .from('mahasiswa_bsi')
-    .update({ status: newStatus })
-    .eq('id', id);
+  const updates = { status: next };
+  // Kalau berubah ke aktif, kosongkan keluar; kalau ke non-aktif, set keluar = today
+  if (next === 'AKTIF') updates.keluar = null;
+  else updates.keluar = new Date().toISOString().slice(0,10);
+
+  const { error } = await sb.from('mahasiswa_bsi').update(updates).eq('id', id);
 
   if (error) {
     showToast('Gagal update status. Silakan coba lagi.', 'err');
   } else {
-    showToast(`Status berhasil diubah ke ${newStatus}`, 'ok');
-    // Update local data
+    showToast(`Status berhasil diubah ke ${next}`, 'ok');
     const row = allData.find(m => m.id === id);
-    if (row) row.status = newStatus;
+    if (row) {
+      row.status = next;
+      row._normStatus = normStatus(next);
+      row._exitDate = updates.keluar ? new Date(updates.keluar) : null;
+      row._tags = inferTags(row);
+    }
+    renderForActivePeriod();
     filterTable();
   }
+}
+
+async function toggleActive(id, currentStatus) {
+  // Backward compat: arahkan ke cycleStatus
+  return cycleStatus(id, normStatus(currentStatus));
 }
 
 async function resetPassword(email, nim) {
