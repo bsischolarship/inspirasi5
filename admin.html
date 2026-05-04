@@ -493,6 +493,92 @@
       .aa-hero { padding: 20px 22px; }
       .aa-hero-name { font-size: 18px; }
     }
+
+    /* ============================================================
+       MODAL: Edit Profil & Reset Password
+       ============================================================ */
+    .ep-modal-bg {
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,.45); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .ep-modal-bg.show { opacity: 1; pointer-events: all; }
+    .ep-modal {
+      background: #fff; border-radius: 18px; padding: 28px 28px 24px;
+      width: 100%; max-width: 460px; box-shadow: 0 24px 60px rgba(0,0,0,.18);
+      transform: translateY(16px) scale(.97);
+      transition: transform .22s cubic-bezier(.2,.8,.2,1);
+      max-height: 90vh; overflow-y: auto;
+    }
+    .ep-modal-bg.show .ep-modal { transform: translateY(0) scale(1); }
+    .ep-modal h3 { font-size: 17px; font-weight: 800; color: #111827; margin: 0 0 4px; }
+    .ep-modal > p { font-size: 13px; color: #6b7280; margin: 0 0 16px; }
+    .ep-user-tag {
+      display: flex; align-items: center; gap: 10px;
+      background: #f3f4f6; border-radius: 10px; padding: 10px 14px; margin-bottom: 18px;
+    }
+    .ep-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+      background: linear-gradient(135deg,#0055a5,#1d4ed8);
+    }
+    .ep-uname { font-size: 13px; font-weight: 600; color: #111827; }
+    .ep-uemail { font-size: 11px; color: #6b7280; }
+    .ep-field { margin-bottom: 14px; }
+    .ep-field label { display: block; font-size: 11px; font-weight: 700; color: #374151; margin-bottom: 5px; text-transform: uppercase; letter-spacing: .4px; }
+    .ep-field input, .ep-field select {
+      width: 100%; padding: 9px 12px; border: 1.5px solid #e5e7eb;
+      border-radius: 10px; font-size: 13px; outline: none; box-sizing: border-box;
+      transition: border-color .15s; font-family: inherit;
+    }
+    .ep-field input:focus, .ep-field select:focus { border-color: #00A59F; }
+    .ep-field input[readonly] { background: #f9fafb; color: #9ca3af; cursor: not-allowed; }
+    .ep-field .ep-hint { font-size: 11px; color: #9ca3af; margin-top: 4px; }
+    .ep-pw-wrap { position: relative; }
+    .ep-pw-wrap input { padding-right: 42px; }
+    .ep-pw-toggle {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; color: #9ca3af; padding: 4px;
+      display: flex; align-items: center; transition: color .15s;
+    }
+    .ep-pw-toggle:hover { color: #374151; }
+    .ep-divider { border: none; border-top: 1px solid #e5e7eb; margin: 16px 0; }
+    .ep-msg { font-size: 13px; padding: 10px 13px; border-radius: 8px; margin-bottom: 12px; display: none; }
+    .ep-msg.show { display: block; }
+    .ep-msg.ok  { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .ep-msg.err { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+    .ep-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px; }
+    .ep-btn-cancel {
+      padding: 9px 18px; background: #f3f4f6; color: #374151;
+      border: none; border-radius: 10px; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+    }
+    .ep-btn-cancel:hover { background: #e5e7eb; }
+    .ep-btn-submit {
+      padding: 9px 20px; border: none; border-radius: 10px;
+      font-size: 13px; font-weight: 700; color: #fff; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: background .15s;
+    }
+    .ep-btn-submit:disabled { opacity: .6; cursor: not-allowed; }
+    .ep-btn-submit.blue   { background: #0055a5; }
+    .ep-btn-submit.blue:hover:not(:disabled)   { background: #003d7a; }
+    .ep-btn-submit.orange { background: #ea580c; }
+    .ep-btn-submit.orange:hover:not(:disabled) { background: #c2410c; }
+    .ep-send-link-btn {
+      width: 100%; padding: 10px; border: 1.5px dashed #d1d5db;
+      border-radius: 10px; background: #f9fafb; color: #6b7280;
+      font-size: 13px; font-weight: 600; cursor: pointer; text-align: center;
+      transition: border-color .15s, color .15s, background .15s; box-sizing: border-box;
+      display: flex; align-items: center; justify-content: center; gap: 7px; margin-bottom: 14px;
+    }
+    .ep-send-link-btn:hover { border-color: #00A59F; color: #00A59F; background: #f0fdfa; }
+    .ep-send-link-btn:disabled { opacity:.5; cursor:not-allowed; }
+    .ep-or { text-align:center; font-size:11px; color:#9ca3af; margin:0 0 14px; position:relative; }
+    .ep-or::before, .ep-or::after { content:''; position:absolute; top:50%; width:40%; height:1px; background:#e5e7eb; }
+    .ep-or::before { left:0; } .ep-or::after { right:0; }
   </style>
 </head>
 
@@ -827,6 +913,109 @@
   </div>
 </div>
 
+
+<!-- MODAL: Edit Profil -->
+<div class="ep-modal-bg" id="epModalBg" onclick="if(event.target===this)closeEditProfileModal()">
+  <div class="ep-modal">
+    <h3>✏️ Edit Profil Pengguna</h3>
+    <p>Ubah data profil pengguna di bawah ini.</p>
+    <input type="hidden" id="epUserId" />
+    <div class="ep-user-tag">
+      <div class="ep-avatar" id="epAvatar">?</div>
+      <div>
+        <div class="ep-uname" id="epUserTagName">—</div>
+        <div class="ep-uemail" id="epUserTagEmail">—</div>
+      </div>
+    </div>
+    <div class="ep-field">
+      <label>Nama Lengkap</label>
+      <input type="text" id="epName" placeholder="Nama lengkap pengguna" />
+    </div>
+    <div class="ep-field">
+      <label>Email</label>
+      <input type="email" id="epEmail" placeholder="nama@email.com" />
+      <div class="ep-hint">⚠ Email di tabel profiles akan diupdate. Email login (auth) hanya bisa diubah via Supabase Dashboard.</div>
+    </div>
+    <div class="ep-field">
+      <label>Role</label>
+      <select id="epRole">
+        <option value="awardee">Awardee</option>
+        <option value="mentor">Mentor</option>
+        <option value="operator">Operator</option>
+        <option value="admin">Admin</option>
+        <option value="administrator">Administrator</option>
+      </select>
+    </div>
+    <div class="ep-field">
+      <label>Status Akun</label>
+      <select id="epApproved">
+        <option value="true">Aktif (Approved)</option>
+        <option value="false">Menunggu (Pending)</option>
+      </select>
+    </div>
+    <div id="epMsg" class="ep-msg"></div>
+    <div class="ep-actions">
+      <button class="ep-btn-cancel" onclick="closeEditProfileModal()">Batal</button>
+      <button class="ep-btn-submit blue" id="epSubmitBtn" onclick="submitEditProfile()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Simpan Perubahan
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Reset Password -->
+<div class="ep-modal-bg" id="rpModalBg" onclick="if(event.target===this)closeResetPasswordModal()">
+  <div class="ep-modal">
+    <h3>🔑 Reset Password</h3>
+    <p>Pilih cara mereset password pengguna ini.</p>
+    <input type="hidden" id="rpUserId" />
+    <input type="hidden" id="rpUserEmail" />
+    <div class="ep-user-tag">
+      <div class="ep-avatar" id="rpAvatar">?</div>
+      <div>
+        <div class="ep-uname" id="rpUserTagName">—</div>
+        <div class="ep-uemail" id="rpUserTagEmail">—</div>
+      </div>
+    </div>
+
+    <button class="ep-send-link-btn" id="rpSendLinkBtn" onclick="sendResetLink()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+      Kirim Link Reset Password ke Email User
+    </button>
+
+    <div class="ep-or">atau set password baru langsung</div>
+
+    <div class="ep-field">
+      <label>Password Baru</label>
+      <div class="ep-pw-wrap">
+        <input type="password" id="rpNewPw" placeholder="Minimal 6 karakter" />
+        <button class="ep-pw-toggle" type="button" onclick="togglePwVisibility('rpNewPw', this)" title="Tampilkan/sembunyikan">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="ep-field">
+      <label>Konfirmasi Password</label>
+      <div class="ep-pw-wrap">
+        <input type="password" id="rpConfirmPw" placeholder="Ulangi password baru" />
+        <button class="ep-pw-toggle" type="button" onclick="togglePwVisibility('rpConfirmPw', this)" title="Tampilkan/sembunyikan">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
+      <div class="ep-hint">Password akan diupdate langsung via Supabase Admin API.</div>
+    </div>
+    <div id="rpMsg" class="ep-msg"></div>
+    <div class="ep-actions">
+      <button class="ep-btn-cancel" onclick="closeResetPasswordModal()">Batal</button>
+      <button class="ep-btn-submit orange" id="rpSubmitBtn" onclick="submitResetPassword()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Set Password Baru
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- MOBILE NAV -->
 <nav class="mob-nav" id="mobNav">
   <a href="index.html" class="mob-nav-item">
@@ -1067,6 +1256,14 @@ window.showUserDetail = function(userId) {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           Tolak / Hapus
         </button>` : ''}
+        <button class="btn-sync" style="background:#0055a5" onclick="openEditProfileModal('${u.id}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit Profil
+        </button>
+        <button class="btn-sync" style="background:#ea580c" onclick="openResetPasswordModal('${u.id}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Reset Password
+        </button>
         ${!isPending ? `<button class="btn-sync" style="background:#7c3aed" onclick="openChangeRoleModal('${u.id}','${role}')">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           Ubah Role
@@ -1489,13 +1686,8 @@ async function submitAddUser() {
     });
     if (authErr) throw authErr;
 
-    // Supabase kadang mengembalikan user palsu jika email sudah terdaftar
     const uid = authData?.user?.id;
-    const identities = authData?.user?.identities;
-    if (!uid) throw new Error('Gagal mendapatkan user ID dari Supabase.');
-    if (Array.isArray(identities) && identities.length === 0) {
-      throw new Error('Email sudah terdaftar. Gunakan email lain atau reset password user tersebut.');
-    }
+    if (!uid) throw new Error('Gagal mendapatkan user ID dari Supabase');
 
     const { error: profErr } = await window._supabase.from('profiles').upsert({
       id: uid, email, full_name: name, role, approved: true,
@@ -1512,28 +1704,7 @@ async function submitAddUser() {
     if (typeof loadUsers === 'function') loadUsers();
   } catch (e) {
     msg.className = 'au-msg err';
-
-    // Terjemahkan pesan error Supabase ke Bahasa Indonesia
-    const raw = e?.message || '';
-    let friendlyMsg = 'Gagal membuat akun. Silakan coba lagi.';
-    if (/user already registered|already been registered/i.test(raw)) {
-      friendlyMsg = 'Email sudah terdaftar. Gunakan email lain.';
-    } else if (/email.*disabled|signup.*disabled/i.test(raw)) {
-      friendlyMsg = 'Pendaftaran via email dinonaktifkan di pengaturan Supabase.';
-    } else if (/password.*characters|password.*length|weak password/i.test(raw)) {
-      friendlyMsg = 'Password terlalu lemah. Gunakan kombinasi huruf, angka, dan simbol.';
-    } else if (/invalid email/i.test(raw)) {
-      friendlyMsg = 'Format email tidak valid.';
-    } else if (/rate.?limit/i.test(raw)) {
-      friendlyMsg = 'Terlalu banyak permintaan. Tunggu beberapa menit lalu coba lagi.';
-    } else if (/422/.test(raw) || /unprocessable/i.test(raw)) {
-      friendlyMsg = 'Supabase menolak permintaan (422). Kemungkinan: email signup dinonaktifkan, email sudah terdaftar, atau password tidak memenuhi syarat.';
-    } else if (raw) {
-      friendlyMsg = raw;
-    }
-
-    msg.textContent = friendlyMsg;
-    console.error('[submitAddUser] error:', e);
+    msg.textContent = 'Gagal. Silakan coba lagi.';
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg> Buat Akun';
@@ -1694,6 +1865,211 @@ async function submitAddUser() {
   // initial load
   await loadUsers();
 })();
+
+/* ============================================================
+   EDIT PROFIL MODAL
+============================================================ */
+function _initialsFromName(name) {
+  const n = (name || '').trim();
+  if (!n) return '?';
+  const p = n.split(/\s+/);
+  return (p[0][0] + (p[p.length-1][0] || '')).toUpperCase();
+}
+
+window.openEditProfileModal = function(userId) {
+  const u = allUsers.find(x => x.id === userId);
+  if (!u) return;
+
+  document.getElementById('epUserId').value  = u.id;
+  document.getElementById('epName').value    = u.full_name || '';
+  document.getElementById('epEmail').value   = u.email || '';
+  document.getElementById('epRole').value    = u.role || 'awardee';
+  document.getElementById('epApproved').value = u.approved ? 'true' : 'false';
+
+  document.getElementById('epUserTagName').textContent  = u.full_name || u.email || '—';
+  document.getElementById('epUserTagEmail').textContent = u.email || '—';
+  document.getElementById('epAvatar').textContent = _initialsFromName(u.full_name || u.email);
+
+  const msg = document.getElementById('epMsg');
+  msg.className = 'ep-msg'; msg.textContent = '';
+
+  document.getElementById('epModalBg').classList.add('show');
+  setTimeout(() => document.getElementById('epName').focus(), 100);
+};
+
+window.closeEditProfileModal = function() {
+  document.getElementById('epModalBg').classList.remove('show');
+};
+
+window.submitEditProfile = async function() {
+  const id       = document.getElementById('epUserId').value;
+  const name     = document.getElementById('epName').value.trim();
+  const email    = document.getElementById('epEmail').value.trim();
+  const role     = document.getElementById('epRole').value;
+  const approved = document.getElementById('epApproved').value === 'true';
+  const msg      = document.getElementById('epMsg');
+  const btn      = document.getElementById('epSubmitBtn');
+
+  msg.className = 'ep-msg'; msg.textContent = '';
+
+  if (!name)  { msg.className='ep-msg err show'; msg.textContent='Nama tidak boleh kosong.'; return; }
+  if (!email) { msg.className='ep-msg err show'; msg.textContent='Email tidak boleh kosong.'; return; }
+
+  btn.disabled = true; btn.textContent = 'Menyimpan...';
+
+  try {
+    const sb = window._supabase;
+    const { error } = await sb.from('profiles').update({
+      full_name: name,
+      email:     email,
+      role:      role,
+      approved:  approved,
+    }).eq('id', id);
+
+    if (error) throw error;
+
+    msg.className = 'ep-msg ok show';
+    msg.textContent = `Profil "${name}" berhasil diperbarui.`;
+    showToast('Profil berhasil diperbarui', 'ok');
+
+    // Refresh local data
+    const u = allUsers.find(x => x.id === id);
+    if (u) { u.full_name = name; u.email = email; u.role = role; u.approved = approved; }
+
+    setTimeout(() => {
+      closeEditProfileModal();
+      if (typeof loadUsers === 'function') loadUsers();
+    }, 1000);
+
+  } catch (e) {
+    msg.className = 'ep-msg err show';
+    msg.textContent = e?.message || 'Gagal memperbarui profil. Silakan coba lagi.';
+    console.error('[submitEditProfile]', e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan Perubahan';
+  }
+};
+
+/* ============================================================
+   RESET PASSWORD MODAL
+============================================================ */
+window.openResetPasswordModal = function(userId) {
+  const u = allUsers.find(x => x.id === userId);
+  if (!u) return;
+
+  document.getElementById('rpUserId').value    = u.id;
+  document.getElementById('rpUserEmail').value = u.email || '';
+  document.getElementById('rpNewPw').value     = '';
+  document.getElementById('rpConfirmPw').value = '';
+
+  document.getElementById('rpUserTagName').textContent  = u.full_name || u.email || '—';
+  document.getElementById('rpUserTagEmail').textContent = u.email || '—';
+  document.getElementById('rpAvatar').textContent = _initialsFromName(u.full_name || u.email);
+
+  const msg = document.getElementById('rpMsg');
+  msg.className = 'ep-msg'; msg.textContent = '';
+
+  const sendBtn = document.getElementById('rpSendLinkBtn');
+  sendBtn.disabled = false;
+  sendBtn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> Kirim Link Reset Password ke Email User';
+
+  document.getElementById('rpModalBg').classList.add('show');
+};
+
+window.closeResetPasswordModal = function() {
+  document.getElementById('rpModalBg').classList.remove('show');
+};
+
+window.togglePwVisibility = function(inputId, btn) {
+  const input = document.getElementById(inputId);
+  const isHidden = input.type === 'password';
+  input.type = isHidden ? 'text' : 'password';
+  btn.innerHTML = isHidden
+    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+};
+
+window.sendResetLink = async function() {
+  const email = document.getElementById('rpUserEmail').value;
+  const msg   = document.getElementById('rpMsg');
+  const btn   = document.getElementById('rpSendLinkBtn');
+  if (!email) { msg.className='ep-msg err show'; msg.textContent='Email tidak ditemukan.'; return; }
+
+  btn.disabled = true; btn.textContent = 'Mengirim...';
+  msg.className = 'ep-msg'; msg.textContent = '';
+
+  try {
+    const { error } = await window._supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/inspirasi5/login.html'
+    });
+    if (error) throw error;
+
+    msg.className = 'ep-msg ok show';
+    msg.textContent = `Link reset password berhasil dikirim ke ${email}. User harus cek emailnya.`;
+    showToast('Link reset dikirim ke ' + email, 'ok');
+    btn.textContent = '✅ Link Terkirim';
+  } catch (e) {
+    msg.className = 'ep-msg err show';
+    msg.textContent = e?.message || 'Gagal mengirim email reset. Coba lagi.';
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> Kirim Link Reset Password ke Email User';
+    console.error('[sendResetLink]', e);
+  }
+};
+
+window.submitResetPassword = async function() {
+  const pw      = document.getElementById('rpNewPw').value;
+  const confirm = document.getElementById('rpConfirmPw').value;
+  const email   = document.getElementById('rpUserEmail').value;
+  const msg     = document.getElementById('rpMsg');
+  const btn     = document.getElementById('rpSubmitBtn');
+
+  msg.className = 'ep-msg'; msg.textContent = '';
+
+  if (pw.length < 6)   { msg.className='ep-msg err show'; msg.textContent='Password minimal 6 karakter.'; return; }
+  if (pw !== confirm)  { msg.className='ep-msg err show'; msg.textContent='Konfirmasi password tidak cocok.'; return; }
+
+  btn.disabled = true; btn.textContent = 'Memproses...';
+
+  try {
+    const SUPABASE_URL = 'https://iyfwaqwmnmjfagszttts.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml5ZndhcXdtbm1qZmFnc3p0dHRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NTEwMTgsImV4cCI6MjA4MzQyNzAxOH0.f2xb_aQDIj4tIPKwTTC9dgIi-9qFv0G252T5uo9XwXo';
+
+    // Coba via Admin API (butuh service role key — jika gagal, arahkan ke send link)
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${document.getElementById('rpUserId').value}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${(await window._supabase.auth.getSession()).data.session?.access_token || SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ password: pw }),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      // Jika 403 (butuh service role key), fallback ke send link
+      if (res.status === 403 || res.status === 401) {
+        throw new Error('Akses ditolak (butuh service role key). Gunakan tombol "Kirim Link Reset" di atas agar user bisa set password sendiri.');
+      }
+      throw new Error(errData?.message || `Gagal (${res.status})`);
+    }
+
+    msg.className = 'ep-msg ok show';
+    msg.textContent = `Password berhasil diubah untuk akun ${email}.`;
+    showToast('Password berhasil direset', 'ok');
+    setTimeout(() => closeResetPasswordModal(), 1500);
+
+  } catch (e) {
+    msg.className = 'ep-msg err show';
+    msg.textContent = e?.message || 'Gagal mereset password. Gunakan tombol kirim link di atas.';
+    console.error('[submitResetPassword]', e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Set Password Baru';
+  }
+};
 </script>
 
 </body>
