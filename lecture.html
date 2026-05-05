@@ -1151,6 +1151,7 @@ async function init(){
       buildFilters();
       wireViewToggle();
       renderAll();
+      _dataReady = true;
       _activateFromHash();
       return;
     }
@@ -1205,6 +1206,7 @@ async function init(){
     buildFilters();
     wireViewToggle();
     renderAll();
+    _dataReady = true;
     _activateFromHash();
   } catch(e){
     console.error(e);
@@ -1293,14 +1295,34 @@ function populateHero(mhs, isAdminView, role){
 }
 
 function renderAll(){
-  renderKPIs();
-  renderDashboard();
-  renderAwardee();
-  _rekapBuildFilters();
-  renderRekap();
-  renderPrestasi();
-  renderOrganisasi();
-  renderLeaderboard();
+  // Wrap tiap render dalam try-catch agar satu error tidak menghentikan render panel lain
+  [
+    renderKPIs,
+    renderDashboard,
+    renderAwardee,
+    _rekapBuildFilters,
+    renderRekap,
+    renderPrestasi,
+    renderOrganisasi,
+    renderLeaderboard,
+  ].forEach(fn => { try { fn(); } catch(e) { console.error('[renderAll]', fn.name, e); } });
+}
+
+// Flag: apakah init() sudah selesai dan data tersedia
+let _dataReady = false;
+
+function _renderPanel(tab) {
+  if (!_dataReady) return;
+  try {
+    switch (tab) {
+      case 'dashboard':   renderKPIDashboard(); renderDashboard(); break;
+      case 'awardee':     renderAwardee();       break;
+      case 'rekap':       _rekapBuildFilters(); renderRekap();    break;
+      case 'prestasi':    renderPrestasi();      break;
+      case 'organisasi':  renderOrganisasi();    break;
+      case 'leaderboard': renderLeaderboard();   break;
+    }
+  } catch(e) { console.error('[_renderPanel]', tab, e); }
 }
 
 /* =========================================================
@@ -1842,24 +1864,38 @@ function renderKPIDashboard(){
   const ymThis = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
   const prestasiThisMonth = _raw.prestasi.filter(r => (r.created_at||'').slice(0,7) === ymThis).length;
 
-  // Attendance 30d
-  const d30 = new Date(); d30.setDate(d30.getDate() - 30);
-  const d30iso = d30.toISOString().slice(0,10);
-  let evt30 = 0, hadir30 = 0;
-  _raw.rekap.forEach(r => {
-    if(!r.tanggal || r.tanggal < d30iso) return;
-    REKAP_ACTS.forEach(a => {
-      const v = r[a.key];
-      if(isEvent(v)) { evt30++; if(isHadir(v)) hadir30++; }
+  // Attendance — coba 30 hari, fallback ke sesi terkini jika tidak ada data
+  const _calcAttend = (days) => {
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
+    const cutIso = cutoff.toISOString().slice(0,10);
+    let e = 0, h = 0;
+    _raw.rekap.forEach(r => {
+      if(!r.tanggal || r.tanggal < cutIso) return;
+      REKAP_ACTS.forEach(a => { const v = r[a.key]; if(isEvent(v)){ e++; if(isHadir(v)) h++; } });
     });
-  });
-  const pct30 = evt30 ? Math.round(hadir30/evt30*100) : 0;
+    return { evt: e, hadir: h };
+  };
+  let attend30 = _calcAttend(30);
+  let attendLabel = '30 Hari';
+  // Jika tidak ada data 30 hari, coba 90 hari → lalu ambil semua rekap
+  if (!attend30.evt) {
+    attend30 = _calcAttend(90);
+    attendLabel = '90 Hari';
+  }
+  if (!attend30.evt) {
+    // Pakai semua rekap (all-time)
+    _raw.rekap.forEach(r => {
+      REKAP_ACTS.forEach(a => { const v = r[a.key]; if(isEvent(v)){ attend30.evt++; if(isHadir(v)) attend30.hadir++; } });
+    });
+    attendLabel = 'All Time';
+  }
+  const pct30 = attend30.evt ? Math.round(attend30.hadir / attend30.evt * 100) : 0;
 
   document.getElementById('kpi-dashboard').innerHTML =
     kpiCard('purple', KPI_ICONS.users,    'Total Awardee',       total.toLocaleString('id-ID'), `Sedang dibimbing`, 'dash_total') +
     kpiCard('amber',  KPI_ICONS.crown,    'Skor Tertinggi',      topScore.toFixed(1)+'%',       _ranked[0]? `<b>${escH(_ranked[0].nama.split(' ').slice(0,2).join(' '))}</b>` : '—', 'dash_top') +
     kpiCard('teal',   KPI_ICONS.chart,    'Rata-rata Skor',      avgScore.toFixed(1)+'%',       `dari ${_ranked.length} awardee aktif`, 'dash_avg') +
-    kpiCard('blue',   KPI_ICONS.trending, 'Kehadiran 30 Hari',   pct30+'%',                      `${hadir30}/${evt30} sesi terisi`, 'dash_30d');
+    kpiCard('blue',   KPI_ICONS.trending, `Kehadiran ${attendLabel}`, pct30+'%', `${attend30.hadir}/${attend30.evt} sesi terisi`, 'dash_30d');
 }
 
 function renderKPIAwardee(){
@@ -2683,6 +2719,8 @@ window.navigateLecture = function(ev, tab){
   if(ev){ ev.preventDefault(); }
   if(location.hash !== '#'+tab) history.pushState(null, '', '#'+tab);
   _activatePanel(tab);
+  // Re-render panel aktif jika data sudah siap (handle klik sebelum init selesai)
+  _renderPanel(tab);
   return false;
 };
 

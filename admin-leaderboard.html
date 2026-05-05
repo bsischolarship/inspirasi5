@@ -1577,6 +1577,7 @@ function computeRanked(mhs, rekap, prestasi, org, view){
         ipk: 0,
         ment:{ok:0,total:0}, pem:{ok:0,total:0}, pre:{ok:0,total:0}, post:{ok:0,total:0}, ass:{ok:0,total:0},
         prestasiPoints:0, prestasiCount:0, orgPoints:0, orgCount:0,
+        prestasiItems:[], orgItems:[],
       });
     } else {
       // Isi field kosong dari fallback (rekap kasih nama/kampus kalau mhs ga punya)
@@ -1618,8 +1619,11 @@ function computeRanked(mhs, rekap, prestasi, org, view){
     if(!r.no_induk) return;
     const a = ensureEntry(r.no_induk);
     if(!a) return;
-    a.prestasiPoints += lbTingkatanBonusPrestasi(r.tingkatan) + lbJuaraBonus(r.juara);
+    const tBonusPrest = lbTingkatanBonusPrestasi(r.tingkatan);
+    const jBonus = lbJuaraBonus(r.juara);
+    a.prestasiPoints += tBonusPrest + jBonus;
     a.prestasiCount++;
+    a.prestasiItems.push({ tingkatan: r.tingkatan||'—', juara: r.juara||'—', tBonus: tBonusPrest, jBonus, pts: tBonusPrest + jBonus });
   });
 
   // 4. Organisasi
@@ -1627,8 +1631,11 @@ function computeRanked(mhs, rekap, prestasi, org, view){
     if(!r.no_induk) return;
     const a = ensureEntry(r.no_induk);
     if(!a) return;
-    a.orgPoints += lbTingkatanBonusOrg(r.tingkatan) + lbKeterlibatanBonus(r.keterlibatan);
+    const tBonusOrg = lbTingkatanBonusOrg(r.tingkatan);
+    const kBonus = lbKeterlibatanBonus(r.keterlibatan);
+    a.orgPoints += tBonusOrg + kBonus;
     a.orgCount++;
+    a.orgItems.push({ tingkatan: r.tingkatan||'—', keterlibatan: r.keterlibatan||'—', tBonus: tBonusOrg, kBonus, pts: tBonusOrg + kBonus });
   });
 
   const scored = Array.from(acc.values()).map(a => {
@@ -2780,19 +2787,214 @@ window.showDetail = (nim) => {
         <tr><td>&nbsp;&nbsp;Post Test</td><td class="center">${a.post.ok}/${a.post.total} hadir</td><td class="center">${pctStr(a.postPct)}</td><td class="center">4%</td><td class="val">${fmt(a.sPost)}</td></tr>
         <tr><td>&nbsp;&nbsp;Quartal Assignment</td><td class="center">${a.ass.ok}/${a.ass.total} hadir</td><td class="center">${pctStr(a.assPct)}</td><td class="center">7%</td><td class="val">${fmt(a.sAss)}</td></tr>
         <tr class="group-row"><td>Self-Development</td><td></td><td></td><td class="center">50%</td><td class="val">${a.selfDev.toFixed(2)}</td></tr>
-        <tr><td>&nbsp;&nbsp;Prestasi</td><td class="center">${a.prestasiCount} kegiatan (${a.prestasiPoints.toFixed(1)} pts / 30)</td><td class="center">${pctStr(a.prestPct)}</td><td class="center">20%</td><td class="val">${fmt(a.sPrest)}</td></tr>
-        <tr><td>&nbsp;&nbsp;Organisasi</td><td class="center">${a.orgCount} keterlibatan (${a.orgPoints.toFixed(1)} pts / 25)</td><td class="center">${pctStr(a.orgPct)}</td><td class="center">20%</td><td class="val">${fmt(a.sOrg)}</td></tr>
+        <tr>
+          <td>&nbsp;&nbsp;Prestasi</td>
+          <td class="center">${a.prestasiCount} kegiatan (${a.prestasiPoints.toFixed(1)} pts / 30)</td>
+          <td class="center">${pctStr(a.prestPct)}</td>
+          <td class="center">20%</td>
+          <td class="val" style="white-space:nowrap;">
+            ${fmt(a.sPrest)}
+            <button onclick="toggleItemDetail('prest-detail')" style="margin-left:6px;font-size:10px;padding:1px 6px;border:1px solid #d97706;border-radius:4px;background:#fef9c3;color:#92400e;cursor:pointer;" id="btn-prest-detail">Lihat Rincian ▼</button>
+          </td>
+        </tr>
+        <tbody id="prest-detail" style="display:none;">
+          ${a.prestasiItems.length ? a.prestasiItems.map((it,i) => `
+          <tr style="background:#fefce8;font-size:11.5px;">
+            <td style="padding:3px 8px 3px 32px;color:#92400e;">↳ #${i+1} ${escH(it.tingkatan)}</td>
+            <td class="center" style="color:#78350f;">Juara: ${escH(it.juara)}</td>
+            <td class="center" style="color:#a16207;">+${it.tBonus} (tingkatan) + ${it.jBonus} (juara)</td>
+            <td class="center" style="color:#a16207;">—</td>
+            <td class="val" style="color:#d97706;">${it.pts.toFixed(1)} pts</td>
+          </tr>`).join('') : `
+          <tr style="background:#fefce8;">
+            <td colspan="5" style="padding:4px 8px 4px 32px;color:#9ca3af;font-style:italic;">Belum ada data prestasi</td>
+          </tr>`}
+          <tr style="background:#fef3c7;font-size:11px;border-top:1px dashed #fbbf24;">
+            <td colspan="5" style="padding:5px 12px 5px 32px;color:#78350f;line-height:1.6;">
+              <b>Rumus:</b> total poin dikumpulkan dari tiap kegiatan (tingkatan + juara). Nilai dibatasi maksimal <b>30 pts (cap)</b> agar tidak ada awardee yang mendapat skor penuh hanya dari kuantitas kegiatan tanpa batas — ini mendorong kualitas dan keberagaman prestasi. Kemudian: <code>min(${a.prestasiPoints.toFixed(1)} / 30, 1) × 20 = ${fmt(a.sPrest)}</code>.
+            </td>
+          </tr>
+        </tbody>
+        <tr>
+          <td>&nbsp;&nbsp;Organisasi</td>
+          <td class="center">${a.orgCount} keterlibatan (${a.orgPoints.toFixed(1)} pts / 25)</td>
+          <td class="center">${pctStr(a.orgPct)}</td>
+          <td class="center">20%</td>
+          <td class="val" style="white-space:nowrap;">
+            ${fmt(a.sOrg)}
+            <button onclick="toggleItemDetail('org-detail')" style="margin-left:6px;font-size:10px;padding:1px 6px;border:1px solid #16a34a;border-radius:4px;background:#dcfce7;color:#15803d;cursor:pointer;" id="btn-org-detail">Lihat Rincian ▼</button>
+          </td>
+        </tr>
+        <tbody id="org-detail" style="display:none;">
+          ${a.orgItems.length ? a.orgItems.map((it,i) => `
+          <tr style="background:#f0fdf4;font-size:11.5px;">
+            <td style="padding:3px 8px 3px 32px;color:#15803d;">↳ #${i+1} ${escH(it.tingkatan)}</td>
+            <td class="center" style="color:#166534;">Keterlibatan: ${escH(it.keterlibatan)}</td>
+            <td class="center" style="color:#15803d;">+${it.tBonus} (tingkatan) + ${it.kBonus} (keterlibatan)</td>
+            <td class="center" style="color:#15803d;">—</td>
+            <td class="val" style="color:#16a34a;">${it.pts.toFixed(1)} pts</td>
+          </tr>`).join('') : `
+          <tr style="background:#f0fdf4;">
+            <td colspan="5" style="padding:4px 8px 4px 32px;color:#9ca3af;font-style:italic;">Belum ada data organisasi</td>
+          </tr>`}
+          <tr style="background:#dcfce7;font-size:11px;border-top:1px dashed #86efac;">
+            <td colspan="5" style="padding:5px 12px 5px 32px;color:#166534;line-height:1.6;">
+              <b>Rumus:</b> poin dikumpulkan dari tiap keterlibatan organisasi (tingkatan + peran). Nilai dibatasi maksimal <b>25 pts (cap)</b> untuk menjaga keseimbangan — terlibat di satu organisasi besar bisa setara dengan banyak organisasi kecil, sehingga cap mendorong keterlibatan bermakna bukan sekedar kuantitas. Kemudian: <code>min(${a.orgPoints.toFixed(1)} / 25, 1) × 20 = ${fmt(a.sOrg)}</code>.
+            </td>
+          </tr>
+        </tbody>
         <tr><td>&nbsp;&nbsp;IPK</td><td class="center">${a.ipk.toFixed(2)} / 4.00</td><td class="center">${pctStr(a.ipkPct)}</td><td class="center">10%</td><td class="val">${fmt(a.sIpk)}</td></tr>
         <tr class="total-row"><td colspan="4">Total Skor</td><td class="val">${a.total.toFixed(2)}%</td></tr>
       </tbody>
     </table>
-    <div style="margin-top:12px;padding:10px 12px;background:#f0f7ff;border:1px solid #bfdbfe;border-radius:10px;font-size:11.5px;color:#1e3a8a;line-height:1.55;">
+
+    <!-- Tabel Pembobotan Lengkap -->
+    <div style="margin-top:10px;">
+      <button onclick="toggleItemDetail('bobot-table')" id="btn-bobot-table"
+        style="width:100%;padding:8px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:600;color:#475569;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;">
+        <span>Tabel Pembobotan Lengkap</span><span>▼</span>
+      </button>
+      <div id="bobot-table" style="display:none;margin-top:4px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;font-size:11.5px;">
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr style="background:#f1f5f9;font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;">
+              <th style="padding:7px 10px;text-align:left;">Komponen</th>
+              <th style="padding:7px 10px;text-align:center;">Bobot</th>
+              <th style="padding:7px 10px;text-align:left;">Basis Penilaian</th>
+              <th style="padding:7px 10px;text-align:left;">Sumber Poin</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background:#eff6ff;font-weight:700;color:#1d4ed8;">
+              <td style="padding:6px 10px;" colspan="4">Mindful — 35%</td>
+            </tr>
+            <tr style="border-top:1px solid #e2e8f0;">
+              <td style="padding:5px 10px 5px 20px;">Mentoring</td>
+              <td style="padding:5px 10px;text-align:center;">17.5%</td>
+              <td style="padding:5px 10px;">(hadir / total sesi) × 17.5</td>
+              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">rekap_bsi.mentoring — tiap ✅ atau TP dihitung hadir</td>
+            </tr>
+            <tr style="background:#f8fafc;border-top:1px solid #e2e8f0;">
+              <td style="padding:5px 10px 5px 20px;">Pembinaan</td>
+              <td style="padding:5px 10px;text-align:center;">17.5%</td>
+              <td style="padding:5px 10px;">(hadir / total sesi) × 17.5</td>
+              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">rekap_bsi.pembinaan — tiap ✅ atau TP dihitung hadir</td>
+            </tr>
+            <tr style="background:#f0fdf4;font-weight:700;color:#15803d;border-top:2px solid #e2e8f0;">
+              <td style="padding:6px 10px;" colspan="4">Accountable — 15%</td>
+            </tr>
+            <tr style="border-top:1px solid #e2e8f0;">
+              <td style="padding:5px 10px 5px 20px;">Pre Test</td>
+              <td style="padding:5px 10px;text-align:center;">4%</td>
+              <td style="padding:5px 10px;">(hadir / total) × 4</td>
+              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">rekap_bsi.pre_test</td>
+            </tr>
+            <tr style="background:#f8fafc;border-top:1px solid #e2e8f0;">
+              <td style="padding:5px 10px 5px 20px;">Post Test</td>
+              <td style="padding:5px 10px;text-align:center;">4%</td>
+              <td style="padding:5px 10px;">(hadir / total) × 4</td>
+              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">rekap_bsi.post_test</td>
+            </tr>
+            <tr style="border-top:1px solid #e2e8f0;">
+              <td style="padding:5px 10px 5px 20px;">Quartal Assignment</td>
+              <td style="padding:5px 10px;text-align:center;">7%</td>
+              <td style="padding:5px 10px;">(hadir / total) × 7</td>
+              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">rekap_bsi.assessment</td>
+            </tr>
+            <tr style="background:#fefce8;font-weight:700;color:#92400e;border-top:2px solid #e2e8f0;">
+              <td style="padding:6px 10px;" colspan="4">Self-Development — 50%</td>
+            </tr>
+            <tr style="border-top:1px solid #e2e8f0;">
+              <td style="padding:5px 10px 5px 20px;">Prestasi</td>
+              <td style="padding:5px 10px;text-align:center;">20%</td>
+              <td style="padding:5px 10px;">min(total_poin / 30, 1) × 20</td>
+              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">prestasi_bsi — poin per kegiatan = tingkatan + juara (lihat bawah)</td>
+            </tr>
+            <tr style="background:#f8fafc;border-top:1px solid #e2e8f0;">
+              <td style="padding:5px 10px 5px 20px;">Organisasi</td>
+              <td style="padding:5px 10px;text-align:center;">20%</td>
+              <td style="padding:5px 10px;">min(total_poin / 25, 1) × 20</td>
+              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">organisasi_bsi — poin per keterlibatan = tingkatan + peran (lihat bawah)</td>
+            </tr>
+            <tr style="border-top:1px solid #e2e8f0;">
+              <td style="padding:5px 10px 5px 20px;">IPK</td>
+              <td style="padding:5px 10px;text-align:center;">10%</td>
+              <td style="padding:5px 10px;">(IPK / 4.0) × 10</td>
+              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">mahasiswa_bsi.ipk</td>
+            </tr>
+            <tr style="background:#f1f5f9;font-weight:700;border-top:2px solid #cbd5e1;">
+              <td style="padding:6px 10px;" colspan="3">Total Maksimum</td>
+              <td style="padding:6px 10px;text-align:right;color:#0f172a;">100%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Sub-tabel poin prestasi -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:2px solid #e2e8f0;">
+          <div style="padding:10px 12px;border-right:1px solid #e2e8f0;">
+            <div style="font-weight:700;font-size:11px;color:#92400e;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Poin Tingkatan Prestasi</div>
+            <table style="width:100%;border-collapse:collapse;font-size:11px;">
+              <tr style="border-bottom:1px solid #fde68a;"><td style="padding:3px 4px;">Internasional / World / Asia</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#d97706;">+3</td></tr>
+              <tr style="border-bottom:1px solid #fde68a;background:#fefce8;"><td style="padding:3px 4px;">Nasional / Indonesia</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#d97706;">+2</td></tr>
+              <tr style="border-bottom:1px solid #fde68a;"><td style="padding:3px 4px;">Regional / Provinsi</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#d97706;">+1</td></tr>
+              <tr style="background:#fefce8;"><td style="padding:3px 4px;">Universitas / Fakultas</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#d97706;">+0.5</td></tr>
+            </table>
+            <div style="font-weight:700;font-size:11px;color:#92400e;margin:8px 0 6px;text-transform:uppercase;letter-spacing:.04em;">Poin Juara Prestasi</div>
+            <table style="width:100%;border-collapse:collapse;font-size:11px;">
+              <tr style="border-bottom:1px solid #fde68a;"><td style="padding:3px 4px;">Juara 1 / Gold</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#d97706;">+3</td></tr>
+              <tr style="border-bottom:1px solid #fde68a;background:#fefce8;"><td style="padding:3px 4px;">Juara 2 / Silver</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#d97706;">+2</td></tr>
+              <tr style="border-bottom:1px solid #fde68a;"><td style="padding:3px 4px;">Juara 3 / Bronze</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#d97706;">+1</td></tr>
+              <tr style="background:#fefce8;"><td style="padding:3px 4px;">Harapan / Finalis</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#d97706;">+0.5</td></tr>
+            </table>
+            <div style="margin-top:6px;font-size:10.5px;color:#78350f;background:#fef9c3;padding:5px 7px;border-radius:5px;">Cap total: <b>30 pts</b>. Skor maks kontribusi ke total: <b>20 poin</b>.</div>
+          </div>
+          <div style="padding:10px 12px;">
+            <div style="font-weight:700;font-size:11px;color:#15803d;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em;">Poin Tingkatan Organisasi</div>
+            <table style="width:100%;border-collapse:collapse;font-size:11px;">
+              <tr style="border-bottom:1px solid #bbf7d0;"><td style="padding:3px 4px;">Internasional</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#16a34a;">+3</td></tr>
+              <tr style="border-bottom:1px solid #bbf7d0;background:#f0fdf4;"><td style="padding:3px 4px;">Nasional</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#16a34a;">+2</td></tr>
+              <tr style="border-bottom:1px solid #bbf7d0;"><td style="padding:3px 4px;">Universitas / Regional</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#16a34a;">+1</td></tr>
+              <tr style="border-bottom:1px solid #bbf7d0;background:#f0fdf4;"><td style="padding:3px 4px;">Fakultas</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#16a34a;">+0.5</td></tr>
+              <tr><td style="padding:3px 4px;">Jurusan / Prodi</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#16a34a;">+0.3</td></tr>
+            </table>
+            <div style="font-weight:700;font-size:11px;color:#15803d;margin:8px 0 6px;text-transform:uppercase;letter-spacing:.04em;">Poin Peran / Keterlibatan Organisasi</div>
+            <table style="width:100%;border-collapse:collapse;font-size:11px;">
+              <tr style="border-bottom:1px solid #bbf7d0;"><td style="padding:3px 4px;">Ketua / Presiden</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#16a34a;">+3</td></tr>
+              <tr style="border-bottom:1px solid #bbf7d0;background:#f0fdf4;"><td style="padding:3px 4px;">Sekjen / Wakil Ketua</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#16a34a;">+2.5</td></tr>
+              <tr style="border-bottom:1px solid #bbf7d0;"><td style="padding:3px 4px;">BPH / Pengurus Inti</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#16a34a;">+2</td></tr>
+              <tr style="border-bottom:1px solid #bbf7d0;background:#f0fdf4;"><td style="padding:3px 4px;">Staff / Anggota</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#16a34a;">+0.5</td></tr>
+              <tr><td style="padding:3px 4px;">Volunteer / Relawan</td><td style="padding:3px 4px;text-align:right;font-weight:700;color:#16a34a;">+0.3</td></tr>
+            </table>
+            <div style="margin-top:6px;font-size:10.5px;color:#166534;background:#dcfce7;padding:5px 7px;border-radius:5px;">Cap total: <b>25 pts</b>. Skor maks kontribusi ke total: <b>20 poin</b>.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:10px;padding:10px 12px;background:#f0f7ff;border:1px solid #bfdbfe;border-radius:10px;font-size:11.5px;color:#1e3a8a;line-height:1.55;">
       <b>Cara membaca:</b> kolom Persentase adalah rasio pencapaian (0–100%) per komponen; kolom Skor adalah persentase × bobot. Total skor = jumlah semua skor komponen, max 100%.
-      ${_currentView !== 'all' ? `<br><b style="color:#78350f;">📅 Periode aktif: ${getQuartal(_currentView).label} — ${getQuartal(_currentView).sub}.</b> Angka kehadiran (Mentoring, Pembinaan, Pre/Post, Assessment) hanya mencakup periode ini; Prestasi, Organisasi, dan IPK tetap all-time.` : ''}
+      ${_currentView !== 'all' ? `<br><b style="color:#78350f;">Periode aktif: ${getQuartal(_currentView).label} — ${getQuartal(_currentView).sub}.</b> Angka kehadiran (Mentoring, Pembinaan, Pre/Post, Assessment) hanya mencakup periode ini; Prestasi, Organisasi, dan IPK tetap all-time.` : ''}
     </div>`;
   document.getElementById('detailModalBg').classList.add('show');
 };
 window.closeDetail = () => document.getElementById('detailModalBg').classList.remove('show');
+
+window.toggleItemDetail = (id) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const isHidden = el.style.display === 'none';
+  el.style.display = isHidden ? '' : 'none';
+  const btn = document.getElementById('btn-' + id);
+  if (btn) {
+    const span = btn.querySelector('span:last-child') || btn;
+    if (id === 'bobot-table') {
+      const spans = btn.querySelectorAll('span');
+      if (spans.length >= 2) spans[1].textContent = isHidden ? '▲' : '▼';
+    } else {
+      btn.textContent = isHidden ? 'Sembunyikan ▲' : 'Lihat Rincian ▼';
+    }
+  }
+};
 
 /* =========================================================
    TABS

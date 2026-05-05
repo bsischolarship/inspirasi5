@@ -134,8 +134,34 @@ const OPERATOR_ALLOW_HANDLERS = new Set([
   'resetFilter', 'filterPanel', 'filterTable', 'applyFilters', 'renderList',
   'runTalent', 'selectTalentCategory',
 
-  // View detail — read-only modals
+  // View detail — read-only modals & back button
   'showDetail', 'openDetail', 'openAwardeeDetail', 'openAwardeeDetailForTalent',
+  'hideDetail',
+
+  // KPI detail (admin-awardee, admin-prestasi, admin-organisasi)
+  'showKpiDetail', 'openKpiDetail', 'openOrgKpiDetail',
+  'openKampusDetail', 'openAwardeeDetailForPrestasi',
+
+  // Row click & detail panel (admin-rekap)
+  'onRowClick',
+
+  // Period selector (admin-awardee quartal pills)
+  'setPeriod', '_drillQuarterBar',
+
+  // Leaderboard — aspect card, histogram bar, activity bar, gap filter
+  'toggleAspectDetail', 'closeAspectDetail',
+  'toggleHistDetail',   'closeHistDetail',
+  'toggleActivityDetail', 'closeActivityDetail',
+  'setGapFilter', 'setGapStatusFilter',
+
+  // Leaderboard modal — rincian prestasi/org & tabel bobot
+  'toggleItemDetail',
+
+  // Chart bar drill-down (admin-prestasi, admin-organisasi)
+  'jumpToSemuaWithFilter',
+
+  // Password visibility toggle (read-only UX, tidak ubah data)
+  'togglePwVisibility',
 
   // Home filter (multi-select) — read-only, hanya ubah URL + re-render client-side
   'toggleHomeFilter', 'applyHomeFilter', 'resetHomeFilter',
@@ -345,10 +371,21 @@ function _attachOperatorInterceptor() {
     //   "return navigateLecture(...)"  → "navigateLecture" (bukan "return")
     //   "navigateLecture(...)"          → "navigateLecture"
     //   "if(event.target===this)closeX()" → "if"
+    //   "window.showDetail(...)"        → cek "showDetail" (strip "window.")
     const m = raw.match(/^\s*(?:return\s+)?([a-zA-Z_$][a-zA-Z0-9_$]*)/);
     const fnName = m ? m[1] : '';
 
-    if (_isOperatorAllowed(fnName)) return; // allowed
+    // Handle "window.fnName(...)" pattern — ekstrak nama aktual setelah "window."
+    if (fnName === 'window') {
+      const m2 = raw.match(/^\s*(?:return\s+)?window\.([a-zA-Z_$][a-zA-Z0-9_$]*)/);
+      const realFn = m2 ? m2[1] : '';
+      if (_isOperatorAllowed(realFn)) return;
+    } else if (fnName === 'event') {
+      // "event.stopPropagation(); realFn(...)" — skip event method, cek fungsi berikutnya
+      const m2 = raw.match(/event\.[^;]+;\s*([a-zA-Z_$][a-zA-Z0-9_$]*)/);
+      const realFn = m2 ? m2[1] : '';
+      if (_isOperatorAllowed(realFn)) return;
+    } else if (_isOperatorAllowed(fnName)) return; // allowed
 
     // Blokir
     e.preventDefault();
