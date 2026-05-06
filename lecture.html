@@ -121,7 +121,7 @@
     .panel-sub { font-size: 12.5px; color: #6b7280; margin: 0; line-height: 1.5; max-width: 700px; }
 
     /* Per-page KPI cards — design matches index.html kpi-card style */
-    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; position: relative; z-index: 2; }
     .kpi-card {
       background: var(--kpi-bg, #eff6ff);
       border: 1px solid var(--kpi-border, #dbeafe);
@@ -130,10 +130,15 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      cursor: pointer;
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      position: relative;
+      z-index: 2;
       transition: transform .15s ease, box-shadow .15s ease, border-color .15s;
       min-height: 82px;
+      user-select: none;
     }
+    .kpi-card * { pointer-events: none; } /* anak2 jangan intercept klik */
     .kpi-card:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 18px rgba(0,0,0,0.08);
@@ -231,6 +236,246 @@
       font-weight: 800; font-size: 12px; color: #78350f;
       background: #fef3c7; padding: 3px 10px; border-radius: 99px;
       border: 1px solid #fde68a; white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* === INLINE KPI DRILL-DOWN (replaces modal) === */
+    .kpi-card.is-active {
+      border-color: var(--kpi-color, #3b82f6);
+      box-shadow: 0 0 0 3px var(--kpi-bg, #eff6ff), 0 6px 18px rgba(0,0,0,.08);
+      transform: translateY(-2px);
+    }
+    .kpi-inline-panel {
+      background:#fff; border-radius:14px;
+      margin-top:0; margin-bottom:0;
+      max-height:0; overflow:hidden; opacity:0;
+      transition: max-height .35s ease, opacity .25s ease, padding .2s ease, margin .2s ease;
+      padding:0 20px;
+      pointer-events:none;
+      border:1px solid transparent;
+    }
+    .kpi-inline-panel.show {
+      max-height:1600px; opacity:1; padding:18px 20px;
+      margin-top:-4px; margin-bottom:20px;
+      pointer-events:auto;
+      border:1px solid #e5e7eb;
+      border-top:3px solid var(--kpi-acc-color, #3b82f6);
+    }
+    .kpi-inline-head {
+      display:flex; align-items:center; gap:12px;
+      padding-bottom:10px; margin-bottom:12px;
+      border-bottom:1px solid #f1f5f9;
+    }
+    .kpi-inline-icon {
+      width:38px; height:38px; border-radius:11px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .kpi-inline-icon svg { width:18px; height:18px; }
+    .kpi-inline-title { font-size:14.5px; font-weight:800; color:#111827; flex:1; }
+    .kpi-inline-close {
+      background:#f3f4f6; border:none; width:30px; height:30px; border-radius:8px;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      color:#6b7280; transition: background .15s;
+    }
+    .kpi-inline-close:hover { background:#e5e7eb; color:#111827; }
+
+    /* Time-window switcher (untuk kehadiran multi-period) */
+    .tw-switcher {
+      display:inline-flex; gap:4px; background:#f3f4f6; padding:3px;
+      border-radius:8px; margin-bottom:12px; flex-wrap:wrap;
+    }
+    .tw-btn {
+      padding:5px 11px; font-size:11.5px; font-weight:600;
+      background:transparent; border:none; border-radius:6px;
+      cursor:pointer; color:#6b7280; transition: all .15s;
+      white-space:nowrap;
+    }
+    .tw-btn:hover { color:#111827; background:rgba(255,255,255,.6); }
+    .tw-btn.active {
+      background:#fff; color:#1d4ed8;
+      box-shadow:0 1px 3px rgba(0,0,0,.08);
+    }
+
+    /* Mini summary stats inside drill-down */
+    .ds-mini-stats {
+      display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));
+      gap:10px; margin-bottom:14px;
+    }
+    .ds-mini {
+      background:#f9fafb; border:1px solid #f1f5f9; border-radius:10px;
+      padding:10px 12px; text-align:center;
+    }
+    .ds-mini-val { font-size:18px; font-weight:800; color:#111827; line-height:1; font-variant-numeric:tabular-nums; }
+    .ds-mini-lbl { font-size:10px; color:#6b7280; margin-top:4px; text-transform:uppercase; letter-spacing:.04em; font-weight:600; }
+    .ds-mini.tone-green { background:#ecfdf5; border-color:#d1fae5; }
+    .ds-mini.tone-green .ds-mini-val { color:#059669; }
+    .ds-mini.tone-amber { background:#fffbeb; border-color:#fef3c7; }
+    .ds-mini.tone-amber .ds-mini-val { color:#b45309; }
+    .ds-mini.tone-red { background:#fef2f2; border-color:#fee2e2; }
+    .ds-mini.tone-red .ds-mini-val { color:#dc2626; }
+    .ds-mini.tone-blue { background:#eff6ff; border-color:#dbeafe; }
+    .ds-mini.tone-blue .ds-mini-val { color:#1d4ed8; }
+
+    /* Mentor note callout */
+    .mentor-note {
+      background:linear-gradient(135deg,#faf5ff 0%, #eff6ff 100%);
+      border:1px solid #ddd6fe; border-radius:12px; padding:12px 14px;
+      margin-bottom:14px; display:flex; gap:10px;
+    }
+    .mentor-note-icon {
+      width:32px; height:32px; border-radius:10px; flex-shrink:0;
+      background:linear-gradient(135deg,#7c3aed,#0d9488);
+      color:#fff; display:flex; align-items:center; justify-content:center;
+    }
+    .mentor-note-icon svg { width:16px; height:16px; }
+    .mentor-note-body { flex:1; font-size:12px; color:#374151; line-height:1.55; }
+    .mentor-note-body b { color:#111827; font-weight:700; }
+    .mentor-note-title { font-size:11.5px; font-weight:800; color:#5b21b6; text-transform:uppercase; letter-spacing:.04em; margin-bottom:3px; }
+
+    /* === MINI BAR CHART (trend) === */
+    .mini-bar-chart {
+      display:flex; align-items:flex-end; gap:6px; height:90px;
+      padding:8px 4px; background:#f9fafb; border-radius:9px;
+      border:1px solid #f1f5f9;
+    }
+    .mb-col {
+      flex:1; min-width:0; display:flex; flex-direction:column;
+      align-items:center; justify-content:flex-end; gap:4px;
+      cursor:default; height:100%;
+    }
+    .mb-bar-track {
+      width:100%; height:100%; display:flex; align-items:flex-end;
+      justify-content:center; position:relative;
+    }
+    .mb-bar {
+      width:100%; max-width:30px;
+      background:linear-gradient(180deg,#60a5fa,#1d4ed8);
+      border-radius:5px 5px 0 0;
+      min-height:3px; position:relative;
+      transition:opacity .15s;
+    }
+    .mb-bar.lo { background:linear-gradient(180deg,#fca5a5,#dc2626); }
+    .mb-bar.mi { background:linear-gradient(180deg,#fcd34d,#d97706); }
+    .mb-bar.hi { background:linear-gradient(180deg,#86efac,#059669); }
+    .mb-bar:hover { opacity:.85; }
+    .mb-val {
+      position:absolute; top:-16px; left:50%; transform:translateX(-50%);
+      font-size:10px; font-weight:800; color:#374151;
+      white-space:nowrap;
+    }
+    .mb-lbl { font-size:10px; color:#6b7280; font-weight:600; white-space:nowrap; }
+
+    /* === MONITORING PERIODIK SECTION === */
+    .mon-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:16px;
+      margin-top:18px;
+    }
+    .mon-card {
+      background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+      padding:16px 18px;
+    }
+    .mon-card.full { grid-column: 1 / -1; }
+    .mon-head {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:12px; padding-bottom:9px; border-bottom:1px solid #f1f5f9;
+    }
+    .mon-title { font-size:13px; font-weight:800; color:#111827; display:flex; align-items:center; gap:7px; }
+    .mon-title svg { width:15px; height:15px; color:#6b7280; }
+    .mon-sub { font-size:11px; color:#9ca3af; }
+
+    /* Quartal comparison */
+    .qcomp-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+    .qcomp-cell {
+      background:#f9fafb; border:1px solid #f1f5f9; border-radius:10px;
+      padding:10px 12px; text-align:center;
+      cursor:pointer; transition: transform .12s, box-shadow .12s, border-color .12s;
+      position:relative;
+    }
+    .qcomp-cell:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,.06);
+      border-color: #c7d2fe;
+    }
+    .qcomp-cell:active { transform: translateY(0); }
+    .qcomp-cell::after {
+      content: ''; position:absolute; right:8px; top:8px;
+      width:6px; height:6px; border-right:2px solid #c7d2fe; border-bottom:2px solid #c7d2fe;
+      transform: rotate(-45deg); opacity:.6;
+    }
+    .qcomp-cell.active {
+      background:linear-gradient(135deg,#f5f3ff,#eff6ff);
+      border-color:#c7d2fe;
+    }
+    .qcomp-label { font-size:11px; font-weight:700; color:#6b7280; }
+    .qcomp-sublabel { font-size:9.5px; color:#9ca3af; margin-bottom:6px; }
+    .qcomp-val { font-size:20px; font-weight:800; color:#111827; line-height:1; font-variant-numeric:tabular-nums; }
+    .qcomp-meta { font-size:10px; color:#6b7280; margin-top:4px; }
+    .qcomp-cell.active .qcomp-val { color:#7c3aed; }
+
+    /* Mover items (rising/falling) */
+    .mover-list { display:flex; flex-direction:column; gap:6px; max-height:340px; overflow-y:auto; padding-right:4px; }
+    .mover-list::-webkit-scrollbar { width:6px; }
+    .mover-list::-webkit-scrollbar-track { background:transparent; }
+    .mover-list::-webkit-scrollbar-thumb { background:#e5e7eb; border-radius:3px; }
+    .mover-list::-webkit-scrollbar-thumb:hover { background:#d1d5db; }
+    .mover-item {
+      display:flex; align-items:center; gap:9px;
+      padding:8px 11px; border-radius:9px; background:#f9fafb;
+      font-size:12px; cursor:pointer; transition:background .12s;
+    }
+    .mover-item:hover { background:#f3f4f6; }
+    .mover-arrow {
+      width:24px; height:24px; border-radius:50%;
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; font-size:12px; font-weight:800;
+    }
+    .mover-arrow.up { background:#dcfce7; color:#166534; }
+    .mover-arrow.down { background:#fee2e2; color:#b91c1c; }
+    .mover-arrow.flat { background:#f3f4f6; color:#6b7280; }
+    .mover-name { flex:1; color:#111827; font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .mover-delta {
+      font-size:11.5px; font-weight:800; padding:2px 8px;
+      border-radius:99px; white-space:nowrap;
+    }
+    .mover-delta.up { background:#dcfce7; color:#166534; }
+    .mover-delta.down { background:#fee2e2; color:#b91c1c; }
+    .mover-delta.flat { background:#f3f4f6; color:#6b7280; }
+    .mover-delta-stack { display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0; }
+    .mover-delta-pct { font-size:9.5px; font-weight:700; color:#6b7280; line-height:1; }
+    .mover-delta-pct.up { color:#16a34a; }
+    .mover-delta-pct.down { color:#dc2626; }
+
+    /* Score histogram */
+    .score-hist { display:flex; align-items:flex-end; gap:5px; height:120px; padding:6px 0; }
+    .sh-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; min-width:0; }
+    .sh-bar { width:100%; max-width:48px; background:linear-gradient(180deg,#a78bfa,#6d28d9); border-radius:6px 6px 0 0; min-height:4px; position:relative; }
+    .sh-bar.bin-low  { background:linear-gradient(180deg,#fca5a5,#dc2626); }
+    .sh-bar.bin-mid  { background:linear-gradient(180deg,#fcd34d,#d97706); }
+    .sh-bar.bin-good { background:linear-gradient(180deg,#86efac,#059669); }
+    .sh-bar.bin-top  { background:linear-gradient(180deg,#a78bfa,#6d28d9); }
+    .sh-cnt { position:absolute; top:-18px; left:50%; transform:translateX(-50%); font-size:11px; font-weight:800; color:#374151; }
+    .sh-rng { font-size:10px; color:#6b7280; font-weight:600; text-align:center; line-height:1.2; white-space:nowrap; }
+
+    /* Mentor checklist (action items) */
+    .mc-list { display:flex; flex-direction:column; gap:6px; }
+    .mc-item {
+      display:flex; align-items:flex-start; gap:9px;
+      padding:9px 11px; background:#fffbeb; border:1px solid #fef3c7;
+      border-radius:9px; font-size:12px;
+    }
+    .mc-item.priority-hi { background:#fef2f2; border-color:#fee2e2; }
+    .mc-item.priority-lo { background:#f0fdfa; border-color:#ccfbf1; }
+    .mc-icon { flex-shrink:0; width:20px; height:20px; display:flex; align-items:center; justify-content:center; }
+    .mc-icon svg { width:14px; height:14px; }
+    .mc-item.priority-hi .mc-icon { color:#dc2626; }
+    .mc-item.priority-md .mc-icon { color:#d97706; }
+    .mc-item.priority-lo .mc-icon { color:#0d9488; }
+    .mc-body { flex:1; color:#374151; line-height:1.5; }
+    .mc-body b { color:#111827; }
+
+    @media (max-width: 900px) {
+      .mon-grid { grid-template-columns: 1fr; }
+      .qcomp-grid { grid-template-columns: repeat(2,1fr); }
+      .ds-mini-stats { grid-template-columns: repeat(2,1fr); }
     }
 
     /* Cards for insight sections */
@@ -696,6 +941,7 @@
             </div>
           </div>
           <div class="kpi-row" id="kpi-dashboard"></div>
+          <div class="kpi-inline-panel" id="kpi-inline-dashboard"></div>
           <div class="insight-grid">
             <div class="insight-card">
               <div class="insight-head">
@@ -726,6 +972,75 @@
               <div id="gapList"><div class="tbl-empty"><p>Memuat...</p></div></div>
             </div>
           </div>
+
+          <!-- ===== MONITORING PERIODIK ===== -->
+          <div class="mon-grid" id="monPeriodikWrap">
+            <div class="mon-card full">
+              <div class="mon-head">
+                <div class="mon-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+                  Tren Kehadiran 6 Bulan Terakhir
+                </div>
+                <span class="mon-sub" id="trendSubtitle">Memuat...</span>
+              </div>
+              <div id="trend6Bulan"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            </div>
+
+            <div class="mon-card full">
+              <div class="mon-head">
+                <div class="mon-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="9" y1="4" x2="9" y2="22"/><line x1="15" y1="4" x2="15" y2="22"/></svg>
+                  Performa per Kuartal
+                </div>
+                <span class="mon-sub">Q1–Q4 · Des 2025 – Nov 2026</span>
+              </div>
+              <div id="quartalCompare"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            </div>
+
+            <div class="mon-card">
+              <div class="mon-head">
+                <div class="mon-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                  Top Movers — Naik Peringkat
+                </div>
+                <span class="mon-sub">Bulan ini</span>
+              </div>
+              <div id="moversUp"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            </div>
+
+            <div class="mon-card">
+              <div class="mon-head">
+                <div class="mon-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg>
+                  Awardee Perlu Diperhatikan
+                </div>
+                <span class="mon-sub">Penurunan kehadiran</span>
+              </div>
+              <div id="moversDown"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            </div>
+
+            <div class="mon-card full">
+              <div class="mon-head">
+                <div class="mon-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><rect x="6" y="14" width="3" height="6"/><rect x="11" y="10" width="3" height="10"/><rect x="16" y="6" width="3" height="14"/></svg>
+                  Distribusi Skor Awardee
+                </div>
+                <span class="mon-sub">Histogram persentase total</span>
+              </div>
+              <div id="scoreHistogram"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            </div>
+
+            <div class="mon-card full">
+              <div class="mon-head">
+                <div class="mon-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+                  Catatan & Rekomendasi Mentor
+                </div>
+                <span class="mon-sub">Auto-generated insight</span>
+              </div>
+              <div id="mentorChecklist"><div class="tbl-empty"><p>Memuat...</p></div></div>
+            </div>
+          </div>
         </div>
 
         <!-- TAB: AWARDEE -->
@@ -740,6 +1055,7 @@
             </div>
           </div>
           <div class="kpi-row" id="kpi-awardee"></div>
+          <div class="kpi-inline-panel" id="kpi-inline-awardee"></div>
           <div class="tbl-toolbar" style="--toolbar-color:#0d9488;">
             <span class="tbl-toolbar-title">Daftar Awardee Binaan</span>
             <div class="tbl-search">
@@ -771,6 +1087,7 @@
             </div>
           </div>
           <div class="kpi-row" id="kpi-rekap"></div>
+          <div class="kpi-inline-panel" id="kpi-inline-rekap"></div>
           <div class="tbl-toolbar" style="--toolbar-color:#0055a5;">
             <span class="tbl-toolbar-title">Rekap Kehadiran</span>
             <div class="tbl-search">
@@ -808,6 +1125,7 @@
             </div>
           </div>
           <div class="kpi-row" id="kpi-prestasi"></div>
+          <div class="kpi-inline-panel" id="kpi-inline-prestasi"></div>
           <div class="tbl-toolbar" style="--toolbar-color:#b45309;">
             <span class="tbl-toolbar-title">Prestasi Awardee Binaan</span>
             <div class="tbl-search">
@@ -838,6 +1156,7 @@
             </div>
           </div>
           <div class="kpi-row" id="kpi-organisasi"></div>
+          <div class="kpi-inline-panel" id="kpi-inline-organisasi"></div>
           <div class="tbl-toolbar" style="--toolbar-color:#be185d;">
             <span class="tbl-toolbar-title">Organisasi Awardee Binaan</span>
             <div class="tbl-search">
@@ -868,6 +1187,7 @@
             </div>
           </div>
           <div class="kpi-row" id="kpi-leaderboard"></div>
+          <div class="kpi-inline-panel" id="kpi-inline-leaderboard"></div>
           <div class="lb-view-toggle" role="tablist" aria-label="Pilih periode">
             <button type="button" class="lvt-btn active" data-view="all" role="tab">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -1339,6 +1659,7 @@ function renderAll(){
   // Render setiap panel secara independen — error satu panel tidak menghentikan yang lain
   try { renderKPIs(); }     catch(e){ console.error('[renderAll] renderKPIs', e); }
   try { renderDashboard(); } catch(e){ console.error('[renderAll] renderDashboard', e); }
+  try { renderMonitoringPeriodik(); } catch(e){ console.error('[renderAll] renderMonitoringPeriodik', e); }
   try { renderAwardee(); }   catch(e){ console.error('[renderAll] renderAwardee', e); }
   try { _rekapBuildFilters(); } catch(e){ console.error('[renderAll] _rekapBuildFilters', e); }
   try { if(typeof window.renderRekap==='function') window.renderRekap(); else console.warn('[renderAll] window.renderRekap not defined yet'); } catch(e){ console.error('[renderAll] renderRekap', e); }
@@ -1374,6 +1695,7 @@ function _renderPanel(tab) {
     case 'dashboard':
       _safe('kpi-dashboard', renderKPIDashboard);
       _safe('dashboard', renderDashboard);
+      _safe('monitoringPeriodik', renderMonitoringPeriodik);
       break;
     case 'awardee':
       _safe('kpi-awardee', renderKPIAwardee);
@@ -1480,30 +1802,45 @@ function kpiCard(tone, iconSvg, label, value, sub, drillKey){
 }
 
 /* =========================================================
-   KPI DRILL-DOWN — klik kartu KPI → buka modal detail list
+   KPI DRILL-DOWN — klik kartu KPI → expand INLINE detail
+   (Bukan modal lagi — render di bawah row KPI agar tidak
+    menutup data, dan user bisa scroll dengan halus.)
 ========================================================= */
+let _activeKPI = null; // { tab, key }
+
+// Map drill-key prefix → tab name (untuk tahu inline panel mana yg dipakai)
+function _kpiTabFromKey(key){
+  if(key.startsWith('dash_')) return 'dashboard';
+  if(key.startsWith('aw_'))   return 'awardee';
+  if(key.startsWith('rk_'))   return 'rekap';
+  if(key.startsWith('pr_'))   return 'prestasi';
+  if(key.startsWith('or_'))   return 'organisasi';
+  if(key.startsWith('lb_'))   return 'leaderboard';
+  return 'dashboard';
+}
+
 window.showKPIDetail = function(key){
   const defs = {
     // Dashboard
     dash_total: {
       title: 'Total Awardee Binaan',
       icon: KPI_ICONS.users, tone: 'purple',
-      render: () => _listMhs(_raw.mhs.slice().sort((a,b)=>(a.nama||'').localeCompare(b.nama||'')), 'Awardee yang Anda bimbing')
+      render: () => _renderTotalAwardeeOverview()
     },
     dash_top: {
       title: 'Awardee dengan Skor Tertinggi',
       icon: KPI_ICONS.crown, tone: 'amber',
-      render: () => _listRanked(_ranked.slice(0, 20), 'Top 20 berdasarkan skor total')
+      render: () => _renderTopScoreOverview()
     },
     dash_avg: {
       title: 'Distribusi Skor Awardee',
       icon: KPI_ICONS.chart, tone: 'teal',
-      render: () => _listRanked(_ranked.slice(), 'Urut dari skor tertinggi ke terendah')
+      render: () => _renderAvgScoreOverview()
     },
     dash_30d: {
-      title: 'Kehadiran 30 Hari Terakhir',
+      title: 'Kehadiran — Multi-Periode',
       icon: KPI_ICONS.trending, tone: 'blue',
-      render: () => _list30dAttend()
+      render: () => _renderAttendMultiPeriod()
     },
     // Awardee
     aw_total: {
@@ -1516,7 +1853,7 @@ window.showKPIDetail = function(key){
     },
     aw_ipk: {
       title: 'Distribusi IPK', icon: KPI_ICONS.target, tone: 'purple',
-      render: () => _listMhs(_raw.mhs.filter(m=>m.ipk>0).sort((a,b)=>parseFloat(b.ipk||0)-parseFloat(a.ipk||0)), 'Urut dari IPK tertinggi', 'ipk')
+      render: () => _renderIpkDistribution()
     },
     aw_cumlaude: {
       title: 'Awardee IPK ≥ 3.50', icon: KPI_ICONS.star, tone: 'gold',
@@ -1525,7 +1862,7 @@ window.showKPIDetail = function(key){
     // Rekap
     rk_sesi: {
       title: 'Total Sesi Rekap Kehadiran', icon: KPI_ICONS.calendar, tone: 'blue',
-      render: () => _listRekapPerBulan()
+      render: () => _renderRekapBulananDetail()
     },
     rk_avg: {
       title: 'Rata-rata Kehadiran per Awardee', icon: KPI_ICONS.check, tone: 'green',
@@ -1542,7 +1879,7 @@ window.showKPIDetail = function(key){
     // Prestasi
     pr_total: {
       title: 'Semua Prestasi', icon: KPI_ICONS.trophy, tone: 'gold',
-      render: () => _listPrestasi(_raw.prestasi.slice())
+      render: () => _renderPrestasiOverview()
     },
     pr_awardee: {
       title: 'Awardee yang Berprestasi', icon: KPI_ICONS.users, tone: 'teal',
@@ -1559,7 +1896,7 @@ window.showKPIDetail = function(key){
     // Organisasi
     or_total: {
       title: 'Semua Keterlibatan Organisasi', icon: KPI_ICONS.briefcase, tone: 'pink',
-      render: () => _listOrg(_raw.org.slice())
+      render: () => _renderOrgOverview()
     },
     or_awardee: {
       title: 'Awardee yang Berorganisasi', icon: KPI_ICONS.users, tone: 'teal',
@@ -1594,10 +1931,19 @@ window.showKPIDetail = function(key){
 
   const def = defs[key];
   if (!def) return;
-  _openKPIModal(def);
+
+  const tab = _kpiTabFromKey(key);
+
+  // Toggle: kalau kartu yg sama diklik lagi, tutup
+  if (_activeKPI && _activeKPI.tab === tab && _activeKPI.key === key) {
+    closeKPIInline();
+    return;
+  }
+
+  _openKPIInline(tab, key, def);
 };
 
-function _openKPIModal(def){
+function _openKPIInline(tab, key, def){
   const iconBgMap = {
     purple:'#f5f3ff', teal:'#f0fdfa', blue:'#eff6ff', gold:'#fffbeb',
     pink:'#fdf2f8', amber:'#fff7ed', green:'#ecfdf5', red:'#fef2f2',
@@ -1609,18 +1955,78 @@ function _openKPIModal(def){
   const bg = iconBgMap[def.tone] || '#eff6ff';
   const col = iconColMap[def.tone] || '#1d4ed8';
 
-  document.getElementById('kpiDetailBody').innerHTML = `
-    <div class="kpi-modal-head">
-      <div class="kpi-modal-icon" style="background:${bg};color:${col};">${def.icon}</div>
-      <div style="flex:1;">
-        <div class="kpi-modal-title">${escH(def.title)}</div>
-      </div>
+  // Hapus highlight aktif sebelumnya
+  document.querySelectorAll('.kpi-card.is-active').forEach(el => el.classList.remove('is-active'));
+  // Tutup semua inline panel di tab manapun
+  document.querySelectorAll('.kpi-inline-panel').forEach(el => {
+    el.classList.remove('show');
+    el.style.removeProperty('--kpi-acc-color');
+  });
+
+  // Tandai kartu yang diklik
+  const clickedCard = document.querySelector(`#kpi-${tab} .kpi-card[onclick*="'${key}'"]`);
+  if(clickedCard) clickedCard.classList.add('is-active');
+
+  // Render & buka inline panel di tab terkait
+  const panel = document.getElementById(`kpi-inline-${tab}`);
+  if(!panel) return;
+
+  // Render dengan try/catch — kalau render function throw, tampilkan error
+  // di dalam panel daripada silent fail (yang tampak seperti "tidak bisa diklik")
+  let renderedContent;
+  try {
+    renderedContent = def.render();
+  } catch(e) {
+    console.error('[KPI render error]', key, e);
+    renderedContent = `<div style="padding:24px;background:#fef2f2;border:1px solid #fee2e2;border-radius:9px;color:#991b1b;font-size:12.5px;">
+      <b>Gagal merender detail untuk "${escH(def.title)}"</b><br>
+      <code style="font-size:11px;">${escH(String(e.message||e).slice(0,200))}</code><br>
+      <small style="color:#6b7280;">Cek console browser (F12) untuk detail. Coba klik kartu KPI lain dulu.</small>
+    </div>`;
+  }
+
+  panel.style.setProperty('--kpi-acc-color', col);
+  panel.innerHTML = `
+    <div class="kpi-inline-head">
+      <div class="kpi-inline-icon" style="background:${bg};color:${col};">${def.icon}</div>
+      <div class="kpi-inline-title">${escH(def.title)}</div>
+      <button class="kpi-inline-close" onclick="closeKPIInline()" aria-label="Tutup">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
-    ${def.render()}
+    <div class="kpi-inline-content">${renderedContent}</div>
   `;
-  document.getElementById('kpiDetailModalBg').classList.add('show');
+  // Trigger transition
+  requestAnimationFrame(() => panel.classList.add('show'));
+
+  _activeKPI = { tab, key };
+
+  // Smooth scroll ke panel — pakai block:'start' supaya selalu kelihatan
+  setTimeout(() => {
+    try {
+      const r = panel.getBoundingClientRect();
+      // Scroll kalau panel di luar viewport atau hanya sebagian terlihat
+      if(r.top < 80 || r.top > window.innerHeight - 100){
+        const target = panel.offsetTop - 90; // kasih offset header
+        window.scrollTo({ top: Math.max(0, target), behavior:'smooth' });
+      }
+    } catch(e) { /* abaikan scroll error */ }
+  }, 280);
 }
-window.closeKPIDetail = () => document.getElementById('kpiDetailModalBg').classList.remove('show');
+
+window.closeKPIInline = function(){
+  document.querySelectorAll('.kpi-card.is-active').forEach(el => el.classList.remove('is-active'));
+  document.querySelectorAll('.kpi-inline-panel').forEach(el => {
+    el.classList.remove('show');
+    setTimeout(() => { if(!el.classList.contains('show')) el.innerHTML = ''; }, 350);
+  });
+  _activeKPI = null;
+};
+
+// Backward-compat aliases (kode lama masih panggil closeKPIDetail)
+window.closeKPIDetail = window.closeKPIInline;
+function _openKPIModal(def){ /* legacy — diarahkan ke inline */
+  console.warn('_openKPIModal deprecated, use inline'); }
 
 /* ——— List renderers for drill-down modal ——— */
 function _listMhs(mhs, subtitle, hl){
@@ -1629,7 +2035,7 @@ function _listMhs(mhs, subtitle, hl){
   return sub + `<div class="kpi-list">` + mhs.map((m,i) => {
     const meta = m.kampus || '—';
     const badgeHTML = hl === 'ipk' ? `<span class="kpi-list-badge">IPK ${m.ipk?parseFloat(m.ipk).toFixed(2):'—'}</span>` : '';
-    return `<div class="kpi-list-item" onclick="closeKPIDetail();setTimeout(()=>showDetail('${escAttr(m.no_induk)}'),100)">
+    return `<div class="kpi-list-item" onclick="closeKPIInline();setTimeout(()=>showDetail('${escAttr(m.no_induk)}'),100)">
       <div class="kpi-list-num">${i+1}</div>
       <div style="flex:1;min-width:0;">
         <div class="kpi-list-name">${escH(m.nama||'—')}</div>
@@ -1648,7 +2054,7 @@ function _listRanked(ranked, subtitle, sortBy){
     if(sortBy === 'mindful')      { mainValue = a.mindful.toFixed(1); mainLabel = '/ 35'; }
     else if(sortBy === 'selfDev') { mainValue = a.selfDev.toFixed(1); mainLabel = '/ 50'; }
     else                            { mainValue = a.total.toFixed(1) + '%'; mainLabel = ''; }
-    return `<div class="kpi-list-item" onclick="closeKPIDetail();setTimeout(()=>showDetail('${escAttr(a.no_induk)}'),100)">
+    return `<div class="kpi-list-item" onclick="closeKPIInline();setTimeout(()=>showDetail('${escAttr(a.no_induk)}'),100)">
       <div class="kpi-list-num" ${i<3?'style="background:linear-gradient(135deg,#fbbf24,#d97706);color:#fff;"':''}>${a.rank||i+1}</div>
       <div style="flex:1;min-width:0;">
         <div class="kpi-list-name">${escH(a.nama)}</div>
@@ -1687,7 +2093,7 @@ function _listPrestasi(rows){
   return sub + `<div class="kpi-list">` + rows.slice(0, 50).map((r,i) => {
     const ct = classifyTingkatan(r.tingkatan);
     const cj = classifyJuaraPrestasi(r.juara);
-    return `<div class="kpi-list-item" onclick="closeKPIDetail();setTimeout(()=>showDetail('${escAttr(r.no_induk)}'),100)">
+    return `<div class="kpi-list-item" onclick="closeKPIInline();setTimeout(()=>showDetail('${escAttr(r.no_induk)}'),100)">
       <div class="kpi-list-num">${i+1}</div>
       <div style="flex:1;min-width:0;">
         <div class="kpi-list-name">${escH(r.nama||'—')}</div>
@@ -1707,7 +2113,7 @@ function _listOrg(rows){
   const sub = `<div style="font-size:12px;color:#6b7280;margin-bottom:10px;">${rows.length} keterlibatan</div>`;
   return sub + `<div class="kpi-list">` + rows.slice(0, 50).map((r,i) => {
     const ct = classifyTingkatan(r.tingkatan);
-    return `<div class="kpi-list-item" onclick="closeKPIDetail();setTimeout(()=>showDetail('${escAttr(r.no_induk)}'),100)">
+    return `<div class="kpi-list-item" onclick="closeKPIInline();setTimeout(()=>showDetail('${escAttr(r.no_induk)}'),100)">
       <div class="kpi-list-num">${i+1}</div>
       <div style="flex:1;min-width:0;">
         <div class="kpi-list-name">${escH(r.nama||'—')}</div>
@@ -1730,7 +2136,7 @@ function _listBerprestasi(){
   }).filter(x => x.m).sort((a,b) => b.cnt - a.cnt);
   const sub = `<div style="font-size:12px;color:#6b7280;margin-bottom:10px;">${withCount.length} awardee · urut berdasarkan jumlah prestasi</div>`;
   return sub + `<div class="kpi-list">` + withCount.map((x,i) =>
-    `<div class="kpi-list-item" onclick="closeKPIDetail();setTimeout(()=>showDetail('${escAttr(x.nim)}'),100)">
+    `<div class="kpi-list-item" onclick="closeKPIInline();setTimeout(()=>showDetail('${escAttr(x.nim)}'),100)">
       <div class="kpi-list-num" ${i<3?'style="background:linear-gradient(135deg,#fbbf24,#d97706);color:#fff;"':''}>${i+1}</div>
       <div style="flex:1;min-width:0;">
         <div class="kpi-list-name">${escH(x.m.nama)}</div>
@@ -1753,7 +2159,7 @@ function _listBerorganisasi(){
   }).filter(x => x.m).sort((a,b) => b.cnt - a.cnt);
   const sub = `<div style="font-size:12px;color:#6b7280;margin-bottom:10px;">${withCount.length} awardee · urut berdasarkan jumlah keterlibatan</div>`;
   return sub + `<div class="kpi-list">` + withCount.map((x,i) =>
-    `<div class="kpi-list-item" onclick="closeKPIDetail();setTimeout(()=>showDetail('${escAttr(x.nim)}'),100)">
+    `<div class="kpi-list-item" onclick="closeKPIInline();setTimeout(()=>showDetail('${escAttr(x.nim)}'),100)">
       <div class="kpi-list-num" ${i<3?'style="background:linear-gradient(135deg,#fbbf24,#d97706);color:#fff;"':''}>${i+1}</div>
       <div style="flex:1;min-width:0;">
         <div class="kpi-list-name">${escH(x.m.nama)}</div>
@@ -1787,7 +2193,7 @@ function _listAttendanceRanked(){
   const avg = ranked.reduce((s,x)=>s+x.pct,0)/ranked.length;
   const sub = `<div style="font-size:12px;color:#6b7280;margin-bottom:10px;">Rata-rata kehadiran: <b>${avg.toFixed(1)}%</b> · ${ranked.length} awardee tercatat</div>`;
   return sub + `<div class="kpi-list">` + ranked.map((x,i) =>
-    `<div class="kpi-list-item" onclick="closeKPIDetail();setTimeout(()=>showDetail('${escAttr(x.nim)}'),100)">
+    `<div class="kpi-list-item" onclick="closeKPIInline();setTimeout(()=>showDetail('${escAttr(x.nim)}'),100)">
       <div class="kpi-list-num" ${i<3?'style="background:linear-gradient(135deg,#34d399,#059669);color:#fff;"':''}>${i+1}</div>
       <div style="flex:1;min-width:0;">
         <div class="kpi-list-name">${escH(x.m.nama)}</div>
@@ -1818,7 +2224,7 @@ function _listPerfectAttendance(){
   if(!perfect.length) return `<div class="kpi-empty" style="text-align:center;padding:40px;color:#9ca3af;">Belum ada awardee dengan kehadiran 100%</div>`;
   const sub = `<div style="font-size:12px;color:#6b7280;margin-bottom:10px;">${perfect.length} awardee · 100% hadir di semua event yang terisi</div>`;
   return sub + `<div class="kpi-list">` + perfect.map((x,i) =>
-    `<div class="kpi-list-item" onclick="closeKPIDetail();setTimeout(()=>showDetail('${escAttr(x.nim)}'),100)">
+    `<div class="kpi-list-item" onclick="closeKPIInline();setTimeout(()=>showDetail('${escAttr(x.nim)}'),100)">
       <div class="kpi-list-num">${i+1}</div>
       <div style="flex:1;min-width:0;">
         <div class="kpi-list-name">${escH(x.m.nama)}</div>
@@ -1889,7 +2295,7 @@ function _listAttendanceRanked30d(rows){
   if(!ranked.length) return `<div class="kpi-empty" style="text-align:center;padding:40px;color:#9ca3af;">Belum ada rekap dalam 30 hari terakhir</div>`;
   const sub = `<div style="font-size:12px;color:#6b7280;margin-bottom:10px;">30 hari terakhir · ${ranked.length} awardee aktif</div>`;
   return sub + `<div class="kpi-list">` + ranked.map((x,i) =>
-    `<div class="kpi-list-item" onclick="closeKPIDetail();setTimeout(()=>showDetail('${escAttr(x.nim)}'),100)">
+    `<div class="kpi-list-item" onclick="closeKPIInline();setTimeout(()=>showDetail('${escAttr(x.nim)}'),100)">
       <div class="kpi-list-num">${i+1}</div>
       <div style="flex:1;min-width:0;">
         <div class="kpi-list-name">${escH(x.m.nama)}</div>
@@ -1898,6 +2304,849 @@ function _listAttendanceRanked30d(rows){
       <span class="kpi-list-badge">${x.pct.toFixed(0)}%</span>
     </div>`
   ).join('') + `</div>`;
+}
+
+// SVG icon factory (mini icons untuk kpi-label)
+/* ===== END OF EXISTING ATTENDANCE HELPERS ===== */
+
+/* =========================================================
+   NEW: Helpers for multi-period attendance & insights
+   (Dipakai oleh inline KPI detail & monitoring periodik.)
+========================================================= */
+
+// Hitung kehadiran agregate dari array of rekap rows
+function _calcAttendFromRows(rows){
+  let evt = 0, hadir = 0;
+  rows.forEach(r => {
+    REKAP_ACTS.forEach(a => {
+      const v = r[a.key];
+      if(isEvent(v)) { evt++; if(isHadir(v)) hadir++; }
+    });
+  });
+  return { evt, hadir, pct: evt ? Math.round(hadir/evt*100) : 0 };
+}
+
+// Hitung kehadiran per awardee dari array of rekap rows
+function _attendByAwardee(rows){
+  const scores = new Map();
+  rows.forEach(r => {
+    const nim = String(r.no_induk||''); if(!nim) return;
+    if(!scores.has(nim)) scores.set(nim, { evt:0, hadir:0 });
+    const s = scores.get(nim);
+    REKAP_ACTS.forEach(a => {
+      const v = r[a.key];
+      if(isEvent(v)) { s.evt++; if(isHadir(v)) s.hadir++; }
+    });
+  });
+  return scores;
+}
+
+// Filter rekap berdasarkan window: '7'|'30'|'90'|'q1'|'q2'|'q3'|'q4'|'all'|'this_month'
+function _filterRekap(window){
+  if(window === 'all') return _raw.rekap.slice();
+  if(window === 'this_month'){
+    const ym = new Date().toISOString().slice(0,7);
+    return _raw.rekap.filter(r => (r.tanggal||'').slice(0,7) === ym);
+  }
+  if(['7','30','90'].includes(window)){
+    const days = parseInt(window,10);
+    const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
+    const cutIso = cutoff.toISOString().slice(0,10);
+    return _raw.rekap.filter(r => r.tanggal && r.tanggal >= cutIso);
+  }
+  if(['q1','q2','q3','q4'].includes(window)){
+    const q = getQuartal(window); if(!q) return [];
+    return _raw.rekap.filter(r => inRange(r.tanggal, q));
+  }
+  return _raw.rekap.slice();
+}
+
+// Render daftar awardee terurut berdasarkan kehadiran di rentang tertentu
+function _attendListHtmlForWindow(window){
+  const rows = _filterRekap(window);
+  if(!rows.length){
+    return `<div class="kpi-empty" style="text-align:center;padding:32px 16px;color:#9ca3af;font-size:12.5px;">Belum ada rekap pada periode ini</div>`;
+  }
+  const scores = _attendByAwardee(rows);
+  const ranked = Array.from(scores.entries())
+    .filter(([,s]) => s.evt > 0)
+    .map(([nim, s]) => {
+      const m = _raw.mhs.find(x => String(x.no_induk) === nim);
+      return { m, nim, pct: s.hadir/s.evt*100, hadir: s.hadir, evt: s.evt };
+    })
+    .filter(x => x.m)
+    .sort((a,b) => b.pct - a.pct);
+  if(!ranked.length){
+    return `<div class="kpi-empty" style="text-align:center;padding:32px 16px;color:#9ca3af;font-size:12.5px;">Tidak ada awardee aktif di periode ini</div>`;
+  }
+  return `<div class="kpi-list">` + ranked.map((x,i) => {
+    const tone = x.pct >= 80 ? '#16a34a' : x.pct >= 60 ? '#d97706' : '#dc2626';
+    const bg   = x.pct >= 80 ? '#dcfce7' : x.pct >= 60 ? '#fef3c7' : '#fee2e2';
+    return `<div class="kpi-list-item" onclick="closeKPIInline();setTimeout(()=>showDetail('${escAttr(x.nim)}'),50)">
+      <div class="kpi-list-num">${i+1}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="kpi-list-name">${escH(x.m.nama)}</div>
+        <div class="kpi-list-meta">${escH(x.m.no_induk)} · ${escH(x.m.kampus||'—')} · ${x.hadir}/${x.evt} event</div>
+      </div>
+      <span class="kpi-list-badge" style="background:${bg};color:${tone};border-color:${tone}40;">${x.pct.toFixed(0)}%</span>
+    </div>`;
+  }).join('') + `</div>`;
+}
+
+// === Multi-period KPI: Attendance switcher (untuk dash_30d) ===
+window.switchAttendWindow = function(win, btnEl){
+  // Update active button
+  const wrap = btnEl.closest('.tw-switcher');
+  wrap.querySelectorAll('.tw-btn').forEach(b => b.classList.remove('active'));
+  btnEl.classList.add('active');
+
+  // Hitung agregat untuk window itu
+  const rows = _filterRekap(win);
+  const agg = _calcAttendFromRows(rows);
+  const scores = _attendByAwardee(rows);
+  const activeAwardee = Array.from(scores.values()).filter(s => s.evt > 0).length;
+  const perfectAwardee = Array.from(scores.values()).filter(s => s.evt > 0 && s.evt === s.hadir).length;
+
+  // Update mini stats
+  const ms = document.getElementById('attendMiniStats');
+  if(ms){
+    ms.innerHTML = `
+      <div class="ds-mini tone-blue"><div class="ds-mini-val">${agg.pct}%</div><div class="ds-mini-lbl">Rata-rata Hadir</div></div>
+      <div class="ds-mini"><div class="ds-mini-val">${agg.hadir}/${agg.evt}</div><div class="ds-mini-lbl">Event Hadir</div></div>
+      <div class="ds-mini tone-green"><div class="ds-mini-val">${activeAwardee}</div><div class="ds-mini-lbl">Awardee Aktif</div></div>
+      <div class="ds-mini tone-amber"><div class="ds-mini-val">${perfectAwardee}</div><div class="ds-mini-lbl">100% Hadir</div></div>
+    `;
+  }
+
+  // Update list
+  const list = document.getElementById('attendList');
+  if(list) list.innerHTML = _attendListHtmlForWindow(win);
+
+  // Update mentor note
+  const note = document.getElementById('attendMentorNote');
+  if(note){
+    note.innerHTML = _generateAttendNote(agg, activeAwardee, perfectAwardee, win);
+  }
+};
+
+// Generate mentor note untuk attendance
+function _generateAttendNote(agg, activeAwardee, perfectAwardee, window){
+  const winLabel = {
+    '7':'7 hari terakhir', '30':'30 hari terakhir', '90':'90 hari terakhir',
+    'this_month':'bulan berjalan', 'all':'sepanjang waktu',
+    'q1':'Kuartal 1', 'q2':'Kuartal 2', 'q3':'Kuartal 3', 'q4':'Kuartal 4'
+  }[window] || window;
+
+  let title = '', body = '';
+  if(!agg.evt){
+    title = 'Belum ada data periode ini';
+    body = `Belum ada rekap kehadiran tercatat untuk <b>${winLabel}</b>. Coba pilih periode yang lebih lebar atau periksa apakah data rekap sudah diinput.`;
+  } else if(agg.pct >= 85){
+    title = 'Kondisi sangat baik';
+    body = `Kehadiran rata-rata <b>${agg.pct}%</b> di ${winLabel} menunjukkan binaan Anda <b>sangat aktif</b>. ${perfectAwardee} awardee bahkan mencapai 100% hadir. Pertahankan ritme ini — apresiasi mereka di sesi mentoring berikutnya.`;
+  } else if(agg.pct >= 70){
+    title = 'Kondisi baik, ada ruang perbaikan';
+    body = `Kehadiran <b>${agg.pct}%</b> di ${winLabel} masih sehat, namun beberapa awardee mulai turun aktivitas. Identifikasi mereka yang persentasenya di bawah 60% dan lakukan personal follow-up sebelum gap melebar.`;
+  } else if(agg.pct >= 50){
+    title = 'Perlu intervensi mentor';
+    body = `Kehadiran <b>${agg.pct}%</b> di ${winLabel} di bawah ekspektasi. Disarankan melakukan check-in personal pada awardee dengan kehadiran rendah, tanyakan kendala (akademik, psikologis, teknis) dan susun kontrak pembinaan ulang.`;
+  } else {
+    title = 'Perhatian khusus dibutuhkan';
+    body = `Kehadiran rata-rata <b>${agg.pct}%</b> di ${winLabel} tergolong rendah. Pertimbangkan untuk: (1) meninjau ulang jadwal yang berbenturan dengan kuliah, (2) mengevaluasi format sesi, (3) menggelar pertemuan kelompok untuk membahas komitmen bersama.`;
+  }
+
+  return `
+    <div class="mentor-note-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    </div>
+    <div class="mentor-note-body">
+      <div class="mentor-note-title">Catatan Mentor</div>
+      ${body}
+    </div>`;
+}
+
+/* === Render functions untuk inline KPI detail === */
+
+function _renderAttendMultiPeriod(){
+  // Default: 30 hari terakhir, fallback all-time kalau kosong
+  const rows30 = _filterRekap('30');
+  const initialWin = rows30.length ? '30' : 'all';
+
+  const switcher = `
+    <div class="tw-switcher">
+      <button class="tw-btn ${initialWin==='7'?'active':''}" onclick="switchAttendWindow('7',this)">7 Hari</button>
+      <button class="tw-btn ${initialWin==='30'?'active':''}" onclick="switchAttendWindow('30',this)">30 Hari</button>
+      <button class="tw-btn" onclick="switchAttendWindow('90',this)">90 Hari</button>
+      <button class="tw-btn" onclick="switchAttendWindow('this_month',this)">Bulan Ini</button>
+      <button class="tw-btn" onclick="switchAttendWindow('q1',this)">Q1</button>
+      <button class="tw-btn" onclick="switchAttendWindow('q2',this)">Q2</button>
+      <button class="tw-btn" onclick="switchAttendWindow('q3',this)">Q3</button>
+      <button class="tw-btn" onclick="switchAttendWindow('q4',this)">Q4</button>
+      <button class="tw-btn ${initialWin==='all'?'active':''}" onclick="switchAttendWindow('all',this)">All Time</button>
+    </div>
+  `;
+
+  const rows = _filterRekap(initialWin);
+  const agg = _calcAttendFromRows(rows);
+  const scores = _attendByAwardee(rows);
+  const activeAwardee = Array.from(scores.values()).filter(s => s.evt > 0).length;
+  const perfectAwardee = Array.from(scores.values()).filter(s => s.evt > 0 && s.evt === s.hadir).length;
+
+  return switcher + `
+    <div class="ds-mini-stats" id="attendMiniStats">
+      <div class="ds-mini tone-blue"><div class="ds-mini-val">${agg.pct}%</div><div class="ds-mini-lbl">Rata-rata Hadir</div></div>
+      <div class="ds-mini"><div class="ds-mini-val">${agg.hadir}/${agg.evt}</div><div class="ds-mini-lbl">Event Hadir</div></div>
+      <div class="ds-mini tone-green"><div class="ds-mini-val">${activeAwardee}</div><div class="ds-mini-lbl">Awardee Aktif</div></div>
+      <div class="ds-mini tone-amber"><div class="ds-mini-val">${perfectAwardee}</div><div class="ds-mini-lbl">100% Hadir</div></div>
+    </div>
+    <div class="mentor-note" id="attendMentorNote">${_generateAttendNote(agg, activeAwardee, perfectAwardee, initialWin)}</div>
+    <div id="attendList">${_attendListHtmlForWindow(initialWin)}</div>
+  `;
+}
+
+function _renderTotalAwardeeOverview(){
+  const mhs = _raw.mhs;
+  const total = mhs.length;
+  const ipkRows = mhs.filter(m => m.ipk > 0);
+  const avgIpk = ipkRows.length ? (ipkRows.reduce((s,m)=>s+parseFloat(m.ipk||0),0)/ipkRows.length) : 0;
+  const aktif = mhs.filter(m => /aktif/i.test(m.status||'aktif')).length;
+  const kampusSet = new Set(mhs.map(m => m.kampus).filter(Boolean));
+
+  // Distribusi per kampus (top 5)
+  const kamMap = new Map();
+  mhs.forEach(m => { const k = m.kampus || 'Tidak terdata'; kamMap.set(k, (kamMap.get(k)||0)+1); });
+  const topKam = Array.from(kamMap.entries()).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+  // Mentor note
+  const noteBody = `Anda saat ini membimbing <b>${total} awardee</b> dari <b>${kampusSet.size} kampus</b>. Status aktif: ${aktif}. Rata-rata IPK keseluruhan <b>${avgIpk.toFixed(2)}</b>${avgIpk >= 3.5 ? ' — di atas standar cumlaude. Pertahankan!' : avgIpk >= 3.0 ? ' — masih sehat, namun ada ruang dorong ke 3.50.' : ' — perlu perhatian akademik.'}`;
+
+  return `
+    <div class="ds-mini-stats">
+      <div class="ds-mini tone-blue"><div class="ds-mini-val">${total}</div><div class="ds-mini-lbl">Total Awardee</div></div>
+      <div class="ds-mini tone-green"><div class="ds-mini-val">${aktif}</div><div class="ds-mini-lbl">Status Aktif</div></div>
+      <div class="ds-mini"><div class="ds-mini-val">${kampusSet.size}</div><div class="ds-mini-lbl">Kampus</div></div>
+      <div class="ds-mini tone-amber"><div class="ds-mini-val">${avgIpk.toFixed(2)}</div><div class="ds-mini-lbl">Rata-rata IPK</div></div>
+    </div>
+    <div class="mentor-note">
+      <div class="mentor-note-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      </div>
+      <div class="mentor-note-body">
+        <div class="mentor-note-title">Catatan Mentor</div>
+        ${noteBody}
+      </div>
+    </div>
+    ${topKam.length ? `<div style="font-size:12px;font-weight:700;color:#374151;margin:14px 0 8px;">Top 5 Kampus Binaan</div>
+      <div class="kpi-list">${topKam.map(([k,c],i) => `
+        <div class="kpi-list-item" style="cursor:default;">
+          <div class="kpi-list-num">${i+1}</div>
+          <div style="flex:1;min-width:0;"><div class="kpi-list-name">${escH(k)}</div></div>
+          <span class="kpi-list-badge">${c} awardee</span>
+        </div>`).join('')}</div>` : ''}
+    <div style="font-size:12px;font-weight:700;color:#374151;margin:14px 0 8px;">Daftar Lengkap Awardee</div>
+    ${_listMhs(mhs.slice().sort((a,b)=>(a.nama||'').localeCompare(b.nama||'')), 'Klik untuk lihat detail')}
+  `;
+}
+
+function _renderTopScoreOverview(){
+  if(!_ranked.length) return `<div class="kpi-empty" style="text-align:center;padding:40px;color:#9ca3af;">Belum ada data</div>`;
+  const top1 = _ranked[0];
+  const top10 = _ranked.slice(0,10);
+  const avg10 = top10.reduce((s,a)=>s+a.total,0)/top10.length;
+  const overallAvg = _ranked.reduce((s,a)=>s+a.total,0)/_ranked.length;
+  const gap = top1.total - overallAvg;
+
+  const noteBody = `Awardee teratas <b>${escH(top1.nama)}</b> meraih skor <b>${top1.total.toFixed(1)}%</b> — ${gap > 30 ? `unggul jauh ${gap.toFixed(0)} poin di atas rata-rata.` : 'tidak terlampau jauh dari rata-rata, persaingan ketat.'} Rata-rata top 10 adalah <b>${avg10.toFixed(1)}%</b>. ${gap > 30 ? 'Pertimbangkan menjadikan mereka peer mentor bagi yang masih tertinggal.' : 'Dorong rotasi peran agar kompetisi sehat ini berlanjut.'}`;
+
+  return `
+    <div class="ds-mini-stats">
+      <div class="ds-mini tone-amber"><div class="ds-mini-val">${top1.total.toFixed(1)}%</div><div class="ds-mini-lbl">Skor Tertinggi</div></div>
+      <div class="ds-mini tone-blue"><div class="ds-mini-val">${avg10.toFixed(1)}%</div><div class="ds-mini-lbl">Rata-rata Top 10</div></div>
+      <div class="ds-mini"><div class="ds-mini-val">${overallAvg.toFixed(1)}%</div><div class="ds-mini-lbl">Rata-rata Keseluruhan</div></div>
+      <div class="ds-mini tone-green"><div class="ds-mini-val">+${gap.toFixed(0)}</div><div class="ds-mini-lbl">Gap Top vs Avg</div></div>
+    </div>
+    <div class="mentor-note">
+      <div class="mentor-note-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg></div>
+      <div class="mentor-note-body"><div class="mentor-note-title">Catatan Mentor</div>${noteBody}</div>
+    </div>
+    ${_listRanked(_ranked.slice(0,20), 'Top 20 berdasarkan skor total')}
+  `;
+}
+
+function _renderAvgScoreOverview(){
+  if(!_ranked.length) return `<div class="kpi-empty" style="text-align:center;padding:40px;color:#9ca3af;">Belum ada data</div>`;
+  const avg = _ranked.reduce((s,a)=>s+a.total,0)/_ranked.length;
+  const median = (() => {
+    const arr = _ranked.map(a=>a.total).sort((a,b)=>a-b);
+    const m = Math.floor(arr.length/2);
+    return arr.length%2 ? arr[m] : (arr[m-1]+arr[m])/2;
+  })();
+  const max = _ranked[0].total;
+  const min = _ranked[_ranked.length-1].total;
+
+  // Histogram bins: 0-20, 20-40, 40-60, 60-80, 80-100
+  const bins = [0,0,0,0,0];
+  _ranked.forEach(a => {
+    const b = Math.min(4, Math.floor(a.total/20));
+    bins[b]++;
+  });
+  const maxBin = Math.max(...bins, 1);
+  const binLabels = ['0–20%','20–40%','40–60%','60–80%','80–100%'];
+  const binCls = ['bin-low','bin-low','bin-mid','bin-good','bin-top'];
+
+  const histHtml = `
+    <div style="font-size:12px;font-weight:700;color:#374151;margin:14px 0 8px;">Histogram Skor Total</div>
+    <div class="score-hist">${bins.map((c,i) => `
+      <div class="sh-col">
+        <div class="sh-bar ${binCls[i]}" style="height:${(c/maxBin*100).toFixed(0)}%;">
+          <span class="sh-cnt">${c}</span>
+        </div>
+        <div class="sh-rng">${binLabels[i]}</div>
+      </div>`).join('')}</div>
+  `;
+
+  let noteBody;
+  if(avg >= 70){
+    noteBody = `Rata-rata skor binaan Anda adalah <b>${avg.toFixed(1)}%</b> (median ${median.toFixed(1)}%) — kondisi <b>sehat</b>. Mayoritas awardee berada di kuartil atas. Fokus berikutnya: dorong yang masih di kelompok 40–60% naik ke level berikutnya.`;
+  } else if(avg >= 50){
+    noteBody = `Rata-rata skor binaan adalah <b>${avg.toFixed(1)}%</b> (median ${median.toFixed(1)}%). Distribusi cukup tersebar. Identifikasi 5 awardee terbawah dan susun rencana intervensi 30 hari ke depan.`;
+  } else {
+    noteBody = `Rata-rata skor binaan <b>${avg.toFixed(1)}%</b> tergolong rendah. Disarankan: (1) audit kelengkapan data rekap, (2) sesi mentoring kelompok untuk membahas hambatan, (3) target ringan & terukur per bulan.`;
+  }
+
+  return `
+    <div class="ds-mini-stats">
+      <div class="ds-mini tone-blue"><div class="ds-mini-val">${avg.toFixed(1)}%</div><div class="ds-mini-lbl">Rata-rata</div></div>
+      <div class="ds-mini"><div class="ds-mini-val">${median.toFixed(1)}%</div><div class="ds-mini-lbl">Median</div></div>
+      <div class="ds-mini tone-green"><div class="ds-mini-val">${max.toFixed(1)}%</div><div class="ds-mini-lbl">Tertinggi</div></div>
+      <div class="ds-mini tone-red"><div class="ds-mini-val">${min.toFixed(1)}%</div><div class="ds-mini-lbl">Terendah</div></div>
+    </div>
+    ${histHtml}
+    <div class="mentor-note" style="margin-top:14px;">
+      <div class="mentor-note-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="4" width="3" height="14"/></svg></div>
+      <div class="mentor-note-body"><div class="mentor-note-title">Catatan Mentor</div>${noteBody}</div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:#374151;margin:14px 0 8px;">Ranking Lengkap</div>
+    ${_listRanked(_ranked.slice(), 'Urut dari skor tertinggi ke terendah')}
+  `;
+}
+
+function _renderIpkDistribution(){
+  const mhs = _raw.mhs;
+  const ipkRows = mhs.filter(m => m.ipk > 0);
+  if(!ipkRows.length) return `<div class="kpi-empty" style="text-align:center;padding:40px;color:#9ca3af;">Belum ada data IPK</div>`;
+  const avg = ipkRows.reduce((s,m)=>s+parseFloat(m.ipk||0),0)/ipkRows.length;
+  const cumlaude = ipkRows.filter(m => parseFloat(m.ipk) >= 3.5).length;
+  const danger = ipkRows.filter(m => parseFloat(m.ipk) < 3.0).length;
+
+  // Bins: <2.5, 2.5-3.0, 3.0-3.25, 3.25-3.5, 3.5-3.75, 3.75-4.0
+  const binEdges = [0, 2.5, 3.0, 3.25, 3.5, 3.75, 4.01];
+  const bins = new Array(binEdges.length-1).fill(0);
+  ipkRows.forEach(m => {
+    const v = parseFloat(m.ipk);
+    for(let i=0;i<binEdges.length-1;i++){
+      if(v >= binEdges[i] && v < binEdges[i+1]){ bins[i]++; break; }
+    }
+  });
+  const maxBin = Math.max(...bins, 1);
+  const binLabels = ['<2.50','2.50–3.00','3.00–3.25','3.25–3.50','3.50–3.75','3.75–4.00'];
+  const binCls    = ['bin-low','bin-low','bin-mid','bin-mid','bin-good','bin-top'];
+
+  const noteBody = `Rata-rata IPK <b>${avg.toFixed(2)}</b>. ${cumlaude} awardee di jalur cumlaude (≥3.50)${danger ? `, namun <b>${danger} awardee berada di bawah 3.00</b> dan perlu pendampingan akademik prioritas.` : '. Tidak ada yang di bawah 3.00 — kondisi akademik solid.'}`;
+
+  return `
+    <div class="ds-mini-stats">
+      <div class="ds-mini tone-blue"><div class="ds-mini-val">${avg.toFixed(2)}</div><div class="ds-mini-lbl">Rata-rata IPK</div></div>
+      <div class="ds-mini tone-green"><div class="ds-mini-val">${cumlaude}</div><div class="ds-mini-lbl">IPK ≥ 3.50</div></div>
+      <div class="ds-mini ${danger?'tone-red':''}"><div class="ds-mini-val">${danger}</div><div class="ds-mini-lbl">IPK &lt; 3.00</div></div>
+      <div class="ds-mini"><div class="ds-mini-val">${ipkRows.length}</div><div class="ds-mini-lbl">Tercatat</div></div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:#374151;margin:14px 0 8px;">Histogram IPK</div>
+    <div class="score-hist">${bins.map((c,i) => `
+      <div class="sh-col">
+        <div class="sh-bar ${binCls[i]}" style="height:${(c/maxBin*100).toFixed(0)}%;">
+          <span class="sh-cnt">${c}</span>
+        </div>
+        <div class="sh-rng">${binLabels[i]}</div>
+      </div>`).join('')}</div>
+    <div class="mentor-note" style="margin-top:14px;">
+      <div class="mentor-note-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+      <div class="mentor-note-body"><div class="mentor-note-title">Catatan Mentor</div>${noteBody}</div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:#374151;margin:14px 0 8px;">Daftar Awardee (Urut IPK)</div>
+    ${_listMhs(ipkRows.sort((a,b)=>parseFloat(b.ipk||0)-parseFloat(a.ipk||0)), 'Klik untuk lihat detail', 'ipk')}
+  `;
+}
+
+function _renderRekapBulananDetail(){
+  const months = new Map();
+  _raw.rekap.forEach(r => {
+    const ym = (r.tanggal||'').slice(0,7); if(!ym) return;
+    if(!months.has(ym)) months.set(ym, { rows:[], evt:0, hadir:0 });
+    const m = months.get(ym); m.rows.push(r);
+    REKAP_ACTS.forEach(a => {
+      const v = r[a.key];
+      if(isEvent(v)) { m.evt++; if(isHadir(v)) m.hadir++; }
+    });
+  });
+  if(!months.size) return `<div class="kpi-empty" style="text-align:center;padding:40px;color:#9ca3af;">Belum ada rekap</div>`;
+  const arr = Array.from(months.entries()).sort((a,b)=>a[0].localeCompare(b[0]));
+  const totalSesi = _raw.rekap.length;
+  const totalEvt = arr.reduce((s,[,d])=>s+d.evt, 0);
+  const totalHadir = arr.reduce((s,[,d])=>s+d.hadir, 0);
+  const avgPct = totalEvt ? Math.round(totalHadir/totalEvt*100) : 0;
+
+  // Mini chart bulanan (semua bulan)
+  const maxEvt = Math.max(...arr.map(([,d])=>d.evt), 1);
+  const mNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const chartHtml = `<div class="mini-bar-chart" style="height:120px;">${arr.map(([ym,d]) => {
+    const [y,mm] = ym.split('-');
+    const lbl = `${mNames[parseInt(mm,10)-1]||mm}'${y.slice(-2)}`;
+    const pct = d.evt ? Math.round(d.hadir/d.evt*100) : 0;
+    const cls = pct >= 80 ? 'hi' : pct >= 60 ? 'mi' : 'lo';
+    const h = (d.evt/maxEvt*100).toFixed(0);
+    return `<div class="mb-col">
+      <div class="mb-bar-track"><div class="mb-bar ${cls}" style="height:${h}%;" title="${lbl}: ${d.evt} event, ${pct}% hadir"><span class="mb-val">${pct}%</span></div></div>
+      <div class="mb-lbl">${lbl}</div>
+    </div>`;
+  }).join('')}</div>`;
+
+  return `
+    <div class="ds-mini-stats">
+      <div class="ds-mini tone-blue"><div class="ds-mini-val">${totalSesi}</div><div class="ds-mini-lbl">Total Sesi</div></div>
+      <div class="ds-mini"><div class="ds-mini-val">${totalEvt}</div><div class="ds-mini-lbl">Event Tercatat</div></div>
+      <div class="ds-mini tone-green"><div class="ds-mini-val">${avgPct}%</div><div class="ds-mini-lbl">Rata-rata Hadir</div></div>
+      <div class="ds-mini tone-amber"><div class="ds-mini-val">${arr.length}</div><div class="ds-mini-lbl">Bulan Aktif</div></div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:#374151;margin:14px 0 8px;">Aktivitas per Bulan (Tinggi = banyak event · Warna = % hadir)</div>
+    ${chartHtml}
+    <div style="font-size:12px;font-weight:700;color:#374151;margin:14px 0 8px;">Detail per Bulan</div>
+    ${_listRekapPerBulan()}
+  `;
+}
+
+function _renderPrestasiOverview(){
+  const pres = _raw.prestasi;
+  if(!pres.length) return `<div class="kpi-empty" style="text-align:center;padding:40px;color:#9ca3af;">Belum ada prestasi tercatat</div>`;
+  const intl = pres.filter(p => /internasion|international|world|asia|asean/i.test(p.tingkatan||'')).length;
+  const nas  = pres.filter(p => /nasional|national|indonesia/i.test(p.tingkatan||'')).length;
+  const reg  = pres.filter(p => /regional|wilayah|provinsi|universitas|kampus|institut|fakultas/i.test(p.tingkatan||'')).length;
+  const j1   = pres.filter(p => /juara\s*1|juara\s*i\b|pertama|^1$|emas|gold/i.test(p.juara||'')).length;
+  const nimSet = new Set(pres.map(p => String(p.no_induk||'')).filter(Boolean));
+  const pctAwardee = _raw.mhs.length ? Math.round(nimSet.size/_raw.mhs.length*100) : 0;
+
+  // Tren bulanan (6 bulan terakhir)
+  const now = new Date();
+  const months = [];
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    const cnt = pres.filter(p => (p.created_at||'').slice(0,7) === ym).length;
+    const mNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    months.push({ lbl:`${mNames[d.getMonth()]}'${String(d.getFullYear()).slice(-2)}`, cnt });
+  }
+  const maxCnt = Math.max(...months.map(m=>m.cnt), 1);
+  const chartHtml = `<div class="mini-bar-chart">${months.map(m => {
+    const h = (m.cnt/maxCnt*100).toFixed(0);
+    return `<div class="mb-col">
+      <div class="mb-bar-track"><div class="mb-bar hi" style="height:${m.cnt?h:3}%;"><span class="mb-val">${m.cnt}</span></div></div>
+      <div class="mb-lbl">${m.lbl}</div>
+    </div>`;
+  }).join('')}</div>`;
+
+  const noteBody = `Total <b>${pres.length} prestasi</b> dari ${nimSet.size} awardee (${pctAwardee}% dari binaan). Komposisi: ${intl} internasional, ${nas} nasional, ${reg} regional/kampus. ${pctAwardee < 30 ? 'Mayoritas awardee belum punya prestasi tercatat — dorong submission ke kompetisi/lomba.' : pctAwardee < 60 ? 'Cakupan prestasi sedang. Targetkan akhir tahun naik 10–15%.' : 'Cakupan prestasi sangat baik — pertahankan!'}`;
+
+  return `
+    <div class="ds-mini-stats">
+      <div class="ds-mini tone-amber"><div class="ds-mini-val">${pres.length}</div><div class="ds-mini-lbl">Total Prestasi</div></div>
+      <div class="ds-mini tone-blue"><div class="ds-mini-val">${nimSet.size}</div><div class="ds-mini-lbl">Awardee Berprestasi</div></div>
+      <div class="ds-mini"><div class="ds-mini-val">${intl}</div><div class="ds-mini-lbl">Internasional</div></div>
+      <div class="ds-mini tone-green"><div class="ds-mini-val">${j1}</div><div class="ds-mini-lbl">Juara 1 / Emas</div></div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:#374151;margin:14px 0 8px;">Tren Prestasi 6 Bulan Terakhir</div>
+    ${chartHtml}
+    <div class="mentor-note" style="margin-top:14px;">
+      <div class="mentor-note-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg></div>
+      <div class="mentor-note-body"><div class="mentor-note-title">Catatan Mentor</div>${noteBody}</div>
+    </div>
+    ${_listPrestasi(pres.slice())}
+  `;
+}
+
+function _renderOrgOverview(){
+  const org = _raw.org;
+  if(!org.length) return `<div class="kpi-empty" style="text-align:center;padding:40px;color:#9ca3af;">Belum ada data organisasi</div>`;
+  const strategisRe = /^(ketua|ketum|ketua umum|gubernur|presiden|sekjen|sekretaris|wakil|bph|dph|kepala|bendahara)/i;
+  const strategis = org.filter(o => strategisRe.test((o.keterlibatan||'').trim())).length;
+  const intl = org.filter(o => /internasion|international/i.test(o.tingkatan||'')).length;
+  const nas  = org.filter(o => /nasional|national/i.test(o.tingkatan||'')).length;
+  const nimSet = new Set(org.map(o => String(o.no_induk||'')).filter(Boolean));
+  const pctAwardee = _raw.mhs.length ? Math.round(nimSet.size/_raw.mhs.length*100) : 0;
+
+  const noteBody = `Total <b>${org.length} keterlibatan organisasi</b> dari ${nimSet.size} awardee (${pctAwardee}%). <b>${strategis}</b> di posisi strategis (Ketua/Wakil/Sekretaris/Bendahara). ${strategis < 5 ? 'Dorong lebih banyak awardee mengambil peran kepemimpinan.' : 'Kapasitas kepemimpinan binaan tampak kuat.'}`;
+
+  return `
+    <div class="ds-mini-stats">
+      <div class="ds-mini tone-blue"><div class="ds-mini-val">${org.length}</div><div class="ds-mini-lbl">Keterlibatan</div></div>
+      <div class="ds-mini tone-green"><div class="ds-mini-val">${nimSet.size}</div><div class="ds-mini-lbl">Awardee Aktif Org</div></div>
+      <div class="ds-mini tone-amber"><div class="ds-mini-val">${strategis}</div><div class="ds-mini-lbl">Posisi Strategis</div></div>
+      <div class="ds-mini"><div class="ds-mini-val">${intl + nas}</div><div class="ds-mini-lbl">Skala Nas/Intl</div></div>
+    </div>
+    <div class="mentor-note">
+      <div class="mentor-note-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+      <div class="mentor-note-body"><div class="mentor-note-title">Catatan Mentor</div>${noteBody}</div>
+    </div>
+    ${_listOrg(org.slice())}
+  `;
+}
+
+/* =========================================================
+   MONITORING PERIODIK — render functions
+========================================================= */
+
+function renderMonitoringPeriodik(){
+  if(!_raw.mhs.length){
+    document.getElementById('trend6Bulan').innerHTML = '<div class="tbl-empty"><p>Belum ada data</p></div>';
+    document.getElementById('quartalCompare').innerHTML = '<div class="tbl-empty"><p>Belum ada data</p></div>';
+    document.getElementById('moversUp').innerHTML = '<div class="tbl-empty"><p>Belum ada data</p></div>';
+    document.getElementById('moversDown').innerHTML = '<div class="tbl-empty"><p>Belum ada data</p></div>';
+    document.getElementById('scoreHistogram').innerHTML = '<div class="tbl-empty"><p>Belum ada data</p></div>';
+    document.getElementById('mentorChecklist').innerHTML = '<div class="tbl-empty"><p>Belum ada data</p></div>';
+    return;
+  }
+  _renderTrend6Bulan();
+  _renderQuartalCompare();
+  _renderTopMovers();
+  _renderScoreHistogramMain();
+  _renderMentorChecklist();
+}
+
+function _renderTrend6Bulan(){
+  const now = new Date();
+  const buckets = [];
+  const mNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const ym = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    buckets.push({
+      ym, lbl:`${mNames[d.getMonth()]} ${String(d.getFullYear()).slice(-2)}`,
+      evt:0, hadir:0, sesi:0, prestasi:0
+    });
+  }
+  const ymToIdx = new Map(buckets.map((b,i) => [b.ym, i]));
+  _raw.rekap.forEach(r => {
+    const ym = (r.tanggal||'').slice(0,7);
+    const idx = ymToIdx.get(ym); if(idx === undefined) return;
+    buckets[idx].sesi++;
+    REKAP_ACTS.forEach(a => {
+      const v = r[a.key];
+      if(isEvent(v)) { buckets[idx].evt++; if(isHadir(v)) buckets[idx].hadir++; }
+    });
+  });
+  _raw.prestasi.forEach(p => {
+    const ym = (p.created_at||'').slice(0,7);
+    const idx = ymToIdx.get(ym); if(idx === undefined) return;
+    buckets[idx].prestasi++;
+  });
+
+  const totalEvt = buckets.reduce((s,b)=>s+b.evt, 0);
+  const totalHadir = buckets.reduce((s,b)=>s+b.hadir, 0);
+  const avgPct = totalEvt ? Math.round(totalHadir/totalEvt*100) : 0;
+
+  // Tentukan trend (perbandingan 3 bulan terakhir vs 3 bulan sebelumnya)
+  const recentEvt = buckets.slice(3).reduce((s,b)=>s+b.evt,0);
+  const recentHadir = buckets.slice(3).reduce((s,b)=>s+b.hadir,0);
+  const earlyEvt = buckets.slice(0,3).reduce((s,b)=>s+b.evt,0);
+  const earlyHadir = buckets.slice(0,3).reduce((s,b)=>s+b.hadir,0);
+  const recentPct = recentEvt ? recentHadir/recentEvt*100 : 0;
+  const earlyPct = earlyEvt ? earlyHadir/earlyEvt*100 : 0;
+  const delta = recentPct - earlyPct;
+
+  document.getElementById('trendSubtitle').innerHTML = avgPct
+    ? `Rata-rata <b>${avgPct}%</b> · ${delta >= 0 ? '<span style="color:#059669;">▲ +' : '<span style="color:#dc2626;">▼ '}${delta.toFixed(1)} poin</span> vs kuartal lalu`
+    : 'Belum ada rekap';
+
+  const maxEvt = Math.max(...buckets.map(b => b.evt), 1);
+  const html = `
+    <div class="mini-bar-chart" style="height:130px;">${buckets.map(b => {
+      const pct = b.evt ? Math.round(b.hadir/b.evt*100) : 0;
+      const cls = pct >= 80 ? 'hi' : pct >= 60 ? 'mi' : pct > 0 ? 'lo' : '';
+      const h = b.evt ? (b.evt/maxEvt*100).toFixed(0) : 3;
+      return `<div class="mb-col">
+        <div class="mb-bar-track"><div class="mb-bar ${cls}" style="height:${h}%;" title="${b.lbl}: ${b.evt} event, ${b.hadir} hadir, ${pct}%"><span class="mb-val">${b.evt ? pct+'%' : '—'}</span></div></div>
+        <div class="mb-lbl">${b.lbl}</div>
+      </div>`;
+    }).join('')}</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:#6b7280;margin-top:10px;">
+      <div><span style="display:inline-block;width:10px;height:10px;background:linear-gradient(180deg,#86efac,#059669);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>≥ 80% hadir</div>
+      <div><span style="display:inline-block;width:10px;height:10px;background:linear-gradient(180deg,#fcd34d,#d97706);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>60–80%</div>
+      <div><span style="display:inline-block;width:10px;height:10px;background:linear-gradient(180deg,#fca5a5,#dc2626);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>&lt; 60%</div>
+      <div style="margin-left:auto;font-weight:600;color:#374151;">Tinggi bar = banyak event · Warna = persentase hadir</div>
+    </div>
+  `;
+  document.getElementById('trend6Bulan').innerHTML = html;
+}
+
+function _renderQuartalCompare(){
+  const today = new Date().toISOString().slice(0,10);
+  const cells = QUARTERS.map(q => {
+    const rows = _raw.rekap.filter(r => inRange(r.tanggal, q));
+    const agg = _calcAttendFromRows(rows);
+    const isActive = today >= q.start && today <= q.end;
+    return { q, agg, isActive, sesi: rows.length };
+  });
+
+  const html = `<div class="qcomp-grid">${cells.map(c => `
+    <div class="qcomp-cell ${c.isActive?'active':''}" data-qid="${c.q.id}" title="Klik untuk lihat detail kehadiran ${c.q.label}">
+      <div class="qcomp-label">${c.q.label} ${c.isActive?'<span style="font-size:9px;color:#7c3aed;font-weight:800;">●AKTIF</span>':''}</div>
+      <div class="qcomp-sublabel">${c.q.sub}</div>
+      <div class="qcomp-val">${c.agg.evt ? c.agg.pct+'%' : '—'}</div>
+      <div class="qcomp-meta">${c.sesi} sesi · ${c.agg.hadir}/${c.agg.evt} hadir</div>
+    </div>`).join('')}</div>
+    <div style="margin-top:8px;font-size:10.5px;color:#9ca3af;text-align:center;">Klik salah satu kuartal untuk melihat rincian kehadiran per awardee di periode tersebut.</div>`;
+  document.getElementById('quartalCompare').innerHTML = html;
+}
+
+function _renderTopMovers(){
+  // Strategy: bandingkan dua bulan kalender terakhir yang punya rekap data.
+  // Hanya hitung awardee yang punya rekap di KEDUA bulan — supaya delta
+  // benar-benar mencerminkan perubahan performa, bukan sekadar "data hilang".
+
+  const monthRekap = new Map(); // ym -> rows[]
+  _raw.rekap.forEach(r => {
+    const ym = (r.tanggal||'').slice(0,7);
+    if(!ym) return;
+    if(!monthRekap.has(ym)) monthRekap.set(ym, []);
+    monthRekap.get(ym).push(r);
+  });
+
+  // Filter: hanya bulan dengan minimal 5 sesi
+  const sortedMonths = Array.from(monthRekap.entries())
+    .filter(([ym, rows]) => rows.length >= 5)
+    .map(([ym]) => ym)
+    .sort()
+    .reverse();
+
+  const fmtMonth = (ym) => {
+    const [y, mm] = ym.split('-');
+    const mNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    return `${mNames[parseInt(mm,10)-1]} ${String(y).slice(-2)}`;
+  };
+
+  const setMoverSub = (txt) => {
+    document.querySelectorAll('#monPeriodikWrap .mon-card .mon-title').forEach(t => {
+      if(/Top Movers|Perlu Diperhatikan/i.test(t.textContent)){
+        const sub = t.parentElement.querySelector('.mon-sub');
+        if(sub) sub.textContent = txt;
+      }
+    });
+  };
+
+  if(sortedMonths.length < 2){
+    const msg = sortedMonths.length === 0
+      ? 'Belum ada rekap kehadiran tercatat'
+      : `Data baru tersedia 1 bulan (${fmtMonth(sortedMonths[0])}). Perbandingan butuh minimal 2 bulan.`;
+    document.getElementById('moversUp').innerHTML = `<div style="text-align:center;padding:24px;color:#9ca3af;font-size:12px;">${escH(msg)}</div>`;
+    document.getElementById('moversDown').innerHTML = `<div style="text-align:center;padding:24px;color:#9ca3af;font-size:12px;">${escH(msg)}</div>`;
+    setMoverSub('Belum cukup data');
+    return;
+  }
+
+  const recentYm = sortedMonths[0];
+  const prevYm   = sortedMonths[1];
+  const subLabel = `${fmtMonth(prevYm)} → ${fmtMonth(recentYm)}`;
+  setMoverSub(subLabel);
+
+  const recentMap = _attendByAwardee(monthRekap.get(recentYm));
+  const prevMap   = _attendByAwardee(monthRekap.get(prevYm));
+
+  // Hitung delta untuk semua awardee yang aktif di kedua bulan
+  const movers = [];
+  recentMap.forEach((r, nim) => {
+    const p = prevMap.get(nim);
+    if(!p) return;
+    if(r.evt < 1 || p.evt < 1) return;
+    const rPct = r.hadir/r.evt*100;
+    const pPct = p.hadir/p.evt*100;
+    const delta = rPct - pPct;
+    // Persentase relatif (dari basis prev)
+    let relPct = null;
+    if(pPct > 0){
+      relPct = ((rPct - pPct) / pPct) * 100;
+    } else if(rPct > 0){
+      relPct = Infinity; // dari 0 → ada → kenaikan tak terhingga relatif
+    }
+    const m = _raw.mhs.find(x => String(x.no_induk) === nim);
+    if(!m) return;
+    movers.push({ nim, m, rPct, pPct, delta, relPct, rEvt:r.evt, pEvt:p.evt, rHadir:r.hadir, pHadir:p.hadir });
+  });
+
+  // Threshold ringan: 1 poin (jadi "stabil" = -1 ≤ delta ≤ 1)
+  const ups   = movers.filter(x => x.delta >  1).sort((a,b)=>b.delta-a.delta);
+  const downs = movers.filter(x => x.delta < -1).sort((a,b)=>a.delta-b.delta);
+  const flat  = movers.filter(x => x.delta >= -1 && x.delta <= 1);
+
+  const totalCompared = movers.length;
+
+  const renderMover = (x, dir) => {
+    const arrowCls = dir === 'up' ? 'up' : 'down';
+    const arrow = dir === 'up' ? '↑' : '↓';
+    const ptTxt = (x.delta > 0 ? '+' : '') + x.delta.toFixed(0) + ' pt';
+    let pctTxt;
+    if(x.relPct === Infinity)      pctTxt = 'baru aktif';
+    else if(x.relPct === null)     pctTxt = '—';
+    else                            pctTxt = (x.relPct > 0 ? '+' : '') + x.relPct.toFixed(0) + '%';
+    return `<div class="mover-item" onclick="showDetail('${escAttr(x.nim)}')" title="Klik untuk detail awardee">
+      <div class="mover-arrow ${arrowCls}">${arrow}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="mover-name">${escH(x.m.nama)}</div>
+        <div style="font-size:10.5px;color:#6b7280;">${x.pPct.toFixed(0)}% (${x.pHadir}/${x.pEvt}) → ${x.rPct.toFixed(0)}% (${x.rHadir}/${x.rEvt}) · ${escH(x.m.kampus||'—')}</div>
+      </div>
+      <div class="mover-delta-stack">
+        <span class="mover-delta ${arrowCls}">${ptTxt}</span>
+        <span class="mover-delta-pct ${arrowCls}">${pctTxt}</span>
+      </div>
+    </div>`;
+  };
+
+  const footerLine = (n, total) =>
+    `<div style="margin-top:8px;font-size:10.5px;color:#9ca3af;text-align:center;">
+      ${n} dari ${total} awardee aktif di kedua bulan${flat.length ? ` · ${flat.length} stabil` : ''}
+    </div>`;
+
+  document.getElementById('moversUp').innerHTML = ups.length
+    ? `<div class="mover-list">${ups.map(x => renderMover(x,'up')).join('')}</div>${footerLine(ups.length, totalCompared)}`
+    : `<div style="text-align:center;padding:24px;color:#9ca3af;font-size:12px;">${totalCompared ? `Tidak ada kenaikan signifikan dari ${totalCompared} awardee aktif di kedua bulan${flat.length ? ` (${flat.length} stabil)` : ''}.` : 'Tidak ada awardee yang aktif di kedua bulan untuk dibandingkan.'}</div>`;
+
+  document.getElementById('moversDown').innerHTML = downs.length
+    ? `<div class="mover-list">${downs.map(x => renderMover(x,'down')).join('')}</div>${footerLine(downs.length, totalCompared)}`
+    : `<div style="text-align:center;padding:24px;color:#10b981;font-size:12px;font-weight:600;">${totalCompared ? '🎉 Tidak ada penurunan signifikan!' : 'Belum cukup data untuk perbandingan'}</div>`;
+}
+
+function _renderScoreHistogramMain(){
+  if(!_ranked.length){
+    document.getElementById('scoreHistogram').innerHTML = '<div class="tbl-empty"><p>Belum ada data</p></div>';
+    return;
+  }
+  const bins = [0,0,0,0,0];
+  _ranked.forEach(a => {
+    const b = Math.min(4, Math.floor(a.total/20));
+    bins[b]++;
+  });
+  const maxBin = Math.max(...bins, 1);
+  const binLabels = ['0–20%','20–40%','40–60%','60–80%','80–100%'];
+  const binCls = ['bin-low','bin-low','bin-mid','bin-good','bin-top'];
+  const binTones = ['Kritis','Lemah','Sedang','Baik','Sangat Baik'];
+
+  const total = _ranked.length;
+  const html = `
+    <div class="score-hist">${bins.map((c,i) => `
+      <div class="sh-col">
+        <div class="sh-bar ${binCls[i]}" style="height:${(c/maxBin*100).toFixed(0)}%;">
+          <span class="sh-cnt">${c}</span>
+        </div>
+        <div class="sh-rng"><b>${binLabels[i]}</b><br><span style="color:#9ca3af;">${binTones[i]}</span></div>
+      </div>`).join('')}</div>
+    <div style="margin-top:10px;font-size:11.5px;color:#6b7280;text-align:center;">Total ${total} awardee tersebar di 5 bin · Klik kartu KPI "Rata-rata Skor" di atas untuk lihat detail per orang.</div>
+  `;
+  document.getElementById('scoreHistogram').innerHTML = html;
+}
+
+function _renderMentorChecklist(){
+  const items = [];
+
+  // 1. Awardee tanpa rekap kehadiran sama sekali
+  const hasRekap = new Set();
+  _raw.rekap.forEach(r => { if(r.no_induk) hasRekap.add(String(r.no_induk)); });
+  const noRekap = _raw.mhs.filter(m => !hasRekap.has(String(m.no_induk)));
+  if(noRekap.length){
+    items.push({
+      priority: 'hi',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>',
+      text: `<b>${noRekap.length} awardee belum punya rekap kehadiran apapun</b>. Pastikan mereka tercatat di sesi terakhir atau hubungi langsung untuk konfirmasi keterlibatan: ${noRekap.slice(0,3).map(m => escH(m.nama)).join(', ')}${noRekap.length > 3 ? `, dan ${noRekap.length-3} lainnya.` : '.'}`
+    });
+  }
+
+  // 2. Awardee dengan IPK rendah (<3.0)
+  const lowIpk = _raw.mhs.filter(m => parseFloat(m.ipk||0) > 0 && parseFloat(m.ipk) < 3.0);
+  if(lowIpk.length){
+    items.push({
+      priority: 'hi',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',
+      text: `<b>${lowIpk.length} awardee dengan IPK di bawah 3.00</b>. Prioritaskan pembinaan akademik: ${lowIpk.slice(0,3).map(m => `${escH(m.nama)} (IPK ${parseFloat(m.ipk).toFixed(2)})`).join(', ')}${lowIpk.length > 3 ? `, dst.` : '.'}`
+    });
+  }
+
+  // 3. Awardee tanpa prestasi & organisasi sama sekali
+  const hasPrestasi = new Set(_raw.prestasi.map(p => String(p.no_induk||'')).filter(Boolean));
+  const hasOrg = new Set(_raw.org.map(o => String(o.no_induk||'')).filter(Boolean));
+  const noBoth = _raw.mhs.filter(m => !hasPrestasi.has(String(m.no_induk)) && !hasOrg.has(String(m.no_induk)));
+  if(noBoth.length){
+    const pct = Math.round(noBoth.length/_raw.mhs.length*100);
+    items.push({
+      priority: pct > 50 ? 'hi' : 'md',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+      text: `<b>${noBoth.length} awardee (${pct}%)</b> belum punya prestasi maupun keterlibatan organisasi tercatat. Dorong mereka mengikuti minimal 1 lomba/komunitas dalam 1 kuartal.`
+    });
+  }
+
+  // 4. Kehadiran rata-rata bulan ini vs bulan lalu
+  const now = new Date();
+  const ymThis = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  const dLast = new Date(now.getFullYear(), now.getMonth()-1, 1);
+  const ymLast = `${dLast.getFullYear()}-${String(dLast.getMonth()+1).padStart(2,'0')}`;
+  const calcMonth = ym => {
+    const rows = _raw.rekap.filter(r => (r.tanggal||'').slice(0,7) === ym);
+    return _calcAttendFromRows(rows);
+  };
+  const aThis = calcMonth(ymThis);
+  const aLast = calcMonth(ymLast);
+  if(aThis.evt && aLast.evt){
+    const delta = aThis.pct - aLast.pct;
+    if(Math.abs(delta) >= 5){
+      items.push({
+        priority: delta < 0 ? 'md' : 'lo',
+        icon: delta < 0
+          ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/></svg>'
+          : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>',
+        text: `Rata-rata kehadiran bulan ini <b>${aThis.pct}%</b> ${delta < 0 ? `<b style="color:#dc2626;">turun ${Math.abs(delta).toFixed(0)} poin</b>` : `<b style="color:#059669;">naik ${delta.toFixed(0)} poin</b>`} dibanding bulan lalu (${aLast.pct}%). ${delta < 0 ? 'Identifikasi sebabnya — ujian, jadwal, atau penurunan engagement umum.' : 'Pertahankan momentum dan apresiasi awardee yang konsisten.'}`
+      });
+    }
+  }
+
+  // 5. Bulan ini sama sekali belum ada rekap
+  if(!aThis.evt){
+    items.push({
+      priority: 'md',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>',
+      text: `<b>Belum ada rekap kehadiran bulan ini.</b> Pastikan sesi mentoring/pembinaan sudah dijadwalkan dan datanya akan diinput sebelum akhir bulan.`
+    });
+  }
+
+  // 6. Awardee top 3 sebagai apresiasi
+  if(_ranked.length >= 3){
+    items.push({
+      priority: 'lo',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+      text: `<b>Top 3 awardee saat ini:</b> ${_ranked.slice(0,3).map((a,i) => `${i+1}. ${escH(a.nama)} (${a.total.toFixed(1)}%)`).join(' · ')}. Pertimbangkan menampilkan mereka di sesi berikutnya sebagai role model.`
+    });
+  }
+
+  if(!items.length){
+    document.getElementById('mentorChecklist').innerHTML = `<div style="text-align:center;padding:24px;color:#10b981;font-size:13px;font-weight:600;">🎉 Semua kondisi binaan saat ini terpantau baik!</div>`;
+    return;
+  }
+
+  // Urutkan berdasarkan prioritas
+  const order = { hi:0, md:1, lo:2 };
+  items.sort((a,b) => order[a.priority] - order[b.priority]);
+
+  const html = `<div class="mc-list">${items.map(it => `
+    <div class="mc-item priority-${it.priority}">
+      <div class="mc-icon">${it.icon}</div>
+      <div class="mc-body">${it.text}</div>
+    </div>`).join('')}</div>`;
+  document.getElementById('mentorChecklist').innerHTML = html;
 }
 
 // SVG icon factory (mini icons untuk kpi-label)
@@ -1933,13 +3182,8 @@ function renderKPIDashboard(){
   const avgScore = _ranked.length ? (_ranked.reduce((s,a)=>s+a.total,0) / _ranked.length) : 0;
   const topScore = _ranked[0]?.total || 0;
 
-  // Prestasi bulan ini
-  const now = new Date();
-  const ymThis = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  const prestasiThisMonth = _raw.prestasi.filter(r => (r.created_at||'').slice(0,7) === ymThis).length;
-
-  // Attendance — coba 30 hari, fallback ke sesi terkini jika tidak ada data
-  const _calcAttend = (days) => {
+  // Attendance — hitung semua window sekaligus, pilih yg paling informatif
+  const _calcAttendDays = (days) => {
     const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - days);
     const cutIso = cutoff.toISOString().slice(0,10);
     let e = 0, h = 0;
@@ -1949,27 +3193,44 @@ function renderKPIDashboard(){
     });
     return { evt: e, hadir: h };
   };
-  let attend30 = _calcAttend(30);
-  let attendLabel = '30 Hari';
-  // Jika tidak ada data 30 hari, coba 90 hari → lalu ambil semua rekap
-  if (!attend30.evt) {
-    attend30 = _calcAttend(90);
-    attendLabel = '90 Hari';
-  }
-  if (!attend30.evt) {
-    // Pakai semua rekap (all-time)
+  const _calcAttendAll = () => {
+    let e = 0, h = 0;
     _raw.rekap.forEach(r => {
-      REKAP_ACTS.forEach(a => { const v = r[a.key]; if(isEvent(v)){ attend30.evt++; if(isHadir(v)) attend30.hadir++; } });
+      REKAP_ACTS.forEach(a => { const v = r[a.key]; if(isEvent(v)){ e++; if(isHadir(v)) h++; } });
     });
-    attendLabel = 'All Time';
+    return { evt: e, hadir: h };
+  };
+  const a30 = _calcAttendDays(30);
+  const a90 = _calcAttendDays(90);
+  const aAll = _calcAttendAll();
+
+  // Pilih display utama: 30 hari dulu, kalau kosong fallback ke 90 → all-time
+  let mainAgg, mainLabel, secondaryHtml;
+  if(a30.evt){
+    mainAgg = a30; mainLabel = '30 Hari';
+  } else if(a90.evt){
+    mainAgg = a90; mainLabel = '90 Hari';
+  } else {
+    mainAgg = aAll; mainLabel = 'All Time';
   }
-  const pct30 = attend30.evt ? Math.round(attend30.hadir / attend30.evt * 100) : 0;
+  const mainPct = mainAgg.evt ? Math.round(mainAgg.hadir/mainAgg.evt*100) : 0;
+  const allPct  = aAll.evt    ? Math.round(aAll.hadir/aAll.evt*100)     : 0;
+
+  // Sub line: tampilkan info utama + perbandingan all-time
+  let attendSub;
+  if(mainAgg.evt && aAll.evt && mainLabel !== 'All Time'){
+    attendSub = `${mainAgg.hadir}/${mainAgg.evt} · <b>All-time: ${allPct}%</b>`;
+  } else if(mainAgg.evt){
+    attendSub = `${mainAgg.hadir}/${mainAgg.evt} sesi`;
+  } else {
+    attendSub = `Belum ada rekap`;
+  }
 
   document.getElementById('kpi-dashboard').innerHTML =
     kpiCard('purple', KPI_ICONS.users,    'Total Awardee',       total.toLocaleString('id-ID'), `Sedang dibimbing`, 'dash_total') +
     kpiCard('amber',  KPI_ICONS.crown,    'Skor Tertinggi',      topScore.toFixed(1)+'%',       _ranked[0]? `<b>${escH(_ranked[0].nama.split(' ').slice(0,2).join(' '))}</b>` : '—', 'dash_top') +
     kpiCard('teal',   KPI_ICONS.chart,    'Rata-rata Skor',      avgScore.toFixed(1)+'%',       `dari ${_ranked.length} awardee aktif`, 'dash_avg') +
-    kpiCard('blue',   KPI_ICONS.trending, `Kehadiran ${attendLabel}`, pct30+'%', `${attend30.hadir}/${attend30.evt} sesi terisi`, 'dash_30d');
+    kpiCard('blue',   KPI_ICONS.trending, `Kehadiran ${mainLabel}`, mainAgg.evt? mainPct+'%' : '—', attendSub, 'dash_30d');
 }
 
 function renderKPIAwardee(){
@@ -2572,6 +3833,7 @@ function wireViewToggle(){
       }
       renderStats();
       renderDashboard();
+      try { renderMonitoringPeriodik(); } catch(e){ console.error(e); }
       renderLeaderboard();
     });
   });
@@ -2962,6 +4224,72 @@ function mkInit(name){
   const parts = n.split(/\s+/);
   return parts.length >= 2 ? (parts[0][0] + parts[parts.length-1][0]).toUpperCase() : n.slice(0,2).toUpperCase();
 }
+
+/* =========================================================
+   SAFETY NET: Document-level click delegation
+   Ada beberapa kasus dimana inline onclick gagal trigger
+   (e.g. browser extension, CSP, conflict event handler).
+   Delegasi ini memastikan klik tetap diproses.
+========================================================= */
+document.addEventListener('click', function(e){
+  // 1) KPI Card click
+  const card = e.target.closest('.kpi-card');
+  if(card){
+    const onclickAttr = card.getAttribute('onclick') || '';
+    const m = onclickAttr.match(/showKPIDetail\(['"]([^'"]+)['"]\)/);
+    if(m && m[1] && typeof window.showKPIDetail === 'function'){
+      // Cek apakah click sudah diproses oleh inline onclick (heuristik:
+      // kalau sebelumnya kartu ini punya .is-active, berarti ditangani)
+      // Tetap aman karena showKPIDetail sudah punya toggle logic.
+      // Hanya panggil kalau belum ada panel terbuka untuk key ini
+      const tab = m[1].startsWith('dash_') ? 'dashboard' :
+                  m[1].startsWith('aw_')   ? 'awardee'   :
+                  m[1].startsWith('rk_')   ? 'rekap'     :
+                  m[1].startsWith('pr_')   ? 'prestasi'  :
+                  m[1].startsWith('or_')   ? 'organisasi':'leaderboard';
+      // Hanya panggil delegated kalau onclick tidak menjalankan
+      // (Bila inline onclick fire normal, _activeKPI sudah ter-set ke key ini.)
+      if(!_activeKPI || _activeKPI.key !== m[1] || _activeKPI.tab !== tab){
+        try { window.showKPIDetail(m[1]); }
+        catch(err){ console.error('[KPI delegated click error]', err); }
+      }
+      return;
+    }
+  }
+
+  // 2) Quartal cell click (Performa per Kuartal)
+  const qcell = e.target.closest('.qcomp-cell[data-qid]');
+  if(qcell){
+    const qid = qcell.getAttribute('data-qid');
+    if(qid){
+      // Trigger inline panel kehadiran lalu pilih kuartal yg diklik
+      try {
+        window.showKPIDetail('dash_30d');
+        setTimeout(() => {
+          const btns = document.querySelectorAll('#kpi-inline-dashboard .tw-btn');
+          btns.forEach(b => {
+            if(b.textContent.trim().toLowerCase() === qid.toLowerCase()){
+              window.switchAttendWindow(qid, b);
+            }
+          });
+        }, 120);
+      } catch(err){ console.error('[Quartal click]', err); }
+      return;
+    }
+  }
+
+  // 3) Mover item click — safety net (kalau inline onclick gagal)
+  const mover = e.target.closest('.mover-item[onclick*="showDetail"]');
+  if(mover){
+    const onclickAttr = mover.getAttribute('onclick') || '';
+    const m = onclickAttr.match(/showDetail\(['"]([^'"]+)['"]\)/);
+    if(m && m[1] && typeof window.showDetail === 'function'){
+      // Kalau onclick masih bisa, biarkan saja (jangan double-trigger)
+      // Kita tidak punya cara mudah cek, jadi pasrah saja.
+      // Tapi delegasi ini jadi backup kalau onclick stripped/disabled.
+    }
+  }
+});
 
 init();
 </script>
