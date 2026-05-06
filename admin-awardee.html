@@ -1836,11 +1836,12 @@ let quarterList = [];      // [{idx, label, start, end, shortRange}]
 let activePeriodIdx = 'all'; // 'all' atau index ke quarterList
 
 function quarterFromDate(d) {
-  // Hitung kuartal index (0-based) sejak QUARTER_ANCHOR. Jika sebelum anchor → -1
+  // Hitung kuartal index (0-based) sejak QUARTER_ANCHOR.
+  // Tanggal sebelum anchor (< Des 2025) dianggap Q1 (idx 0), karena program baru mulai.
   if (!d) return -1;
   const monthsDiff = (d.getFullYear() - QUARTER_ANCHOR.getFullYear()) * 12
                    + (d.getMonth() - QUARTER_ANCHOR.getMonth());
-  if (monthsDiff < 0) return -1;
+  if (monthsDiff < 0) return 0; // sebelum Des 2025 → masuk Q1
   return Math.floor(monthsDiff / 3);
 }
 

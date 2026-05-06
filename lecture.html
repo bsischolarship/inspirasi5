@@ -547,27 +547,27 @@
       </a>
     </div><div class="sidebar-lecture-group" id="lectureGroup" style="display:none;">
       <div class="sidebar-section-label" style="margin-top:16px;">Portal Lecture</div>
-      <a href="lecture.html#dashboard" class="sidebar-link lc-nav active" data-lc-nav="dashboard" onclick="return navigateLecture(event, 'dashboard')">
+      <a href="#dashboard" class="sidebar-link lc-nav active" data-lc-nav="dashboard" onclick="return navigateLecture(event, 'dashboard')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg>
         Dashboard
       </a>
-      <a href="lecture.html#awardee" class="sidebar-link lc-nav" data-lc-nav="awardee" onclick="return navigateLecture(event, 'awardee')">
+      <a href="#awardee" class="sidebar-link lc-nav" data-lc-nav="awardee" onclick="return navigateLecture(event, 'awardee')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
         Daftar Awardee
       </a>
-      <a href="lecture.html#rekap" class="sidebar-link lc-nav" data-lc-nav="rekap" onclick="return navigateLecture(event, 'rekap')">
+      <a href="#rekap" class="sidebar-link lc-nav" data-lc-nav="rekap" onclick="return navigateLecture(event, 'rekap')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Rekap Kehadiran
       </a>
-      <a href="lecture.html#prestasi" class="sidebar-link lc-nav" data-lc-nav="prestasi" onclick="return navigateLecture(event, 'prestasi')">
+      <a href="#prestasi" class="sidebar-link lc-nav" data-lc-nav="prestasi" onclick="return navigateLecture(event, 'prestasi')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>
         Prestasi
       </a>
-      <a href="lecture.html#organisasi" class="sidebar-link lc-nav" data-lc-nav="organisasi" onclick="return navigateLecture(event, 'organisasi')">
+      <a href="#organisasi" class="sidebar-link lc-nav" data-lc-nav="organisasi" onclick="return navigateLecture(event, 'organisasi')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         Organisasi
       </a>
-      <a href="lecture.html#leaderboard" class="sidebar-link lc-nav" data-lc-nav="leaderboard" onclick="return navigateLecture(event, 'leaderboard')">
+      <a href="#leaderboard" class="sidebar-link lc-nav" data-lc-nav="leaderboard" onclick="return navigateLecture(event, 'leaderboard')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
         Leaderboard
       </a>
@@ -924,9 +924,6 @@
 <!-- MODAL: Detail awardee -->
 <div class="lc-modal-bg" id="detailModalBg" onclick="if(event.target===this)closeDetail()">
   <div class="lc-modal">
-    <button class="modal-close-x" onclick="closeDetail()" aria-label="Tutup">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
     <div id="detailBody"></div>
   </div>
 </div>
@@ -945,13 +942,48 @@ function closeSidebar(){document.getElementById('sidebar').classList.remove('ope
 const sb = () => window._supabase || window._authClient;
 const PER_PAGE = 15;
 
-const WEIGHTS = {
-  mentoring: 17.5, pembinaan: 17.5,
-  pre: 4, post: 4, assessment: 7,
-  prestasi: 20, organisasi: 20, ipk: 10,
+// Load scoring config dari admin-settings (localStorage), fallback ke default
+const _SC_DEFAULTS = {
+  weights: { mentoring:17.5, pembinaan:17.5, pre:4, post:4, assessment:7, prestasi:20, organisasi:20, ipk:10 },
+  prestasiMax: 30, orgMax: 25,
+  prestasiTingkatan: { intl:3, nas:2, reg:1, univ:0.5, other:0 },
+  prestasiJuara:     { j1:3, j2:2, j3:1, harapan:0.5, other:0.3 },
+  orgTingkatan:      { intl:3, nas:2, univ:1, fak:0.5, prodi:0.3 },
+  orgKeterlibatan:   { ketua:3, wakil:2.5, kadiv:2, staff:0.5, vol:0.3 },
 };
-const PRESTASI_MAX = 30;
-const ORG_MAX      = 25;
+function _mergeScoringCfg(p) {
+  return {
+    weights:           { ..._SC_DEFAULTS.weights,           ...(p.weights||{}) },
+    prestasiMax:       p.prestasiMax       ?? _SC_DEFAULTS.prestasiMax,
+    orgMax:            p.orgMax            ?? _SC_DEFAULTS.orgMax,
+    prestasiTingkatan: { ..._SC_DEFAULTS.prestasiTingkatan, ...(p.prestasiTingkatan||{}) },
+    prestasiJuara:     { ..._SC_DEFAULTS.prestasiJuara,     ...(p.prestasiJuara||{}) },
+    orgTingkatan:      { ..._SC_DEFAULTS.orgTingkatan,      ...(p.orgTingkatan||{}) },
+    orgKeterlibatan:   { ..._SC_DEFAULTS.orgKeterlibatan,   ...(p.orgKeterlibatan||{}) },
+  };
+}
+let _SC = JSON.parse(JSON.stringify(_SC_DEFAULTS));
+let WEIGHTS      = _SC.weights;
+let PRESTASI_MAX = _SC.prestasiMax;
+let ORG_MAX      = _SC.orgMax;
+
+async function _loadScoringCfgAsync() {
+  try {
+    const { data, error } = await sb().from('bsi_config')
+      .select('value').eq('key', 'scoring_weights').maybeSingle();
+    if (!error && data?.value) {
+      _SC = _mergeScoringCfg(data.value);
+      localStorage.setItem('_bsi_scoring_weights', JSON.stringify(_SC));
+      WEIGHTS = _SC.weights; PRESTASI_MAX = _SC.prestasiMax; ORG_MAX = _SC.orgMax;
+      return;
+    }
+  } catch(e) { console.warn('Gagal load scoring config dari DB:', e); }
+  try {
+    const raw = localStorage.getItem('_bsi_scoring_weights');
+    if (raw) { _SC = _mergeScoringCfg(JSON.parse(raw)); }
+  } catch(e) {}
+  WEIGHTS = _SC.weights; PRESTASI_MAX = _SC.prestasiMax; ORG_MAX = _SC.orgMax;
+}
 
 const QUARTERS = [
   { id:'q1', label:'Q1', sub:"Des'25–Feb'26", start:'2025-12-01', end:'2026-02-28' },
@@ -975,38 +1007,38 @@ function isHadir(v){ return v==='✅' || v==='TP'; }
 function isEvent(v){ return v !== null && v !== undefined && String(v).trim() !== ''; }
 function ratio(ok, tot){ return tot>0 ? ok/tot : 0; }
 function lbTingkatanBonusPrestasi(t){
-  const s = (t||'').toLowerCase();
-  if(/internasion|international|world|asia|asean/.test(s)) return 3;
-  if(/nasional|national|indonesia/.test(s)) return 2;
-  if(/regional|wilayah|provinsi/.test(s)) return 1;
-  if(/universitas|kampus|institut|politek|fakultas|jurusan/.test(s)) return 0.5;
-  return 0;
+  const s = (t||'').toLowerCase(), b = _SC.prestasiTingkatan;
+  if(/internasion|international|world|asia|asean/.test(s)) return b.intl;
+  if(/nasional|national|indonesia/.test(s)) return b.nas;
+  if(/regional|wilayah|provinsi/.test(s)) return b.reg;
+  if(/universitas|kampus|institut|politek|fakultas|jurusan/.test(s)) return b.univ;
+  return b.other;
 }
 function lbJuaraBonus(j){
-  const s = (j||'').toLowerCase();
-  if(/harap/.test(s)) return 0.5;
-  if(/juara\s*1|juara\s*i\b|pertama|^1$|emas|gold/.test(s)) return 3;
-  if(/juara\s*2|juara\s*ii\b|kedua|^2$|perak|silver/.test(s)) return 2;
-  if(/juara\s*3|juara\s*iii\b|ketiga|^3$|perunggu|bronze/.test(s)) return 1;
-  return 0.3;
+  const s = (j||'').toLowerCase(), b = _SC.prestasiJuara;
+  if(/harap/.test(s)) return b.harapan;
+  if(/juara\s*1|juara\s*i\b|pertama|^1$|emas|gold/.test(s)) return b.j1;
+  if(/juara\s*2|juara\s*ii\b|kedua|^2$|perak|silver/.test(s)) return b.j2;
+  if(/juara\s*3|juara\s*iii\b|ketiga|^3$|perunggu|bronze/.test(s)) return b.j3;
+  return b.other;
 }
 function lbTingkatanBonusOrg(t){
-  const s = (t||'').toLowerCase();
-  if(/internasion|international|world|asia|asean/.test(s)) return 3;
-  if(/nasional|national|indonesia/.test(s)) return 2;
-  if(/universitas|kampus|institut|politek|regional|wilayah|provinsi/.test(s)) return 1;
-  if(/fakultas/.test(s)) return 0.5;
-  if(/jurusan|prodi|himpunan|hmp\b|hmj\b|hima/.test(s)) return 0.3;
+  const s = (t||'').toLowerCase(), b = _SC.orgTingkatan;
+  if(/internasion|international|world|asia|asean/.test(s)) return b.intl;
+  if(/nasional|national|indonesia/.test(s)) return b.nas;
+  if(/universitas|kampus|institut|politek|regional|wilayah|provinsi/.test(s)) return b.univ;
+  if(/fakultas/.test(s)) return b.fak;
+  if(/jurusan|prodi|himpunan|hmp\b|hmj\b|hima/.test(s)) return b.prodi;
   return 0;
 }
 function lbKeterlibatanBonus(k){
-  const s = (k||'').toLowerCase();
-  if(/^ketua$|\bketua umum\b|\bketum\b|gubernur|presiden/.test(s)) return 3;
-  if(/sekjen|sekretaris jendral|sekretaris umum|wakil ketua|^wakil\b/.test(s)) return 2.5;
-  if(/ketua divisi|ketua bidang|\bbph\b|\bdph\b|kepala bidang|kepala divisi|kepala departemen|bendahara/.test(s)) return 2;
-  if(/^staff$|^staf$|anggota|pengurus/.test(s)) return 0.5;
-  if(/volunteer|relawan/.test(s)) return 0.3;
-  return 0.3;
+  const s = (k||'').toLowerCase(), b = _SC.orgKeterlibatan;
+  if(/^ketua$|\bketua umum\b|\bketum\b|gubernur|presiden/.test(s)) return b.ketua;
+  if(/sekjen|sekretaris jendral|sekretaris umum|wakil ketua|^wakil\b/.test(s)) return b.wakil;
+  if(/ketua divisi|ketua bidang|\bbph\b|\bdph\b|kepala bidang|kepala divisi|kepala departemen|bendahara/.test(s)) return b.kadiv;
+  if(/^staff$|^staf$|anggota|pengurus/.test(s)) return b.staff;
+  if(/volunteer|relawan/.test(s)) return b.vol;
+  return b.vol;
 }
 
 /* Tingkatan classifier */
@@ -1075,6 +1107,9 @@ async function init(){
     return;
   }
 
+  // Load scoring config dari DB sebelum komputasi apapun
+  await _loadScoringCfgAsync();
+
   const isAdminView = (role === 'admin' || role === 'operator');
   const cachedAuth = JSON.parse(sessionStorage.getItem('_bsi_auth')||'{}');
   const email = window._authEmail || cachedAuth.email || '';
@@ -1142,16 +1177,16 @@ async function init(){
             : `Belum ada awardee yang tercatat di bawah pembimbingan <b>${escH(_lecturerName)}</b>. Jika ini keliru, silakan hubungi admin untuk memperbarui data.`;
         }
       }
-      // PENTING: tetap inisialisasi data kosong & render, supaya tabel tidak stuck di "Memuat..."
       _raw = { mhs: [], rekap: [], prestasi: [], org: [] };
       _ranked = [];
       _globalRaw = _raw;
       _globalRanked = [];
       _globalTotalCount = 0;
-      buildFilters();
-      wireViewToggle();
-      renderAll();
+      try { buildFilters(); }    catch(e){ console.error('[init] buildFilters', e); }
+      try { wireViewToggle(); }  catch(e){ console.error('[init] wireViewToggle', e); }
       _dataReady = true;
+      try { renderAll(); }       catch(e){ console.error('[init] renderAll', e); }
+      if (_pendingTab) { _renderPanel(_pendingTab); _pendingTab = null; }
       _activateFromHash();
       return;
     }
@@ -1203,14 +1238,20 @@ async function init(){
       _globalTotalCount = _ranked.length;
     }
 
-    buildFilters();
-    wireViewToggle();
-    renderAll();
+    try { buildFilters(); }    catch(e){ console.error('[init] buildFilters', e); }
+    try { wireViewToggle(); }  catch(e){ console.error('[init] wireViewToggle', e); }
     _dataReady = true;
+    try { renderAll(); }       catch(e){ console.error('[init] renderAll', e); }
+    if (_pendingTab) { _renderPanel(_pendingTab); _pendingTab = null; }
     _activateFromHash();
   } catch(e){
-    console.error(e);
-    toast('Gagal memuat data. Silakan coba lagi.', 'err');
+    console.error('[init] fatal error:', e);
+    toast('Gagal memuat data: ' + (e?.message || e), 'err');
+    // Pastikan _dataReady tetap true agar tab bisa diklik
+    _dataReady = true;
+    try { renderAll(); } catch(_){}
+    if (_pendingTab) { _renderPanel(_pendingTab); _pendingTab = null; }
+    _activateFromHash();
   }
 }
 
@@ -1295,34 +1336,67 @@ function populateHero(mhs, isAdminView, role){
 }
 
 function renderAll(){
-  // Wrap tiap render dalam try-catch agar satu error tidak menghentikan render panel lain
-  [
-    renderKPIs,
-    renderDashboard,
-    renderAwardee,
-    _rekapBuildFilters,
-    renderRekap,
-    renderPrestasi,
-    renderOrganisasi,
-    renderLeaderboard,
-  ].forEach(fn => { try { fn(); } catch(e) { console.error('[renderAll]', fn.name, e); } });
+  // Render setiap panel secara independen — error satu panel tidak menghentikan yang lain
+  try { renderKPIs(); }     catch(e){ console.error('[renderAll] renderKPIs', e); }
+  try { renderDashboard(); } catch(e){ console.error('[renderAll] renderDashboard', e); }
+  try { renderAwardee(); }   catch(e){ console.error('[renderAll] renderAwardee', e); }
+  try { _rekapBuildFilters(); } catch(e){ console.error('[renderAll] _rekapBuildFilters', e); }
+  try { if(typeof window.renderRekap==='function') window.renderRekap(); else console.warn('[renderAll] window.renderRekap not defined yet'); } catch(e){ console.error('[renderAll] renderRekap', e); }
+  try { renderPrestasi(); }  catch(e){ console.error('[renderAll] renderPrestasi', e); }
+  try { renderOrganisasi(); } catch(e){ console.error('[renderAll] renderOrganisasi', e); }
+  try { renderLeaderboard(); } catch(e){ console.error('[renderAll] renderLeaderboard', e); }
 }
 
 // Flag: apakah init() sudah selesai dan data tersedia
 let _dataReady = false;
+let _pendingTab = null; // tab yang diminta sebelum data siap
+
+function _panelShowError(tab, err){
+  // Tampilkan pesan error di dalam panel agar mudah di-debug
+  const selectors = {
+    awardee:    '#tbl-awardee',
+    rekap:      '#body-rekap',
+    prestasi:   '#tbl-prestasi',
+    organisasi: '#tbl-organisasi',
+    leaderboard:'#tbl-leaderboard',
+    dashboard:  '#topAwardee',
+  };
+  const sel = selectors[tab];
+  if (!sel) return;
+  const el = document.querySelector(sel);
+  if (el) el.innerHTML = `<div style="padding:24px;color:#dc2626;font-size:12px;"><b>Gagal memuat panel '${tab}':</b><br><code>${String(err&&err.message||err).slice(0,200)}</code></div>`;
+}
 
 function _renderPanel(tab) {
-  if (!_dataReady) return;
-  try {
-    switch (tab) {
-      case 'dashboard':   renderKPIDashboard(); renderDashboard(); break;
-      case 'awardee':     renderAwardee();       break;
-      case 'rekap':       _rekapBuildFilters(); renderRekap();    break;
-      case 'prestasi':    renderPrestasi();      break;
-      case 'organisasi':  renderOrganisasi();    break;
-      case 'leaderboard': renderLeaderboard();   break;
-    }
-  } catch(e) { console.error('[_renderPanel]', tab, e); }
+  if (!_dataReady) { _pendingTab = tab; return; }
+  const _safe = (label, fn) => { try { fn(); } catch(e) { console.error('[_renderPanel]', label, e); } };
+  switch (tab) {
+    case 'dashboard':
+      _safe('kpi-dashboard', renderKPIDashboard);
+      _safe('dashboard', renderDashboard);
+      break;
+    case 'awardee':
+      _safe('kpi-awardee', renderKPIAwardee);
+      _safe('awardee', renderAwardee);
+      break;
+    case 'rekap':
+      _safe('kpi-rekap', renderKPIRekap);
+      _safe('rekapBuildFilters', _rekapBuildFilters);
+      _safe('renderRekap', () => window.renderRekap());
+      break;
+    case 'prestasi':
+      _safe('kpi-prestasi', renderKPIPrestasi);
+      _safe('prestasi', renderPrestasi);
+      break;
+    case 'organisasi':
+      _safe('kpi-organisasi', renderKPIOrganisasi);
+      _safe('organisasi', renderOrganisasi);
+      break;
+    case 'leaderboard':
+      _safe('kpi-leaderboard', renderKPILeaderboard);
+      _safe('leaderboard', renderLeaderboard);
+      break;
+  }
 }
 
 /* =========================================================
@@ -2613,30 +2687,61 @@ window.showDetail = (nim) => {
 
   const fmt = (v) => v.toFixed(2);
   const pctStr = (v) => (v*100).toFixed(1) + '%';
+  const W = WEIGHTS;
 
-  let breakdownHTML = '';
-  if(a){
-    breakdownHTML = `
+  // Hitung breakdown — gunakan data dari _ranked jika ada, atau hitung ulang dari raw
+  let bd = a;
+  if (!bd) {
+    const ment={ok:0,total:0}, pem={ok:0,total:0}, pre={ok:0,total:0}, post={ok:0,total:0}, ass={ok:0,total:0};
+    const cols = [['mentoring',ment],['pembinaan',pem],['pre_test',pre],['post_test',post],['assessment',ass]];
+    _raw.rekap.filter(r => String(r.no_induk||'') === String(nim)).forEach(r => {
+      cols.forEach(([src, bucket]) => {
+        if(isEvent(r[src])){ bucket.total++; if(isHadir(r[src])) bucket.ok++; }
+      });
+    });
+    let prestasiPoints=0, prestasiCount=0, orgPoints=0, orgCount=0;
+    prestasi.forEach(p => { prestasiPoints += lbTingkatanBonusPrestasi(p.tingkatan) + lbJuaraBonus(p.juara); prestasiCount++; });
+    org.forEach(o => { orgPoints += lbTingkatanBonusOrg(o.tingkatan) + lbKeterlibatanBonus(o.keterlibatan); orgCount++; });
+    const ipkVal = parseFloat(mhs.ipk)||0;
+    const mentPct=ratio(ment.ok,ment.total), pemPct=ratio(pem.ok,pem.total);
+    const prePct=ratio(pre.ok,pre.total), postPct=ratio(post.ok,post.total), assPct=ratio(ass.ok,ass.total);
+    const prestPct=Math.min(1, prestasiPoints/PRESTASI_MAX);
+    const orgPct=Math.min(1, orgPoints/ORG_MAX);
+    const ipkPct=Math.min(1, ipkVal/4.0);
+    const sMent=mentPct*W.mentoring, sPem=pemPct*W.pembinaan;
+    const sPre=prePct*W.pre, sPost=postPct*W.post, sAss=assPct*W.assessment;
+    const sPrest=prestPct*W.prestasi, sOrg=orgPct*W.organisasi, sIpk=ipkPct*W.ipk;
+    bd = { ment,pem,pre,post,ass, mentPct,pemPct,prePct,postPct,assPct,prestPct,orgPct,ipkPct,
+           sMent,sPem,sPre,sPost,sAss,sPrest,sOrg,sIpk,
+           mindful:sMent+sPem, account:sPre+sPost+sAss, selfDev:sPrest+sOrg+sIpk,
+           prestasiCount, prestasiPoints, orgCount, orgPoints, ipk:ipkVal,
+           total:(sMent+sPem)+(sPre+sPost+sAss)+(sPrest+sOrg+sIpk), rank:null };
+  }
+
+  const mindfulW  = W.mentoring + W.pembinaan;
+  const accountW  = W.pre + W.post + W.assessment;
+  const selfDevW  = W.prestasi + W.organisasi + W.ipk;
+
+  const breakdownHTML = `
     <h4 style="font-size:13px;font-weight:800;color:#111827;margin:18px 0 8px;">Breakdown Skor</h4>
     <table class="breakdown-table">
       <thead><tr><th>Komponen</th><th class="center">Detail</th><th class="center">%</th><th class="center">Bobot</th><th class="val">Skor</th></tr></thead>
       <tbody>
-        <tr class="group-row"><td>Mindful</td><td></td><td></td><td class="center">35%</td><td class="val">${a.mindful.toFixed(2)}</td></tr>
-        <tr><td>&nbsp;&nbsp;Mentoring</td><td class="center">${a.ment.ok}/${a.ment.total}</td><td class="center">${pctStr(a.mentPct)}</td><td class="center">17.5%</td><td class="val">${fmt(a.sMent)}</td></tr>
-        <tr><td>&nbsp;&nbsp;Pembinaan</td><td class="center">${a.pem.ok}/${a.pem.total}</td><td class="center">${pctStr(a.pemPct)}</td><td class="center">17.5%</td><td class="val">${fmt(a.sPem)}</td></tr>
-        <tr class="group-row"><td>Accountable</td><td></td><td></td><td class="center">15%</td><td class="val">${a.account.toFixed(2)}</td></tr>
-        <tr><td>&nbsp;&nbsp;Pre Test</td><td class="center">${a.pre.ok}/${a.pre.total}</td><td class="center">${pctStr(a.prePct)}</td><td class="center">4%</td><td class="val">${fmt(a.sPre)}</td></tr>
-        <tr><td>&nbsp;&nbsp;Post Test</td><td class="center">${a.post.ok}/${a.post.total}</td><td class="center">${pctStr(a.postPct)}</td><td class="center">4%</td><td class="val">${fmt(a.sPost)}</td></tr>
-        <tr><td>&nbsp;&nbsp;Assessment</td><td class="center">${a.ass.ok}/${a.ass.total}</td><td class="center">${pctStr(a.assPct)}</td><td class="center">7%</td><td class="val">${fmt(a.sAss)}</td></tr>
-        <tr class="group-row"><td>Self-Development</td><td></td><td></td><td class="center">50%</td><td class="val">${a.selfDev.toFixed(2)}</td></tr>
-        <tr><td>&nbsp;&nbsp;Prestasi</td><td class="center">${a.prestasiCount} (${a.prestasiPoints.toFixed(1)} pts)</td><td class="center">${pctStr(a.prestPct)}</td><td class="center">20%</td><td class="val">${fmt(a.sPrest)}</td></tr>
-        <tr><td>&nbsp;&nbsp;Organisasi</td><td class="center">${a.orgCount} (${a.orgPoints.toFixed(1)} pts)</td><td class="center">${pctStr(a.orgPct)}</td><td class="center">20%</td><td class="val">${fmt(a.sOrg)}</td></tr>
-        <tr><td>&nbsp;&nbsp;IPK</td><td class="center">${a.ipk.toFixed(2)} / 4.00</td><td class="center">${pctStr(a.ipkPct)}</td><td class="center">10%</td><td class="val">${fmt(a.sIpk)}</td></tr>
-        <tr class="total-row"><td colspan="4">Total Skor</td><td class="val">${a.total.toFixed(2)}%</td></tr>
+        <tr class="group-row"><td>Mindful</td><td></td><td></td><td class="center">${mindfulW}%</td><td class="val">${bd.mindful.toFixed(2)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Mentoring</td><td class="center">${bd.ment.ok}/${bd.ment.total}</td><td class="center">${pctStr(bd.mentPct)}</td><td class="center">${W.mentoring}%</td><td class="val">${fmt(bd.sMent)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Pembinaan</td><td class="center">${bd.pem.ok}/${bd.pem.total}</td><td class="center">${pctStr(bd.pemPct)}</td><td class="center">${W.pembinaan}%</td><td class="val">${fmt(bd.sPem)}</td></tr>
+        <tr class="group-row"><td>Accountable</td><td></td><td></td><td class="center">${accountW}%</td><td class="val">${bd.account.toFixed(2)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Pre Test</td><td class="center">${bd.pre.ok}/${bd.pre.total}</td><td class="center">${pctStr(bd.prePct)}</td><td class="center">${W.pre}%</td><td class="val">${fmt(bd.sPre)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Post Test</td><td class="center">${bd.post.ok}/${bd.post.total}</td><td class="center">${pctStr(bd.postPct)}</td><td class="center">${W.post}%</td><td class="val">${fmt(bd.sPost)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Assessment</td><td class="center">${bd.ass.ok}/${bd.ass.total}</td><td class="center">${pctStr(bd.assPct)}</td><td class="center">${W.assessment}%</td><td class="val">${fmt(bd.sAss)}</td></tr>
+        <tr class="group-row"><td>Self-Development</td><td></td><td></td><td class="center">${selfDevW}%</td><td class="val">${bd.selfDev.toFixed(2)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Prestasi</td><td class="center">${bd.prestasiCount} (${bd.prestasiPoints.toFixed(1)} raw pts)</td><td class="center">${pctStr(bd.prestPct)}</td><td class="center">${W.prestasi}%</td><td class="val">${fmt(bd.sPrest)}</td></tr>
+        <tr><td>&nbsp;&nbsp;Organisasi</td><td class="center">${bd.orgCount} (${bd.orgPoints.toFixed(1)} raw pts)</td><td class="center">${pctStr(bd.orgPct)}</td><td class="center">${W.organisasi}%</td><td class="val">${fmt(bd.sOrg)}</td></tr>
+        <tr><td>&nbsp;&nbsp;IPK</td><td class="center">${bd.ipk.toFixed(2)} / 4.00</td><td class="center">${pctStr(bd.ipkPct)}</td><td class="center">${W.ipk}%</td><td class="val">${fmt(bd.sIpk)}</td></tr>
+        <tr class="total-row"><td colspan="4">Total Skor</td><td class="val">${bd.total.toFixed(2)}%</td></tr>
       </tbody>
     </table>
-    ${_currentView !== 'all' ? `<div style="margin-top:10px;padding:9px 11px;background:linear-gradient(90deg,#fef3c7,#fff);border:1px solid #fcd34d;border-radius:10px;font-size:11.5px;color:#78350f;"><b>📅 Periode aktif: ${getQuartal(_currentView).label} — ${getQuartal(_currentView).sub}.</b> Kehadiran difilter; prestasi/organisasi/IPK all-time.</div>` : ''}`;
-  }
+    ${_currentView !== 'all' ? `<div style="margin-top:10px;padding:9px 11px;background:linear-gradient(90deg,#fef3c7,#fff);border:1px solid #fcd34d;border-radius:10px;font-size:11.5px;color:#78350f;"><b>Periode aktif: ${getQuartal(_currentView).label} — ${getQuartal(_currentView).sub}.</b> Kehadiran difilter; prestasi/organisasi/IPK all-time.</div>` : ''}`;
 
   const prestasiHTML = prestasi.length ? `
     <h4 style="font-size:13px;font-weight:800;color:#111827;margin:18px 0 8px;">Prestasi (${prestasi.length})</h4>
@@ -2658,13 +2763,17 @@ window.showDetail = (nim) => {
     }).join('')}</tbody></table></div>` : '';
 
   document.getElementById('detailBody').innerHTML = `
+    <button onclick="closeDetail()" style="display:inline-flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;color:#6b7280;font-size:12.5px;font-weight:600;padding:0 0 14px 0;font-family:inherit;" aria-label="Kembali">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Kembali
+    </button>
     <div class="lc-modal-head">
       <div class="lc-modal-avatar">${mkInit(mhs.nama)}</div>
       <div style="flex:1;min-width:0;">
         <div class="lc-modal-name">${escH(mhs.nama)}</div>
         <div class="lc-modal-sub">${escH(mhs.no_induk||'—')} · ${escH(mhs.kampus||'—')}</div>
       </div>
-      ${a ? `<div style="text-align:right;"><div style="font-size:11px;color:#9ca3af;">Rank #${a.rank}</div><div style="font-size:22px;font-weight:800;color:#78350f;">${a.total.toFixed(2)}%</div></div>` : ''}
+      ${a ? `<div style="text-align:right;"><div style="font-size:11px;color:#9ca3af;">Rank #${a.rank}</div><div style="font-size:22px;font-weight:800;color:#78350f;">${bd.total.toFixed(2)}%</div></div>` : `<div style="text-align:right;"><div style="font-size:11px;color:#9ca3af;">Belum diranking</div><div style="font-size:22px;font-weight:800;color:#78350f;">${bd.total.toFixed(2)}%</div></div>`}
     </div>
     <div class="info-grid">
       <div class="info-row"><span class="ir-label">Fakultas</span><span class="ir-value">${escH(mhs.fakultas||'—')}</span></div>
@@ -2716,30 +2825,44 @@ function _activatePanel(tab){
 }
 
 window.navigateLecture = function(ev, tab){
-  if(ev){ ev.preventDefault(); }
+  if(ev){ ev.preventDefault(); ev.stopPropagation(); }
   if(location.hash !== '#'+tab) history.pushState(null, '', '#'+tab);
   _activatePanel(tab);
-  // Re-render panel aktif jika data sudah siap (handle klik sebelum init selesai)
   _renderPanel(tab);
   return false;
 };
 
-// Legacy shim — any old code calling switchTab('tab', btn) keeps working
+// Tab bar buttons — also render the panel so content is always fresh
 window.switchTab = (tab, btn) => {
-  _activatePanel(tab);
   if(location.hash !== '#'+tab) history.pushState(null, '', '#'+tab);
+  _activatePanel(tab);
+  _renderPanel(tab);
 };
 
-// Handle browser back/forward buttons
+// Handle browser back/forward buttons (pushState → popstate)
 window.addEventListener('popstate', () => {
   const tab = (location.hash || '#dashboard').slice(1);
-  _activatePanel(tab);
+  const t = LECTURE_TABS.includes(tab) ? tab : 'dashboard';
+  _activatePanel(t);
+  _renderPanel(t);
 });
 
-// On load: activate tab from hash
+// Safety net: if a hash-only link click slips through (href="#tab"),
+// hashchange fires — route it the same way
+window.addEventListener('hashchange', () => {
+  const tab = (location.hash || '#dashboard').slice(1);
+  const t = LECTURE_TABS.includes(tab) ? tab : 'dashboard';
+  _activatePanel(t);
+  _renderPanel(t);
+});
+
+// On load: activate tab from hash, lalu pastikan panel di-render
 function _activateFromHash(){
   const tab = (location.hash || '#dashboard').slice(1);
-  _activatePanel(LECTURE_TABS.includes(tab) ? tab : 'dashboard');
+  const t = LECTURE_TABS.includes(tab) ? tab : 'dashboard';
+  _activatePanel(t);
+  // Render panel yang aktif (data sudah siap karena dipanggil setelah renderAll)
+  _renderPanel(t);
 }
 
 /* =========================================================

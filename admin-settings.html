@@ -105,6 +105,55 @@
     .st-danger .st-row { background:#fff9f9; }
     .st-danger .st-row:hover { background:#fff5f5; }
 
+    /* SCORING EDITOR */
+    .sc-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:18px; }
+    @media(max-width:900px){ .sc-grid { grid-template-columns:1fr 1fr; } }
+    @media(max-width:600px){ .sc-grid { grid-template-columns:1fr; } }
+    .sc-aspect-card {
+      background:#f9fafb; border:1.5px solid #e5e7eb; border-radius:13px;
+      padding:14px 16px;
+    }
+    .sc-aspect-title {
+      font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.06em;
+      margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid #e5e7eb;
+      display:flex; align-items:center; gap:6px;
+    }
+    .sc-row { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+    .sc-row:last-child { margin-bottom:0; }
+    .sc-lbl { font-size:12.5px; font-weight:600; color:#374151; flex:1; }
+    .sc-lbl-sub { font-size:10.5px; color:#9ca3af; font-weight:400; }
+    .sc-num { width:70px; padding:5px 8px; font-size:13px; font-weight:700; text-align:right;
+      border:1.5px solid #e5e7eb; border-radius:8px; background:#fff; color:#111827; outline:none; }
+    .sc-num:focus { border-color:#0055a5; }
+    .sc-unit { font-size:11px; color:#9ca3af; width:20px; }
+    .sc-total-bar {
+      background:#f3f4f6; border:1.5px solid #e5e7eb; border-radius:10px;
+      padding:10px 16px; display:flex; align-items:center; gap:12px; margin-bottom:18px;
+    }
+    .sc-total-num { font-size:22px; font-weight:800; font-variant-numeric:tabular-nums; }
+    .sc-total-ok  { color:#16a34a; }
+    .sc-total-err { color:#dc2626; }
+    .sc-bonus-table { width:100%; border-collapse:collapse; font-size:12px; margin-top:4px; }
+    .sc-bonus-table th { text-align:left; font-size:10.5px; font-weight:700; color:#6b7280; text-transform:uppercase;
+      padding:5px 8px; border-bottom:1px solid #e5e7eb; background:#f9fafb; }
+    .sc-bonus-table td { padding:6px 8px; border-bottom:1px solid #f1f5f9; vertical-align:middle; }
+    .sc-bonus-table tr:last-child td { border-bottom:none; }
+    .sc-bonus-table .sc-num-sm { width:60px; padding:4px 6px; font-size:12px; font-weight:700;
+      text-align:right; border:1.5px solid #e5e7eb; border-radius:7px; background:#fff; outline:none; }
+    .sc-bonus-table .sc-num-sm:focus { border-color:#0055a5; }
+    .sc-rec-box {
+      background:linear-gradient(135deg,#f0fdf4,#ecfdf5); border:1.5px solid #a7f3d0;
+      border-radius:12px; padding:14px 18px; margin-bottom:18px;
+    }
+    .sc-rec-title { font-size:12.5px; font-weight:800; color:#065f46; margin-bottom:8px;
+      display:flex; align-items:center; gap:6px; }
+    .sc-rec-body { font-size:12px; color:#064e3b; line-height:1.65; }
+    .sc-rec-body b { color:#047857; }
+    .sc-rec-stat { display:inline-flex; align-items:center; gap:6px; background:#fff; border:1px solid #a7f3d0;
+      border-radius:8px; padding:4px 10px; font-size:11px; font-weight:700; color:#065f46; margin:3px 2px; }
+    .sc-actions { display:flex; gap:10px; flex-wrap:wrap; }
+    .sc-save-badge { font-size:11px; color:#9ca3af; margin-top:6px; }
+
     /* TOAST */
     #stToast {
       position:fixed; bottom:24px; right:24px; z-index:9999;
@@ -556,6 +605,217 @@
         </div>
       </div>
 
+      <!-- PEMBOBOTAN SKOR -->
+      <div class="st-section" id="sectionScoring" style="display:none;">
+        <div class="st-section-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:6px;"><path d="M12 3v18M3 9h18M3 15h18"/><circle cx="12" cy="3" r="2"/><path d="M5 9a7 7 0 0 0 14 0"/></svg>
+          Pembobotan &amp; Skoring Leaderboard
+        </div>
+
+        <!-- Total validator -->
+        <div class="sc-total-bar">
+          <div style="flex:1;">
+            <div style="font-size:12px;color:#6b7280;font-weight:600;margin-bottom:2px;">Total Bobot Keseluruhan (harus = 100)</div>
+            <div style="display:flex;align-items:baseline;gap:8px;">
+              <span class="sc-total-num" id="scTotalNum">100</span>
+              <span class="sc-total-ok" id="scTotalLabel" style="font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:3px;"><svg id="scTotalIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg><span id="scTotalText">Valid</span></span>
+            </div>
+          </div>
+          <div style="flex:1;">
+            <div style="height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden;">
+              <div id="scTotalBar" style="height:100%;width:100%;background:#16a34a;border-radius:99px;transition:width .3s,background .3s;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bobot aspek -->
+        <div class="sc-grid">
+          <!-- Mindful -->
+          <div class="sc-aspect-card">
+            <div class="sc-aspect-title" style="color:#7c3aed;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              Mindful
+              <span style="font-weight:400;font-size:9.5px;color:#9ca3af;">kehadiran</span>
+            </div>
+            <div class="sc-row">
+              <div class="sc-lbl">Mentoring<span class="sc-lbl-sub"> (sesi rutin)</span></div>
+              <input class="sc-num" type="number" id="w_mentoring" min="0" max="50" step="0.5" value="17.5" onchange="scUpdateTotal()">
+              <span class="sc-unit">pt</span>
+            </div>
+            <div class="sc-row">
+              <div class="sc-lbl">Pembinaan<span class="sc-lbl-sub"> (pembinaan karakter)</span></div>
+              <input class="sc-num" type="number" id="w_pembinaan" min="0" max="50" step="0.5" value="17.5" onchange="scUpdateTotal()">
+              <span class="sc-unit">pt</span>
+            </div>
+          </div>
+          <!-- Accountable -->
+          <div class="sc-aspect-card">
+            <div class="sc-aspect-title" style="color:#1d4ed8;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              Accountable
+              <span style="font-weight:400;font-size:9.5px;color:#9ca3af;">ujian &amp; tugas</span>
+            </div>
+            <div class="sc-row">
+              <div class="sc-lbl">Pre Test</div>
+              <input class="sc-num" type="number" id="w_pre" min="0" max="30" step="0.5" value="4" onchange="scUpdateTotal()">
+              <span class="sc-unit">pt</span>
+            </div>
+            <div class="sc-row">
+              <div class="sc-lbl">Post Test</div>
+              <input class="sc-num" type="number" id="w_post" min="0" max="30" step="0.5" value="4" onchange="scUpdateTotal()">
+              <span class="sc-unit">pt</span>
+            </div>
+            <div class="sc-row">
+              <div class="sc-lbl">Quartal Assignment</div>
+              <input class="sc-num" type="number" id="w_assessment" min="0" max="30" step="0.5" value="7" onchange="scUpdateTotal()">
+              <span class="sc-unit">pt</span>
+            </div>
+          </div>
+          <!-- Self-Dev -->
+          <div class="sc-aspect-card">
+            <div class="sc-aspect-title" style="color:#0d9488;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>
+              Self-Development
+              <span style="font-weight:400;font-size:9.5px;color:#9ca3af;">prestasi, org, ipk</span>
+            </div>
+            <div class="sc-row">
+              <div class="sc-lbl">Prestasi</div>
+              <input class="sc-num" type="number" id="w_prestasi" min="0" max="60" step="0.5" value="20" onchange="scUpdateTotal()">
+              <span class="sc-unit">pt</span>
+            </div>
+            <div class="sc-row">
+              <div class="sc-lbl">Organisasi</div>
+              <input class="sc-num" type="number" id="w_organisasi" min="0" max="60" step="0.5" value="20" onchange="scUpdateTotal()">
+              <span class="sc-unit">pt</span>
+            </div>
+            <div class="sc-row">
+              <div class="sc-lbl">IPK</div>
+              <input class="sc-num" type="number" id="w_ipk" min="0" max="30" step="0.5" value="10" onchange="scUpdateTotal()">
+              <span class="sc-unit">pt</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Point Cap + Rekomendasi -->
+        <div class="sc-rec-box">
+          <div class="sc-rec-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Mengapa Point Cap lebih baik?
+          </div>
+          <div class="sc-rec-body">
+            Tanpa cap, awardee yang meraih <b>10 prestasi internasional juara 1</b> bisa mendapat <b>60 raw points</b> hanya dari prestasi —
+            jauh melampaui batas komponen (max 20 pts). Ini membuat aspek lain (kehadiran, IPK) menjadi tidak berarti.<br><br>
+            Dengan <b>Point Cap</b>, skor prestasi dikumulasikan lalu di-cap sebelum dikalikan bobot. Ini memastikan:<br>
+            <span class="sc-rec-stat"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg> Distribusi skor merata</span>
+            <span class="sc-rec-stat"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 3v18M3 9h18M3 15h18"/></svg> Semua aspek proporsional</span>
+            <span class="sc-rec-stat"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Outlier tidak mendominasi</span><br><br>
+            <b>Rumus:</b> skor_prestasi = min(raw_points / Cap, 1) × Bobot_prestasi<br>
+            Misal raw = 45 pts, Cap = 30 → ratio = 1.0 (full 20 pts). Raw = 15 → ratio = 0.5 → 10 pts.
+          </div>
+          <div style="display:flex;gap:14px;margin-top:12px;flex-wrap:wrap;">
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#065f46;display:block;margin-bottom:4px;">Cap Prestasi (raw pts)</label>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <input class="sc-num" type="number" id="sc_prestasiMax" min="5" max="100" step="1" value="30" onchange="scUpdateTotal()" style="width:80px;">
+                <span style="font-size:11.5px;color:#6b7280;">pts = full ratio 1.0</span>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:#065f46;display:block;margin-bottom:4px;">Cap Organisasi (raw pts)</label>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <input class="sc-num" type="number" id="sc_orgMax" min="5" max="100" step="1" value="25" onchange="scUpdateTotal()" style="width:80px;">
+                <span style="font-size:11.5px;color:#6b7280;">pts = full ratio 1.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabel Bonus -->
+        <div class="sc-grid" style="grid-template-columns:1fr 1fr;">
+          <!-- Prestasi Tingkatan -->
+          <div class="sc-aspect-card">
+            <div class="sc-aspect-title" style="color:#b45309;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="8" r="6"/><polyline points="15.477 12.89 17 22 12 19 7 22 8.523 12.89"/></svg>
+              Bonus Tingkatan Prestasi
+            </div>
+            <table class="sc-bonus-table">
+              <thead><tr><th>Tingkatan</th><th>Bonus (raw pts)</th></tr></thead>
+              <tbody>
+                <tr><td>Internasional / World / Asia</td><td><input class="sc-num-sm" type="number" id="bp_intl" min="0" max="10" step="0.5" value="3"></td></tr>
+                <tr><td>Nasional / Indonesia</td><td><input class="sc-num-sm" type="number" id="bp_nas" min="0" max="10" step="0.5" value="2"></td></tr>
+                <tr><td>Regional / Provinsi</td><td><input class="sc-num-sm" type="number" id="bp_reg" min="0" max="10" step="0.5" value="1"></td></tr>
+                <tr><td>Universitas / Fakultas</td><td><input class="sc-num-sm" type="number" id="bp_univ" min="0" max="10" step="0.5" value="0.5"></td></tr>
+                <tr><td>Lainnya</td><td><input class="sc-num-sm" type="number" id="bp_other" min="0" max="10" step="0.5" value="0"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Juara Bonus -->
+          <div class="sc-aspect-card">
+            <div class="sc-aspect-title" style="color:#b45309;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+              Bonus Juara Prestasi
+            </div>
+            <table class="sc-bonus-table">
+              <thead><tr><th>Juara</th><th>Bonus (raw pts)</th></tr></thead>
+              <tbody>
+                <tr><td>Juara 1 / Emas / Gold</td><td><input class="sc-num-sm" type="number" id="bj_j1" min="0" max="10" step="0.5" value="3"></td></tr>
+                <tr><td>Juara 2 / Perak / Silver</td><td><input class="sc-num-sm" type="number" id="bj_j2" min="0" max="10" step="0.5" value="2"></td></tr>
+                <tr><td>Juara 3 / Perunggu / Bronze</td><td><input class="sc-num-sm" type="number" id="bj_j3" min="0" max="10" step="0.5" value="1"></td></tr>
+                <tr><td>Juara Harapan</td><td><input class="sc-num-sm" type="number" id="bj_harapan" min="0" max="10" step="0.5" value="0.5"></td></tr>
+                <tr><td>Peserta / Finalis (lainnya)</td><td><input class="sc-num-sm" type="number" id="bj_other" min="0" max="10" step="0.5" value="0.3"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Org Tingkatan -->
+          <div class="sc-aspect-card">
+            <div class="sc-aspect-title" style="color:#0d9488;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Bonus Tingkatan Organisasi
+            </div>
+            <table class="sc-bonus-table">
+              <thead><tr><th>Tingkatan Org</th><th>Bonus (raw pts)</th></tr></thead>
+              <tbody>
+                <tr><td>Internasional / World</td><td><input class="sc-num-sm" type="number" id="bo_intl" min="0" max="10" step="0.5" value="3"></td></tr>
+                <tr><td>Nasional / Indonesia</td><td><input class="sc-num-sm" type="number" id="bo_nas" min="0" max="10" step="0.5" value="2"></td></tr>
+                <tr><td>Universitas / Regional</td><td><input class="sc-num-sm" type="number" id="bo_univ" min="0" max="10" step="0.5" value="1"></td></tr>
+                <tr><td>Fakultas</td><td><input class="sc-num-sm" type="number" id="bo_fak" min="0" max="10" step="0.5" value="0.5"></td></tr>
+                <tr><td>Jurusan / Prodi / HMP</td><td><input class="sc-num-sm" type="number" id="bo_prodi" min="0" max="10" step="0.5" value="0.3"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Keterlibatan Bonus -->
+          <div class="sc-aspect-card">
+            <div class="sc-aspect-title" style="color:#0d9488;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Bonus Keterlibatan Organisasi
+            </div>
+            <table class="sc-bonus-table">
+              <thead><tr><th>Posisi</th><th>Bonus (raw pts)</th></tr></thead>
+              <tbody>
+                <tr><td>Ketua / Gubernur / Presiden</td><td><input class="sc-num-sm" type="number" id="bk_ketua" min="0" max="10" step="0.5" value="3"></td></tr>
+                <tr><td>Sekjen / Wakil Ketua</td><td><input class="sc-num-sm" type="number" id="bk_wakil" min="0" max="10" step="0.5" value="2.5"></td></tr>
+                <tr><td>Kadiv / BPH / Kepala / Bendahara</td><td><input class="sc-num-sm" type="number" id="bk_kadiv" min="0" max="10" step="0.5" value="2"></td></tr>
+                <tr><td>Staff / Anggota / Pengurus</td><td><input class="sc-num-sm" type="number" id="bk_staff" min="0" max="10" step="0.5" value="0.5"></td></tr>
+                <tr><td>Volunteer / Relawan</td><td><input class="sc-num-sm" type="number" id="bk_vol" min="0" max="10" step="0.5" value="0.3"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="sc-actions">
+          <button class="st-btn st-btn-primary" onclick="scSave()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Simpan Pembobotan
+          </button>
+          <button class="st-btn st-btn-gray" onclick="scReset()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+            Reset ke Default
+          </button>
+        </div>
+        <div class="sc-save-badge" id="scSavedAt"></div>
+      </div>
+
       <!-- INFO SISTEM -->
       <div class="st-section">
         <div class="st-section-title">Informasi Sistem</div>
@@ -681,6 +941,14 @@ async function loadProfile() {
       if (ld) ld.classList.add('hide');
       const sc = document.getElementById('settingsContent');
       if (sc) sc.style.display = 'block';
+
+      // Show scoring section only for admin
+      if (role === 'admin' || role === 'operator') {
+        const ss = document.getElementById('sectionScoring');
+        if (ss) ss.style.display = 'block';
+      }
+      // Load scoring config into form
+      scLoadIntoForm();
     }, 600);
   });
 }
@@ -742,6 +1010,187 @@ function toast(msg, type='ok') {
   const el = document.getElementById('stToast');
   el.textContent = msg; el.className = 'show ' + type;
   clearTimeout(_tt); _tt = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+/* ════════════════════════════════════════════════════
+   PEMBOBOTAN SKOR
+════════════════════════════════════════════════════ */
+const SC_KEY = '_bsi_scoring_weights';
+
+const SC_DEFAULTS = {
+  weights: { mentoring:17.5, pembinaan:17.5, pre:4, post:4, assessment:7, prestasi:20, organisasi:20, ipk:10 },
+  prestasiMax: 30,
+  orgMax: 25,
+  prestasiTingkatan: { intl:3, nas:2, reg:1, univ:0.5, other:0 },
+  prestasiJuara:     { j1:3, j2:2, j3:1, harapan:0.5, other:0.3 },
+  orgTingkatan:      { intl:3, nas:2, univ:1, fak:0.5, prodi:0.3 },
+  orgKeterlibatan:   { ketua:3, wakil:2.5, kadiv:2, staff:0.5, vol:0.3 },
+};
+
+function _scMerge(p) {
+  return {
+    weights:           { ...SC_DEFAULTS.weights,           ...(p.weights||{}) },
+    prestasiMax:       p.prestasiMax       ?? SC_DEFAULTS.prestasiMax,
+    orgMax:            p.orgMax            ?? SC_DEFAULTS.orgMax,
+    prestasiTingkatan: { ...SC_DEFAULTS.prestasiTingkatan, ...(p.prestasiTingkatan||{}) },
+    prestasiJuara:     { ...SC_DEFAULTS.prestasiJuara,     ...(p.prestasiJuara||{}) },
+    orgTingkatan:      { ...SC_DEFAULTS.orgTingkatan,      ...(p.orgTingkatan||{}) },
+    orgKeterlibatan:   { ...SC_DEFAULTS.orgKeterlibatan,   ...(p.orgKeterlibatan||{}) },
+  };
+}
+
+function scGet() {
+  try {
+    const raw = localStorage.getItem(SC_KEY);
+    if (raw) return _scMerge(JSON.parse(raw));
+  } catch(e) {}
+  return JSON.parse(JSON.stringify(SC_DEFAULTS));
+}
+
+async function scLoadIntoForm() {
+  // Load dari Supabase, fallback ke localStorage, fallback ke defaults
+  let cfg;
+  try {
+    const { data, error } = await sb().from('bsi_config')
+      .select('value,updated_at,updated_by').eq('key', 'scoring_weights').maybeSingle();
+    if (!error && data?.value) {
+      cfg = _scMerge(data.value);
+      localStorage.setItem(SC_KEY, JSON.stringify(cfg));
+      const ts = data.updated_at ? new Date(data.updated_at).toLocaleString('id-ID', {dateStyle:'medium',timeStyle:'short'}) : '-';
+      const by = data.updated_by ? ' oleh ' + data.updated_by : '';
+      const badge = document.getElementById('scSavedAt');
+      if (badge) badge.textContent = 'Terakhir disimpan: ' + ts + by;
+    }
+  } catch(e) { console.warn('Gagal load scoring config dari DB:', e); }
+  if (!cfg) cfg = scGet();
+
+  const w = cfg.weights;
+  const v = (id, val) => { const el = document.getElementById(id); if(el) el.value = val; };
+  // Weights
+  v('w_mentoring',  w.mentoring);  v('w_pembinaan',  w.pembinaan);
+  v('w_pre',        w.pre);        v('w_post',       w.post);       v('w_assessment', w.assessment);
+  v('w_prestasi',   w.prestasi);   v('w_organisasi', w.organisasi); v('w_ipk',        w.ipk);
+  // Caps
+  v('sc_prestasiMax', cfg.prestasiMax); v('sc_orgMax', cfg.orgMax);
+  // Prestasi tingkatan
+  v('bp_intl', cfg.prestasiTingkatan.intl); v('bp_nas', cfg.prestasiTingkatan.nas);
+  v('bp_reg',  cfg.prestasiTingkatan.reg);  v('bp_univ', cfg.prestasiTingkatan.univ); v('bp_other', cfg.prestasiTingkatan.other);
+  // Juara
+  v('bj_j1', cfg.prestasiJuara.j1); v('bj_j2', cfg.prestasiJuara.j2); v('bj_j3', cfg.prestasiJuara.j3);
+  v('bj_harapan', cfg.prestasiJuara.harapan); v('bj_other', cfg.prestasiJuara.other);
+  // Org tingkatan
+  v('bo_intl', cfg.orgTingkatan.intl); v('bo_nas', cfg.orgTingkatan.nas); v('bo_univ', cfg.orgTingkatan.univ);
+  v('bo_fak', cfg.orgTingkatan.fak);  v('bo_prodi', cfg.orgTingkatan.prodi);
+  // Keterlibatan
+  v('bk_ketua', cfg.orgKeterlibatan.ketua); v('bk_wakil', cfg.orgKeterlibatan.wakil);
+  v('bk_kadiv', cfg.orgKeterlibatan.kadiv); v('bk_staff', cfg.orgKeterlibatan.staff); v('bk_vol', cfg.orgKeterlibatan.vol);
+
+  if (!cfg._fromDB) {
+    const savedAt = localStorage.getItem(SC_KEY + '_savedAt');
+    const badge = document.getElementById('scSavedAt');
+    if (badge && savedAt) badge.textContent = 'Terakhir disimpan: ' + savedAt;
+    else if (badge) badge.textContent = 'Menggunakan nilai default.';
+  }
+  scUpdateTotal();
+}
+
+function scNumVal(id) { return parseFloat(document.getElementById(id)?.value) || 0; }
+
+function scUpdateTotal() {
+  const total = scNumVal('w_mentoring') + scNumVal('w_pembinaan') +
+                scNumVal('w_pre') + scNumVal('w_post') + scNumVal('w_assessment') +
+                scNumVal('w_prestasi') + scNumVal('w_organisasi') + scNumVal('w_ipk');
+  const rounded = Math.round(total * 10) / 10;
+  const numEl  = document.getElementById('scTotalNum');
+  const lblEl  = document.getElementById('scTotalLabel');
+  const barEl  = document.getElementById('scTotalBar');
+  if (!numEl) return;
+  numEl.textContent = rounded;
+  const ok = Math.abs(rounded - 100) < 0.05;
+  numEl.className = 'sc-total-num ' + (ok ? 'sc-total-ok' : 'sc-total-err');
+  const iconEl = document.getElementById('scTotalIcon');
+  const textEl = document.getElementById('scTotalText');
+  if (ok) {
+    if(iconEl) iconEl.setAttribute('d', '');
+    if(iconEl) { iconEl.innerHTML = '<polyline points="20 6 9 17 4 12"/>'; iconEl.style.stroke = '#16a34a'; }
+    if(textEl) textEl.textContent = 'Valid';
+  } else if (rounded < 100) {
+    if(iconEl) { iconEl.innerHTML = '<polyline points="12 19 12 5"/><polyline points="5 12 12 5 19 12"/>'; iconEl.style.stroke = '#d97706'; }
+    if(textEl) textEl.textContent = 'Kurang ' + (100-rounded).toFixed(1);
+  } else {
+    if(iconEl) { iconEl.innerHTML = '<polyline points="12 5 12 19"/><polyline points="19 12 12 19 5 12"/>'; iconEl.style.stroke = '#dc2626'; }
+    if(textEl) textEl.textContent = 'Lebih ' + (rounded-100).toFixed(1);
+  }
+  lblEl.className = ok ? 'sc-total-ok' : 'sc-total-err';
+  lblEl.style.fontSize = '12px'; lblEl.style.fontWeight = '700';
+  barEl.style.width = Math.min(100, rounded) + '%';
+  barEl.style.background = ok ? '#16a34a' : (rounded > 100 ? '#dc2626' : '#d97706');
+}
+
+function scCollect() {
+  return {
+    weights: {
+      mentoring:  scNumVal('w_mentoring'), pembinaan:   scNumVal('w_pembinaan'),
+      pre:        scNumVal('w_pre'),       post:        scNumVal('w_post'),
+      assessment: scNumVal('w_assessment'),prestasi:    scNumVal('w_prestasi'),
+      organisasi: scNumVal('w_organisasi'),ipk:         scNumVal('w_ipk'),
+    },
+    prestasiMax: scNumVal('sc_prestasiMax'),
+    orgMax:      scNumVal('sc_orgMax'),
+    prestasiTingkatan: {
+      intl: scNumVal('bp_intl'), nas: scNumVal('bp_nas'), reg: scNumVal('bp_reg'),
+      univ: scNumVal('bp_univ'), other: scNumVal('bp_other'),
+    },
+    prestasiJuara: {
+      j1: scNumVal('bj_j1'), j2: scNumVal('bj_j2'), j3: scNumVal('bj_j3'),
+      harapan: scNumVal('bj_harapan'), other: scNumVal('bj_other'),
+    },
+    orgTingkatan: {
+      intl: scNumVal('bo_intl'), nas: scNumVal('bo_nas'), univ: scNumVal('bo_univ'),
+      fak: scNumVal('bo_fak'),  prodi: scNumVal('bo_prodi'),
+    },
+    orgKeterlibatan: {
+      ketua: scNumVal('bk_ketua'), wakil: scNumVal('bk_wakil'), kadiv: scNumVal('bk_kadiv'),
+      staff: scNumVal('bk_staff'), vol: scNumVal('bk_vol'),
+    },
+  };
+}
+
+async function scSave() {
+  // Validasi total = 100
+  const total = Object.values(scCollect().weights).reduce((s,v)=>s+v, 0);
+  if (Math.abs(Math.round(total*10)/10 - 100) >= 0.05) {
+    toast('Total bobot harus = 100. Sekarang: ' + (Math.round(total*10)/10), 'err');
+    return;
+  }
+  const cfg = scCollect();
+  const cachedAuth = JSON.parse(sessionStorage.getItem('_bsi_auth')||'{}');
+  const email = window._authEmail || cachedAuth.email || '';
+  try {
+    const { error } = await sb().from('bsi_config').upsert({
+      key: 'scoring_weights',
+      value: cfg,
+      updated_at: new Date().toISOString(),
+      updated_by: email,
+    });
+    if (error) throw error;
+    localStorage.setItem(SC_KEY, JSON.stringify(cfg));
+    const now = new Date().toLocaleString('id-ID', { dateStyle:'medium', timeStyle:'short' });
+    localStorage.setItem(SC_KEY + '_savedAt', now);
+    document.getElementById('scSavedAt').textContent = 'Terakhir disimpan: ' + now + (email ? ' oleh ' + email : '');
+    toast('Pembobotan berhasil disimpan! Reload halaman leaderboard untuk menerapkan.', 'ok');
+  } catch(e) {
+    console.error('Gagal simpan ke DB:', e);
+    toast('Gagal simpan ke database: ' + (e.message || e), 'err');
+  }
+}
+
+function scReset() {
+  if (!confirm('Reset semua pembobotan ke nilai default?')) return;
+  localStorage.removeItem(SC_KEY);
+  localStorage.removeItem(SC_KEY + '_savedAt');
+  scLoadIntoForm();
+  toast('Pembobotan direset ke nilai default.', 'info');
 }
 </script>
 

@@ -1315,7 +1315,7 @@
             <p style="margin:6px 0;"><b>Poin Organisasi</b> per baris = <i>tingkatan_bonus</i> + <i>keterlibatan_bonus</i>:
             Internasional +3 / Nasional +2 / Univ–Regional +1 / Fakultas +0.5 / Jurusan +0.3;
             Ketua +3 / Sekjen +2.5 / BPH +2 / Staff +0.5 / Volunteer +0.3.</p>
-            <p style="margin:6px 0;"><b>Kehadiran</b>: simbol <code>✅</code> (hadir) dan <code>TP</code> (tugas pengganti) dihitung hadir; sel kosong berarti aktivitas tidak berlaku untuk awardee tsb dan tidak masuk denominator.</p>
+            <p style="margin:6px 0;"><b>Kehadiran</b>: simbol <svg style="display:inline;vertical-align:middle;margin:0 2px" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg> (hadir) dan <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#fef08a;color:#854d0e;font-size:9.5px;font-weight:800;vertical-align:middle;">TP</span> (tugas pengganti) dihitung hadir; sel kosong berarti aktivitas tidak berlaku untuk awardee tsb dan tidak masuk denominator.</p>
           </div>
         </div>
       </details>
@@ -1351,50 +1351,88 @@ function closeSidebar(){document.getElementById('sidebar').classList.remove('ope
 const sb = () => window._supabase;
 const PER_PAGE = 15;
 
-const WEIGHTS = {
-  mentoring: 17.5, pembinaan: 17.5,
-  pre: 4, post: 4, assessment: 7,
-  prestasi: 20, organisasi: 20, ipk: 10,
+// Load scoring config dari admin-settings (localStorage), fallback ke default
+const _SC_DEFAULTS = {
+  weights: { mentoring:17.5, pembinaan:17.5, pre:4, post:4, assessment:7, prestasi:20, organisasi:20, ipk:10 },
+  prestasiMax: 30, orgMax: 25,
+  prestasiTingkatan: { intl:3, nas:2, reg:1, univ:0.5, other:0 },
+  prestasiJuara:     { j1:3, j2:2, j3:1, harapan:0.5, other:0.3 },
+  orgTingkatan:      { intl:3, nas:2, univ:1, fak:0.5, prodi:0.3 },
+  orgKeterlibatan:   { ketua:3, wakil:2.5, kadiv:2, staff:0.5, vol:0.3 },
 };
-const PRESTASI_MAX = 30;
-const ORG_MAX = 25;
+function _mergeScoringCfg(p) {
+  return {
+    weights:           { ..._SC_DEFAULTS.weights,           ...(p.weights||{}) },
+    prestasiMax:       p.prestasiMax       ?? _SC_DEFAULTS.prestasiMax,
+    orgMax:            p.orgMax            ?? _SC_DEFAULTS.orgMax,
+    prestasiTingkatan: { ..._SC_DEFAULTS.prestasiTingkatan, ...(p.prestasiTingkatan||{}) },
+    prestasiJuara:     { ..._SC_DEFAULTS.prestasiJuara,     ...(p.prestasiJuara||{}) },
+    orgTingkatan:      { ..._SC_DEFAULTS.orgTingkatan,      ...(p.orgTingkatan||{}) },
+    orgKeterlibatan:   { ..._SC_DEFAULTS.orgKeterlibatan,   ...(p.orgKeterlibatan||{}) },
+  };
+}
+// _SC, WEIGHTS, PRESTASI_MAX, ORG_MAX diisi oleh _loadScoringCfgAsync() saat init
+let _SC = JSON.parse(JSON.stringify(_SC_DEFAULTS));
+let WEIGHTS      = _SC.weights;
+let PRESTASI_MAX = _SC.prestasiMax;
+let ORG_MAX      = _SC.orgMax;
+
+async function _loadScoringCfgAsync() {
+  try {
+    const { data, error } = await sb().from('bsi_config')
+      .select('value').eq('key', 'scoring_weights').maybeSingle();
+    if (!error && data?.value) {
+      _SC = _mergeScoringCfg(data.value);
+      // cache ke localStorage sebagai fallback offline
+      localStorage.setItem('_bsi_scoring_weights', JSON.stringify(_SC));
+      WEIGHTS = _SC.weights; PRESTASI_MAX = _SC.prestasiMax; ORG_MAX = _SC.orgMax;
+      return;
+    }
+  } catch(e) { console.warn('Gagal load scoring config dari DB:', e); }
+  // Fallback: localStorage
+  try {
+    const raw = localStorage.getItem('_bsi_scoring_weights');
+    if (raw) { _SC = _mergeScoringCfg(JSON.parse(raw)); }
+  } catch(e) {}
+  WEIGHTS = _SC.weights; PRESTASI_MAX = _SC.prestasiMax; ORG_MAX = _SC.orgMax;
+}
 
 /* =========================================================
    SCORING HELPERS
 ========================================================= */
 function lbTingkatanBonusPrestasi(t){
-  const s = (t||'').toLowerCase();
-  if(/internasion|international|world|asia|asean/.test(s))     return 3;
-  if(/nasional|national|indonesia/.test(s))                     return 2;
-  if(/regional|wilayah|provinsi|province/.test(s))              return 1;
-  if(/universitas|kampus|institut|politek|fakultas|jurusan/.test(s)) return 0.5;
-  return 0;
+  const s = (t||'').toLowerCase(), b = _SC.prestasiTingkatan;
+  if(/internasion|international|world|asia|asean/.test(s))     return b.intl;
+  if(/nasional|national|indonesia/.test(s))                     return b.nas;
+  if(/regional|wilayah|provinsi|province/.test(s))              return b.reg;
+  if(/universitas|kampus|institut|politek|fakultas|jurusan/.test(s)) return b.univ;
+  return b.other;
 }
 function lbJuaraBonus(j){
-  const s = (j||'').toLowerCase();
-  if(/harap/.test(s))                                            return 0.5;
-  if(/juara\s*1|juara\s*i\b|pertama|^1$|emas|gold/.test(s))      return 3;
-  if(/juara\s*2|juara\s*ii\b|kedua|^2$|perak|silver/.test(s))    return 2;
-  if(/juara\s*3|juara\s*iii\b|ketiga|^3$|perunggu|bronze/.test(s)) return 1;
-  return 0.3;
+  const s = (j||'').toLowerCase(), b = _SC.prestasiJuara;
+  if(/harap/.test(s))                                            return b.harapan;
+  if(/juara\s*1|juara\s*i\b|pertama|^1$|emas|gold/.test(s))      return b.j1;
+  if(/juara\s*2|juara\s*ii\b|kedua|^2$|perak|silver/.test(s))    return b.j2;
+  if(/juara\s*3|juara\s*iii\b|ketiga|^3$|perunggu|bronze/.test(s)) return b.j3;
+  return b.other;
 }
 function lbTingkatanBonusOrg(t){
-  const s = (t||'').toLowerCase();
-  if(/internasion|international|world|asia|asean/.test(s))                         return 3;
-  if(/nasional|national|indonesia/.test(s))                                         return 2;
-  if(/universitas|kampus|institut|politek|regional|wilayah|provinsi|province/.test(s)) return 1;
-  if(/fakultas/.test(s))                                                            return 0.5;
-  if(/jurusan|prodi|himpunan|hmp\b|hmj\b|hima/.test(s))                             return 0.3;
+  const s = (t||'').toLowerCase(), b = _SC.orgTingkatan;
+  if(/internasion|international|world|asia|asean/.test(s))                         return b.intl;
+  if(/nasional|national|indonesia/.test(s))                                         return b.nas;
+  if(/universitas|kampus|institut|politek|regional|wilayah|provinsi|province/.test(s)) return b.univ;
+  if(/fakultas/.test(s))                                                            return b.fak;
+  if(/jurusan|prodi|himpunan|hmp\b|hmj\b|hima/.test(s))                             return b.prodi;
   return 0;
 }
 function lbKeterlibatanBonus(k){
-  const s = (k||'').toLowerCase();
-  if(/^ketua$|\bketua umum\b|\bketum\b|gubernur|presiden/.test(s))                   return 3;
-  if(/sekjen|sekretaris jendral|sekretaris umum|wakil ketua|^wakil\b/.test(s))       return 2.5;
-  if(/ketua divisi|ketua bidang|\bbph\b|\bdph\b|kepala bidang|kepala divisi|kepala departemen|bendahara/.test(s)) return 2;
-  if(/^staff$|^staf$|anggota|pengurus/.test(s))                                      return 0.5;
-  if(/volunteer|relawan/.test(s))                                                    return 0.3;
-  return 0.3;
+  const s = (k||'').toLowerCase(), b = _SC.orgKeterlibatan;
+  if(/^ketua$|\bketua umum\b|\bketum\b|gubernur|presiden/.test(s))                   return b.ketua;
+  if(/sekjen|sekretaris jendral|sekretaris umum|wakil ketua|^wakil\b/.test(s))       return b.wakil;
+  if(/ketua divisi|ketua bidang|\bbph\b|\bdph\b|kepala bidang|kepala divisi|kepala departemen|bendahara/.test(s)) return b.kadiv;
+  if(/^staff$|^staf$|anggota|pengurus/.test(s))                                      return b.staff;
+  if(/volunteer|relawan/.test(s))                                                    return b.vol;
+  return b.vol;
 }
 function isHadir(v){ return v==='✅' || v==='TP'; }
 function isEvent(v){ return v !== null && v !== undefined && String(v).trim() !== ''; }
@@ -1454,6 +1492,9 @@ async function init(){
       const info = await window._authReady;
       if (info.role !== 'admin' && info.role !== 'operator') { location.replace('index.html'); return; }
     }
+
+    // Load scoring config dari DB sebelum komputasi apapun
+    await _loadScoringCfgAsync();
 
     const [mhs, rekap, prestasi, org, spRows] = await Promise.all([
       fetchAll('mahasiswa_bsi', 'no_induk,nama,kampus,kelompok,ipk,status,fakultas,prodi'),
@@ -2854,8 +2895,11 @@ window.showDetail = (nim) => {
         style="width:100%;padding:8px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:600;color:#475569;cursor:pointer;text-align:left;display:flex;justify-content:space-between;align-items:center;">
         <span>Tabel Pembobotan Lengkap</span><span>▼</span>
       </button>
-      <div id="bobot-table" style="display:none;margin-top:4px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;font-size:11.5px;">
-        <table style="width:100%;border-collapse:collapse;">
+      <div id="bobot-table" style="display:none;margin-top:4px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;font-size:12px;">
+        <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
+          <colgroup>
+            <col style="width:22%"><col style="width:9%"><col style="width:28%"><col style="width:41%">
+          </colgroup>
           <thead>
             <tr style="background:#f1f5f9;font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em;">
               <th style="padding:7px 10px;text-align:left;">Komponen</th>
@@ -2864,63 +2908,63 @@ window.showDetail = (nim) => {
               <th style="padding:7px 10px;text-align:left;">Sumber Poin</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody style="font-size:12px;">
             <tr style="background:#eff6ff;font-weight:700;color:#1d4ed8;">
               <td style="padding:6px 10px;" colspan="4">Mindful — 35%</td>
             </tr>
             <tr style="border-top:1px solid #e2e8f0;">
               <td style="padding:5px 10px 5px 20px;">Mentoring</td>
-              <td style="padding:5px 10px;text-align:center;">17.5%</td>
+              <td style="padding:5px 10px;text-align:center;font-weight:700;">17.5%</td>
               <td style="padding:5px 10px;">(hadir / total sesi) × 17.5</td>
-              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">rekap_bsi.mentoring — tiap ✅ atau TP dihitung hadir</td>
+              <td style="padding:5px 10px;color:#6b7280;">rekap_bsi.mentoring — tiap <svg style="display:inline;vertical-align:middle;margin:0 1px" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg> atau <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#fef08a;color:#854d0e;font-size:9.5px;font-weight:800;vertical-align:middle;line-height:1;">TP</span> dihitung hadir</td>
             </tr>
             <tr style="background:#f8fafc;border-top:1px solid #e2e8f0;">
               <td style="padding:5px 10px 5px 20px;">Pembinaan</td>
-              <td style="padding:5px 10px;text-align:center;">17.5%</td>
+              <td style="padding:5px 10px;text-align:center;font-weight:700;">17.5%</td>
               <td style="padding:5px 10px;">(hadir / total sesi) × 17.5</td>
-              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">rekap_bsi.pembinaan — tiap ✅ atau TP dihitung hadir</td>
+              <td style="padding:5px 10px;color:#6b7280;">rekap_bsi.pembinaan — tiap <svg style="display:inline;vertical-align:middle;margin:0 1px" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg> atau <span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:#fef08a;color:#854d0e;font-size:9.5px;font-weight:800;vertical-align:middle;line-height:1;">TP</span> dihitung hadir</td>
             </tr>
             <tr style="background:#f0fdf4;font-weight:700;color:#15803d;border-top:2px solid #e2e8f0;">
               <td style="padding:6px 10px;" colspan="4">Accountable — 15%</td>
             </tr>
             <tr style="border-top:1px solid #e2e8f0;">
               <td style="padding:5px 10px 5px 20px;">Pre Test</td>
-              <td style="padding:5px 10px;text-align:center;">4%</td>
+              <td style="padding:5px 10px;text-align:center;font-weight:700;">4%</td>
               <td style="padding:5px 10px;">(hadir / total) × 4</td>
-              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">rekap_bsi.pre_test</td>
+              <td style="padding:5px 10px;color:#6b7280;">rekap_bsi.pre_test</td>
             </tr>
             <tr style="background:#f8fafc;border-top:1px solid #e2e8f0;">
               <td style="padding:5px 10px 5px 20px;">Post Test</td>
-              <td style="padding:5px 10px;text-align:center;">4%</td>
+              <td style="padding:5px 10px;text-align:center;font-weight:700;">4%</td>
               <td style="padding:5px 10px;">(hadir / total) × 4</td>
-              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">rekap_bsi.post_test</td>
+              <td style="padding:5px 10px;color:#6b7280;">rekap_bsi.post_test</td>
             </tr>
             <tr style="border-top:1px solid #e2e8f0;">
               <td style="padding:5px 10px 5px 20px;">Quartal Assignment</td>
-              <td style="padding:5px 10px;text-align:center;">7%</td>
+              <td style="padding:5px 10px;text-align:center;font-weight:700;">7%</td>
               <td style="padding:5px 10px;">(hadir / total) × 7</td>
-              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">rekap_bsi.assessment</td>
+              <td style="padding:5px 10px;color:#6b7280;">rekap_bsi.assessment</td>
             </tr>
             <tr style="background:#fefce8;font-weight:700;color:#92400e;border-top:2px solid #e2e8f0;">
               <td style="padding:6px 10px;" colspan="4">Self-Development — 50%</td>
             </tr>
             <tr style="border-top:1px solid #e2e8f0;">
               <td style="padding:5px 10px 5px 20px;">Prestasi</td>
-              <td style="padding:5px 10px;text-align:center;">20%</td>
+              <td style="padding:5px 10px;text-align:center;font-weight:700;">20%</td>
               <td style="padding:5px 10px;">min(total_poin / 30, 1) × 20</td>
-              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">prestasi_bsi — poin per kegiatan = tingkatan + juara (lihat bawah)</td>
+              <td style="padding:5px 10px;color:#6b7280;">prestasi_bsi — poin per kegiatan = tingkatan + juara (lihat bawah)</td>
             </tr>
             <tr style="background:#f8fafc;border-top:1px solid #e2e8f0;">
               <td style="padding:5px 10px 5px 20px;">Organisasi</td>
-              <td style="padding:5px 10px;text-align:center;">20%</td>
+              <td style="padding:5px 10px;text-align:center;font-weight:700;">20%</td>
               <td style="padding:5px 10px;">min(total_poin / 25, 1) × 20</td>
-              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">organisasi_bsi — poin per keterlibatan = tingkatan + peran (lihat bawah)</td>
+              <td style="padding:5px 10px;color:#6b7280;">organisasi_bsi — poin per keterlibatan = tingkatan + peran (lihat bawah)</td>
             </tr>
             <tr style="border-top:1px solid #e2e8f0;">
               <td style="padding:5px 10px 5px 20px;">IPK</td>
-              <td style="padding:5px 10px;text-align:center;">10%</td>
+              <td style="padding:5px 10px;text-align:center;font-weight:700;">10%</td>
               <td style="padding:5px 10px;">(IPK / 4.0) × 10</td>
-              <td style="padding:5px 10px;color:#6b7280;font-size:11px;">mahasiswa_bsi.ipk</td>
+              <td style="padding:5px 10px;color:#6b7280;">mahasiswa_bsi.ipk</td>
             </tr>
             <tr style="background:#f1f5f9;font-weight:700;border-top:2px solid #cbd5e1;">
               <td style="padding:6px 10px;" colspan="3">Total Maksimum</td>
